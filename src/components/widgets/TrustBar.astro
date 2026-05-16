@@ -1,0 +1,49 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const items = [
+  {
+    icon: 'tabler:folders',
+    title: 'Unify scattered docs',
+    description: 'Bring everything together in one place',
+  },
+  {
+    icon: 'tabler:sparkles',
+    title: 'Create clarity',
+    description: 'Structure unstructured information automatically',
+  },
+  {
+    icon: 'tabler:refresh',
+    title: 'Stay up to date',
+    description: 'Keep your DNA spec living and accurate',
+  },
+  {
+    icon: 'tabler:plug-connected',
+    title: 'Connect your stack',
+    description: 'Sync to the tools your team already uses',
+  },
+];
+---
+
+<div class="py-10 border-y border-white/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <p class="text-center text-sm text-slate-500 mb-8 tracking-wide">
+      Trusted by teams who run complex businesses
+    </p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {
+        items.map(({ icon, title, description }) => (
+          <div class="group flex items-start gap-3 intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade cursor-default">
+            <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center transition-all ease-in duration-200 group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:shadow-md group-hover:shadow-primary/10 group-hover:-translate-y-0.5">
+              <Icon name={icon} class="w-4 h-4 text-primary transition-transform ease-in duration-200 group-hover:scale-110" />
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-200 transition-colors ease-in duration-200 group-hover:text-white">{title}</p>
+              <p class="text-xs text-slate-500 mt-0.5 transition-colors ease-in duration-200 group-hover:text-slate-400">{description}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>

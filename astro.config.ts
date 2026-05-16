@@ -22,6 +22,7 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
   hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
 
 export default defineConfig({
+  site: 'https://dna.codes',
   output: 'static',
 
   integrations: [
@@ -41,6 +42,18 @@ export default defineConfig({
           'business-contact',
           'database',
         ],
+        logos: [
+          'google-drive',
+          'notion',
+          'confluence',
+          'dropbox',
+          'slack',
+          'airtable',
+        ],
+        'simple-icons': ['linear'],
+        mdi: ['microsoft-sharepoint'],
+        ri: ['notion-fill'],
+        devicon: ['slack'],
       },
     }),
 

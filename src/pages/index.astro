@@ -1,9 +1,29 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
-import Features from '~/components/widgets/Features.astro';
-import Steps from '~/components/widgets/Steps.astro';
+import DnaHelix from '~/components/DnaHelix.astro';
+import HowItWorks from '~/components/widgets/HowItWorks.astro';
+import BiggerPicture from '~/components/widgets/BiggerPicture.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
+import { Icon } from 'astro-icon/components';
+
+const ingestSources = [
+  { name: 'Google Drive', icon: 'logos:google-drive' },
+  { name: 'Notion', icon: 'ri:notion-fill' },
+  { name: 'Confluence', icon: 'logos:confluence' },
+  { name: 'Dropbox', icon: 'logos:dropbox' },
+  { name: 'PDF / Docs', icon: 'tabler:pdf' },
+  { name: 'Websites', icon: 'tabler:globe' },
+];
+
+const syncDestinations = [
+  { name: 'Notion', icon: 'ri:notion-fill' },
+  { name: 'Confluence', icon: 'logos:confluence' },
+  { name: 'Slack', icon: 'devicon:slack' },
+  { name: 'Linear', icon: 'simple-icons:linear' },
+  { name: 'Airtable', icon: 'logos:airtable' },
+  { name: 'SharePoint', icon: 'mdi:microsoft-sharepoint' },
+];
 
 const metadata = {
   title: 'DNA Codes — Your Digital Business Model',
@@ -13,100 +33,110 @@ const metadata = {
 
 <Layout metadata={metadata}>
   <Hero
+    tagline="Turn business docs into your Digital DNA"
     actions={[
       {
         variant: 'primary',
-        text: 'Get started',
+        text: 'Get started for free',
         href: 'https://app.dna.codes',
       },
-      { text: 'See how it works', href: '#how-it-works' },
+      { text: 'Book a demo', href: 'https://app.dna.codes/demo' },
     ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2070&q=80',
-      alt: 'Team aligning on operational structure',
-    }}
   >
+    <DnaHelix slot="bg" orientation="horizontal" helixWidth={120} nodeSize={12} filled style="height:58%" />
+
     <Fragment slot="title">
-      Your digital<br />
-      <span class="text-accent">business model</span>
+      One source of truth for how your<br />
+      business <span class="text-accent">really works.</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      Define process, rules, and roles once.<br class="hidden sm:block" />
-      Generate docs, workflows, and specs automatically.
+      Ingest your business documents, structure them into a living DNA spec,<br class="hidden md:block" />
+      and connect them to <strong class="text-slate-200">the tools</strong> you use every day.
+    </Fragment>
+
+    <Fragment slot="content">
+      <p class="text-sm text-slate-500 mt-3 text-center">No credit card required</p>
+    </Fragment>
+
+    <Fragment slot="image">
+      <!-- Three-panel product mockup -->
+      <div class="relative max-w-4xl mx-auto mt-4 hidden md:flex items-start justify-center gap-3">
+        <!-- Left: Ingest panel -->
+        <div class="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur p-4 translate-y-5 opacity-80 transition-all ease-in duration-200 hover:opacity-100 hover:bg-white/[0.07] hover:border-white/20 hover:-translate-y-0">
+          <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-3">Ingest from anywhere</p>
+          <ul class="space-y-2">
+            {ingestSources.map(({ name, icon }) => (
+              <li class="flex items-center gap-2 text-xs text-slate-400 rounded px-1 py-0.5 transition-colors ease-in duration-150 hover:text-slate-200 hover:bg-white/5 cursor-default">
+                <Icon name={icon} class="w-4 h-4 flex-shrink-0" />
+                {name}
+              </li>
+            ))}
+            <li class="text-[10px] text-slate-600">... And more</li>
+          </ul>
+        </div>
+
+        <!-- Arrow -->
+        <div class="flex-shrink-0 text-primary/40 text-lg mt-16 select-none">›</div>
+
+        <!-- Center: DNA Spec panel (featured) -->
+        <div class="flex-[1.35] rounded-2xl border border-primary/35 bg-primary/5 backdrop-blur p-5 shadow-xl shadow-primary/10 relative z-10 transition-all ease-in duration-200 hover:border-primary/55 hover:shadow-primary/20 hover:bg-primary/[0.08]">
+          <div class="flex items-center gap-1.5 mb-1">
+            <span class="text-primary text-base font-bold">⬡</span>
+            <span class="font-bold text-white text-sm">dna</span>
+          </div>
+          <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-3">Structured DNA Spec</p>
+          <ul class="space-y-1.5">
+            {['Purpose & Strategy', 'Business Model', 'Products & Services', 'Processes', 'Organization', 'Systems & Data', 'Policies & Rules'].map((s) => (
+              <li class="flex items-center justify-between text-xs text-slate-300 py-0.5 border-b border-white/5 rounded px-1 transition-colors ease-in duration-150 hover:text-slate-100 hover:bg-white/5 cursor-default group">
+                <span>{s}</span>
+                <span class="text-slate-600 transition-colors ease-in duration-150 group-hover:text-primary">›</span>
+              </li>
+            ))}
+            <li class="text-[10px] text-slate-600">... And more.</li>
+          </ul>
+        </div>
+
+        <!-- Arrow -->
+        <div class="flex-shrink-0 text-primary/40 text-lg mt-16 select-none">›</div>
+
+        <!-- Right: Sync panel -->
+        <div class="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur p-4 translate-y-5 opacity-80 transition-all ease-in duration-200 hover:opacity-100 hover:bg-white/[0.07] hover:border-white/20 hover:-translate-y-0">
+          <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-3">Sync everywhere</p>
+          <ul class="space-y-2">
+            {syncDestinations.map(({ name, icon }) => (
+              <li class="flex items-center gap-2 text-xs text-slate-400 rounded px-1 py-0.5 transition-colors ease-in duration-150 hover:text-slate-200 hover:bg-white/5 cursor-default">
+                <Icon name={icon} class="w-4 h-4 flex-shrink-0" />
+                {name}
+              </li>
+            ))}
+            <li class="text-[10px] text-slate-600">... And more.</li>
+          </ul>
+        </div>
+      </div>
     </Fragment>
   </Hero>
 
-  <Features
-    id="features"
-    title="Everything flows from one place"
-    subtitle="Stop maintaining five versions of the truth. Operational DNA is the single model your whole org runs from."
-    items={[
-      {
-        title: 'A taxonomy that reflects reality',
-        description: 'Roles, groups, resources, and relationships — structured, not scattered.',
-        icon: 'tabler:sitemap',
-      },
-      {
-        title: 'Process flows that never go stale',
-        description: 'Change the model once. Every doc and diagram updates with it.',
-        icon: 'tabler:refresh',
-      },
-      {
-        title: 'Business rules that stay enforced',
-        description: 'Approval chains, access logic, escalation paths — in the model, not buried in wikis.',
-        icon: 'tabler:shield-check',
-      },
-      {
-        title: 'Engineering builds what you described',
-        description: 'Your operational model drives API specs and system design. No translation needed.',
-        icon: 'tabler:code',
-      },
-    ]}
-  />
+  <HowItWorks />
 
-  <Steps
-    id="how-it-works"
-    title="From description to operational model"
-    items={[
-      {
-        title: 'Describe your operations',
-        description: 'Write how your business works in plain language — roles, processes, rules, and relationships.',
-        icon: 'tabler:pencil',
-      },
-      {
-        title: 'DNA generates the model',
-        description: 'Operational DNA structures your description into a validated taxonomy with enforced constraints.',
-        icon: 'tabler:dna',
-      },
-      {
-        title: 'Get every artifact automatically',
-        description: 'Process docs, RACI matrices, workflow diagrams, audit schemas, and API specs — generated and kept in sync.',
-        icon: 'tabler:files',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?auto=format&fit=crop&w=2076&q=80',
-      alt: 'Operational clarity',
-    }}
-  />
+  <BiggerPicture />
 
   <CallToAction
     actions={[
       {
         variant: 'primary',
-        text: 'Get started',
+        text: 'Get started for free',
         href: 'https://app.dna.codes',
       },
     ]}
   >
     <Fragment slot="title">
-      Put your operations<br class="block sm:hidden" />
-      <span class="sm:whitespace-nowrap"> in writing.</span>
+      Your business has a unique DNA.<br class="block sm:hidden" />
+      <span class="sm:whitespace-nowrap"> Let's make it usable.</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      One model. Every artifact. Always in sync.
+      One spec. Every artifact. Always in sync.
     </Fragment>
   </CallToAction>
 </Layout>

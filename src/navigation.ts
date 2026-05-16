@@ -2,19 +2,41 @@ import { getPermalink, getBlogPermalink } from './utils/permalinks';
 
 export const headerData = {
   links: [
+    { text: 'Product', href: getPermalink('/') },
+    { text: 'Pricing', href: getPermalink('/pricing') },
+    { text: 'About', href: getPermalink('/about') },
     { text: 'Docs', href: 'https://docs.dna.codes' },
-    { text: 'Playground', href: 'https://app.dna.codes/playground' },
     { text: 'Blog', href: getBlogPermalink() },
   ],
-  actions: [{ text: 'Login', href: 'https://app.dna.codes' }],
+  actions: [
+    { text: 'Sign in', href: 'https://app.dna.codes', variant: 'tertiary' },
+    { text: 'Get started', href: 'https://app.dna.codes', variant: 'primary' },
+  ],
 };
 
 export const footerData = {
   links: [
     {
+      title: 'Product',
+      links: [
+        { text: 'How it works', href: getPermalink('/#how-it-works') },
+        { text: 'Pricing', href: getPermalink('/pricing') },
+        { text: 'Playground', href: 'https://app.dna.codes/playground' },
+      ],
+    },
+    {
       title: 'Developers',
       links: [
-        { text: 'Developer API', href: 'https://docs.dna.codes/api' },
+        { text: 'Documentation', href: 'https://docs.dna.codes' },
+        { text: 'API Reference', href: 'https://docs.dna.codes/api' },
+      ],
+    },
+    {
+      title: 'Company',
+      links: [
+        { text: 'About', href: getPermalink('/about') },
+        { text: 'Blog', href: getBlogPermalink() },
+        { text: 'Contact', href: getPermalink('/contact') },
       ],
     },
   ],
@@ -23,5 +45,5 @@ export const footerData = {
     { text: 'Privacy Policy', href: getPermalink('/privacy') },
   ],
   socialLinks: [],
-  footNote: '',
+  footNote: "Your business has a unique DNA. Let's make it usable.",
 };

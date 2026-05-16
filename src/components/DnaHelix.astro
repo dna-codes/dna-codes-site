@@ -1,0 +1,139 @@
+---
+interface Props {
+  orientation?: 'vertical' | 'horizontal';
+  nodeSize?: number;
+  helixWidth?: number;
+  filled?: boolean;
+  class?: string;
+  style?: string;
+}
+
+const {
+  orientation = 'vertical',
+  nodeSize,
+  helixWidth,
+  filled = false,
+  class: className,
+  style,
+} = Astro.props;
+---
+
+<div
+  data-dna-helix
+  data-orientation={orientation}
+  {...nodeSize   !== undefined ? { 'data-node-size': String(nodeSize) }     : {}}
+  {...helixWidth !== undefined ? { 'data-helix-width': String(helixWidth) } : {}}
+  {...filled ? { 'data-filled': '' } : {}}
+  class:list={['w-full h-full overflow-hidden pointer-events-none', className]}
+  style={style}
+  aria-hidden="true"
+></div>
+
+<script is:inline>
+(function () {
+  // Store the init function once; re-use on subsequent DnaHelix instances.
+  if (!window.__initDnaHelix) {
+    window.__initDnaHelix = function (el, opts) {
+      var isVertical   = (opts.orientation || 'vertical') === 'vertical';
+      var BASE_R       = opts.nodeSize   != null ? opts.nodeSize   : 6.5;
+      var AMP_OVERRIDE = opts.helixWidth != null ? opts.helixWidth : null;
+      var filled       = !!opts.filled;
+      var N_RUNGS      = isVertical ? 20 : 22;
+      var RUNGS_PER_TURN = 10, DEPTH_SCALE = 0.50, SPEED = 0.08, MAX_ALPHA = 0.20;
+      var CR = 45, CG = 212, CB = 191;
+
+      function rgba(a) { return 'rgba(' + CR + ',' + CG + ',' + CB + ',' + a.toFixed(3) + ')'; }
+
+      var canvas = document.createElement('canvas');
+      canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:block;';
+      el.style.position = 'relative';
+      el.insertBefore(canvas, el.firstChild);
+
+      var ctx = canvas.getContext('2d');
+      var W = 0, H = 0, dpr = 1, raf = 0;
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var r = el.getBoundingClientRect();
+        W = r.width  || window.innerWidth;
+        H = r.height || window.innerHeight;
+        canvas.width  = Math.round(W * dpr);
+        canvas.height = Math.round(H * dpr);
+      }
+
+      if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resize).observe(el);
+      resize();
+
+      function frame(ts) {
+        if (document.hidden) { raf = 0; return; }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.scale(dpr, dpr);
+
+        var angle = ts * 0.001 * SPEED * 2 * Math.PI;
+        var pitch = (2 * Math.PI) / RUNGS_PER_TURN;
+        var mainLen = isVertical ? H : W;
+        var oscLen  = isVertical ? W : H;
+        var pad     = mainLen * (isVertical ? 0.05 : 0.02);
+        var spacing = (mainLen - pad * 2) / (N_RUNGS - 1);
+        var center  = oscLen / 2;
+        var crossLen = isVertical ? W : H;
+        var amp     = AMP_OVERRIDE != null
+                    ? Math.min(AMP_OVERRIDE, crossLen * 0.40)
+                    : isVertical ? Math.min(W * 0.13, 68)
+                    :              Math.min(H * 0.22, 80);
+        var circles = [];
+
+        for (var i = 0; i < N_RUNGS; i++) {
+          var theta = angle + i * pitch;
+          var cosT  = Math.cos(theta);
+          var sinT  = Math.sin(theta);
+          var main  = pad + i * spacing;
+          var oscA  = center + amp * cosT;
+          var oscB  = center - amp * cosT;
+          var x1    = isVertical ? oscA : main;
+          var y1    = isVertical ? main : oscA;
+          var x2    = isVertical ? oscB : main;
+          var y2    = isVertical ? main : oscB;
+
+          var lineA = MAX_ALPHA * 0.5 * (0.4 + 0.6 * Math.abs(cosT));
+          ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+          ctx.strokeStyle = rgba(lineA); ctx.lineWidth = 1.2; ctx.stroke();
+
+          circles.push({ x: x1, y: y1, r: BASE_R * (1 + DEPTH_SCALE * sinT),  z: sinT  });
+          circles.push({ x: x2, y: y2, r: BASE_R * (1 + DEPTH_SCALE * -sinT), z: -sinT });
+        }
+
+        circles.sort(function (a, b) { return a.z - b.z; });
+        for (var j = 0; j < circles.length; j++) {
+          var c = circles[j];
+          var sA = MAX_ALPHA * (0.35 + 0.65 * (c.z + 1) * 0.5);
+          ctx.beginPath();
+          ctx.arc(c.x, c.y, Math.max(c.r, 0.5), 0, 6.283185);
+          ctx.fillStyle = rgba(filled ? sA : sA * 0.12);
+          ctx.strokeStyle = rgba(sA); ctx.lineWidth = 1.5;
+          ctx.fill(); ctx.stroke();
+        }
+
+        ctx.restore();
+        raf = requestAnimationFrame(frame);
+      }
+
+      function start() { if (!raf) raf = requestAnimationFrame(frame); }
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) start(); });
+      start();
+    };
+  }
+
+  // Init any uninitialized instances already in the DOM.
+  document.querySelectorAll('[data-dna-helix]:not([data-helix-ready])').forEach(function (el) {
+    el.dataset.helixReady = '1';
+    window.__initDnaHelix(el, {
+      orientation: el.dataset.orientation,
+      nodeSize:    el.dataset.nodeSize    ? parseFloat(el.dataset.nodeSize)    : undefined,
+      helixWidth:  el.dataset.helixWidth  ? parseFloat(el.dataset.helixWidth)  : undefined,
+      filled:      'filled' in el.dataset,
+    });
+  });
+})();
+</script>
