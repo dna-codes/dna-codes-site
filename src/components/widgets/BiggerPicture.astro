@@ -44,8 +44,8 @@ const quadrants = [
           This is just the beginning of your Digital DNA
         </h2>
         <p class="text-slate-400 mb-8 leading-relaxed">
-          Your DNA spec is the foundation for everything that comes next — AI agents, automation, smarter decisions,
-          and a business that adapts as fast as you do.
+          Your DNA spec is the foundation for everything that comes next — AI agents, automation, smarter decisions, and
+          a business that adapts as fast as you do.
         </p>
         <Button variant="primary" text="Explore the roadmap" href="https://docs.dna.codes" />
       </div>
@@ -57,18 +57,22 @@ const quadrants = [
       >
         <div class="relative w-72 h-72 md:w-80 md:h-80">
           <!-- Outer ring -->
-          <div class="absolute inset-0 rounded-full border border-dashed border-white/10" />
+          <div class="absolute inset-0 rounded-full border border-dashed border-white/10"></div>
           <!-- Inner ring -->
-          <div class="absolute inset-8 rounded-full border border-dashed border-white/15" />
+          <div class="absolute inset-8 rounded-full border border-dashed border-white/15"></div>
 
           <!-- Orbit dots -->
-          <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 w-2 h-2 rounded-full bg-primary" />
-          <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1 w-1.5 h-1.5 rounded-full bg-primary/50" />
-          <div class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-1.5 h-1.5 rounded-full bg-primary/40" />
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 w-2 h-2 rounded-full bg-primary"></div>
+          <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1 w-1.5 h-1.5 rounded-full bg-primary/50">
+          </div>
+          <div class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-1.5 h-1.5 rounded-full bg-primary/40">
+          </div>
 
           <!-- Center DNA circle -->
           <div class="absolute inset-0 flex items-center justify-center">
-            <div class="w-20 h-20 rounded-full bg-primary/10 border border-primary/30 flex flex-col items-center justify-center shadow-lg shadow-primary/10 transition-all ease-in duration-200 hover:bg-primary/20 hover:border-primary/50 hover:shadow-primary/25 hover:scale-105 cursor-default">
+            <div
+              class="w-20 h-20 rounded-full bg-primary/10 border border-primary/30 flex flex-col items-center justify-center shadow-lg shadow-primary/10 transition-all ease-in duration-200 hover:bg-primary/20 hover:border-primary/50 hover:shadow-primary/25 hover:scale-105 cursor-default"
+            >
               <Icon name="tabler:dna" class="w-8 h-8 text-primary" />
               <span class="text-xs font-bold text-primary mt-0.5">dna</span>
             </div>
@@ -78,12 +82,24 @@ const quadrants = [
           {
             quadrants.map(({ icon, title, description, position, align }) => (
               <div class:list={['absolute flex gap-2.5 max-w-[140px] group cursor-default', position, align]}>
-                <div class:list={['flex-col gap-1', align === 'items-end text-right' ? 'flex items-end' : 'flex items-start']}>
+                <div
+                  class:list={[
+                    'flex-col gap-1',
+                    align === 'items-end text-right' ? 'flex items-end' : 'flex items-start',
+                  ]}
+                >
                   <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 transition-all ease-in duration-200 group-hover:bg-primary/15 group-hover:border-primary/35 group-hover:-translate-y-0.5 group-hover:shadow-md group-hover:shadow-primary/10">
-                    <Icon name={icon} class="w-4 h-4 text-primary transition-transform ease-in duration-200 group-hover:scale-110" />
+                    <Icon
+                      name={icon}
+                      class="w-4 h-4 text-primary transition-transform ease-in duration-200 group-hover:scale-110"
+                    />
                   </div>
-                  <p class="text-xs font-semibold text-slate-300 leading-tight transition-colors ease-in duration-200 group-hover:text-slate-100">{title}</p>
-                  <p class="text-[10px] text-slate-500 leading-snug transition-colors ease-in duration-200 group-hover:text-slate-400">{description}</p>
+                  <p class="text-xs font-semibold text-slate-300 leading-tight transition-colors ease-in duration-200 group-hover:text-slate-100">
+                    {title}
+                  </p>
+                  <p class="text-[10px] text-slate-500 leading-snug transition-colors ease-in duration-200 group-hover:text-slate-400">
+                    {description}
+                  </p>
                 </div>
               </div>
             ))

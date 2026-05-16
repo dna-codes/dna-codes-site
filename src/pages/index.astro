@@ -63,15 +63,19 @@ const metadata = {
       <!-- Three-panel product mockup -->
       <div class="relative max-w-4xl mx-auto mt-4 hidden md:flex items-stretch justify-center gap-3">
         <!-- Left: Ingest panel -->
-        <div class="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur p-4 translate-y-5 opacity-80 transition-all ease-in duration-200 hover:opacity-100 hover:bg-white/[0.07] hover:border-white/20 hover:-translate-y-0">
+        <div
+          class="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur p-4 translate-y-5 opacity-80 transition-all ease-in duration-200 hover:opacity-100 hover:bg-white/[0.07] hover:border-white/20 hover:-translate-y-0"
+        >
           <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-3">Ingest from anywhere</p>
           <ul class="space-y-2">
-            {ingestSources.map(({ name, icon }) => (
-              <li class="flex items-center gap-2 text-xs text-slate-400 rounded px-1 py-0.5 transition-colors ease-in duration-150 hover:text-slate-200 hover:bg-white/5 cursor-default">
-                <Icon name={icon} class="w-4 h-4 flex-shrink-0" />
-                {name}
-              </li>
-            ))}
+            {
+              ingestSources.map(({ name, icon }) => (
+                <li class="flex items-center gap-2 text-xs text-slate-400 rounded px-1 py-0.5 transition-colors ease-in duration-150 hover:text-slate-200 hover:bg-white/5 cursor-default">
+                  <Icon name={icon} class="w-4 h-4 flex-shrink-0" />
+                  {name}
+                </li>
+              ))
+            }
             <li class="text-[10px] text-slate-600">... And more</li>
           </ul>
         </div>
@@ -80,19 +84,31 @@ const metadata = {
         <div class="flex-shrink-0 flex items-center text-primary/40 text-lg select-none">›</div>
 
         <!-- Center: DNA Spec panel (featured) -->
-        <div class="flex-[1.35] rounded-2xl border border-primary/35 bg-primary/5 backdrop-blur p-5 shadow-xl shadow-primary/10 relative z-10 transition-all ease-in duration-200 hover:border-primary/55 hover:shadow-primary/20 hover:bg-primary/[0.08]">
+        <div
+          class="flex-[1.35] rounded-2xl border border-primary/35 bg-primary/5 backdrop-blur p-5 shadow-xl shadow-primary/10 relative z-10 transition-all ease-in duration-200 hover:border-primary/55 hover:shadow-primary/20 hover:bg-primary/[0.08]"
+        >
           <div class="flex items-center gap-1.5 mb-1">
             <span class="text-primary text-base font-bold">⬡</span>
             <span class="font-bold text-white text-sm">dna</span>
           </div>
           <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-3">Structured DNA Spec</p>
           <ul class="space-y-1.5">
-            {['Purpose & Strategy', 'Business Model', 'Products & Services', 'Processes', 'Organization', 'Systems & Data', 'Policies & Rules'].map((s) => (
-              <li class="flex items-center justify-between text-xs text-slate-300 py-0.5 border-b border-white/5 rounded px-1 transition-colors ease-in duration-150 hover:text-slate-100 hover:bg-white/5 cursor-default group">
-                <span>{s}</span>
-                <span class="text-slate-600 transition-colors ease-in duration-150 group-hover:text-primary">›</span>
-              </li>
-            ))}
+            {
+              [
+                'Purpose & Strategy',
+                'Business Model',
+                'Products & Services',
+                'Processes',
+                'Organization',
+                'Systems & Data',
+                'Policies & Rules',
+              ].map((s) => (
+                <li class="flex items-center justify-between text-xs text-slate-300 py-0.5 border-b border-white/5 rounded px-1 transition-colors ease-in duration-150 hover:text-slate-100 hover:bg-white/5 cursor-default group">
+                  <span>{s}</span>
+                  <span class="text-slate-600 transition-colors ease-in duration-150 group-hover:text-primary">›</span>
+                </li>
+              ))
+            }
             <li class="text-[10px] text-slate-600">... And more.</li>
           </ul>
         </div>
@@ -101,15 +117,19 @@ const metadata = {
         <div class="flex-shrink-0 flex items-center text-primary/40 text-lg select-none">›</div>
 
         <!-- Right: Sync panel -->
-        <div class="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur p-4 translate-y-5 opacity-80 transition-all ease-in duration-200 hover:opacity-100 hover:bg-white/[0.07] hover:border-white/20 hover:-translate-y-0">
+        <div
+          class="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur p-4 translate-y-5 opacity-80 transition-all ease-in duration-200 hover:opacity-100 hover:bg-white/[0.07] hover:border-white/20 hover:-translate-y-0"
+        >
           <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-3">Sync everywhere</p>
           <ul class="space-y-2">
-            {syncDestinations.map(({ name, icon }) => (
-              <li class="flex items-center gap-2 text-xs text-slate-400 rounded px-1 py-0.5 transition-colors ease-in duration-150 hover:text-slate-200 hover:bg-white/5 cursor-default">
-                <Icon name={icon} class="w-4 h-4 flex-shrink-0" />
-                {name}
-              </li>
-            ))}
+            {
+              syncDestinations.map(({ name, icon }) => (
+                <li class="flex items-center gap-2 text-xs text-slate-400 rounded px-1 py-0.5 transition-colors ease-in duration-150 hover:text-slate-200 hover:bg-white/5 cursor-default">
+                  <Icon name={icon} class="w-4 h-4 flex-shrink-0" />
+                  {name}
+                </li>
+              ))
+            }
             <li class="text-[10px] text-slate-600">... And more.</li>
           </ul>
         </div>
@@ -135,8 +155,6 @@ const metadata = {
       <span class="sm:whitespace-nowrap"> Let's make it usable.</span>
     </Fragment>
 
-    <Fragment slot="subtitle">
-      One spec. Every artifact. Always in sync.
-    </Fragment>
+    <Fragment slot="subtitle"> One spec. Every artifact. Always in sync. </Fragment>
   </CallToAction>
 </Layout>
