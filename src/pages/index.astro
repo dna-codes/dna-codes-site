@@ -7,41 +7,41 @@ import CTA from '../components/CTA.astro';
 
 const features = [
   {
-    title: 'Structured from day one',
+    title: 'A taxonomy that reflects how you actually work',
     description:
-      'Describe your product in plain language. DNA Codes turns it into a structured model — entities, capabilities, APIs — that every tool in your stack can read.',
+      'Model your real org: roles, groups, resources, and the relationships between them. Not a static org chart — a living definition of who does what, to what, and under what rules.',
   },
   {
-    title: 'One source, every output',
+    title: 'Process flows that never go stale',
     description:
-      'Generate API specs, DB schemas, documentation, and test stubs from a single DNA document. Change the model once; every output stays in sync.',
+      'Define your operations once in DNA. Process documentation, workflow diagrams, and handoff specs are generated from it — so when the process changes, everything updates together.',
   },
   {
-    title: 'Adapters for your stack',
+    title: 'Business rules that stay enforced',
     description:
-      'Deploy to AWS via Terraform, spin up local Docker environments, or export to OpenAPI. The same DNA drives all of them.',
+      'Encode constraints directly in the model: approval chains, role cardinalities, access logic, escalation paths. They live in one place instead of scattered across tribal knowledge and stale wikis.',
   },
   {
-    title: 'Built for teams',
+    title: 'Engineering builds what you actually described',
     description:
-      'OpenSpec workflow keeps changes reviewable and intentional. Non-trivial changes go through proposal → design → tasks before a line of code is touched.',
+      'When product and engineering need to build, they build from your model. No translation layer, no lost-in-handoff errors. The same DNA that defines your operations drives the API specs and system design.',
   },
 ];
 ---
 
-<Layout title="DNA Codes — structured intelligence for your codebase">
+<Layout title="DNA Codes — one model for how your business operates">
   <main>
     <Hero
-      headline="Your codebase, structured by design"
-      subheadline="DNA Codes transforms product descriptions into a living schema that generates APIs, databases, docs, and infrastructure — all in sync."
-      ctaLabel="Start building"
+      headline="Your operations, finally in one place"
+      subheadline="BizOps leaders spend more time maintaining scattered docs than running the business. Operational DNA gives your org structure, roles, and processes a single authoritative model — and generates everything else from it."
+      ctaLabel="See how it works"
       ctaHref="https://app.dna.codes"
     />
     <Features features={features} />
     <AnimatedDemo />
     <CTA
-      headline="Ready to give your codebase a backbone?"
-      label="Get started free"
+      headline="Stop duct-taping your operations together."
+      label="Get started with Operational DNA"
       href="https://app.dna.codes"
     />
   </main>

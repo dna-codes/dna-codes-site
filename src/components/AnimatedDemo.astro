@@ -1,120 +1,232 @@
 ---
-// Scripted walkthrough: transcript in → DNA created → diagrams/docs out
-// No live API calls; pre-scripted for reliability.
+// Scripted walkthrough of an operational DNA scenario.
 // Degrades gracefully when JS is disabled (static snapshot shown instead).
 ---
 
 <section class="demo-section">
-  <h2 class="section-title">See it in action</h2>
+  <div class="demo-label">See it in action</div>
+  <h2 class="section-title">From process description to operational model</h2>
+  <p class="section-sub">Describe how your business works in plain language. DNA turns it into a structured model that generates docs, workflows, and specs — automatically.</p>
 
-  <!-- Static fallback (always visible, hidden by JS once demo loads) -->
-  <div class="demo-static" id="demo-static">
-    <div class="demo-step">
-      <span class="step-label">Input</span>
-      <pre class="code-block">transcript: "We need a billing module that tracks invoices..."</pre>
+  <div class="demo-shell">
+    <!-- Static fallback -->
+    <div id="demo-static" class="demo-panes">
+      <div class="pane">
+        <div class="pane-label">You describe the operation</div>
+        <pre class="code-block">Procurement requires a Requester,
+an Approver (must be level 5+),
+and a Finance rep for orders over $10k.
+Each step must be logged and auditable.</pre>
+      </div>
+      <div class="pane-arrow">→</div>
+      <div class="pane">
+        <div class="pane-label">DNA generates the model</div>
+        <pre class="code-block">role: Requester
+role: Approver
+  constraint: level >= 5
+role: FinanceReviewer
+  constraint: order.value > 10000
+
+process: procurement
+  steps:
+    - request  → Requester
+    - approve  → Approver
+    - review   → FinanceReviewer
+  rules:
+    - all steps must be logged</pre>
+      </div>
+      <div class="pane-arrow">→</div>
+      <div class="pane">
+        <div class="pane-label">Everything else is generated</div>
+        <pre class="code-block">→ Process doc         ✓
+→ RACI matrix         ✓
+→ Workflow diagram     ✓
+→ Audit schema        ✓
+→ API spec            ✓</pre>
+      </div>
     </div>
-    <div class="demo-arrow">↓</div>
-    <div class="demo-step">
-      <span class="step-label">DNA generated</span>
-      <pre class="code-block">entity: Invoice
-  fields: [id, amount, status, customer_id]
-capability: billing.create-invoice</pre>
-    </div>
-    <div class="demo-arrow">↓</div>
-    <div class="demo-step">
-      <span class="step-label">Output</span>
-      <pre class="code-block">→ API spec  → DB schema  → Docs  → Tests</pre>
+
+    <!-- Animated version -->
+    <div id="demo-animated" class="demo-animated" aria-hidden="true" style="display:none">
+      <div class="anim-panes">
+        <div class="anim-pane" id="anim-input">
+          <div class="pane-label">You describe the operation</div>
+          <pre class="code-block" id="anim-input-text"> </pre>
+        </div>
+        <div class="anim-arrow" id="anim-arrow-1">→</div>
+        <div class="anim-pane" id="anim-model" style="opacity:0">
+          <div class="pane-label">DNA generates the model</div>
+          <pre class="code-block" id="anim-model-text"> </pre>
+        </div>
+        <div class="anim-arrow" id="anim-arrow-2" style="opacity:0">→</div>
+        <div class="anim-pane" id="anim-output" style="opacity:0">
+          <div class="pane-label">Everything else is generated</div>
+          <pre class="code-block" id="anim-output-text"> </pre>
+        </div>
+      </div>
     </div>
   </div>
-
-  <!-- Animated version (progressive enhancement) -->
-  <div class="demo-animated" id="demo-animated" aria-hidden="true" style="display:none"></div>
 </section>
 
 <script>
-  // Scripted walkthrough frames
-  const frames: string[] = [
-    'transcript: "We need a billing module that tracks invoices..."',
-    'Parsing transcript…',
-    'entity: Invoice\n  fields: [id, amount, status, customer_id]',
-    'capability: billing.create-invoice\ncapability: billing.list-invoices',
-    'Generating outputs…',
-    '→ OpenAPI spec ✓\n→ DB schema    ✓\n→ Docs         ✓\n→ Test stubs   ✓',
+  const inputLines = [
+    'Procurement requires a Requester,',
+    'an Approver (must be level 5+),',
+    'and a Finance rep for orders over $10k.',
+    'Each step must be logged and auditable.',
   ];
+
+  const modelLines = [
+    'role: Requester',
+    'role: Approver',
+    '  constraint: level >= 5',
+    'role: FinanceReviewer',
+    '  constraint: order.value > 10000',
+    '',
+    'process: procurement',
+    '  steps:',
+    '    - request  → Requester',
+    '    - approve  → Approver',
+    '    - review   → FinanceReviewer',
+    '  rules:',
+    '    - all steps must be logged',
+  ];
+
+  const outputLines = [
+    '→ Process doc         ✓',
+    '→ RACI matrix         ✓',
+    '→ Workflow diagram     ✓',
+    '→ Audit schema        ✓',
+    '→ API spec            ✓',
+  ];
+
+  function typeLines(el: HTMLElement, lines: string[], msPerChar: number, msPerLine: number): Promise<void> {
+    return new Promise((resolve) => {
+      let lineIdx = 0;
+      let charIdx = 0;
+      let built = '';
+
+      function tick() {
+        if (lineIdx >= lines.length) { resolve(); return; }
+        const line = lines[lineIdx]!;
+        if (charIdx < line.length) {
+          built += line[charIdx++];
+          el.textContent = built;
+          setTimeout(tick, msPerChar);
+        } else {
+          built += '\n';
+          el.textContent = built;
+          lineIdx++;
+          charIdx = 0;
+          setTimeout(tick, msPerLine);
+        }
+      }
+      tick();
+    });
+  }
+
+  function fadeIn(el: HTMLElement): Promise<void> {
+    return new Promise((resolve) => {
+      el.style.transition = 'opacity 0.5s';
+      el.style.opacity = '1';
+      setTimeout(resolve, 500);
+    });
+  }
+
+  function delay(ms: number): Promise<void> {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  async function runAnimation() {
+    const inputEl = document.getElementById('anim-input-text') as HTMLElement;
+    const modelEl = document.getElementById('anim-model-text') as HTMLElement;
+    const outputEl = document.getElementById('anim-output-text') as HTMLElement;
+    const modelPane = document.getElementById('anim-model') as HTMLElement;
+    const arrow1 = document.getElementById('anim-arrow-1') as HTMLElement;
+    const arrow2 = document.getElementById('anim-arrow-2') as HTMLElement;
+    const outputPane = document.getElementById('anim-output') as HTMLElement;
+
+    // Reset
+    inputEl.textContent = '';
+    modelEl.textContent = '';
+    outputEl.textContent = '';
+    modelPane.style.opacity = '0';
+    arrow1.style.opacity = '1';
+    arrow2.style.opacity = '0';
+    outputPane.style.opacity = '0';
+
+    await typeLines(inputEl, inputLines, 28, 120);
+    await delay(500);
+    await fadeIn(modelPane);
+    await typeLines(modelEl, modelLines, 18, 60);
+    await delay(400);
+    await fadeIn(arrow2);
+    await fadeIn(outputPane);
+    await typeLines(outputEl, outputLines, 20, 180);
+    await delay(3500);
+    runAnimation();
+  }
 
   const staticEl = document.getElementById('demo-static')!;
   const animatedEl = document.getElementById('demo-animated')!;
-
-  let frame = 0;
-  let charIdx = 0;
-  let current = '';
-
-  function tick() {
-    if (frame >= frames.length) {
-      // Loop after pause
-      setTimeout(() => {
-        frame = 0;
-        charIdx = 0;
-        current = '';
-        animatedEl.innerHTML = '';
-        tick();
-      }, 3000);
-      return;
-    }
-
-    const target = frames[frame]!;
-    if (charIdx < target.length) {
-      current += target[charIdx++];
-      animatedEl.innerHTML = `<pre class="code-block">${current}</pre>`;
-      setTimeout(tick, 30);
-    } else {
-      frame++;
-      charIdx = 0;
-      current = '';
-      setTimeout(tick, 800);
-    }
-  }
-
   staticEl.style.display = 'none';
   animatedEl.style.display = 'block';
   animatedEl.removeAttribute('aria-hidden');
-  tick();
+  runAnimation();
 </script>
 
 <style>
   .demo-section {
-    padding: 5rem 0;
+    padding: 6rem 0;
+    text-align: center;
+  }
+
+  .demo-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent-light);
+    margin-bottom: 1rem;
   }
 
   .section-title {
-    font-size: 2rem;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
     font-weight: 700;
-    text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
   }
 
-  .demo-static,
-  .demo-animated {
-    max-width: 620px;
-    margin: 0 auto;
+  .section-sub {
+    color: var(--color-muted);
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    font-size: 1.05rem;
+  }
+
+  .demo-shell {
+    text-align: left;
+  }
+
+  .demo-panes,
+  .anim-panes {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
   }
 
-  .demo-step {
-    width: 100%;
+  .pane,
+  .anim-pane {
+    flex: 1;
+    min-width: 0;
   }
 
-  .step-label {
-    display: block;
+  .pane-label {
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--color-accent-light);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
   }
 
   .code-block {
@@ -123,16 +235,37 @@ capability: billing.create-invoice</pre>
     border-radius: 8px;
     padding: 1rem 1.25rem;
     font-family: var(--font-mono);
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: var(--color-text);
     white-space: pre;
     overflow-x: auto;
     width: 100%;
-    min-height: 3.5rem;
+    min-height: 8rem;
+    line-height: 1.6;
   }
 
-  .demo-arrow {
+  .pane-arrow,
+  .anim-arrow {
     font-size: 1.5rem;
     color: var(--color-accent);
+    padding-top: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  .demo-animated {
+    width: 100%;
+  }
+
+  @media (max-width: 700px) {
+    .demo-panes,
+    .anim-panes {
+      flex-direction: column;
+    }
+
+    .pane-arrow,
+    .anim-arrow {
+      transform: rotate(90deg);
+      padding-top: 0;
+    }
   }
 </style>
