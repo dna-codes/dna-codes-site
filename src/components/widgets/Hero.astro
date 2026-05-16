@@ -24,6 +24,12 @@ const {
       {bg ? <Fragment set:html={bg} /> : null}
     </slot>
   </div>
+  <div
+    class="absolute inset-0 z-[1] pointer-events-none"
+    aria-hidden="true"
+    style="background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(10,15,30,0.82) 0%, transparent 100%)"
+  >
+  </div>
   <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
     <div class="pt-0 md:pt-[76px] pointer-events-none"></div>
     <div class="pt-12 md:pt-20 pb-0">
