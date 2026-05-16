@@ -41,7 +41,7 @@ const {
       var BASE_R       = opts.nodeSize   != null ? opts.nodeSize   : 6.5;
       var AMP_OVERRIDE = opts.helixWidth != null ? opts.helixWidth : null;
       var filled       = !!opts.filled;
-      var RUNGS_PER_TURN = 10, DEPTH_SCALE = 0.50, SPEED = opts.speed != null ? opts.speed : 0.03, MAX_ALPHA = 0.20;
+      var RUNGS_PER_TURN = 10, DEPTH_SCALE = 0.50, SPEED = opts.speed != null ? opts.speed : 0.03, MAX_ALPHA = 0.55;
       var CR = 45, CG = 212, CB = 191;
       var BG = 'rgb(10,15,30)';
 
@@ -101,9 +101,9 @@ const {
           var x2    = isVertical ? oscB : main;
           var y2    = isVertical ? main : oscB;
 
-          var lineA = MAX_ALPHA * 0.5 * (0.4 + 0.6 * Math.abs(cosT));
+          var lineA = MAX_ALPHA * (0.4 + 0.6 * Math.abs(cosT));
           ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
-          ctx.strokeStyle = rgba(lineA); ctx.lineWidth = 1.2; ctx.stroke();
+          ctx.strokeStyle = rgba(lineA); ctx.lineWidth = 1.5; ctx.stroke();
 
           circles.push({ x: x1, y: y1, r: nodeR * (1 + DEPTH_SCALE * sinT),  z: sinT  });
           circles.push({ x: x2, y: y2, r: nodeR * (1 + DEPTH_SCALE * -sinT), z: -sinT });
