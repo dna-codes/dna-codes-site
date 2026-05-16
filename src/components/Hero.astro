@@ -1,0 +1,65 @@
+---
+interface Props {
+  headline: string;
+  subheadline: string;
+  ctaLabel: string;
+  ctaHref: string;
+}
+
+const { headline, subheadline, ctaLabel, ctaHref } = Astro.props;
+---
+
+<section class="hero">
+  <div class="hero-content">
+    <h1 class="headline">{headline}</h1>
+    <p class="subheadline">{subheadline}</p>
+    <a href={ctaHref} class="cta-btn">{ctaLabel}</a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding: 7rem 0 5rem;
+    text-align: center;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .headline {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #f1f5f9 30%, var(--color-accent-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subheadline {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    color: var(--color-muted);
+    max-width: 640px;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: var(--color-accent);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.85rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+
+  .cta-btn:hover {
+    background: var(--color-accent-light);
+  }
+</style>

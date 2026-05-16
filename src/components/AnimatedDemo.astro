@@ -1,0 +1,138 @@
+---
+// Scripted walkthrough: transcript in → DNA created → diagrams/docs out
+// No live API calls; pre-scripted for reliability.
+// Degrades gracefully when JS is disabled (static snapshot shown instead).
+---
+
+<section class="demo-section">
+  <h2 class="section-title">See it in action</h2>
+
+  <!-- Static fallback (always visible, hidden by JS once demo loads) -->
+  <div class="demo-static" id="demo-static">
+    <div class="demo-step">
+      <span class="step-label">Input</span>
+      <pre class="code-block">transcript: "We need a billing module that tracks invoices..."</pre>
+    </div>
+    <div class="demo-arrow">↓</div>
+    <div class="demo-step">
+      <span class="step-label">DNA generated</span>
+      <pre class="code-block">entity: Invoice
+  fields: [id, amount, status, customer_id]
+capability: billing.create-invoice</pre>
+    </div>
+    <div class="demo-arrow">↓</div>
+    <div class="demo-step">
+      <span class="step-label">Output</span>
+      <pre class="code-block">→ API spec  → DB schema  → Docs  → Tests</pre>
+    </div>
+  </div>
+
+  <!-- Animated version (progressive enhancement) -->
+  <div class="demo-animated" id="demo-animated" aria-hidden="true" style="display:none"></div>
+</section>
+
+<script>
+  // Scripted walkthrough frames
+  const frames: string[] = [
+    'transcript: "We need a billing module that tracks invoices..."',
+    'Parsing transcript…',
+    'entity: Invoice\n  fields: [id, amount, status, customer_id]',
+    'capability: billing.create-invoice\ncapability: billing.list-invoices',
+    'Generating outputs…',
+    '→ OpenAPI spec ✓\n→ DB schema    ✓\n→ Docs         ✓\n→ Test stubs   ✓',
+  ];
+
+  const staticEl = document.getElementById('demo-static')!;
+  const animatedEl = document.getElementById('demo-animated')!;
+
+  let frame = 0;
+  let charIdx = 0;
+  let current = '';
+
+  function tick() {
+    if (frame >= frames.length) {
+      // Loop after pause
+      setTimeout(() => {
+        frame = 0;
+        charIdx = 0;
+        current = '';
+        animatedEl.innerHTML = '';
+        tick();
+      }, 3000);
+      return;
+    }
+
+    const target = frames[frame]!;
+    if (charIdx < target.length) {
+      current += target[charIdx++];
+      animatedEl.innerHTML = `<pre class="code-block">${current}</pre>`;
+      setTimeout(tick, 30);
+    } else {
+      frame++;
+      charIdx = 0;
+      current = '';
+      setTimeout(tick, 800);
+    }
+  }
+
+  staticEl.style.display = 'none';
+  animatedEl.style.display = 'block';
+  animatedEl.removeAttribute('aria-hidden');
+  tick();
+</script>
+
+<style>
+  .demo-section {
+    padding: 5rem 0;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .demo-static,
+  .demo-animated {
+    max-width: 620px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .demo-step {
+    width: 100%;
+  }
+
+  .step-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-light);
+    margin-bottom: 0.4rem;
+  }
+
+  .code-block {
+    background: var(--color-surface);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--color-text);
+    white-space: pre;
+    overflow-x: auto;
+    width: 100%;
+    min-height: 3.5rem;
+  }
+
+  .demo-arrow {
+    font-size: 1.5rem;
+    color: var(--color-accent);
+  }
+</style>

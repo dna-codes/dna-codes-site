@@ -1,0 +1,48 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Features from '../components/Features.astro';
+import AnimatedDemo from '../components/AnimatedDemo.astro';
+import CTA from '../components/CTA.astro';
+
+const features = [
+  {
+    title: 'Structured from day one',
+    description:
+      'Describe your product in plain language. DNA Codes turns it into a structured model — entities, capabilities, APIs — that every tool in your stack can read.',
+  },
+  {
+    title: 'One source, every output',
+    description:
+      'Generate API specs, DB schemas, documentation, and test stubs from a single DNA document. Change the model once; every output stays in sync.',
+  },
+  {
+    title: 'Adapters for your stack',
+    description:
+      'Deploy to AWS via Terraform, spin up local Docker environments, or export to OpenAPI. The same DNA drives all of them.',
+  },
+  {
+    title: 'Built for teams',
+    description:
+      'OpenSpec workflow keeps changes reviewable and intentional. Non-trivial changes go through proposal → design → tasks before a line of code is touched.',
+  },
+];
+---
+
+<Layout title="DNA Codes — structured intelligence for your codebase">
+  <main>
+    <Hero
+      headline="Your codebase, structured by design"
+      subheadline="DNA Codes transforms product descriptions into a living schema that generates APIs, databases, docs, and infrastructure — all in sync."
+      ctaLabel="Start building"
+      ctaHref="https://app.dna.codes"
+    />
+    <Features features={features} />
+    <AnimatedDemo />
+    <CTA
+      headline="Ready to give your codebase a backbone?"
+      label="Get started free"
+      href="https://app.dna.codes"
+    />
+  </main>
+</Layout>
