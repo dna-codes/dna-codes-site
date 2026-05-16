@@ -51,11 +51,10 @@ const integrations = [
 
     <!-- Steps row -->
     <div class="relative grid grid-cols-2 md:grid-cols-4 gap-6 mb-14">
-      <!-- Dotted connector line (desktop only) -->
-      <div
-        class="hidden md:block absolute top-8 left-[calc(12.5%+2.5rem)] right-[calc(12.5%+2.5rem)] h-px border-t border-dashed border-white/20"
-        aria-hidden="true"
-      />
+      <!-- Dotted connector segments between each icon (desktop only) -->
+      <div class="hidden md:block absolute top-8 left-[calc(12.5%+2.25rem)] right-[calc(62.5%+2.25rem)] h-px border-t border-dashed border-white/20" aria-hidden="true" />
+      <div class="hidden md:block absolute top-8 left-[calc(37.5%+2.25rem)] right-[calc(37.5%+2.25rem)] h-px border-t border-dashed border-white/20" aria-hidden="true" />
+      <div class="hidden md:block absolute top-8 left-[calc(62.5%+2.25rem)] right-[calc(12.5%+2.25rem)] h-px border-t border-dashed border-white/20" aria-hidden="true" />
 
       {
         steps.map(({ number, icon, title, description }) => (
