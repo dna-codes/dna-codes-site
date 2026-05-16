@@ -1,44 +1,112 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
-import Features from '../components/Features.astro';
-import AnimatedDemo from '../components/AnimatedDemo.astro';
-import CTA from '../components/CTA.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
 
-const features = [
-  {
-    title: 'A taxonomy that reflects reality',
-    description: 'Roles, groups, resources, and relationships — structured, not scattered.',
-  },
-  {
-    title: 'Process flows that never go stale',
-    description: 'Change the model once. Every doc and diagram updates with it.',
-  },
-  {
-    title: 'Business rules that stay enforced',
-    description: 'Approval chains, access logic, escalation paths — in the model, not buried in wikis.',
-  },
-  {
-    title: 'Engineering builds what you described',
-    description: 'Your operational model drives API specs and system design. No translation needed.',
-  },
-];
+const metadata = {
+  title: 'DNA Codes — one model for how your business operates',
+  ignoreTitleTemplate: true,
+};
 ---
 
-<Layout title="DNA Codes — operational structure for modern teams">
-  <main>
-    <Hero
-      headline="Your operations, in one model"
-      subheadline="Define roles, processes, and business rules once. Generate docs, workflows, and specs automatically."
-      ctaLabel="Get started"
-      ctaHref="https://app.dna.codes"
-    />
-    <Features features={features} />
-    <AnimatedDemo />
-    <CTA
-      headline="Put your operations in writing."
-      label="Get started"
-      href="https://app.dna.codes"
-    />
-  </main>
+<Layout metadata={metadata}>
+  <Hero
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Get started',
+        href: 'https://app.dna.codes',
+      },
+      { text: 'See how it works', href: '#how-it-works' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Team aligning on operational structure',
+    }}
+  >
+    <Fragment slot="title">
+      Your operations,<br />
+      <span class="text-accent">in one model</span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Define roles, processes, and business rules once.<br class="hidden sm:block" />
+      Generate docs, workflows, and specs automatically.
+    </Fragment>
+  </Hero>
+
+  <Features
+    id="features"
+    title="Everything flows from one place"
+    subtitle="Stop maintaining five versions of the truth. Operational DNA is the single model your whole org runs from."
+    items={[
+      {
+        title: 'A taxonomy that reflects reality',
+        description: 'Roles, groups, resources, and relationships — structured, not scattered.',
+        icon: 'tabler:sitemap',
+      },
+      {
+        title: 'Process flows that never go stale',
+        description: 'Change the model once. Every doc and diagram updates with it.',
+        icon: 'tabler:refresh',
+      },
+      {
+        title: 'Business rules that stay enforced',
+        description: 'Approval chains, access logic, escalation paths — in the model, not buried in wikis.',
+        icon: 'tabler:shield-check',
+      },
+      {
+        title: 'Engineering builds what you described',
+        description: 'Your operational model drives API specs and system design. No translation needed.',
+        icon: 'tabler:code',
+      },
+    ]}
+  />
+
+  <Steps
+    id="how-it-works"
+    title="From description to operational model"
+    items={[
+      {
+        title: 'Describe your operations',
+        description: 'Write how your business works in plain language — roles, processes, rules, and relationships.',
+        icon: 'tabler:pencil',
+      },
+      {
+        title: 'DNA generates the model',
+        description: 'Operational DNA structures your description into a validated taxonomy with enforced constraints.',
+        icon: 'tabler:dna',
+      },
+      {
+        title: 'Get every artifact automatically',
+        description: 'Process docs, RACI matrices, workflow diagrams, audit schemas, and API specs — generated and kept in sync.',
+        icon: 'tabler:files',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?auto=format&fit=crop&w=2076&q=80',
+      alt: 'Operational clarity',
+    }}
+  />
+
+  <CallToAction
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Get started',
+        href: 'https://app.dna.codes',
+      },
+    ]}
+  >
+    <Fragment slot="title">
+      Put your operations<br class="block sm:hidden" />
+      <span class="sm:whitespace-nowrap"> in writing.</span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      One model. Every artifact. Always in sync.
+    </Fragment>
+  </CallToAction>
 </Layout>

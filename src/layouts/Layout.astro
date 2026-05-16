@@ -1,54 +1,50 @@
 ---
-interface Props {
-  title: string;
-  description?: string;
+import '~/assets/styles/tailwind.css';
+
+import { I18N } from 'astrowind:config';
+
+import CommonMeta from '~/components/common/CommonMeta.astro';
+import Favicons from '~/components/Favicons.astro';
+import CustomStyles from '~/components/CustomStyles.astro';
+import ApplyColorMode from '~/components/common/ApplyColorMode.astro';
+import Metadata from '~/components/common/Metadata.astro';
+import SiteVerification from '~/components/common/SiteVerification.astro';
+import Analytics from '~/components/common/Analytics.astro';
+import BasicScripts from '~/components/common/BasicScripts.astro';
+
+// Comment the line below to disable View Transitions
+import { ClientRouter } from 'astro:transitions';
+
+import type { MetaData as MetaDataType } from '~/types';
+
+export interface Props {
+  metadata?: MetaDataType;
 }
 
-const { title, description = 'DNA Codes — one model for how your business operates' } = Astro.props;
+const { metadata = {} } = Astro.props;
+const { language, textDirection } = I18N;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={language} dir={textDirection} class="2xl:text-[20px]">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
-    <style>
-      *, *::before, *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+    <CommonMeta />
+    <Favicons />
+    <CustomStyles />
+    <ApplyColorMode />
+    <Metadata {...metadata} />
+    <SiteVerification />
+    <Analytics />
 
-      :root {
-        --color-bg: #0f172a;
-        --color-surface: #1e293b;
-        --color-accent: #0d9488;
-        --color-accent-light: #2dd4bf;
-        --color-text: #f1f5f9;
-        --color-muted: #94a3b8;
-        --font-sans: system-ui, -apple-system, sans-serif;
-        --font-mono: 'Fira Code', 'Cascadia Code', monospace;
-        --max-width: 1100px;
-      }
+    <link rel="preconnect" href="https://images.unsplash.com" />
 
-      body {
-        background: var(--color-bg);
-        color: var(--color-text);
-        font-family: var(--font-sans);
-        line-height: 1.6;
-      }
-
-      main {
-        max-width: var(--max-width);
-        margin: 0 auto;
-        padding: 0 1.5rem;
-      }
-    </style>
+    <!-- Comment the line below to disable View Transitions -->
+    <ClientRouter fallback="swap" />
   </head>
-  <body>
+
+  <body class="antialiased text-default bg-page tracking-tight">
     <slot />
+
+    <BasicScripts />
   </body>
 </html>
