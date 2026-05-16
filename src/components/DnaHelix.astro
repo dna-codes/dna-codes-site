@@ -38,7 +38,6 @@ const {
       var BASE_R       = opts.nodeSize   != null ? opts.nodeSize   : 6.5;
       var AMP_OVERRIDE = opts.helixWidth != null ? opts.helixWidth : null;
       var filled       = !!opts.filled;
-      var N_RUNGS      = isVertical ? 20 : 22;
       var RUNGS_PER_TURN = 10, DEPTH_SCALE = 0.50, SPEED = 0.08, MAX_ALPHA = 0.20;
       var CR = 45, CG = 212, CB = 191;
 
@@ -75,6 +74,7 @@ const {
         var mainLen = isVertical ? H : W;
         var oscLen  = isVertical ? W : H;
         var pad     = mainLen * (isVertical ? 0.05 : 0.02);
+        var N_RUNGS = Math.max(RUNGS_PER_TURN, Math.round((mainLen - pad * 2) / 52) + 1);
         var spacing = (mainLen - pad * 2) / (N_RUNGS - 1);
         var center  = oscLen / 2;
         var crossLen = isVertical ? W : H;
