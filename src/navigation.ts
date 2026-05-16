@@ -2,34 +2,35 @@ import { getPermalink, getBlogPermalink } from './utils/permalinks';
 
 export const headerData = {
   links: [
-    { text: 'Platform', href: getPermalink('/') },
-    { text: 'Pricing', href: getPermalink('/pricing') },
+    // { text: 'Platform', href: getPermalink('/') },
+    // { text: 'Pricing', href: getPermalink('/pricing') },
     { text: 'About', href: getPermalink('/about') },
-    { text: 'Docs', href: 'https://docs.dna.codes' },
+    // { text: 'Docs', href: 'https://docs.dna.codes' },
     { text: 'Blog', href: getBlogPermalink() },
   ],
   actions: [
-    { text: 'Sign in', href: 'https://app.dna.codes', variant: 'tertiary' as const },
-    { text: 'Get started', href: 'https://app.dna.codes', variant: 'primary' as const },
+    // { text: 'Sign in', href: 'https://app.dna.codes', variant: 'tertiary' as const },
+    // { text: 'Get started', href: 'https://app.dna.codes', variant: 'primary' as const },
+    { text: 'Join the waitlist', href: '#waitlist-form', variant: 'primary' as const },
   ],
 };
 
 export const footerData = {
   links: [
-    {
-      title: 'Platform',
-      links: [
-        { text: 'Pricing', href: getPermalink('/pricing') },
-        { text: 'Playground', href: 'https://app.dna.codes/playground' },
-      ],
-    },
-    {
-      title: 'Developers',
-      links: [
-        { text: 'Documentation', href: 'https://docs.dna.codes' },
-        { text: 'API Reference', href: 'https://docs.dna.codes/api' },
-      ],
-    },
+    // {
+    //   title: 'Platform',
+    //   links: [
+    //     { text: 'Pricing', href: getPermalink('/pricing') },
+    //     { text: 'Playground', href: 'https://app.dna.codes/playground' },
+    //   ],
+    // },
+    // {
+    //   title: 'Developers',
+    //   links: [
+    //     { text: 'Documentation', href: 'https://docs.dna.codes' },
+    //     { text: 'API Reference', href: 'https://docs.dna.codes/api' },
+    //   ],
+    // },
     {
       title: 'Company',
       links: [

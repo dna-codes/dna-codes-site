@@ -1,0 +1,29 @@
+---
+// Connect to your waitlist service by replacing the action URL
+// e.g. Mailchimp: https://yourlist.us1.list-manage.com/subscribe/post?u=...
+// e.g. ConvertKit: https://app.convertkit.com/forms/...
+// e.g. Your own API: /api/waitlist
+const ACTION_URL = '#';
+---
+
+<form
+  class="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+  action={ACTION_URL}
+  method="POST"
+  id="waitlist-form"
+>
+  <label for="waitlist-email" class="sr-only">Work email</label>
+  <input
+    id="waitlist-email"
+    name="email"
+    type="email"
+    required
+    autocomplete="email"
+    placeholder="your@company.com"
+    class="flex-1 px-4 py-3 rounded-lg bg-slate-800/80 border border-slate-600 text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+  />
+  <button type="submit" class="btn-primary px-6 py-3 whitespace-nowrap text-sm font-semibold rounded-lg">
+    Join the waitlist
+  </button>
+</form>
+<p class="text-xs text-slate-500 mt-3 text-center">We don't like spam, so we won't spam you.</p>

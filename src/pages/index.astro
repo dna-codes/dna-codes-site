@@ -2,30 +2,23 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import DnaHelix from '~/components/DnaHelix.astro';
-import BiggerPicture from '~/components/widgets/BiggerPicture.astro';
+// import BiggerPicture from '~/components/widgets/BiggerPicture.astro';
 import OperationsLayer from '~/components/widgets/OperationsLayer.astro';
-import ProductLayer from '~/components/widgets/ProductLayer.astro';
-import TechnologyLayer from '~/components/widgets/TechnologyLayer.astro';
+// import ProductLayer from '~/components/widgets/ProductLayer.astro';
+// import TechnologyLayer from '~/components/widgets/TechnologyLayer.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
-import { Icon } from 'astro-icon/components';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+// import { Icon } from 'astro-icon/components';
 
 const metadata = {
-  title: 'DNA Codes — The Source Code for Your Business',
+  title: 'DNA Codes — Living Operations for Your Team',
+  // title: 'DNA Codes — The Source Code for Your Business',
   ignoreTitleTemplate: true,
 };
 ---
 
 <Layout metadata={metadata}>
-  <Hero
-    actions={[
-      {
-        variant: 'primary',
-        text: 'Get started for free',
-        href: 'https://app.dna.codes',
-      },
-      { text: 'Book a demo', href: 'https://app.dna.codes/demo' },
-    ]}
-  >
+  <Hero tagline="Now building — join the waitlist">
     <DnaHelix
       slot="bg"
       orientation="horizontal"
@@ -36,25 +29,44 @@ const metadata = {
     />
 
     <Fragment slot="title">
-      The source code for<br />
-      <span id="hero-rotating-word" class="text-accent">teams</span>
+      Finally, process docs that<br />
+      <span class="text-accent">keep up with your business.</span>
+      <!-- Finally, give your processes<br />
+      <span class="text-accent">living DNA.</span> -->
+      <!-- Your processes are scattered.<br />
+      <span class="text-accent">Your team feels it.</span> -->
+      <!-- The source code for<br />
+      <span id="hero-rotating-word" class="text-accent">teams</span> -->
     </Fragment>
 
     <Fragment slot="subtitle">
-      Encode Your Business Processes.<br class="hidden md:block" />
-      Build Your Digital DNA.
+      Your operational DNA acts as the source of truth for every process your team runs —<br class="hidden md:block" />
+      structured, owned, and always current.
+      <!-- DNA Codes turns your existing SOPs into a living operations spec —<br class="hidden md:block" />
+      so your team always knows how things actually work. -->
+      <!-- DNA Codes turns your existing docs into a living operations spec —<br class="hidden md:block" />
+      with owners, SLAs, and flows your whole team can actually follow. -->
+      <!-- Encode Your Business Processes.<br class="hidden md:block" />
+      Build Your Digital DNA. -->
     </Fragment>
 
     <Fragment slot="content">
-      <p class="text-sm text-slate-500 mt-3 text-center">No credit card required</p>
+      <WaitlistForm />
+      <!-- <p class="text-sm text-slate-500 mt-3 text-center">No credit card required</p> -->
     </Fragment>
+
+    <!-- actions={[
+      { variant: 'primary', text: 'Get started for free', href: 'https://app.dna.codes' },
+      { text: 'Book a demo', href: 'https://app.dna.codes/demo' },
+    ]} -->
   </Hero>
 
-  <BiggerPicture />
+  <!-- <BiggerPicture /> -->
 
   <OperationsLayer />
 
-  <div class="flex flex-col items-center -mt-8 -mb-8 relative z-10">
+  <!-- Arrow connector (ops → product) -->
+  <!-- <div class="flex flex-col items-center -mt-8 -mb-8 relative z-10">
     <div class="w-0.5 h-12 bg-gradient-to-b from-primary/60 to-primary"></div>
     <div
       class="w-10 h-10 rounded-full border-2 border-primary bg-primary/10 shadow-[0_0_24px_rgba(13,148,136,0.5)] flex items-center justify-center"
@@ -64,9 +76,10 @@ const metadata = {
     <div class="w-0.5 h-12 bg-gradient-to-b from-primary to-primary/60"></div>
   </div>
 
-  <ProductLayer />
+  <ProductLayer /> -->
 
-  <div class="flex flex-col items-center -mt-8 -mb-8 relative z-10">
+  <!-- Arrow connector (product → technology) -->
+  <!-- <div class="flex flex-col items-center -mt-8 -mb-8 relative z-10">
     <div class="w-0.5 h-12 bg-gradient-to-b from-primary/60 to-primary"></div>
     <div
       class="w-10 h-10 rounded-full border-2 border-primary bg-primary/10 shadow-[0_0_24px_rgba(13,148,136,0.5)] flex items-center justify-center"
@@ -76,26 +89,33 @@ const metadata = {
     <div class="w-0.5 h-12 bg-gradient-to-b from-primary to-primary/60"></div>
   </div>
 
-  <TechnologyLayer />
+  <TechnologyLayer /> -->
 
   <CallToAction
     actions={[
       {
         variant: 'primary',
-        text: 'Get started for free',
-        href: 'https://app.dna.codes',
+        text: 'Join the waitlist',
+        href: '#waitlist-form',
       },
+      // { variant: 'primary', text: 'Get started for free', href: 'https://app.dna.codes' },
     ]}
   >
     <Fragment slot="title">
-      Your business has a unique DNA.<br class="block sm:hidden" />
-      <span class="sm:whitespace-nowrap"> Let's make it usable.</span>
+      Be first to bring order<br class="block sm:hidden" />
+      <span class="sm:whitespace-nowrap"> to your ops.</span>
+      <!-- Your business has a unique DNA.<br class="block sm:hidden" />
+      <span class="sm:whitespace-nowrap"> Let's make it usable.</span> -->
     </Fragment>
 
-    <Fragment slot="subtitle"> One spec. Every artifact. Always in sync. </Fragment>
+    <Fragment slot="subtitle">
+      We're building it now. Join the waitlist and help shape what we create.
+      <!-- One spec. Every artifact. Always in sync. -->
+    </Fragment>
   </CallToAction>
 </Layout>
 
+<!-- Rotating word script (re-enable with hero-rotating-word title above)
 <style>
   #hero-rotating-word {
     display: inline-block;
@@ -129,3 +149,4 @@ const metadata = {
     cycle();
   }
 </script>
+-->
