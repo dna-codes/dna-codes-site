@@ -9,7 +9,7 @@ metadata:
   title:
     default: DNA Codes
     template: '%s — DNA Codes'
-  description: 'Operational DNA gives your org structure, roles, and processes a single authoritative model — and generates docs, workflows, and specs from it.'
+  description: 'DNA Codes is your digital business model — define roles, processes, and rules once, and generate docs, workflows, and specs automatically.'
   robots:
     index: true
     follow: true
