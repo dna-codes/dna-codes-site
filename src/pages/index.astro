@@ -2,38 +2,21 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import DnaHelix from '~/components/DnaHelix.astro';
-import HowItWorks from '~/components/widgets/HowItWorks.astro';
 import BiggerPicture from '~/components/widgets/BiggerPicture.astro';
+import OperationsLayer from '~/components/widgets/OperationsLayer.astro';
+import ProductLayer from '~/components/widgets/ProductLayer.astro';
+import TechnologyLayer from '~/components/widgets/TechnologyLayer.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import { Icon } from 'astro-icon/components';
 
-const ingestSources = [
-  { name: 'Google Drive', icon: 'logos:google-drive' },
-  { name: 'Notion', icon: 'ri:notion-fill' },
-  { name: 'Confluence', icon: 'logos:confluence' },
-  { name: 'Dropbox', icon: 'logos:dropbox' },
-  { name: 'PDF / Docs', icon: 'tabler:pdf' },
-  { name: 'Websites', icon: 'tabler:globe' },
-];
-
-const syncDestinations = [
-  { name: 'Notion', icon: 'ri:notion-fill' },
-  { name: 'Confluence', icon: 'logos:confluence' },
-  { name: 'Slack', icon: 'devicon:slack' },
-  { name: 'Linear', icon: 'simple-icons:linear' },
-  { name: 'Airtable', icon: 'logos:airtable' },
-  { name: 'SharePoint', icon: 'mdi:microsoft-sharepoint' },
-];
-
 const metadata = {
-  title: 'DNA Codes — Your Digital Business Model',
+  title: 'DNA Codes — The Operating System for Your Business',
   ignoreTitleTemplate: true,
 };
 ---
 
 <Layout metadata={metadata}>
   <Hero
-    tagline="Turn business docs into your Digital DNA"
     actions={[
       {
         variant: 'primary',
@@ -46,100 +29,59 @@ const metadata = {
     <DnaHelix slot="bg" orientation="horizontal" helixWidth={120} nodeSize={12} filled style="height:58%" />
 
     <Fragment slot="title">
-      One source of truth for how your<br />
-      business <span class="text-accent">really works.</span>
+      The operating system for<br />
+      <span id="hero-rotating-word" class="text-accent">teams</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      Ingest your business documents, structure them into a living DNA spec,<br class="hidden md:block" />
-      and connect them to <strong class="text-slate-200">the tools</strong> you use every day.
+      Structure how your business works &mdash; once.<br class="hidden md:block" />
+      Keep it running across every <strong class="text-slate-200">team, tool, and agent.</strong>
     </Fragment>
 
     <Fragment slot="content">
       <p class="text-sm text-slate-500 mt-3 text-center">No credit card required</p>
     </Fragment>
-
-    <Fragment slot="image">
-      <!-- Three-panel product mockup -->
-      <div class="relative max-w-4xl mx-auto mt-4 hidden md:flex items-stretch justify-center gap-3">
-        <!-- Left: Ingest panel -->
-        <div
-          class="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur p-4 translate-y-5 opacity-80 transition-all ease-in duration-200 hover:opacity-100 hover:bg-white/[0.07] hover:border-white/20 hover:-translate-y-0"
-        >
-          <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-3">Ingest from anywhere</p>
-          <ul class="space-y-2">
-            {
-              ingestSources.map(({ name, icon }) => (
-                <li class="flex items-center gap-2 text-xs text-slate-400 rounded px-1 py-0.5 transition-colors ease-in duration-150 hover:text-slate-200 hover:bg-white/5 cursor-default">
-                  <Icon name={icon} class="w-4 h-4 flex-shrink-0" />
-                  {name}
-                </li>
-              ))
-            }
-            <li class="text-[10px] text-slate-600">... And more</li>
-          </ul>
-        </div>
-
-        <!-- Arrow -->
-        <div class="flex-shrink-0 flex items-center text-primary/40 text-lg select-none">›</div>
-
-        <!-- Center: DNA Spec panel (featured) -->
-        <div
-          class="flex-[1.35] rounded-2xl border border-primary/35 bg-primary/5 backdrop-blur p-5 shadow-xl shadow-primary/10 relative z-10 transition-all ease-in duration-200 hover:border-primary/55 hover:shadow-primary/20 hover:bg-primary/[0.08]"
-        >
-          <div class="flex items-center gap-1.5 mb-1">
-            <span class="text-primary text-base font-bold">⬡</span>
-            <span class="font-bold text-white text-sm">dna</span>
-          </div>
-          <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-3">Structured DNA Spec</p>
-          <ul class="space-y-1.5">
-            {
-              [
-                'Purpose & Strategy',
-                'Business Model',
-                'Products & Services',
-                'Processes',
-                'Organization',
-                'Systems & Data',
-                'Policies & Rules',
-              ].map((s) => (
-                <li class="flex items-center justify-between text-xs text-slate-300 py-0.5 border-b border-white/5 rounded px-1 transition-colors ease-in duration-150 hover:text-slate-100 hover:bg-white/5 cursor-default group">
-                  <span>{s}</span>
-                  <span class="text-slate-600 transition-colors ease-in duration-150 group-hover:text-primary">›</span>
-                </li>
-              ))
-            }
-            <li class="text-[10px] text-slate-600">... And more.</li>
-          </ul>
-        </div>
-
-        <!-- Arrow -->
-        <div class="flex-shrink-0 flex items-center text-primary/40 text-lg select-none">›</div>
-
-        <!-- Right: Sync panel -->
-        <div
-          class="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur p-4 translate-y-5 opacity-80 transition-all ease-in duration-200 hover:opacity-100 hover:bg-white/[0.07] hover:border-white/20 hover:-translate-y-0"
-        >
-          <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-3">Sync everywhere</p>
-          <ul class="space-y-2">
-            {
-              syncDestinations.map(({ name, icon }) => (
-                <li class="flex items-center gap-2 text-xs text-slate-400 rounded px-1 py-0.5 transition-colors ease-in duration-150 hover:text-slate-200 hover:bg-white/5 cursor-default">
-                  <Icon name={icon} class="w-4 h-4 flex-shrink-0" />
-                  {name}
-                </li>
-              ))
-            }
-            <li class="text-[10px] text-slate-600">... And more.</li>
-          </ul>
-        </div>
-      </div>
-    </Fragment>
   </Hero>
 
-  <HowItWorks />
-
   <BiggerPicture />
+
+  <OperationsLayer />
+
+  <div class="flex flex-col items-center -mt-8 -mb-8 relative z-10">
+    <div
+      class="w-0.5 h-12 bg-gradient-to-b from-primary/60 to-primary"
+    >
+    </div>
+    <div
+      class="w-10 h-10 rounded-full border-2 border-primary bg-primary/10 shadow-[0_0_24px_rgba(13,148,136,0.5)] flex items-center justify-center"
+    >
+      <Icon name="tabler:arrow-down" class="w-5 h-5 text-primary" />
+    </div>
+    <div
+      class="w-0.5 h-12 bg-gradient-to-b from-primary to-primary/60"
+    >
+    </div>
+  </div>
+
+  <ProductLayer />
+
+  <div class="flex flex-col items-center -mt-8 -mb-8 relative z-10">
+    <div
+      class="w-0.5 h-12 bg-gradient-to-b from-primary/60 to-primary"
+    >
+    </div>
+    <div
+      class="w-10 h-10 rounded-full border-2 border-primary bg-primary/10 shadow-[0_0_24px_rgba(13,148,136,0.5)] flex items-center justify-center"
+    >
+      <Icon name="tabler:arrow-down" class="w-5 h-5 text-primary" />
+    </div>
+    <div
+      class="w-0.5 h-12 bg-gradient-to-b from-primary to-primary/60"
+    >
+    </div>
+  </div>
+
+  <TechnologyLayer />
 
   <CallToAction
     actions={[
@@ -158,3 +100,37 @@ const metadata = {
     <Fragment slot="subtitle"> One spec. Every artifact. Always in sync. </Fragment>
   </CallToAction>
 </Layout>
+
+<style>
+  #hero-rotating-word {
+    display: inline-block;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+  #hero-rotating-word.fade-out {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+</style>
+
+<script>
+  const words = ['teams', 'agents', 'business'];
+  const durations = [3000, 3000, 12000];
+  let index = 0;
+  const el = document.getElementById('hero-rotating-word');
+  if (el) {
+    const cycle = () => {
+      setTimeout(() => {
+        el.classList.add('fade-out');
+        setTimeout(() => {
+          index = (index + 1) % words.length;
+          el.textContent = words[index];
+          el.classList.remove('fade-out');
+          cycle();
+        }, 300);
+      }, durations[index]);
+    };
+    cycle();
+  }
+</script>

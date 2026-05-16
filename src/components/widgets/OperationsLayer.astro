@@ -1,0 +1,177 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const ingestSources = [
+  { name: 'Google Drive', icon: 'logos:google-drive' },
+  { name: 'Notion', icon: 'ri:notion-fill' },
+  { name: 'Confluence', icon: 'logos:confluence' },
+  { name: 'Dropbox', icon: 'logos:dropbox' },
+  { name: 'PDF / Docs', icon: 'tabler:pdf' },
+  { name: 'Websites', icon: 'tabler:globe' },
+];
+
+const processSteps = [
+  { step: '1', name: 'Welcome email sent', owner: 'Auto', timing: 'on trigger' },
+  { step: '2', name: 'Account setup call', owner: 'Success', timing: 'within 24h' },
+  { step: '3', name: 'Intro walkthrough', owner: 'Success', timing: 'day 3' },
+  { step: '4', name: '30-day check-in', owner: 'Success', timing: 'day 30' },
+];
+---
+
+<section id="operations" class="py-20 scroll-mt-20">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <!-- Header -->
+    <div class="text-center mb-12 intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+      <h2
+        class="inline-flex items-center px-5 py-2 rounded-full border-2 border-primary bg-primary/10 text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-4"
+      >
+        Operations Layer
+      </h2>
+      <p class="text-slate-400 max-w-xl mx-auto leading-relaxed">
+        Structure how your business runs — from meeting notes and process docs to executable flows your whole team can
+        follow.
+      </p>
+    </div>
+
+    <!-- Three-panel flow: operations.dna → Review → Sync -->
+    <div
+      class="grid lg:grid-cols-[1fr_36px_1.5fr_36px_1.5fr] items-stretch gap-y-4 intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+    >
+      <!-- Panel 1: Ingest -->
+      <div class="bg-slate-800/80 rounded-2xl border border-white/20 p-4 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <span
+            class="text-[9px] font-bold uppercase tracking-widest bg-primary/25 text-primary border border-primary/40 rounded-full px-2.5 py-1"
+          >
+            Ingest
+          </span>
+          <div class="flex items-center gap-1.5">
+            <Icon name="tabler:download" class="w-3 h-3 text-slate-500" />
+            <span class="text-[9px] text-slate-400 font-mono">from anywhere</span>
+          </div>
+        </div>
+
+        <div class="space-y-1.5 flex-1">
+          {
+            ingestSources.map(({ name, icon }) => (
+              <div class="flex items-center gap-2 py-1 px-1.5 rounded border border-white/10 bg-white/[0.05]">
+                <Icon name={icon} class="w-3.5 h-3.5 flex-shrink-0 text-slate-400" />
+                <span class="flex-1 text-[10px] text-slate-300">{name}</span>
+              </div>
+            ))
+          }
+        </div>
+
+        <div class="mt-3 pt-3 border-t border-white/8">
+          <span class="text-[8px] text-slate-500">SOPs, policies, org charts, process docs…</span>
+        </div>
+      </div>
+
+      <!-- Arrow 1 -->
+      <div class="hidden lg:flex items-center justify-center">
+        <Icon name="tabler:arrow-right" class="w-5 h-5 text-primary/50" />
+      </div>
+
+      <!-- Panel 2: DNA Spec -->
+      <div class="bg-slate-900/90 rounded-2xl border border-primary/60 p-5">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-6 h-6 rounded-lg bg-primary/25 border border-primary/40 flex items-center justify-center">
+            <Icon name="tabler:dna" class="w-3.5 h-3.5 text-primary" />
+          </div>
+          <span class="text-[10px] font-bold text-primary uppercase tracking-widest">DNA Spec</span>
+          <span class="ml-auto text-[10px] text-slate-400 font-mono">operations.dna</span>
+        </div>
+        <div class="font-mono text-[11px] leading-loose">
+          <div>
+            <span class="text-violet-400">process</span><span class="text-slate-500">:</span>
+            <span class="text-amber-300">CustomerOnboarding</span>
+          </div>
+          <div class="ml-2 text-slate-400">
+            owner<span class="text-slate-600">:</span>
+            <span class="text-sky-400">SuccessTeam</span>
+          </div>
+          <div class="ml-2 text-slate-400">steps<span class="text-slate-600">:</span></div>
+          <div class="ml-4">
+            <span class="text-slate-500">-</span>
+            <span class="text-violet-400">welcome-email</span>
+          </div>
+          <div class="ml-4">
+            <span class="text-slate-500">-</span>
+            <span class="text-violet-400">account-setup</span>
+          </div>
+          <div class="ml-4">
+            <span class="text-slate-500">-</span>
+            <span class="text-violet-400">intro-call</span>
+          </div>
+          <div class="ml-4">
+            <span class="text-slate-500">-</span>
+            <span class="text-violet-400">30-day-check-in</span>
+          </div>
+          <div class="mt-1 ml-2 text-slate-400">triggers<span class="text-slate-600">:</span></div>
+          <div class="ml-4">
+            <span class="text-slate-500">-</span>
+            <span class="text-amber-300">new-signup</span>
+          </div>
+          <div class="ml-4">
+            <span class="text-slate-500">-</span>
+            <span class="text-amber-300">plan-upgrade</span>
+          </div>
+          <div class="mt-1 ml-2 text-slate-400">
+            sla<span class="text-slate-600">:</span>
+            <span class="text-emerald-400">24h response</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow 2 -->
+      <div class="hidden lg:flex items-center justify-center">
+        <Icon name="tabler:arrow-right" class="w-5 h-5 text-primary/50" />
+      </div>
+
+      <!-- Panel 3: Process Flow -->
+      <div class="flex flex-col bg-slate-800/80 rounded-2xl border border-white/20 p-4">
+        <div class="flex items-center justify-between mb-4">
+          <span
+            class="text-[9px] font-bold uppercase tracking-widest bg-violet-500/25 text-violet-300 border border-violet-500/40 rounded-full px-2.5 py-1"
+          >
+            Process Flow
+          </span>
+          <div class="flex items-center gap-1.5">
+            <Icon name="tabler:git-branch" class="w-3 h-3 text-slate-500" />
+            <span class="text-[9px] text-slate-400 font-mono">CustomerOnboarding</span>
+          </div>
+        </div>
+
+        <!-- Vertical step list with connectors -->
+        <div class="flex-1 space-y-0">
+          {
+            processSteps.map(({ step, name, owner, timing }, i) => (
+              <div class="flex gap-3">
+                <div class="flex flex-col items-center flex-shrink-0">
+                  <div class="w-5 h-5 rounded-full bg-primary/25 border border-primary/50 flex items-center justify-center flex-shrink-0">
+                    <span class="text-[8px] font-bold text-primary">{step}</span>
+                  </div>
+                  {i < processSteps.length - 1 && <div class="my-0.5 min-h-[14px] w-px flex-1 bg-white/15" />}
+                </div>
+                <div class="pb-3">
+                  <p class="text-[10px] font-medium leading-tight text-slate-200">{name}</p>
+                  <div class="mt-0.5 flex items-center gap-2">
+                    <span class="rounded bg-white/8 px-1.5 py-0.5 text-[8px] text-slate-400">{owner}</span>
+                    <span class="text-[8px] text-slate-500">{timing}</span>
+                  </div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+
+        <div class="mt-3 pt-3 border-t border-white/8 flex items-center gap-1.5">
+          <Icon name="tabler:dna" class="w-2.5 h-2.5 text-primary/60" />
+          <span class="text-[8px] text-slate-500"
+            >Structured from <span class="text-primary/70 font-mono">operations.dna</span></span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

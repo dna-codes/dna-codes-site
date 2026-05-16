@@ -2,7 +2,7 @@ import { getPermalink, getBlogPermalink } from './utils/permalinks';
 
 export const headerData = {
   links: [
-    { text: 'Product', href: getPermalink('/') },
+    { text: 'Platform', href: getPermalink('/') },
     { text: 'Pricing', href: getPermalink('/pricing') },
     { text: 'About', href: getPermalink('/about') },
     { text: 'Docs', href: 'https://docs.dna.codes' },
@@ -17,9 +17,8 @@ export const headerData = {
 export const footerData = {
   links: [
     {
-      title: 'Product',
+      title: 'Platform',
       links: [
-        { text: 'How it works', href: getPermalink('/#how-it-works') },
         { text: 'Pricing', href: getPermalink('/pricing') },
         { text: 'Playground', href: 'https://app.dna.codes/playground' },
       ],
@@ -45,5 +44,5 @@ export const footerData = {
     { text: 'Privacy Policy', href: getPermalink('/privacy') },
   ],
   socialLinks: [],
-  footNote: "Your business has a unique DNA. Let's make it usable.",
+  footNote: 'Your business has a unique DNA. Time to run on it.',
 };
