@@ -79,9 +79,10 @@ const {
         var center  = oscLen / 2;
         var crossLen = isVertical ? W : H;
         var amp     = AMP_OVERRIDE != null
-                    ? Math.min(AMP_OVERRIDE, crossLen * 0.40)
+                    ? Math.min(AMP_OVERRIDE, crossLen * 0.32)
                     : isVertical ? Math.min(W * 0.13, 68)
                     :              Math.min(H * 0.22, 80);
+        var nodeR   = Math.min(BASE_R, crossLen * 0.055);
         var circles = [];
 
         for (var i = 0; i < N_RUNGS; i++) {
@@ -100,8 +101,8 @@ const {
           ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
           ctx.strokeStyle = rgba(lineA); ctx.lineWidth = 1.2; ctx.stroke();
 
-          circles.push({ x: x1, y: y1, r: BASE_R * (1 + DEPTH_SCALE * sinT),  z: sinT  });
-          circles.push({ x: x2, y: y2, r: BASE_R * (1 + DEPTH_SCALE * -sinT), z: -sinT });
+          circles.push({ x: x1, y: y1, r: nodeR * (1 + DEPTH_SCALE * sinT),  z: sinT  });
+          circles.push({ x: x2, y: y2, r: nodeR * (1 + DEPTH_SCALE * -sinT), z: -sinT });
         }
 
         circles.sort(function (a, b) { return a.z - b.z; });
