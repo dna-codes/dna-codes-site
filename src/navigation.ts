@@ -9,8 +9,8 @@ export const headerData = {
     { text: 'Blog', href: getBlogPermalink() },
   ],
   actions: [
-    { text: 'Sign in', href: 'https://app.dna.codes', variant: 'tertiary' },
-    { text: 'Get started', href: 'https://app.dna.codes', variant: 'primary' },
+    { text: 'Sign in', href: 'https://app.dna.codes', variant: 'tertiary' as const },
+    { text: 'Get started', href: 'https://app.dna.codes', variant: 'primary' as const },
   ],
 };
 
