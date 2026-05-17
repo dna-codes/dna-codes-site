@@ -5,11 +5,33 @@ interface Props {
   helixWidth?: number;
   filled?: boolean;
   speed?: number;
+  color?: string;
+  bgColor?: string;
+  rungsPerTurn?: number;
+  density?: number;
+  rungSpacing?: number;
+  lineWidth?: number;
+  flare?: number;
   class?: string;
   style?: string;
 }
 
-const { orientation = 'vertical', nodeSize, helixWidth, filled = false, speed, class: className, style } = Astro.props;
+const {
+  orientation = 'vertical',
+  nodeSize,
+  helixWidth,
+  filled = false,
+  speed,
+  color,
+  bgColor,
+  rungsPerTurn,
+  density,
+  rungSpacing,
+  lineWidth,
+  flare,
+  class: className,
+  style,
+} = Astro.props;
 ---
 
 <div
@@ -19,6 +41,13 @@ const { orientation = 'vertical', nodeSize, helixWidth, filled = false, speed, c
   {...helixWidth !== undefined ? { 'data-helix-width': String(helixWidth) } : {}}
   {...filled ? { 'data-filled': '' } : {}}
   {...speed !== undefined ? { 'data-speed': String(speed) } : {}}
+  {...color !== undefined ? { 'data-color': color } : {}}
+  {...bgColor !== undefined ? { 'data-bg-color': bgColor } : {}}
+  {...rungsPerTurn !== undefined ? { 'data-rungs-per-turn': String(rungsPerTurn) } : {}}
+  {...density !== undefined ? { 'data-density': String(density) } : {}}
+  {...rungSpacing !== undefined ? { 'data-rung-spacing': String(rungSpacing) } : {}}
+  {...lineWidth !== undefined ? { 'data-line-width': String(lineWidth) } : {}}
+  {...flare !== undefined ? { 'data-flare': String(flare) } : {}}
   class:list={['w-full h-full overflow-hidden pointer-events-none', className]}
   style={style}
   aria-hidden="true"
@@ -27,38 +56,67 @@ const { orientation = 'vertical', nodeSize, helixWidth, filled = false, speed, c
 
 <script is:inline>
   (function () {
-    // Store the init function once; re-use on subsequent DnaHelix instances.
+    // Must stay inline: this component is often rendered into a slot that
+    // Hero.astro re-emits via Astro.slots.render + set:html, which strips
+    // bundled <script> tags. See src/utils/dnaHelix.ts for the SVG variant.
     if (!window.__initDnaHelix) {
       window.__initDnaHelix = function (el, opts) {
-        const isVertical = (opts.orientation || 'vertical') === 'vertical';
-        const BASE_R = opts.nodeSize != null ? opts.nodeSize : 6.5;
-        const AMP_OVERRIDE = opts.helixWidth != null ? opts.helixWidth : null;
-        const RUNGS_PER_TURN = 10,
-          DEPTH_SCALE = 0.5,
-          SPEED = opts.speed != null ? opts.speed : 0.03,
-          MAX_ALPHA = 0.55;
-        const CR = 45,
-          CG = 212,
-          CB = 191;
+        var DEFAULT_COLOR = { r: 45, g: 212, b: 191 };
+        var DEFAULT_BG = { r: 10, g: 15, b: 30 };
 
-        function rgba(a) {
-          return 'rgba(' + CR + ',' + CG + ',' + CB + ',' + a.toFixed(3) + ')';
+        function parseColor(c, fb) {
+          if (!c) return fb;
+          var m = String(c)
+            .trim()
+            .match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+          if (!m) return fb;
+          var h = m[1];
+          if (h.length === 3)
+            h = h
+              .split('')
+              .map(function (ch) {
+                return ch + ch;
+              })
+              .join('');
+          return {
+            r: parseInt(h.slice(0, 2), 16),
+            g: parseInt(h.slice(2, 4), 16),
+            b: parseInt(h.slice(4, 6), 16),
+          };
         }
 
-        const canvas = document.createElement('canvas');
+        var COLOR = parseColor(opts.color, DEFAULT_COLOR);
+        var BG = parseColor(opts.bgColor, DEFAULT_BG);
+        var isVertical = (opts.orientation || 'vertical') === 'vertical';
+        var BASE_R = opts.nodeSize != null ? opts.nodeSize : 6.5;
+        var AMP_OVERRIDE = opts.helixWidth != null ? opts.helixWidth : null;
+        var RUNGS_PER_TURN = opts.rungsPerTurn != null ? opts.rungsPerTurn : 10;
+        var DENSITY = opts.density != null ? opts.density : 80;
+        var RUNG_SPACING = opts.rungSpacing != null ? opts.rungSpacing : null;
+        var FLARE = opts.flare != null ? opts.flare : 0;
+        var DEPTH_SCALE = 0.5;
+        var SPEED = opts.speed != null ? opts.speed : 0.03;
+        var MAX_ALPHA = 0.55;
+        var LINE_WIDTH = opts.lineWidth != null ? opts.lineWidth : 1.5;
+
+        function rgba(a) {
+          return 'rgba(' + COLOR.r + ',' + COLOR.g + ',' + COLOR.b + ',' + a.toFixed(3) + ')';
+        }
+
+        var canvas = document.createElement('canvas');
         canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:block;';
         el.style.position = 'relative';
         el.insertBefore(canvas, el.firstChild);
 
-        const ctx = canvas.getContext('2d');
-        let W = 0,
+        var ctx = canvas.getContext('2d');
+        var W = 0,
           H = 0,
           dpr = 1,
           raf = 0;
 
         function resize() {
           dpr = Math.min(window.devicePixelRatio || 1, 2);
-          const r = el.getBoundingClientRect();
+          var r = el.getBoundingClientRect();
           W = r.width || window.innerWidth;
           H = r.height || window.innerHeight;
           canvas.width = Math.round(W * dpr);
@@ -77,42 +135,52 @@ const { orientation = 'vertical', nodeSize, helixWidth, filled = false, speed, c
           ctx.save();
           ctx.scale(dpr, dpr);
 
-          const angle = ts * 0.001 * SPEED * 2 * Math.PI;
-          const pitch = (2 * Math.PI) / RUNGS_PER_TURN;
-          const mainLen = isVertical ? H : W;
-          const oscLen = isVertical ? W : H;
-          const pad = mainLen * (isVertical ? 0.05 : 0.02);
-          const N_RUNGS = Math.max(RUNGS_PER_TURN, Math.round((mainLen - pad * 2) / 80) + 1);
-          const spacing = (mainLen - pad * 2) / (N_RUNGS - 1);
-          const center = oscLen / 2;
-          const crossLen = isVertical ? W : H;
-          const amp =
+          var angle = ts * 0.001 * SPEED * 2 * Math.PI;
+          var pitch = (2 * Math.PI) / RUNGS_PER_TURN;
+          var mainLen = isVertical ? H : W;
+          var oscLen = isVertical ? W : H;
+          var autoPad = mainLen * (isVertical ? 0.05 : 0.02);
+          var N_RUNGS = Math.max(RUNGS_PER_TURN, Math.round((mainLen - autoPad * 2) / DENSITY) + 1);
+          var spacing, pad;
+          if (RUNG_SPACING != null && N_RUNGS > 1) {
+            spacing = RUNG_SPACING;
+            pad = (mainLen - spacing * (N_RUNGS - 1)) / 2;
+          } else {
+            spacing = N_RUNGS > 1 ? (mainLen - autoPad * 2) / (N_RUNGS - 1) : 0;
+            pad = autoPad;
+          }
+          var center = oscLen / 2;
+          var crossLen = isVertical ? W : H;
+          var amp =
             AMP_OVERRIDE != null
               ? Math.min(AMP_OVERRIDE, crossLen * 0.32)
               : isVertical
                 ? Math.min(W * 0.13, 68)
                 : Math.min(H * 0.22, 80);
-          const nodeR = Math.min(BASE_R, crossLen * 0.055);
-          const circles = [];
+          var nodeR = Math.min(BASE_R, crossLen * 0.055);
+          var circles = [];
 
-          for (let i = 0; i < N_RUNGS; i++) {
-            const theta = angle + i * pitch;
-            const cosT = Math.cos(theta);
-            const sinT = Math.sin(theta);
-            const main = pad + i * spacing;
-            const oscA = center + amp * cosT;
-            const oscB = center - amp * cosT;
-            const x1 = isVertical ? oscA : main;
-            const y1 = isVertical ? main : oscA;
-            const x2 = isVertical ? oscB : main;
-            const y2 = isVertical ? main : oscB;
+          var centerIdx = (N_RUNGS - 1) / 2;
+          for (var i = 0; i < N_RUNGS; i++) {
+            var theta = angle + (i - centerIdx) * pitch;
+            var cosT = Math.cos(theta);
+            var sinT = Math.sin(theta);
+            var main = pad + i * spacing;
+            var tNorm = N_RUNGS > 1 ? i / (N_RUNGS - 1) : 0.5;
+            var ampI = amp * (1 + FLARE * Math.pow(Math.cos(Math.PI * tNorm), 2));
+            var oscA = center + ampI * cosT;
+            var oscB = center - ampI * cosT;
+            var x1 = isVertical ? oscA : main;
+            var y1 = isVertical ? main : oscA;
+            var x2 = isVertical ? oscB : main;
+            var y2 = isVertical ? main : oscB;
 
-            const lineA = MAX_ALPHA * (0.4 + 0.6 * Math.abs(cosT));
+            var lineA = MAX_ALPHA * (0.4 + 0.6 * Math.abs(cosT));
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
             ctx.strokeStyle = rgba(lineA);
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = LINE_WIDTH;
             ctx.stroke();
 
             circles.push({ x: x1, y: y1, r: nodeR * (1 + DEPTH_SCALE * sinT), z: sinT });
@@ -122,21 +190,18 @@ const { orientation = 'vertical', nodeSize, helixWidth, filled = false, speed, c
           circles.sort(function (a, b) {
             return a.z - b.z;
           });
-          for (let j = 0; j < circles.length; j++) {
-            const c = circles[j];
-            const sA = MAX_ALPHA * (0.35 + 0.65 * (c.z + 1) * 0.5);
-            const t = 0.35 + 0.65 * Math.pow((c.z + 1) / 2, 2);
-            const bgR = 10,
-              bgG = 15,
-              bgB = 30;
-            const fR = Math.round(bgR + (CR - bgR) * t);
-            const fG = Math.round(bgG + (CG - bgG) * t);
-            const fB = Math.round(bgB + (CB - bgB) * t);
+          for (var j = 0; j < circles.length; j++) {
+            var c = circles[j];
+            var sA = MAX_ALPHA * (0.35 + 0.65 * (c.z + 1) * 0.5);
+            var t = 0.35 + 0.65 * Math.pow((c.z + 1) / 2, 2);
+            var fR = Math.round(BG.r + (COLOR.r - BG.r) * t);
+            var fG = Math.round(BG.g + (COLOR.g - BG.g) * t);
+            var fB = Math.round(BG.b + (COLOR.b - BG.b) * t);
             ctx.beginPath();
             ctx.arc(c.x, c.y, Math.max(c.r, 0.5), 0, 6.283185);
             ctx.fillStyle = 'rgb(' + fR + ',' + fG + ',' + fB + ')';
             ctx.strokeStyle = rgba(sA);
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = LINE_WIDTH;
             ctx.fill();
             ctx.stroke();
           }
@@ -155,7 +220,6 @@ const { orientation = 'vertical', nodeSize, helixWidth, filled = false, speed, c
       };
     }
 
-    // Init any uninitialized instances already in the DOM.
     document.querySelectorAll('[data-dna-helix]:not([data-helix-ready])').forEach(function (el) {
       el.dataset.helixReady = '1';
       window.__initDnaHelix(el, {
@@ -164,6 +228,13 @@ const { orientation = 'vertical', nodeSize, helixWidth, filled = false, speed, c
         helixWidth: el.dataset.helixWidth ? parseFloat(el.dataset.helixWidth) : undefined,
         filled: 'filled' in el.dataset,
         speed: el.dataset.speed ? parseFloat(el.dataset.speed) : undefined,
+        color: el.dataset.color,
+        bgColor: el.dataset.bgColor,
+        rungsPerTurn: el.dataset.rungsPerTurn ? parseFloat(el.dataset.rungsPerTurn) : undefined,
+        density: el.dataset.density ? parseFloat(el.dataset.density) : undefined,
+        rungSpacing: el.dataset.rungSpacing ? parseFloat(el.dataset.rungSpacing) : undefined,
+        lineWidth: el.dataset.lineWidth ? parseFloat(el.dataset.lineWidth) : undefined,
+        flare: el.dataset.flare ? parseFloat(el.dataset.flare) : undefined,
       });
     });
   })();

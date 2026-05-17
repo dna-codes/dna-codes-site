@@ -194,6 +194,25 @@ import { Icon } from 'astro-icon/components';
 </section>
 
 <style>
+  :global(#playground ::-webkit-scrollbar) {
+    width: 8px;
+    height: 8px;
+  }
+  :global(#playground ::-webkit-scrollbar-track) {
+    background: rgb(15 22 40);
+  }
+  :global(#playground ::-webkit-scrollbar-thumb) {
+    background: rgb(13 148 136);
+    border-radius: 4px;
+  }
+  :global(#playground ::-webkit-scrollbar-thumb:hover) {
+    background: rgb(45 212 191);
+  }
+  :global(#playground *) {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(13 148 136) rgb(15 22 40);
+  }
+
   .pg-tab {
     color: rgb(100 116 139);
     cursor: pointer;

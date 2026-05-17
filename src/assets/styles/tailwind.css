@@ -115,3 +115,26 @@
 .dd *:first-child {
   margin-top: 0;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(15 22 40);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(13 148 136);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(45 212 191);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(13 148 136) rgb(15 22 40);
+}
