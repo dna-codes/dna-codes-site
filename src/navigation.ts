@@ -4,9 +4,9 @@ export const headerData = {
   links: [
     // { text: 'Platform', href: getPermalink('/') },
     // { text: 'Pricing', href: getPermalink('/pricing') },
-    { text: 'About', href: getPermalink('/about') },
+    // { text: 'About', href: getPermalink('/about') },
     // { text: 'Docs', href: 'https://docs.dna.codes' },
-    { text: 'Blog', href: getBlogPermalink() },
+    // { text: 'Blog', href: getBlogPermalink() },
   ],
   actions: [
     // { text: 'Sign in', href: 'https://app.dna.codes', variant: 'tertiary' as const },
@@ -31,14 +31,6 @@ export const footerData = {
     //     { text: 'API Reference', href: 'https://docs.dna.codes/api' },
     //   ],
     // },
-    {
-      title: 'Company',
-      links: [
-        { text: 'About', href: getPermalink('/about') },
-        { text: 'Blog', href: getBlogPermalink() },
-        { text: 'Contact', href: getPermalink('/contact') },
-      ],
-    },
   ],
   secondaryLinks: [
     { text: 'Terms', href: getPermalink('/terms') },

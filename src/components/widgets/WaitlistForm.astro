@@ -6,12 +6,8 @@
 const ACTION_URL = '#';
 ---
 
-<form
-  class="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-  action={ACTION_URL}
-  method="POST"
-  id="waitlist-form"
->
+<div id="waitlist-form" style="position: relative; top: -150px; visibility: hidden; pointer-events: none;"></div>
+<form class="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto" action={ACTION_URL} method="POST">
   <label for="waitlist-email" class="sr-only">Work email</label>
   <input
     id="waitlist-email"
