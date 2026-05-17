@@ -61,16 +61,16 @@ const {
     // bundled <script> tags. See src/utils/dnaHelix.ts for the SVG variant.
     if (!window.__initDnaHelix) {
       window.__initDnaHelix = function (el, opts) {
-        var DEFAULT_COLOR = { r: 45, g: 212, b: 191 };
-        var DEFAULT_BG = { r: 10, g: 15, b: 30 };
+        const DEFAULT_COLOR = { r: 45, g: 212, b: 191 };
+        const DEFAULT_BG = { r: 10, g: 15, b: 30 };
 
         function parseColor(c, fb) {
           if (!c) return fb;
-          var m = String(c)
+          const m = String(c)
             .trim()
             .match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
           if (!m) return fb;
-          var h = m[1];
+          let h = m[1];
           if (h.length === 3)
             h = h
               .split('')
@@ -85,38 +85,38 @@ const {
           };
         }
 
-        var COLOR = parseColor(opts.color, DEFAULT_COLOR);
-        var BG = parseColor(opts.bgColor, DEFAULT_BG);
-        var isVertical = (opts.orientation || 'vertical') === 'vertical';
-        var BASE_R = opts.nodeSize != null ? opts.nodeSize : 6.5;
-        var AMP_OVERRIDE = opts.helixWidth != null ? opts.helixWidth : null;
-        var RUNGS_PER_TURN = opts.rungsPerTurn != null ? opts.rungsPerTurn : 10;
-        var DENSITY = opts.density != null ? opts.density : 80;
-        var RUNG_SPACING = opts.rungSpacing != null ? opts.rungSpacing : null;
-        var FLARE = opts.flare != null ? opts.flare : 0;
-        var DEPTH_SCALE = 0.5;
-        var SPEED = opts.speed != null ? opts.speed : 0.03;
-        var MAX_ALPHA = 0.55;
-        var LINE_WIDTH = opts.lineWidth != null ? opts.lineWidth : 1.5;
+        const COLOR = parseColor(opts.color, DEFAULT_COLOR);
+        const BG = parseColor(opts.bgColor, DEFAULT_BG);
+        const isVertical = (opts.orientation || 'vertical') === 'vertical';
+        const BASE_R = opts.nodeSize != null ? opts.nodeSize : 6.5;
+        const AMP_OVERRIDE = opts.helixWidth != null ? opts.helixWidth : null;
+        const RUNGS_PER_TURN = opts.rungsPerTurn != null ? opts.rungsPerTurn : 10;
+        const DENSITY = opts.density != null ? opts.density : 80;
+        const RUNG_SPACING = opts.rungSpacing != null ? opts.rungSpacing : null;
+        const FLARE = opts.flare != null ? opts.flare : 0;
+        const DEPTH_SCALE = 0.5;
+        const SPEED = opts.speed != null ? opts.speed : 0.03;
+        const MAX_ALPHA = 0.55;
+        const LINE_WIDTH = opts.lineWidth != null ? opts.lineWidth : 1.5;
 
         function rgba(a) {
           return 'rgba(' + COLOR.r + ',' + COLOR.g + ',' + COLOR.b + ',' + a.toFixed(3) + ')';
         }
 
-        var canvas = document.createElement('canvas');
+        const canvas = document.createElement('canvas');
         canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:block;';
         el.style.position = 'relative';
         el.insertBefore(canvas, el.firstChild);
 
-        var ctx = canvas.getContext('2d');
-        var W = 0,
+        const ctx = canvas.getContext('2d');
+        let W = 0,
           H = 0,
           dpr = 1,
           raf = 0;
 
         function resize() {
           dpr = Math.min(window.devicePixelRatio || 1, 2);
-          var r = el.getBoundingClientRect();
+          const r = el.getBoundingClientRect();
           W = r.width || window.innerWidth;
           H = r.height || window.innerHeight;
           canvas.width = Math.round(W * dpr);
@@ -135,13 +135,13 @@ const {
           ctx.save();
           ctx.scale(dpr, dpr);
 
-          var angle = ts * 0.001 * SPEED * 2 * Math.PI;
-          var pitch = (2 * Math.PI) / RUNGS_PER_TURN;
-          var mainLen = isVertical ? H : W;
-          var oscLen = isVertical ? W : H;
-          var autoPad = mainLen * (isVertical ? 0.05 : 0.02);
-          var N_RUNGS = Math.max(RUNGS_PER_TURN, Math.round((mainLen - autoPad * 2) / DENSITY) + 1);
-          var spacing, pad;
+          const angle = ts * 0.001 * SPEED * 2 * Math.PI;
+          const pitch = (2 * Math.PI) / RUNGS_PER_TURN;
+          const mainLen = isVertical ? H : W;
+          const oscLen = isVertical ? W : H;
+          const autoPad = mainLen * (isVertical ? 0.05 : 0.02);
+          const N_RUNGS = Math.max(RUNGS_PER_TURN, Math.round((mainLen - autoPad * 2) / DENSITY) + 1);
+          let spacing, pad;
           if (RUNG_SPACING != null && N_RUNGS > 1) {
             spacing = RUNG_SPACING;
             pad = (mainLen - spacing * (N_RUNGS - 1)) / 2;
@@ -149,33 +149,33 @@ const {
             spacing = N_RUNGS > 1 ? (mainLen - autoPad * 2) / (N_RUNGS - 1) : 0;
             pad = autoPad;
           }
-          var center = oscLen / 2;
-          var crossLen = isVertical ? W : H;
-          var amp =
+          const center = oscLen / 2;
+          const crossLen = isVertical ? W : H;
+          const amp =
             AMP_OVERRIDE != null
               ? Math.min(AMP_OVERRIDE, crossLen * 0.32)
               : isVertical
                 ? Math.min(W * 0.13, 68)
                 : Math.min(H * 0.22, 80);
-          var nodeR = Math.min(BASE_R, crossLen * 0.055);
-          var circles = [];
+          const nodeR = Math.min(BASE_R, crossLen * 0.055);
+          const circles = [];
 
-          var centerIdx = (N_RUNGS - 1) / 2;
-          for (var i = 0; i < N_RUNGS; i++) {
-            var theta = angle + (i - centerIdx) * pitch;
-            var cosT = Math.cos(theta);
-            var sinT = Math.sin(theta);
-            var main = pad + i * spacing;
-            var tNorm = N_RUNGS > 1 ? i / (N_RUNGS - 1) : 0.5;
-            var ampI = amp * (1 + FLARE * Math.pow(Math.cos(Math.PI * tNorm), 2));
-            var oscA = center + ampI * cosT;
-            var oscB = center - ampI * cosT;
-            var x1 = isVertical ? oscA : main;
-            var y1 = isVertical ? main : oscA;
-            var x2 = isVertical ? oscB : main;
-            var y2 = isVertical ? main : oscB;
+          const centerIdx = (N_RUNGS - 1) / 2;
+          for (let i = 0; i < N_RUNGS; i++) {
+            const theta = angle + (i - centerIdx) * pitch;
+            const cosT = Math.cos(theta);
+            const sinT = Math.sin(theta);
+            const main = pad + i * spacing;
+            const tNorm = N_RUNGS > 1 ? i / (N_RUNGS - 1) : 0.5;
+            const ampI = amp * (1 + FLARE * Math.pow(Math.cos(Math.PI * tNorm), 2));
+            const oscA = center + ampI * cosT;
+            const oscB = center - ampI * cosT;
+            const x1 = isVertical ? oscA : main;
+            const y1 = isVertical ? main : oscA;
+            const x2 = isVertical ? oscB : main;
+            const y2 = isVertical ? main : oscB;
 
-            var lineA = MAX_ALPHA * (0.4 + 0.6 * Math.abs(cosT));
+            const lineA = MAX_ALPHA * (0.4 + 0.6 * Math.abs(cosT));
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
@@ -190,13 +190,13 @@ const {
           circles.sort(function (a, b) {
             return a.z - b.z;
           });
-          for (var j = 0; j < circles.length; j++) {
-            var c = circles[j];
-            var sA = MAX_ALPHA * (0.35 + 0.65 * (c.z + 1) * 0.5);
-            var t = 0.35 + 0.65 * Math.pow((c.z + 1) / 2, 2);
-            var fR = Math.round(BG.r + (COLOR.r - BG.r) * t);
-            var fG = Math.round(BG.g + (COLOR.g - BG.g) * t);
-            var fB = Math.round(BG.b + (COLOR.b - BG.b) * t);
+          for (let j = 0; j < circles.length; j++) {
+            const c = circles[j];
+            const sA = MAX_ALPHA * (0.35 + 0.65 * (c.z + 1) * 0.5);
+            const t = 0.35 + 0.65 * Math.pow((c.z + 1) / 2, 2);
+            const fR = Math.round(BG.r + (COLOR.r - BG.r) * t);
+            const fG = Math.round(BG.g + (COLOR.g - BG.g) * t);
+            const fB = Math.round(BG.b + (COLOR.b - BG.b) * t);
             ctx.beginPath();
             ctx.arc(c.x, c.y, Math.max(c.r, 0.5), 0, 6.283185);
             ctx.fillStyle = 'rgb(' + fR + ',' + fG + ',' + fB + ')';
