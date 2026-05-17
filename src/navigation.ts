@@ -1,7 +1,8 @@
-import { getPermalink, getBlogPermalink } from './utils/permalinks';
+import { getPermalink } from './utils/permalinks';
 
 export const headerData = {
   links: [
+    { text: 'Playground', href: getPermalink('/playground') },
     // { text: 'Platform', href: getPermalink('/') },
     // { text: 'Pricing', href: getPermalink('/pricing') },
     // { text: 'About', href: getPermalink('/about') },

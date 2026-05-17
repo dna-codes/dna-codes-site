@@ -1,0 +1,616 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<section id="playground" class="py-12 sm:py-16">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <h1
+        class="inline-flex items-center px-5 py-2 rounded-full border-2 border-primary bg-primary/10 text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-4"
+      >
+        Playground
+      </h1>
+      <h2 class="text-3xl sm:text-4xl font-bold text-slate-100 mb-3">
+        Paste a transcript.<br class="sm:hidden" />
+        <span class="text-accent"> Watch it become DNA.</span>
+      </h2>
+      <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+        Drop in meeting notes or a process write-up. DNA Codes generates a living spec — and the artifacts your team
+        actually uses.
+      </p>
+    </div>
+
+    <!-- Layout: stacked on mobile, two-column on md+ -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <!-- Left column: Input + DNA -->
+      <div class="flex flex-col gap-4 sm:gap-6 min-w-0">
+        <!-- Input region -->
+        <div class="bg-slate-900/80 rounded-2xl border border-white/10 p-4 sm:p-5">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2 min-w-0">
+              <div
+                class="w-7 h-7 rounded-lg bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0"
+              >
+                <span class="text-xs font-black text-primary font-mono">01</span>
+              </div>
+              <span class="text-xs font-bold uppercase tracking-widest text-primary">Transcript</span>
+            </div>
+            <button
+              id="pg-sample"
+              type="button"
+              class="text-xs font-semibold text-slate-300 hover:text-white underline-offset-2 hover:underline whitespace-nowrap"
+            >
+              Try a sample
+            </button>
+          </div>
+
+          <label for="transcript-input" class="sr-only">Paste your transcript</label>
+          <textarea
+            id="transcript-input"
+            class="w-full min-h-[12rem] px-3 py-3 rounded-lg bg-slate-800/80 border border-slate-600 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-y"
+            placeholder="Paste meeting notes or a process description here — e.g. 'We start onboarding when a new customer signs up. CS sends a welcome email, books an intro call within 24 hours…'"
+          ></textarea>
+
+          <div class="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+            <p class="text-xs text-slate-500 leading-snug">
+              Your transcript stays in this browser tab and isn't stored anywhere.
+            </p>
+            <button
+              id="pg-convert"
+              type="button"
+              disabled
+              class="btn-primary w-full sm:w-auto px-5 py-2.5 text-sm font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Convert
+            </button>
+          </div>
+        </div>
+
+        <!-- DNA region -->
+        <div
+          class="bg-slate-900/90 rounded-2xl border border-primary/60 shadow-[0_0_40px_rgba(13,148,136,0.2)] overflow-hidden"
+        >
+          <div class="flex items-center gap-2 px-4 sm:px-5 pt-4 pb-3 border-b border-white/8">
+            <div
+              class="w-7 h-7 rounded-lg bg-primary/25 border border-primary/40 flex items-center justify-center flex-shrink-0"
+            >
+              <Icon name="tabler:dna" class="w-4 h-4 text-primary" />
+            </div>
+            <span class="text-xs font-bold text-primary uppercase tracking-widest">DNA Spec</span>
+            <span class="ml-auto text-xs text-slate-400 font-mono truncate">operations.dna</span>
+          </div>
+
+          <div id="pg-dna-panel" class="p-4 sm:p-6 min-h-[12rem] overflow-x-auto">
+            <div data-state="empty" class="text-sm text-slate-500 italic">
+              Your generated DNA spec will appear here after you convert a transcript.
+            </div>
+            <div data-state="loading" class="hidden flex items-center gap-2 text-sm text-slate-400">
+              <span class="pg-spinner"></span>
+              Generating DNA spec…
+            </div>
+            <div data-state="error" class="hidden">
+              <p class="text-sm text-rose-300 mb-3"></p>
+              <button
+                type="button"
+                data-retry="dna"
+                class="text-xs font-semibold text-slate-200 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md px-3 py-1.5"
+              >
+                Retry
+              </button>
+            </div>
+            <pre
+              data-state="ready"
+              class="hidden font-mono text-sm leading-relaxed text-slate-300 whitespace-pre-wrap break-words">
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: Outputs -->
+      <div class="min-w-0">
+        <div class="bg-slate-900/90 rounded-2xl border border-white/10 overflow-hidden h-full flex flex-col">
+          <div class="px-4 sm:px-5 pt-4 pb-3 border-b border-white/8">
+            <div class="flex items-center justify-between gap-2 mb-3 flex-wrap">
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-7 h-7 rounded-lg bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0"
+                >
+                  <span class="text-xs font-black text-primary font-mono">03</span>
+                </div>
+                <span class="text-xs font-bold uppercase tracking-widest text-primary">Outputs</span>
+              </div>
+              <!-- demo-mode badge (remove when live API lands) -->
+              <span
+                data-pg-demo-badge
+                class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-amber-300 bg-amber-500/15 border border-amber-500/30 rounded-full px-2.5 py-1"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                Demo mode — sample data
+              </span>
+            </div>
+
+            <!-- Tab strip: horizontally scrollable on narrow viewports -->
+            <div class="-mx-1 overflow-x-auto">
+              <div class="flex gap-1 px-1 min-w-max">
+                <button
+                  data-out="process-flow"
+                  class="pg-tab active-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
+                >
+                  Process Flow
+                </button>
+                <button
+                  data-out="raci"
+                  class="pg-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
+                >
+                  RACI
+                </button>
+                <button
+                  data-out="sop"
+                  class="pg-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
+                >
+                  SOP
+                </button>
+                <button
+                  data-out="runbook"
+                  class="pg-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
+                >
+                  Runbook
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 sm:p-5 flex-1">
+            {
+              ['process-flow', 'raci', 'sop', 'runbook'].map((t, i) => (
+                <div id={`out-${t}`} class:list={['pg-out', i === 0 ? '' : 'hidden']}>
+                  <div data-state="empty" class="text-sm text-slate-500 italic min-h-[12rem] flex items-center">
+                    Run a conversion to see this artifact.
+                  </div>
+                  <div data-state="loading" class="hidden flex items-center gap-2 text-sm text-slate-400 min-h-[12rem]">
+                    <span class="pg-spinner" />
+                    Generating…
+                  </div>
+                  <div data-state="error" class="hidden min-h-[12rem]">
+                    <p class="text-sm text-rose-300 mb-3" />
+                    <button
+                      type="button"
+                      data-retry={t}
+                      class="text-xs font-semibold text-slate-200 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md px-3 py-1.5"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                  <div data-state="ready" class="hidden" />
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pg-tab {
+    color: rgb(100 116 139);
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: transparent;
+  }
+  .pg-tab:hover {
+    color: rgb(203 213 225);
+    background: rgb(255 255 255 / 0.07);
+    border-color: rgb(255 255 255 / 0.1);
+  }
+  .pg-tab.active-tab {
+    background: rgb(13 148 136 / 0.2);
+    color: rgb(45 212 191);
+    border-color: rgb(13 148 136 / 0.4);
+  }
+  .pg-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgb(148 163 184 / 0.3);
+    border-top-color: rgb(45 212 191);
+    border-radius: 9999px;
+    animation: pg-spin 0.8s linear infinite;
+  }
+  @keyframes pg-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+
+<script>
+  import { convert, ConvertError } from '~/utils/dnaApi';
+  import type { ConvertResult, ToType } from '~/utils/dnaApi';
+
+  const SAMPLE_TRANSCRIPT = `Customer onboarding kickoff — 2026-05-15
+
+Attendees: Priya (CS lead), Marco (Sales), Devon (Ops)
+
+Priya: When a new customer signs up, the trigger is "new-signup". CS owns the whole flow. First touch is an automated welcome email that goes out immediately.
+
+Marco: Sales hands off the account, then we want an intro call booked inside 24 hours. Devon and I agree — that's the SLA we want to commit to.
+
+Devon: After the intro call, we walk them through the product on day 3, then we do a structured 30-day check-in to make sure they're seeing value. The 30-day check-in is the moment we know if onboarding succeeded.
+
+Priya: Plan upgrades also trigger this flow — anyone who moves from free to paid gets the same treatment.
+
+Action items: document the flow, set the 24h SLA, and make sure the 30-day check-in is on the calendar by day 28.`;
+
+  type ArtifactType = Exclude<ToType, 'dna'>;
+  const ARTIFACTS: ArtifactType[] = ['process-flow', 'raci', 'sop', 'runbook'];
+
+  const $ = <T extends Element = Element>(sel: string, root: ParentNode = document) =>
+    root.querySelector(sel) as T | null;
+  const $$ = <T extends Element = Element>(sel: string, root: ParentNode = document) =>
+    Array.from(root.querySelectorAll(sel)) as T[];
+
+  const textarea = $<HTMLTextAreaElement>('#transcript-input');
+  const convertBtn = $<HTMLButtonElement>('#pg-convert');
+  const sampleBtn = $<HTMLButtonElement>('#pg-sample');
+  const dnaPanel = $<HTMLElement>('#pg-dna-panel');
+
+  if (!textarea || !convertBtn || !sampleBtn || !dnaPanel) {
+    // Defensive — markup above guarantees these exist; if not, do nothing.
+  } else {
+    let currentDna = '';
+    const inFlight: Partial<Record<'dna' | ArtifactType, AbortController>> = {};
+
+    const setConvertEnabled = () => {
+      convertBtn.disabled = !textarea.value.trim();
+    };
+
+    const setPanelState = (panel: HTMLElement, state: 'empty' | 'loading' | 'error' | 'ready') => {
+      $$('[data-state]', panel).forEach((el) => {
+        const el2 = el as HTMLElement;
+        if (el2.dataset.state === state) {
+          el2.style.removeProperty('display');
+          el2.classList.remove('hidden');
+        } else {
+          // Use inline display:none so class-level conflicts (e.g. `flex` on the
+          // same element) can't accidentally win over `hidden`.
+          el2.style.display = 'none';
+        }
+      });
+    };
+
+    const setPanelError = (panel: HTMLElement, message: string) => {
+      const errEl = panel.querySelector('[data-state="error"]') as HTMLElement | null;
+      if (errEl) {
+        const p = errEl.querySelector('p');
+        if (p) p.textContent = message;
+      }
+      setPanelState(panel, 'error');
+    };
+
+    const userMessage = (err: unknown): string => {
+      if (err instanceof ConvertError) return err.userMessage;
+      return 'Something went wrong. Give it another try.';
+    };
+
+    const getArtifactPanel = (type: ArtifactType) => $<HTMLElement>(`#out-${type}`);
+
+    // ── Renderers ────────────────────────────────────────────────────────
+
+    const escapeHtml = (s: string) =>
+      s.replace(
+        /[&<>"']/g,
+        (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string
+      );
+
+    const renderDna = (content: string): string => {
+      // Lightweight YAML-ish syntax coloring matching OperationsLayerC.astro
+      const lines = content.split('\n').map((rawLine) => {
+        const line = escapeHtml(rawLine);
+        // key: value pattern
+        const m = line.match(/^(\s*)(-?\s*)([A-Za-z][\w-]*)(:)(.*)$/);
+        if (m) {
+          const [, indent, dash, key, colon, rest] = m;
+          return `${indent}<span class="text-slate-500">${dash}</span><span class="text-violet-400">${key}</span><span class="text-slate-500">${colon}</span><span class="text-amber-300">${rest}</span>`;
+        }
+        // list item: "- value"
+        const li = line.match(/^(\s*)(-)(\s+)(.*)$/);
+        if (li) {
+          const [, indent, dash, sp, val] = li;
+          return `${indent}<span class="text-slate-500">${dash}</span>${sp}<span class="text-violet-400">${val}</span>`;
+        }
+        return line;
+      });
+      return lines.join('\n');
+    };
+
+    const renderProcessFlow = (r: Extract<ConvertResult, { type: 'process-flow' }>): string => {
+      const steps = r.steps ?? [];
+      const rows = steps.map((s, i) => {
+        const isLast = i === steps.length - 1;
+        const owner = s.owner
+          ? `<span class="rounded bg-white/8 px-1.5 py-0.5 text-xs text-slate-400">${escapeHtml(s.owner)}</span>`
+          : '';
+        const timing = s.timing ? `<span class="text-xs text-slate-500">${escapeHtml(s.timing)}</span>` : '';
+        const connector = isLast ? '' : '<div class="w-px flex-1 min-h-[16px] bg-white/10 my-0.5"></div>';
+        return `
+          <div class="flex gap-2.5">
+            <div class="flex flex-col items-center flex-shrink-0">
+              <div class="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
+                <span class="text-[10px] font-bold text-primary">${i + 1}</span>
+              </div>
+              ${connector}
+            </div>
+            <div class="pb-3">
+              <p class="text-sm text-slate-200 leading-tight">${escapeHtml(s.name ?? '')}</p>
+              <div class="mt-1 flex items-center gap-2 flex-wrap">${owner}${timing}</div>
+            </div>
+          </div>`;
+      });
+      return `
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <span class="text-xs font-bold uppercase tracking-widest text-violet-300 bg-violet-500/20 border border-violet-500/30 rounded-full px-2.5 py-1">
+            Process Flow
+          </span>
+          <span class="text-xs text-slate-500 font-mono">${escapeHtml(r.process ?? '')}</span>
+        </div>
+        <div>${rows.join('')}</div>`;
+    };
+
+    const renderRaci = (r: Extract<ConvertResult, { type: 'raci' }>): string => {
+      const roles = r.roles ?? [];
+      const rows = r.rows ?? [];
+      const cellClass = (c: string) => {
+        switch (c) {
+          case 'R':
+            return 'bg-primary/25 text-primary';
+          case 'A':
+            return 'bg-amber-500/25 text-amber-300';
+          case 'C':
+            return 'bg-violet-500/25 text-violet-300';
+          case 'I':
+            return 'bg-white/5 text-slate-500';
+          default:
+            return 'bg-transparent text-slate-700';
+        }
+      };
+      const head = roles
+        .map(
+          (role) => `<th class="text-center text-[10px] text-slate-500 font-medium pb-2 px-1">${escapeHtml(role)}</th>`
+        )
+        .join('');
+      const body = rows
+        .map(
+          (row) => `
+        <tr>
+          <td class="text-slate-300 py-1.5 pr-3 text-xs">${escapeHtml(row.process ?? '')}</td>
+          ${(row.cells ?? [])
+            .map(
+              (c) => `
+            <td class="text-center py-1.5 px-1">
+              <span class="inline-block w-5 h-5 rounded text-[10px] font-bold leading-5 text-center ${cellClass(c)}">${escapeHtml(c ?? '')}</span>
+            </td>`
+            )
+            .join('')}
+        </tr>`
+        )
+        .join('');
+      const legend = [
+        ['R', 'bg-primary/25 text-primary', 'Responsible'],
+        ['A', 'bg-amber-500/25 text-amber-300', 'Accountable'],
+        ['C', 'bg-violet-500/25 text-violet-300', 'Consulted'],
+        ['I', 'bg-white/5 text-slate-500', 'Informed'],
+      ]
+        .map(
+          ([letter, cls, label]) => `
+        <div class="flex items-center gap-1">
+          <span class="inline-block w-4 h-4 rounded text-[9px] font-bold leading-4 text-center ${cls}">${letter}</span>
+          <span class="text-[10px] text-slate-500">${label}</span>
+        </div>`
+        )
+        .join('');
+      return `
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <span class="text-xs font-bold uppercase tracking-widest text-emerald-300 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-2.5 py-1">
+            RACI Matrix
+          </span>
+          <span class="text-xs text-slate-500 font-mono">auto-generated</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs border-collapse">
+            <thead>
+              <tr>
+                <th class="text-left text-[10px] text-slate-500 font-medium pb-2 pr-3 w-1/2">Process</th>
+                ${head}
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">${body}</tbody>
+          </table>
+          <div class="mt-3 flex items-center gap-3 flex-wrap">${legend}</div>
+        </div>`;
+    };
+
+    const renderSop = (r: Extract<ConvertResult, { type: 'sop' }>): string => {
+      const steps = (r.steps ?? [])
+        .map((s, i) => `<div class="text-sm text-slate-300">${i + 1}. ${escapeHtml(s)}</div>`)
+        .join('');
+      const ownerBlock = r.owner
+        ? `<div>
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Owner</div>
+            <div class="text-sm text-sky-400 font-mono">${escapeHtml(r.owner)}</div>
+          </div>`
+        : '';
+      const slaBlock = r.sla
+        ? `<div>
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">SLA</div>
+            <div class="text-sm text-emerald-400">${escapeHtml(r.sla)}</div>
+          </div>`
+        : '';
+      return `
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <span class="text-xs font-bold uppercase tracking-widest text-sky-300 bg-sky-500/20 border border-sky-500/30 rounded-full px-2.5 py-1">
+            SOP Document
+          </span>
+          <div class="inline-flex items-center gap-1.5 bg-slate-700/60 border border-white/10 rounded px-2 py-1">
+            <span class="text-xs text-slate-400">PDF</span>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <div class="text-sm font-semibold text-slate-200 mb-1.5">${escapeHtml(r.title ?? 'Standard Operating Procedure')}</div>
+          </div>
+          ${ownerBlock}
+          <div>
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Steps</div>
+            <div class="space-y-1">${steps}</div>
+          </div>
+          ${slaBlock}
+        </div>`;
+    };
+
+    const renderRunbook = (r: Extract<ConvertResult, { type: 'runbook' }>): string => {
+      const groups = (r.groups ?? [])
+        .map(
+          ({ area, processes }) => `
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-semibold text-slate-200">${escapeHtml(area ?? '')}</span>
+            <span class="text-[10px] text-slate-500 bg-white/5 rounded px-1.5 py-0.5">${(processes ?? []).length} processes</span>
+          </div>
+          <div class="ml-3 space-y-0.5">
+            ${(processes ?? [])
+              .map(
+                (p) => `
+              <div class="flex items-center gap-1.5">
+                <div class="w-1 h-1 rounded-full bg-slate-600 flex-shrink-0"></div>
+                <span class="text-xs text-slate-400">${escapeHtml(p)}</span>
+              </div>`
+              )
+              .join('')}
+          </div>
+        </div>`
+        )
+        .join('');
+      return `
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <span class="text-xs font-bold uppercase tracking-widest text-amber-300 bg-amber-500/20 border border-amber-500/30 rounded-full px-2.5 py-1">
+            Runbook
+          </span>
+          <span class="text-xs text-slate-500 font-mono">ops-runbook.dna</span>
+        </div>
+        <div class="space-y-2">${groups}</div>`;
+    };
+
+    const renderArtifact = (type: ArtifactType, result: ConvertResult) => {
+      const panel = getArtifactPanel(type);
+      if (!panel) return;
+      const ready = panel.querySelector('[data-state="ready"]') as HTMLElement | null;
+      if (!ready) return;
+      let html = '';
+      if (type === 'process-flow' && result.type === 'process-flow') html = renderProcessFlow(result);
+      else if (type === 'raci' && result.type === 'raci') html = renderRaci(result);
+      else if (type === 'sop' && result.type === 'sop') html = renderSop(result);
+      else if (type === 'runbook' && result.type === 'runbook') html = renderRunbook(result);
+      ready.innerHTML = html;
+      setPanelState(panel, 'ready');
+    };
+
+    // ── Flow ─────────────────────────────────────────────────────────────
+
+    const runArtifact = async (type: ArtifactType, dna: string) => {
+      const panel = getArtifactPanel(type);
+      if (!panel) return;
+      inFlight[type]?.abort();
+      setPanelState(panel, 'loading');
+      try {
+        const result = await convert({ from: { type: 'dna', content: dna }, to: { type } });
+        renderArtifact(type, result);
+      } catch (err) {
+        console.error('[playground] artifact failed', type, err);
+        setPanelError(panel, userMessage(err));
+      }
+    };
+
+    const runDna = async (transcript: string) => {
+      setPanelState(dnaPanel, 'loading');
+      convertBtn.disabled = true;
+      try {
+        const result = await convert({
+          from: { type: 'transcript', content: transcript },
+          to: { type: 'dna' },
+        });
+        if (result.type !== 'dna') throw new ConvertError('Unexpected response.');
+        currentDna = result.content;
+        const ready = dnaPanel.querySelector('[data-state="ready"]') as HTMLElement | null;
+        if (ready) ready.innerHTML = renderDna(currentDna);
+        setPanelState(dnaPanel, 'ready');
+        // Fan out artifact calls in parallel — each manages its own state.
+        ARTIFACTS.forEach((t) => {
+          void runArtifact(t, currentDna);
+        });
+      } catch (err) {
+        console.error('[playground] dna failed', err);
+        setPanelError(dnaPanel, userMessage(err));
+        // Reset artifact panels to empty since we have no DNA to fan out from.
+        ARTIFACTS.forEach((t) => {
+          const p = getArtifactPanel(t);
+          if (p) setPanelState(p, 'empty');
+        });
+      } finally {
+        setConvertEnabled();
+      }
+    };
+
+    // ── Wiring ───────────────────────────────────────────────────────────
+
+    // Normalize initial visibility (avoids any class-conflict flash before the first
+    // user action). Each panel starts in its empty state.
+    setPanelState(dnaPanel, 'empty');
+    ARTIFACTS.forEach((t) => {
+      const p = getArtifactPanel(t);
+      if (p) setPanelState(p, 'empty');
+    });
+
+    textarea.addEventListener('input', setConvertEnabled);
+    setConvertEnabled();
+
+    convertBtn.addEventListener('click', () => {
+      const value = textarea.value.trim();
+      if (!value) return;
+      void runDna(value);
+    });
+
+    sampleBtn.addEventListener('click', () => {
+      textarea.value = SAMPLE_TRANSCRIPT;
+      setConvertEnabled();
+      void runDna(SAMPLE_TRANSCRIPT);
+    });
+
+    $$('.pg-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const out = (tab as HTMLElement).dataset.out;
+        $$('.pg-tab').forEach((t) => t.classList.remove('active-tab'));
+        tab.classList.add('active-tab');
+        $$('.pg-out').forEach((p) => p.classList.add('hidden'));
+        document.getElementById(`out-${out}`)?.classList.remove('hidden');
+      });
+    });
+
+    // Retry buttons (DNA and each artifact)
+    $$('[data-retry]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = (btn as HTMLElement).dataset.retry;
+        if (target === 'dna') {
+          const value = textarea.value.trim();
+          if (value) void runDna(value);
+          return;
+        }
+        if (currentDna && ARTIFACTS.includes(target as ArtifactType)) {
+          void runArtifact(target as ArtifactType, currentDna);
+        }
+      });
+    });
+  }
+</script>
