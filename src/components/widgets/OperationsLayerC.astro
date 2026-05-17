@@ -1,0 +1,579 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const sources = [
+  { name: 'Google Drive', icon: 'logos:google-drive' },
+  { name: 'Notion', icon: 'ri:notion-fill' },
+  { name: 'Confluence', icon: 'logos:confluence' },
+  { name: 'Slack', icon: 'devicon:slack' },
+  { name: 'PDF / Docs', icon: 'tabler:pdf' },
+  { name: 'Websites', icon: 'tabler:globe' },
+  { name: 'Dropbox', icon: 'logos:dropbox' },
+  { name: 'Email', icon: 'tabler:mail' },
+];
+
+const vendors = [
+  { name: 'Notion', icon: 'ri:notion-fill' },
+  { name: 'Confluence', icon: 'logos:confluence' },
+  { name: 'SharePoint', icon: 'mdi:microsoft-sharepoint' },
+  { name: 'Google Drive', icon: 'logos:google-drive' },
+  { name: 'Slack', icon: 'devicon:slack' },
+  { name: 'Asana', icon: 'logos:asana' },
+  { name: 'Monday', icon: 'logos:monday' },
+  { name: 'Linear', icon: 'simple-icons:linear' },
+  { name: 'Jira', icon: 'logos:jira' },
+  { name: 'Airtable', icon: 'logos:airtable' },
+];
+---
+
+<section id="operations" class="py-16 sm:py-20 scroll-mt-20">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6">
+    <!-- Header -->
+    <div class="text-center mb-12 intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+      <h2
+        class="inline-flex items-center px-5 py-2 rounded-full border-2 border-primary bg-primary/10 text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-4"
+      >
+        Operations Layer
+      </h2>
+      <p class="text-slate-400 max-w-xl mx-auto leading-relaxed text-sm sm:text-base">
+        Structure how your business runs — from meeting notes and process docs to executable flows your whole team can
+        follow.
+      </p>
+    </div>
+
+    <!-- Act 1: Collect -->
+    <div class="intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+      <div class="flex items-start gap-3 mb-5">
+        <div
+          class="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0 shadow-[0_0_16px_rgba(13,148,136,0.3)] mt-0.5"
+        >
+          <span class="text-sm font-black text-primary font-mono">01</span>
+        </div>
+        <div>
+          <p class="text-sm font-bold uppercase tracking-widest text-primary mb-0.5">Collect</p>
+          <p class="text-sm text-slate-400">Pull in your existing docs, SOPs, and tribal knowledge from anywhere.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {
+          sources.map(({ name, icon }) => (
+            <div class="flex items-center gap-2 bg-slate-800/60 border border-white/10 rounded-xl px-3 py-2.5 transition-colors duration-150 hover:bg-slate-700/80 hover:border-white/20 group">
+              <Icon
+                name={icon}
+                class="w-4 h-4 text-slate-400 flex-shrink-0 group-hover:text-slate-200 transition-colors duration-150"
+              />
+              <span class="text-xs text-slate-300 leading-tight group-hover:text-white transition-colors duration-150">
+                {name}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Connector 1→2 -->
+    <div class="flex flex-col items-center my-5">
+      <div class="w-px h-6 bg-gradient-to-b from-transparent to-primary/50"></div>
+      <div
+        class="w-8 h-8 rounded-full border-2 border-primary bg-primary/10 shadow-[0_0_16px_rgba(13,148,136,0.4)] flex items-center justify-center"
+      >
+        <Icon name="tabler:arrow-down" class="w-4 h-4 text-primary" />
+      </div>
+      <div class="w-px h-6 bg-gradient-to-b from-primary/50 to-transparent"></div>
+    </div>
+
+    <!-- Act 2: Structure -->
+    <div
+      class="intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+      style="animation-delay:150ms"
+    >
+      <div class="flex items-start gap-3 mb-5">
+        <div
+          class="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0 shadow-[0_0_16px_rgba(13,148,136,0.3)] mt-0.5"
+        >
+          <span class="text-sm font-black text-primary font-mono">02</span>
+        </div>
+        <div>
+          <p class="text-sm font-bold uppercase tracking-widest text-primary mb-0.5">Structure</p>
+          <p class="text-sm text-slate-400">
+            DNA Codes reads your content and writes a living spec — versioned, owned, always current.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="bg-slate-900/90 rounded-2xl border border-primary/60 shadow-[0_0_40px_rgba(13,148,136,0.2)] overflow-hidden"
+      >
+        <!-- Tab pills -->
+        <div class="flex gap-1 p-3 border-b border-white/8">
+          <button
+            data-spec="onboarding"
+            class="spec-tab active-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
+          >
+            CustomerOnboarding
+          </button>
+          <button
+            data-spec="launch"
+            class="spec-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
+          >
+            ProductLaunch
+          </button>
+          <button
+            data-spec="close"
+            class="spec-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
+          >
+            MonthlyClose
+          </button>
+        </div>
+
+        <div class="p-4 sm:p-6 overflow-x-auto">
+          <div class="flex items-center gap-2 mb-4">
+            <div
+              class="w-6 h-6 rounded-lg bg-primary/25 border border-primary/40 flex items-center justify-center flex-shrink-0"
+            >
+              <Icon name="tabler:dna" class="w-3.5 h-3.5 text-primary" />
+            </div>
+            <span class="text-xs font-bold text-primary uppercase tracking-widest">DNA Spec</span>
+            <span class="ml-auto text-xs text-slate-400 font-mono">operations.dna</span>
+          </div>
+
+          <!-- Spec: CustomerOnboarding -->
+          <div id="spec-onboarding" class="font-mono text-sm leading-relaxed">
+            <div>
+              <span class="text-violet-400">process</span><span class="text-slate-500">:</span><span
+                class="text-amber-300"
+              >
+                CustomerOnboarding</span
+              >
+            </div>
+            <div class="ml-3 text-slate-400">
+              owner<span class="text-slate-600">:</span><span class="text-sky-400"> CustomerSuccess</span>
+            </div>
+            <div class="ml-3 text-slate-400">steps<span class="text-slate-600">:</span></div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> welcome-email</span>
+            </div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> account-setup</span>
+            </div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> intro-call</span>
+            </div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> 30-day-check-in</span>
+            </div>
+            <div class="mt-1 ml-3 text-slate-400">triggers<span class="text-slate-600">:</span></div>
+            <div class="ml-5"><span class="text-slate-500">-</span><span class="text-amber-300"> new-signup</span></div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-amber-300"> plan-upgrade</span>
+            </div>
+            <div class="mt-1 ml-3 text-slate-400">
+              sla<span class="text-slate-600">:</span><span class="text-emerald-400"> 24h response</span>
+            </div>
+          </div>
+
+          <!-- Spec: MonthlyClose -->
+          <div id="spec-close" class="font-mono text-sm leading-relaxed hidden">
+            <div>
+              <span class="text-violet-400">process</span><span class="text-slate-500">:</span><span
+                class="text-amber-300"
+              >
+                MonthlyClose</span
+              >
+            </div>
+            <div class="ml-3 text-slate-400">
+              owner<span class="text-slate-600">:</span><span class="text-sky-400"> Finance</span>
+            </div>
+            <div class="ml-3 text-slate-400">steps<span class="text-slate-600">:</span></div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> close-books</span>
+            </div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> reconcile-accounts</span>
+            </div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> review-variance</span>
+            </div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> exec-report</span>
+            </div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> board-package</span>
+            </div>
+            <div class="mt-1 ml-3 text-slate-400">owners<span class="text-slate-600">:</span></div>
+            <div class="ml-5"><span class="text-slate-500">-</span><span class="text-sky-400"> Finance</span></div>
+            <div class="ml-5"><span class="text-slate-500">-</span><span class="text-sky-400"> Operations</span></div>
+            <div class="ml-5"><span class="text-slate-500">-</span><span class="text-sky-400"> Leadership</span></div>
+            <div class="mt-1 ml-3 text-slate-400">triggers<span class="text-slate-600">:</span></div>
+            <div class="ml-5"><span class="text-slate-500">-</span><span class="text-amber-300"> month-end</span></div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-amber-300"> quarter-end</span>
+            </div>
+            <div class="mt-1 ml-3 text-slate-400">
+              sla<span class="text-slate-600">:</span><span class="text-emerald-400"> 5-day close</span>
+            </div>
+          </div>
+
+          <!-- Spec: ProductLaunch -->
+          <div id="spec-launch" class="font-mono text-sm leading-relaxed hidden">
+            <div>
+              <span class="text-violet-400">process</span><span class="text-slate-500">:</span><span
+                class="text-amber-300"
+              >
+                ProductLaunch</span
+              >
+            </div>
+            <div class="ml-3 text-slate-400">
+              owner<span class="text-slate-600">:</span><span class="text-sky-400"> ProductTeam</span>
+            </div>
+            <div class="ml-3 text-slate-400">steps<span class="text-slate-600">:</span></div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> market-validation</span>
+            </div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> engineering-build</span>
+            </div>
+            <div class="ml-5"><span class="text-slate-500">-</span><span class="text-violet-400"> gtm-prep</span></div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> launch-day</span>
+            </div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-violet-400"> post-launch-review</span>
+            </div>
+            <div class="mt-1 ml-3 text-slate-400">owners<span class="text-slate-600">:</span></div>
+            <div class="ml-5"><span class="text-slate-500">-</span><span class="text-sky-400"> Product</span></div>
+            <div class="ml-5"><span class="text-slate-500">-</span><span class="text-sky-400"> Engineering</span></div>
+            <div class="ml-5"><span class="text-slate-500">-</span><span class="text-sky-400"> Sales</span></div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-sky-400"> CustomerSuccess</span>
+            </div>
+            <div class="mt-1 ml-3 text-slate-400">triggers<span class="text-slate-600">:</span></div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-amber-300"> roadmap-approval</span>
+            </div>
+            <div class="ml-5">
+              <span class="text-slate-500">-</span><span class="text-amber-300"> exec-signoff</span>
+            </div>
+            <div class="mt-1 ml-3 text-slate-400">
+              sla<span class="text-slate-600">:</span><span class="text-emerald-400"> 90-day cycle</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connector 2→3 -->
+    <div class="flex flex-col items-center my-5">
+      <div class="w-px h-6 bg-gradient-to-b from-transparent to-primary/50"></div>
+      <div
+        class="w-8 h-8 rounded-full border-2 border-primary bg-primary/10 shadow-[0_0_16px_rgba(13,148,136,0.4)] flex items-center justify-center"
+      >
+        <Icon name="tabler:arrow-down" class="w-4 h-4 text-primary" />
+      </div>
+      <div class="w-px h-6 bg-gradient-to-b from-primary/50 to-transparent"></div>
+    </div>
+
+    <!-- Act 3: Generate -->
+    <div
+      class="intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+      style="animation-delay:300ms"
+    >
+      <div class="flex items-start gap-3 mb-5">
+        <div
+          class="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0 shadow-[0_0_16px_rgba(13,148,136,0.3)] mt-0.5"
+        >
+          <span class="text-sm font-black text-primary font-mono">03</span>
+        </div>
+        <div>
+          <p class="text-sm font-bold uppercase tracking-widest text-primary mb-0.5">Generate</p>
+          <p class="text-sm text-slate-400">
+            Produce any artifact on demand — SOP docs, process flow diagrams, runbooks, and more.
+          </p>
+        </div>
+      </div>
+
+      <!-- Output cards: 1-col on mobile, 2x2 grid on sm+ -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- SOP Document -->
+        <div class="bg-slate-800/80 rounded-xl border border-white/10 p-4">
+          <div class="flex items-center justify-between mb-4">
+            <span
+              class="text-xs font-bold uppercase tracking-widest text-sky-300 bg-sky-500/20 border border-sky-500/30 rounded-full px-2.5 py-1"
+            >
+              SOP Document
+            </span>
+            <div class="inline-flex items-center gap-1.5 bg-slate-700/60 border border-white/10 rounded px-2 py-1">
+              <Icon name="tabler:download" class="w-3 h-3 text-slate-400" />
+              <span class="text-xs text-slate-400">PDF</span>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div>
+              <div class="text-sm font-semibold text-slate-200 mb-1.5">Customer Onboarding SOP</div>
+              <div class="space-y-1.5">
+                <div class="h-2 w-full bg-slate-700/60 rounded-sm"></div>
+                <div class="h-2 w-5/6 bg-slate-700/60 rounded-sm"></div>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Owner</div>
+              <div class="text-sm text-sky-400 font-mono">Customer SuccessTeam</div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Steps</div>
+              <div class="space-y-1">
+                {
+                  ['1. Welcome email', '2. Account setup', '3. Intro call', '4. 30-day check-in'].map((s) => (
+                    <div class="text-sm text-slate-300">{s}</div>
+                  ))
+                }
+              </div>
+            </div>
+            <div>
+              <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">SLA</div>
+              <div class="text-sm text-emerald-400">24h response guaranteed</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Process Flow -->
+        <div class="bg-slate-800/80 rounded-xl border border-white/10 p-4">
+          <div class="flex items-center justify-between mb-4">
+            <span
+              class="text-xs font-bold uppercase tracking-widest text-violet-300 bg-violet-500/20 border border-violet-500/30 rounded-full px-2.5 py-1"
+            >
+              Process Flow
+            </span>
+            <span class="text-xs text-slate-500 font-mono">CustomerOnboarding</span>
+          </div>
+          <div>
+            {
+              [
+                { name: 'Welcome email sent', owner: 'Auto', timing: 'on trigger' },
+                { name: 'Account setup call', owner: 'Customer Success', timing: 'within 24h' },
+                { name: 'Intro walkthrough', owner: 'Customer Success', timing: 'day 3' },
+                { name: '30-day check-in', owner: 'Customer Success', timing: 'day 30' },
+              ].map(({ name, owner, timing }, i, arr) => (
+                <div class="flex gap-2.5">
+                  <div class="flex flex-col items-center flex-shrink-0">
+                    <div class="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
+                      <span class="text-[10px] font-bold text-primary">{i + 1}</span>
+                    </div>
+                    {i < arr.length - 1 && <div class="w-px flex-1 min-h-[16px] bg-white/10 my-0.5" />}
+                  </div>
+                  <div class="pb-3">
+                    <p class="text-sm text-slate-200 leading-tight">{name}</p>
+                    <div class="mt-1 flex items-center gap-2">
+                      <span class="rounded bg-white/8 px-1.5 py-0.5 text-xs text-slate-400">{owner}</span>
+                      <span class="text-xs text-slate-500">{timing}</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Runbook -->
+        <div class="bg-slate-800/80 rounded-xl border border-white/10 p-4">
+          <div class="flex items-center justify-between mb-4">
+            <span
+              class="text-xs font-bold uppercase tracking-widest text-amber-300 bg-amber-500/20 border border-amber-500/30 rounded-full px-2.5 py-1"
+            >
+              Runbook
+            </span>
+            <span class="text-xs text-slate-500 font-mono">ops-runbook.dna</span>
+          </div>
+          <div class="space-y-2">
+            {
+              [
+                { area: 'Sales', processes: ['Lead qualification', 'Handoff to success'] },
+                { area: 'Customer Success', processes: ['Customer onboarding', 'QBR process', 'Churn escalation'] },
+                { area: 'Finance', processes: ['Monthly close', 'Invoice approval'] },
+                { area: 'Operations', processes: ['Vendor review', 'Headcount request'] },
+              ].map(({ area, processes }) => (
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-semibold text-slate-200">{area}</span>
+                    <span class="text-[10px] text-slate-500 bg-white/5 rounded px-1.5 py-0.5">
+                      {processes.length} processes
+                    </span>
+                  </div>
+                  <div class="ml-3 space-y-0.5">
+                    {processes.map((p) => (
+                      <div class="flex items-center gap-1.5">
+                        <div class="w-1 h-1 rounded-full bg-slate-600 flex-shrink-0" />
+                        <span class="text-xs text-slate-400">{p}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- RACI -->
+        <div class="bg-slate-800/80 rounded-xl border border-white/10 p-4">
+          <div class="flex items-center justify-between mb-4">
+            <span
+              class="text-xs font-bold uppercase tracking-widest text-emerald-300 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-2.5 py-1"
+            >
+              RACI Matrix
+            </span>
+            <span class="text-xs text-slate-500 font-mono">auto-generated</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs border-collapse">
+              <thead>
+                <tr>
+                  <th class="text-left text-[10px] text-slate-500 font-medium pb-2 pr-3 w-1/2">Process</th>
+                  {
+                    ['Ops', 'Sales', 'Customer Success', 'Finance'].map((role) => (
+                      <th class="text-center text-[10px] text-slate-500 font-medium pb-2 px-1">{role}</th>
+                    ))
+                  }
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5">
+                {
+                  [
+                    { process: 'Onboarding', cells: ['A', 'C', 'R', 'I'] },
+                    { process: 'Lead handoff', cells: ['I', 'R', 'A', 'I'] },
+                    { process: 'Monthly close', cells: ['A', 'I', 'I', 'R'] },
+                    { process: 'Vendor review', cells: ['R', 'C', 'I', 'A'] },
+                  ].map(({ process, cells }) => (
+                    <tr>
+                      <td class="text-slate-300 py-1.5 pr-3 text-xs">{process}</td>
+                      {cells.map((cell) => (
+                        <td class="text-center py-1.5 px-1">
+                          <span
+                            class:list={[
+                              'inline-block w-5 h-5 rounded text-[10px] font-bold leading-5 text-center',
+                              cell === 'R' && 'bg-primary/25 text-primary',
+                              cell === 'A' && 'bg-amber-500/25 text-amber-300',
+                              cell === 'C' && 'bg-violet-500/25 text-violet-300',
+                              cell === 'I' && 'bg-white/5 text-slate-500',
+                            ]}
+                          >
+                            {cell}
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+            <div class="mt-3 flex items-center gap-3 flex-wrap">
+              {
+                [
+                  ['R', 'bg-primary/25 text-primary', 'Responsible'],
+                  ['A', 'bg-amber-500/25 text-amber-300', 'Accountable'],
+                  ['C', 'bg-violet-500/25 text-violet-300', 'Consulted'],
+                  ['I', 'bg-white/5 text-slate-500', 'Informed'],
+                ].map(([letter, cls, label]) => (
+                  <div class="flex items-center gap-1">
+                    <span class:list={['inline-block w-4 h-4 rounded text-[9px] font-bold leading-4 text-center', cls]}>
+                      {letter}
+                    </span>
+                    <span class="text-[10px] text-slate-500">{label}</span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connector 3→4 -->
+    <div class="flex flex-col items-center my-5">
+      <div class="w-px h-6 bg-gradient-to-b from-transparent to-primary/50"></div>
+      <div
+        class="w-8 h-8 rounded-full border-2 border-primary bg-primary/10 shadow-[0_0_16px_rgba(13,148,136,0.4)] flex items-center justify-center"
+      >
+        <Icon name="tabler:arrow-down" class="w-4 h-4 text-primary" />
+      </div>
+      <div class="w-px h-6 bg-gradient-to-b from-primary/50 to-transparent"></div>
+    </div>
+
+    <!-- Act 4: Distribute -->
+    <div
+      class="intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+      style="animation-delay:450ms"
+    >
+      <div class="flex items-start gap-3 mb-5">
+        <div
+          class="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0 shadow-[0_0_16px_rgba(13,148,136,0.3)] mt-0.5"
+        >
+          <span class="text-sm font-black text-primary font-mono">04</span>
+        </div>
+        <div>
+          <p class="text-sm font-bold uppercase tracking-widest text-primary mb-0.5">Distribute</p>
+          <p class="text-sm text-slate-400">
+            Push changes to every tool your team already uses — automatically kept in sync.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        {
+          vendors.map(({ name, icon }) => (
+            <div class="flex items-center gap-2 bg-slate-800/60 border border-white/10 rounded-full px-4 py-2 transition-colors duration-150 hover:bg-slate-700/80 hover:border-white/20 hover:text-white group">
+              <span class="sync-dot w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0" />
+              <Icon
+                name={icon}
+                class="w-4 h-4 text-slate-400 group-hover:text-slate-200 transition-colors duration-150"
+              />
+              <span class="text-sm text-slate-300 group-hover:text-white transition-colors duration-150">{name}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sync-dot {
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.25;
+    }
+  }
+  .spec-tab {
+    color: rgb(100 116 139);
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  .spec-tab:hover {
+    color: rgb(203 213 225);
+    background: rgb(255 255 255 / 0.07);
+    border-color: rgb(255 255 255 / 0.1);
+  }
+  .spec-tab.active-tab {
+    background: rgb(13 148 136 / 0.2);
+    color: rgb(45 212 191);
+    border-color: rgb(13 148 136 / 0.4);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.spec-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const spec = (tab as HTMLElement).dataset.spec;
+      document.querySelectorAll('.spec-tab').forEach((t) => t.classList.remove('active-tab'));
+      tab.classList.add('active-tab');
+      document.querySelectorAll('[id^="spec-"]').forEach((el) => el.classList.add('hidden'));
+      document.getElementById(`spec-${spec}`)?.classList.remove('hidden');
+    });
+  });
+</script>

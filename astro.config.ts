@@ -42,7 +42,7 @@ export default defineConfig({
           'business-contact',
           'database',
         ],
-        logos: ['google-drive', 'notion', 'confluence', 'dropbox', 'slack', 'airtable'],
+        logos: ['google-drive', 'notion', 'confluence', 'dropbox', 'slack', 'airtable', 'jira', 'asana', 'monday'],
         'simple-icons': ['linear'],
         mdi: ['microsoft-sharepoint'],
         ri: ['notion-fill'],
