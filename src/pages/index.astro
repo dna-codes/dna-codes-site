@@ -7,7 +7,6 @@ import OperationsLayerC from '~/components/widgets/OperationsLayerC.astro';
 // import ProductLayer from '~/components/widgets/ProductLayer.astro';
 // import TechnologyLayer from '~/components/widgets/TechnologyLayer.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
-import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
 // import { Icon } from 'astro-icon/components';
 
 const metadata = {
@@ -18,7 +17,13 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <Hero tagline="Now building — join the waitlist">
+  <Hero
+    tagline="Living operations for your team"
+    actions={[
+      { variant: 'primary', text: 'Playground', href: '/playground' },
+      { text: 'Docs', href: '/docs' },
+    ]}
+  >
     <DnaHelix
       slot="bg"
       orientation="horizontal"
@@ -49,16 +54,6 @@ const metadata = {
       <!-- Encode Your Business Processes.<br class="hidden md:block" />
       Build Your Digital DNA. -->
     </Fragment>
-
-    <Fragment slot="content">
-      <WaitlistForm />
-      <!-- <p class="text-sm text-slate-500 mt-3 text-center">No credit card required</p> -->
-    </Fragment>
-
-    <!-- actions={[
-      { variant: 'primary', text: 'Get started for free', href: 'https://app.dna.codes' },
-      { text: 'Book a demo', href: 'https://app.dna.codes/demo' },
-    ]} -->
   </Hero>
 
   <!-- <BiggerPicture /> -->
@@ -93,25 +88,16 @@ const metadata = {
 
   <CallToAction
     actions={[
-      {
-        variant: 'primary',
-        text: 'Join the waitlist',
-        href: '#waitlist-form',
-      },
-      // { variant: 'primary', text: 'Get started for free', href: 'https://app.dna.codes' },
+      { variant: 'primary', text: 'Playground', href: '/playground' },
+      { text: 'Docs', href: '/docs' },
     ]}
   >
     <Fragment slot="title">
-      Be first to bring order<br class="block sm:hidden" />
+      Bring order<br class="block sm:hidden" />
       <span class="sm:whitespace-nowrap"> to your ops.</span>
-      <!-- Your business has a unique DNA.<br class="block sm:hidden" />
-      <span class="sm:whitespace-nowrap"> Let's make it usable.</span> -->
     </Fragment>
 
-    <Fragment slot="subtitle">
-      We're building it now. Join the waitlist and help shape what we create.
-      <!-- One spec. Every artifact. Always in sync. -->
-    </Fragment>
+    <Fragment slot="subtitle"> Encode your processes. Give your team a single source of truth. </Fragment>
   </CallToAction>
 </Layout>
 
