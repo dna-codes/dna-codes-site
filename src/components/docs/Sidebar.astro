@@ -56,6 +56,10 @@ const groupKeys = Object.keys(groupedAnchors);
       sections.map((section) => {
         const active = isActive(section.href);
         const showRefChildren = section.label === 'Reference' && isInReference;
+        // For non-Reference sections (Getting Started, Examples, Frameworks):
+        // when active and the page passed anchors, render them as a flat list
+        // directly under the section link.
+        const showFlatAnchors = active && !section.children && anchors.length > 0;
 
         return (
           <li>
@@ -70,6 +74,21 @@ const groupKeys = Object.keys(groupedAnchors);
             >
               {section.label}
             </a>
+
+            {showFlatAnchors && (
+              <ul class="mt-1 ml-3 space-y-0.5 border-l border-gray-200 pl-3 dark:border-slate-700">
+                {anchors.map((a) => (
+                  <li>
+                    <a
+                      href={`#${a.id}`}
+                      class="block py-0.5 text-gray-600 hover:text-primary dark:text-slate-400 dark:hover:text-primary"
+                    >
+                      {a.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
 
             {showRefChildren && section.children && (
               <ul class="mt-1 ml-3 space-y-1 border-l border-gray-200 pl-3 dark:border-slate-700">
