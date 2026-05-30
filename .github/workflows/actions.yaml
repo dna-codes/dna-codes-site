@@ -20,7 +20,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: dna-codes/dna
-          path: ../dna
+          path: _dna
+      - run: ln -s $GITHUB_WORKSPACE/_dna $RUNNER_WORKSPACE/dna
       - name: Use Node.js v${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -37,7 +38,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: dna-codes/dna
-          path: ../dna
+          path: _dna
+      - run: ln -s $GITHUB_WORKSPACE/_dna $RUNNER_WORKSPACE/dna
       - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
