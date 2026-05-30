@@ -26,6 +26,11 @@ const STYLES: Record<Stability, { label: string; title: string; classes: string 
     classes:
       'bg-emerald-100 text-emerald-800 ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-300 dark:ring-emerald-400/30',
   },
+  deprecated: {
+    label: 'Deprecated',
+    title: 'Deprecated — slated for removal. Avoid new usage and migrate off.',
+    classes: 'bg-red-100 text-red-800 ring-red-600/20 dark:bg-red-400/10 dark:text-red-300 dark:ring-red-400/30',
+  },
 };
 
 const s = STYLES[level];

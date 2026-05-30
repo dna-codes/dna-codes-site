@@ -76,14 +76,13 @@ The second command is the set of schemas the reference pages actually import. Ke
    - **Removed/renamed files** that a page still imports → the build will fail on the missing module. Remove or rename the import and its array entry.
    - **Unchanged set** → no page edits needed; field/description changes are picked up by the rebuild alone.
 
-6. **Stability field.** The pages render a stability pill resolved by `getStability()` in `src/utils/schema-doc.ts`, which prefers a schema's own top-level `stability` field and otherwise falls back to the curated `STABILITY_STUB` map. Check whether the new schemas now ship a real `stability` field:
+6. **Stability field.** The pages render a stability pill resolved by `getStability()` in `src/utils/schema-doc.ts`: it reads a schema's own top-level `stability` value (enum `experimental | beta | stable | deprecated`, defined in the schemas' base) and otherwise treats the primitive as `stable`. There is no curated map — the schema is the only source. Check which schemas actually declare a value:
 
    ```bash
-   grep -rl '"stability"' node_modules/@dna-codes/dna-schemas
+   grep -rl '"stability"\s*:\s*"' node_modules/@dna-codes/dna-schemas
    ```
 
-   - If they do: the live value now wins automatically. Remove the corresponding entries from `STABILITY_STUB` so the stub doesn't shadow or drift from the source of truth, and tell the user which primitives switched to live stability.
-   - If they don't: leave the stub as-is, but add stub entries for any newly added primitives (default is `experimental` if you omit one).
+   (Note: `base.json` always matches because it _defines_ the `stability` property; that's the enum definition, not a declared value. You're looking for leaf schemas that set `"stability": "..."`.) No code change is needed here — declared values flow into the pills automatically on rebuild. Just report which primitives, if any, now carry a non-default (non-`stable`) value.
 
 ### Phase 5 — Regenerate and verify
 
@@ -110,7 +109,7 @@ The second command is the set of schemas the reference pages actually import. Ke
 9. Summarize:
    - Version bump (old → new), and confirmation the lockfile resolves from the npm registry.
    - Primitives added / removed / renamed and the pages edited (or "schema set unchanged").
-   - Whether stability is now sourced from the schemas' own field or still the stub, and any `STABILITY_STUB` entries removed.
+   - Which primitives, if any, now declare a non-default stability value (the rest render `stable`).
    - Build + check result.
 10. Do NOT commit or push automatically. Offer to run `/commit-push`, which will commit, push, and watch the deploy through to completion.
 

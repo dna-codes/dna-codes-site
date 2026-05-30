@@ -24,7 +24,7 @@
   "dependencies": {
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
-    "@dna-codes/dna-schemas": "^0.6.0",
+    "@dna-codes/dna-schemas": "^0.7.0",
     "@fontsource-variable/inter": "^5.2.8",
     "@iconify-json/devicon": "^1.2.62",
     "@iconify-json/logos": "^1.2.11",

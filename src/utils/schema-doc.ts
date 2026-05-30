@@ -119,90 +119,27 @@ export function firstExample(schema: JsonSchema): string | null {
 // ---------------------------------------------------------------------------
 // Stability
 //
-// Every primitive carries a maturity signal — experimental, beta, or stable —
-// surfaced as a pill on the reference pages. The canonical source is a
-// top-level `stability` field on each schema, shipping to
-// @dna-codes/dna-schemas soon. Until then we read from an interim curated
-// stub keyed by the schema `$id` path. As soon as a schema declares its own
-// `stability`, that live value wins over the stub (see getStability).
+// Each primitive carries a maturity signal — surfaced as a pill on the
+// reference pages. The source of truth is the optional top-level `stability`
+// field defined in the schemas' base (enum: experimental | beta | stable |
+// deprecated). When a schema declares it, we render that value; when it
+// doesn't, the primitive is treated as `stable`.
 // ---------------------------------------------------------------------------
 
-export type Stability = 'experimental' | 'beta' | 'stable';
+export type Stability = 'experimental' | 'beta' | 'stable' | 'deprecated';
 
-/** Least → most mature. Useful for sorting or "at least beta" comparisons. */
-export const STABILITY_ORDER: Stability[] = ['experimental', 'beta', 'stable'];
+/** Maturity ramp (then deprecated). Drives legend/display order. */
+export const STABILITY_ORDER: Stability[] = ['experimental', 'beta', 'stable', 'deprecated'];
 
-const STABILITY_DEFAULT: Stability = 'experimental';
+const STABILITY_DEFAULT: Stability = 'stable';
 
-const isStability = (v: unknown): v is Stability => v === 'experimental' || v === 'beta' || v === 'stable';
-
-/** Strip the registry prefix from a schema `$id` → e.g. "operational/person". */
-const idPath = (id: string | undefined): string =>
-  (id ?? '').replace(/^https?:\/\/[^/]+\/schemas\//, '').replace(/\.json$/, '');
+const isStability = (v: unknown): v is Stability =>
+  v === 'experimental' || v === 'beta' || v === 'stable' || v === 'deprecated';
 
 /**
- * Interim stability ratings keyed by `$id` path. This is a stub standing in
- * for the per-schema `stability` field until it ships to npm — once a schema
- * declares its own value, getStability() prefers that over this map.
+ * Resolve a primitive's stability: the schema's own `stability` field when it
+ * declares one, otherwise `stable`.
  */
-const STABILITY_STUB: Record<string, Stability> = {
-  // Operational — the oldest, most exercised layer.
-  'operational/person': 'stable',
-  'operational/role': 'stable',
-  'operational/group': 'stable',
-  'operational/membership': 'beta',
-  'operational/resource': 'stable',
-  'operational/attribute': 'stable',
-  'operational/relationship': 'beta',
-  'operational/domain': 'stable',
-  'operational/operation': 'stable',
-  'operational/action': 'stable',
-  'operational/process': 'beta',
-  'operational/task': 'beta',
-  'operational/trigger': 'experimental',
-  'operational/rule': 'experimental',
-  // Product — actively stabilizing.
-  'product/core/resource': 'beta',
-  'product/core/action': 'beta',
-  'product/core/operation': 'beta',
-  'product/core/field': 'beta',
-  'product/api/endpoint': 'beta',
-  'product/api/namespace': 'beta',
-  'product/api/param': 'beta',
-  'product/api/schema': 'beta',
-  'product/web/layout': 'experimental',
-  'product/web/page': 'experimental',
-  'product/web/route': 'experimental',
-  'product/web/block': 'experimental',
-  // Technical — newest, still moving.
-  'technical/cell': 'beta',
-  'technical/construct': 'experimental',
-  'technical/connection': 'experimental',
-  'technical/environment': 'beta',
-  'technical/node': 'experimental',
-  'technical/zone': 'experimental',
-  'technical/provider': 'experimental',
-  'technical/variable': 'experimental',
-  'technical/output': 'experimental',
-  'technical/view': 'experimental',
-};
-
-interface StabilitySchema {
-  $id?: string;
-  stability?: unknown;
-  'x-stability'?: unknown;
-}
-
-/**
- * Resolve a primitive's stability. Precedence:
- *   1. the schema's own `stability` (or `x-stability`) field — the live source,
- *   2. the interim curated stub keyed by `$id` path,
- *   3. a conservative `experimental` default.
- */
-export function getStability(schema: StabilitySchema): Stability {
-  const declared = schema.stability ?? schema['x-stability'];
-  if (isStability(declared)) return declared;
-  const stub = STABILITY_STUB[idPath(schema.$id)];
-  if (stub) return stub;
-  return STABILITY_DEFAULT;
+export function getStability(schema: { stability?: unknown }): Stability {
+  return isStability(schema.stability) ? schema.stability : STABILITY_DEFAULT;
 }
