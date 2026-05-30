@@ -98,8 +98,7 @@ export default defineConfig({
     resolve: {
       alias: {
         '~': path.resolve(__dirname, './src'),
-        // Resolves via the installed @dna-codes/dna-schemas package.
-        // Swap "file:../dna/packages/schemas" → published version once it ships to npm.
+        // Resolves via the @dna-codes/dna-schemas package published to npm.
         '~schemas': path.resolve(__dirname, 'node_modules/@dna-codes/dna-schemas'),
       },
     },

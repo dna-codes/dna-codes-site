@@ -1,0 +1,44 @@
+---
+import type { Stability } from '~/utils/schema-doc';
+
+export interface Props {
+  level: Stability;
+  class?: string;
+}
+
+const { level, class: className = '' } = Astro.props;
+
+const STYLES: Record<Stability, { label: string; title: string; classes: string }> = {
+  experimental: {
+    label: 'Experimental',
+    title: 'Experimental — the shape may change without notice. Not recommended for production.',
+    classes:
+      'bg-amber-100 text-amber-800 ring-amber-600/20 dark:bg-amber-400/10 dark:text-amber-300 dark:ring-amber-400/30',
+  },
+  beta: {
+    label: 'Beta',
+    title: 'Beta — stabilizing. Minor changes are still possible before it locks.',
+    classes: 'bg-blue-100 text-blue-800 ring-blue-600/20 dark:bg-blue-400/10 dark:text-blue-300 dark:ring-blue-400/30',
+  },
+  stable: {
+    label: 'Stable',
+    title: 'Stable — safe to build on. Changes follow semantic versioning.',
+    classes:
+      'bg-emerald-100 text-emerald-800 ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-300 dark:ring-emerald-400/30',
+  },
+};
+
+const s = STYLES[level];
+---
+
+<span
+  class:list={[
+    'not-prose inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset align-middle',
+    s.classes,
+    className,
+  ]}
+  title={s.title}
+>
+  <span class="h-1.5 w-1.5 rounded-full bg-current opacity-70"></span>
+  {s.label}
+</span>

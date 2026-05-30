@@ -1,7 +1,8 @@
 ---
 import DocsLayout from '~/layouts/DocsLayout.astro';
 import PrimitiveSection from '~/components/docs/PrimitiveSection.astro';
-import { slugify } from '~/utils/schema-doc';
+import StabilityLegend from '~/components/docs/StabilityLegend.astro';
+import { slugify, type SchemaDoc } from '~/utils/schema-doc';
 
 // Product Layer schemas — three sub-layers: Core, API, UI.
 import coreAction from '~schemas/product/core/action.json';
@@ -24,7 +25,7 @@ const metadata = {
   description: 'What gets built — Core resources, API surface, and UI shell.',
 };
 
-type Primitive = { schema: typeof coreResource; related?: string[] };
+type Primitive = { schema: SchemaDoc; related?: string[] };
 type Group = { label: string; description: string; primitives: Primitive[] };
 
 const groups: Group[] = [
@@ -87,6 +88,8 @@ const relatedHref = (name: string) => `#${slugify(name)}`;
     <li><strong>API</strong> — the REST surface.</li>
     <li><strong>UI</strong> — the web surface.</li>
   </ul>
+
+  <StabilityLegend />
 
   {
     groups.map((g) => (

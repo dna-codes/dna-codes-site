@@ -1,6 +1,7 @@
 ---
 import FieldsTable from '~/components/docs/FieldsTable.astro';
-import { extractFields, splitDescription, slugify, firstExample } from '~/utils/schema-doc';
+import StabilityPill from '~/components/docs/StabilityPill.astro';
+import { extractFields, splitDescription, slugify, firstExample, getStability } from '~/utils/schema-doc';
 
 export interface RelatedLink {
   label: string;
@@ -9,11 +10,13 @@ export interface RelatedLink {
 
 export interface Props {
   schema: {
+    $id?: string;
     title?: string;
     description?: string;
     required?: string[];
     properties?: Record<string, unknown>;
     examples?: unknown[];
+    stability?: unknown;
   };
   related?: RelatedLink[];
 }
@@ -25,11 +28,13 @@ const id = slugify(title);
 const paragraphs = splitDescription(schema.description);
 const fields = extractFields(schema as Parameters<typeof extractFields>[0]);
 const example = firstExample(schema as Parameters<typeof firstExample>[0]);
+const stability = getStability(schema);
 ---
 
 <section id={id} class="scroll-mt-24">
-  <h3>
+  <h3 class="flex flex-wrap items-center gap-x-3 gap-y-1">
     <a href={`#${id}`} class="no-underline hover:underline">{title}</a>
+    <StabilityPill level={stability} />
   </h3>
 
   {paragraphs.map((p) => <p>{p}</p>)}

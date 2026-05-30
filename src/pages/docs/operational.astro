@@ -1,7 +1,8 @@
 ---
 import DocsLayout from '~/layouts/DocsLayout.astro';
 import PrimitiveSection from '~/components/docs/PrimitiveSection.astro';
-import { slugify } from '~/utils/schema-doc';
+import StabilityLegend from '~/components/docs/StabilityLegend.astro';
+import { slugify, type SchemaDoc } from '~/utils/schema-doc';
 
 // Schemas — imported directly from @dna-codes/dna-schemas (via the ~schemas
 // alias defined in astro.config.ts). Reference content stays in sync with
@@ -27,7 +28,7 @@ const metadata = {
   description: 'The People, Structures, and Activities that describe how your business runs.',
 };
 
-type Primitive = { schema: typeof person; related?: string[] };
+type Primitive = { schema: SchemaDoc; related?: string[] };
 type Group = { label: string; description: string; primitives: Primitive[] };
 
 const groups: Group[] = [
@@ -100,6 +101,8 @@ const relatedHref = (name: string) => `#${slugify(name)}`;
     optional <code>attributes[]</code>, optional <code>actions[]</code>, optional <code>parent</code>. They differ in
     which collection of a Domain they live in and in the extra fields specific to their type.
   </p>
+
+  <StabilityLegend />
 
   {
     groups.map((g) => (

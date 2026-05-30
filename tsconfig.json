@@ -5,7 +5,8 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["src/*"],
+      "~schemas/*": ["node_modules/@dna-codes/dna-schemas/*"]
     }
   },
   "include": [".astro/types.d.ts", "**/*"],

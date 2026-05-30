@@ -1,6 +1,7 @@
 ---
 import DocsLayout from '~/layouts/DocsLayout.astro';
 import PrimitiveSection from '~/components/docs/PrimitiveSection.astro';
+import StabilityLegend from '~/components/docs/StabilityLegend.astro';
 import { slugify } from '~/utils/schema-doc';
 
 // Technical Layer schemas — how the system is deployed and wired together.
@@ -52,6 +53,8 @@ const relatedHref = (name: string) => `#${slugify(name)}`;
     <strong>Cells</strong> are the unit of deployment — they consume DNA from the upper layers and generate concrete artifacts
     (API code, database migrations, infrastructure templates).
   </p>
+
+  <StabilityLegend />
 
   {
     primitives.map((p) => (
