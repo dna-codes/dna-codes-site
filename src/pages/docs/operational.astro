@@ -1,0 +1,120 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import PrimitiveSection from '~/components/docs/PrimitiveSection.astro';
+import { slugify } from '~/utils/schema-doc';
+
+// Schemas — imported directly from @dna-codes/dna-schemas (via the ~schemas
+// alias defined in astro.config.ts). Reference content stays in sync with
+// the canonical schemas; if a schema field is added or renamed, the next
+// build picks it up automatically.
+import action from '~schemas/operational/action.json';
+import attribute from '~schemas/operational/attribute.json';
+import domain from '~schemas/operational/domain.json';
+import group from '~schemas/operational/group.json';
+import membership from '~schemas/operational/membership.json';
+import operation from '~schemas/operational/operation.json';
+import person from '~schemas/operational/person.json';
+import process from '~schemas/operational/process.json';
+import relationship from '~schemas/operational/relationship.json';
+import resource from '~schemas/operational/resource.json';
+import role from '~schemas/operational/role.json';
+import rule from '~schemas/operational/rule.json';
+import task from '~schemas/operational/task.json';
+import trigger from '~schemas/operational/trigger.json';
+
+const metadata = {
+  title: 'Operational Layer Reference — DNA Codes',
+  description: 'The People, Structures, and Activities that describe how your business runs.',
+};
+
+type Primitive = { schema: typeof person; related?: string[] };
+type Group = { label: string; description: string; primitives: Primitive[] };
+
+const groups: Group[] = [
+  {
+    label: 'People',
+    description: 'Who the organization deals with, in what capacities.',
+    primitives: [
+      { schema: person, related: ['Role', 'Group', 'Membership'] },
+      { schema: role, related: ['Person', 'Group', 'Membership', 'Action'] },
+      { schema: group, related: ['Role', 'Domain', 'Resource'] },
+      { schema: membership, related: ['Person', 'Role', 'Group'] },
+    ],
+  },
+  {
+    label: 'Structures',
+    description: 'The objects and connections your business manages.',
+    primitives: [
+      { schema: resource, related: ['Attribute', 'Action', 'Operation', 'Relationship'] },
+      { schema: attribute, related: ['Resource', 'Person', 'Role', 'Group'] },
+      { schema: relationship, related: ['Resource', 'Person', 'Role', 'Group'] },
+      { schema: domain, related: ['Person', 'Role', 'Group', 'Resource', 'Process'] },
+    ],
+  },
+  {
+    label: 'Activities',
+    description: 'What actually happens — atomic operations, orchestrated processes, and the rules that govern them.',
+    primitives: [
+      { schema: operation, related: ['Resource', 'Action', 'Rule', 'Trigger'] },
+      { schema: action, related: ['Resource', 'Operation', 'Role'] },
+      { schema: process, related: ['Task', 'Operation', 'Trigger'] },
+      { schema: task, related: ['Role', 'Operation', 'Process'] },
+      { schema: trigger, related: ['Operation', 'Process'] },
+      { schema: rule, related: ['Operation', 'Role'] },
+    ],
+  },
+];
+
+// Sidebar anchors — flat list with group attribution so the sidebar can
+// render People / Structures / Activities sub-headings.
+const anchors = groups.flatMap((g) =>
+  g.primitives.map((p) => ({
+    id: slugify(p.schema.title ?? ''),
+    label: p.schema.title ?? '',
+    group: g.label,
+  }))
+);
+
+const relatedHref = (name: string) => `#${slugify(name)}`;
+---
+
+<DocsLayout
+  metadata={metadata}
+  title="Operational"
+  description="The first DNA layer — Persons, Roles, Groups, Resources, and the Activities that bind them. Operational DNA captures organizational modeling: who deals with what, in what capacities."
+  anchors={anchors}
+>
+  <p>
+    Operational DNA describes <strong>what an organization is and what it does</strong>, independent of UI, API, or
+    deployment technology. It is split into three categories of primitives:
+  </p>
+
+  <ul>
+    <li><strong>People</strong> — Person, Role, Group, Membership</li>
+    <li><strong>Structures</strong> — Resource, Attribute, Relationship, Domain</li>
+    <li><strong>Activities</strong> — Operation, Action, Process, Task, Trigger, Rule</li>
+  </ul>
+
+  <p>
+    The four noun primitives (<strong>Resource, Person, Role, Group</strong>) share a common shape: <code>name</code>,
+    optional <code>attributes[]</code>, optional <code>actions[]</code>, optional <code>parent</code>. They differ in
+    which collection of a Domain they live in and in the extra fields specific to their type.
+  </p>
+
+  {
+    groups.map((g) => (
+      <>
+        <h2 id={slugify(g.label)} class="scroll-mt-24 mt-12">
+          {g.label}
+        </h2>
+        <p>{g.description}</p>
+        {g.primitives.map((p) => (
+          <PrimitiveSection
+            schema={p.schema}
+            related={(p.related ?? []).map((r) => ({ label: r, href: relatedHref(r) }))}
+          />
+        ))}
+      </>
+    ))
+  }
+</DocsLayout>

@@ -1,0 +1,72 @@
+---
+import FieldsTable from '~/components/docs/FieldsTable.astro';
+import { extractFields, splitDescription, slugify, firstExample } from '~/utils/schema-doc';
+
+export interface RelatedLink {
+  label: string;
+  href: string;
+}
+
+export interface Props {
+  schema: {
+    title?: string;
+    description?: string;
+    required?: string[];
+    properties?: Record<string, unknown>;
+    examples?: unknown[];
+  };
+  related?: RelatedLink[];
+}
+
+const { schema, related = [] } = Astro.props;
+
+const title = schema.title ?? 'Untitled';
+const id = slugify(title);
+const paragraphs = splitDescription(schema.description);
+const fields = extractFields(schema as Parameters<typeof extractFields>[0]);
+const example = firstExample(schema as Parameters<typeof firstExample>[0]);
+---
+
+<section id={id} class="scroll-mt-24">
+  <h3>
+    <a href={`#${id}`} class="no-underline hover:underline">{title}</a>
+  </h3>
+
+  {paragraphs.map((p) => <p>{p}</p>)}
+
+  {
+    fields.length > 0 && (
+      <h4 class="mt-6 mb-2 text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-slate-400">Fields</h4>
+    )
+  }
+  <FieldsTable fields={fields} />
+
+  {
+    example && (
+      <>
+        <h4 class="mt-6 mb-2 text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-slate-400">
+          Example
+        </h4>
+        <pre>
+          <code class="language-json">{example}</code>
+        </pre>
+      </>
+    )
+  }
+
+  {
+    related.length > 0 && (
+      <p class="mt-6 text-sm text-gray-600 dark:text-slate-400">
+        <span class="font-semibold">Related:</span>{' '}
+        {related.map((r, i) => (
+          <>
+            {i > 0 && <span class="text-gray-400"> · </span>}
+            <a href={r.href} class="text-primary hover:underline">
+              {r.label}
+            </a>
+          </>
+        ))}
+      </p>
+    )
+  }
+</section>

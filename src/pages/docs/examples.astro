@@ -1,0 +1,149 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import { slugify } from '~/utils/schema-doc';
+
+const metadata = {
+  title: 'Examples — DNA Codes',
+  description:
+    'DNA modeled across seven business domains: lending, mass tort, healthcare, education, manufacturing, marketplace, registry.',
+};
+
+type Example = {
+  name: string;
+  title: string;
+  description: string;
+  demonstrates: string[];
+};
+
+const examples: Example[] = [
+  {
+    name: 'lending',
+    title: 'Lending',
+    description:
+      'A bank approves and disburses loans. The canonical first example — small, complete, and exercises the operational triangle of Person, Role, and Operation.',
+    demonstrates: [
+      'Operations, Tasks, Process',
+      'Operation-level and Process-level Triggers',
+      'A system Role (scheduled delinquency sweep)',
+      'A scoped Role (Underwriter within BankDepartment)',
+      'Person-as-actor (Borrower) and Role-as-actor (Underwriter)',
+      'Memberships',
+    ],
+  },
+  {
+    name: 'mass-tort',
+    title: 'Mass Tort',
+    description:
+      'A law firm runs many parallel plaintiff cases. Group-heavy modeling — each Case is a Group with multiple lawyers attached via Memberships.',
+    demonstrates: [
+      'Case as Group',
+      'Multiple Person→Role Memberships (Partner → LeadCounsel / CoCounsel)',
+      'Multiple Processes',
+      'Process triggered by an Operation completion',
+    ],
+  },
+  {
+    name: 'marketplace',
+    title: 'Marketplace',
+    description:
+      'A two-sided rental marketplace. A single Member can be both Host and Guest — the same Person template eligible for two peer Roles via Memberships.',
+    demonstrates: [
+      'Same Person template eligible for two peer Roles via Memberships (Member → Host AND Member → Guest)',
+      'Two Groups (Listing, Booking)',
+      'A global (unscoped) Role',
+      'Step.else routing',
+    ],
+  },
+  {
+    name: 'healthcare',
+    title: 'Healthcare',
+    description:
+      'A hospital admits and discharges patients. Patient as a Person template with its own lifecycle, and per-Patient scope for the attending physician.',
+    demonstrates: [
+      'Patient as Person template (structure and lifecycle)',
+      'Per-Person Role.scope (AttendingPhysician.scope = Patient)',
+      'Mixed scope targets (Person + Group)',
+      'Multi-predicate condition Rule',
+    ],
+  },
+  {
+    name: 'manufacturing',
+    title: 'Manufacturing',
+    description:
+      'A factory floor with multiple system Roles (CNC, press, paint robot, scheduler) coordinating parallel and sequential Steps.',
+    demonstrates: [
+      'Multiple system Roles with `system: true` and `resource:` link',
+      'Parallel fan-out and fan-in via Step.depends_on',
+      'Schedule-source Trigger on a system Operation',
+    ],
+  },
+  {
+    name: 'education',
+    title: 'Education',
+    description:
+      'A university models Courses (Resource catalog) separately from CourseOfferings (Group instances). Faculty teach; UniversityMembers enroll.',
+    demonstrates: [
+      'Course (Resource catalog) vs CourseOffering (Group)',
+      'Two Person templates eligible for distinct Roles (Faculty → Instructor, UniversityMember → Student)',
+      'Three scope tiers',
+      'Calendar-aligned schedule Triggers',
+    ],
+  },
+  {
+    name: 'registry',
+    title: 'Registry',
+    description:
+      'A meta-pattern: a platform that lets users define their own types at runtime. TypeDefinition / Instance / Link triad, with category-driven dispatching.',
+    demonstrates: [
+      'Type-driven platform meta-pattern (TypeDefinition / Instance / Link triad)',
+      '`category` enum dispatching condition Rules (TypeIsNotRole, TypeIsPublished)',
+      'A system Role on a Resource template (ValidationEngine)',
+      'Process-level Trigger off a config-primitive lifecycle Operation',
+    ],
+  },
+];
+
+const githubBase = 'https://github.com/dna-codes/dna/tree/main/examples';
+
+const anchors = examples.map((e) => ({ id: slugify(e.name), label: e.title }));
+---
+
+<DocsLayout
+  metadata={metadata}
+  title="Examples"
+  description="DNA modeled across seven business domains. Each example validates against the schemas and exercises specific parts of the model — start here when you want to see how a real domain looks."
+  anchors={anchors}
+>
+  <p>
+    Each example is a complete, validating DNA document. They are organized to exercise different parts of the language:
+    Memberships, scoping, system Roles, parallel Processes, scope-narrow inheritance, and the registry meta-pattern.
+    Pick whichever one is closest to the system you're modeling.
+  </p>
+
+  {
+    examples.map((ex) => (
+      <section id={slugify(ex.name)} class="scroll-mt-24 mt-12">
+        <h2>
+          <a href={`#${slugify(ex.name)}`} class="no-underline hover:underline">
+            {ex.title}
+          </a>
+        </h2>
+
+        <p>{ex.description}</p>
+
+        <p class="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-slate-400">Demonstrates</p>
+        <ul>
+          {ex.demonstrates.map((d) => (
+            <li>{d}</li>
+          ))}
+        </ul>
+
+        <p>
+          <a class="text-primary hover:underline" href={`${githubBase}/${ex.name}`}>
+            View source on GitHub →
+          </a>
+        </p>
+      </section>
+    ))
+  }
+</DocsLayout>

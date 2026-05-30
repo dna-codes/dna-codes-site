@@ -1,0 +1,64 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import PrimitiveSection from '~/components/docs/PrimitiveSection.astro';
+import { slugify } from '~/utils/schema-doc';
+
+// Technical Layer schemas — how the system is deployed and wired together.
+import cell from '~schemas/technical/cell.json';
+import connection from '~schemas/technical/connection.json';
+import construct from '~schemas/technical/construct.json';
+import environment from '~schemas/technical/environment.json';
+import node from '~schemas/technical/node.json';
+import output from '~schemas/technical/output.json';
+import provider from '~schemas/technical/provider.json';
+import variable from '~schemas/technical/variable.json';
+import view from '~schemas/technical/view.json';
+import zone from '~schemas/technical/zone.json';
+
+const metadata = {
+  title: 'Technical Layer Reference — DNA Codes',
+  description: 'Cells, constructs, environments — how the system is deployed and wired.',
+};
+
+const primitives = [
+  { schema: cell, related: ['Construct', 'Connection', 'Provider'] },
+  { schema: construct, related: ['Cell', 'Node'] },
+  { schema: connection, related: ['Cell', 'Zone'] },
+  { schema: environment, related: ['Cell', 'Provider', 'Variable'] },
+  { schema: node, related: ['Construct'] },
+  { schema: zone, related: ['Connection', 'Environment'] },
+  { schema: provider, related: ['Cell', 'Environment'] },
+  { schema: variable, related: ['Environment', 'Output'] },
+  { schema: output, related: ['Cell', 'Variable'] },
+  { schema: view, related: ['Cell', 'Environment'] },
+];
+
+const anchors = primitives.map((p) => ({
+  id: slugify(p.schema.title ?? ''),
+  label: p.schema.title ?? '',
+}));
+
+const relatedHref = (name: string) => `#${slugify(name)}`;
+---
+
+<DocsLayout
+  metadata={metadata}
+  title="Technical"
+  description="The third DNA layer — how the system is deployed and wired together."
+  anchors={anchors}
+>
+  <p>
+    Technical DNA describes how the system actually runs.
+    <strong>Cells</strong> are the unit of deployment — they consume DNA from the upper layers and generate concrete artifacts
+    (API code, database migrations, infrastructure templates).
+  </p>
+
+  {
+    primitives.map((p) => (
+      <PrimitiveSection
+        schema={p.schema}
+        related={(p.related ?? []).map((r) => ({ label: r, href: relatedHref(r) }))}
+      />
+    ))
+  }
+</DocsLayout>

@@ -1,0 +1,122 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+
+const metadata = {
+  title: 'Getting Started — DNA Codes',
+  description: 'Install DNA, write your first document, learn the three layers.',
+};
+---
+
+<DocsLayout
+  metadata={metadata}
+  title="Getting Started"
+  description="Install DNA, write your first document, and learn the three layers."
+>
+  <h2 id="what-is-dna">What is DNA?</h2>
+
+  <p>
+    DNA is a description language for business systems. You describe what your business does, what gets built on top of
+    it, and how that's deployed — all in JSON / YAML, all in one place. From that description, you can generate
+    documentation, workflows, validation, and increasingly, working software.
+  </p>
+
+  <p>
+    DNA is split across <strong>three intentionally decoupled layers</strong>:
+  </p>
+
+  <ul>
+    <li>
+      <strong><a href="/docs/operational">Operational</a></strong> — the people, structures, and activities your business
+      is built on.
+    </li>
+    <li>
+      <strong><a href="/docs/product">Product</a></strong> — the resources, APIs, and UI your product surfaces.
+    </li>
+    <li>
+      <strong><a href="/docs/technical">Technical</a></strong> — how the system is deployed: cells, providers, environments.
+    </li>
+  </ul>
+
+  <p>Layers flow downstream only — Operational → Product → Technical. Upper layers never depend on lower ones.</p>
+
+  <h2 id="install">Install</h2>
+
+  <p>The packages live under the <code>@dna-codes</code> npm scope:</p>
+
+  <pre><code class="language-bash">{`npm install @dna-codes/dna-core @dna-codes/dna-schemas`}</code></pre>
+
+  <p>
+    No <code>.npmrc</code> or auth token required — they're published to the public npm registry.
+  </p>
+
+  <h2 id="quickstart">Quickstart: validate a tiny Operational DNA</h2>
+
+  <p>Create <code>my-business.json</code>:</p>
+
+  <pre><code class="language-json">{`{
+  "domain": {
+    "name": "lending",
+    "path": "acme.finance.lending",
+    "resources": [
+      {
+        "name": "Loan",
+        "attributes": [
+          { "name": "amount", "type": "number", "required": true },
+          { "name": "status", "type": "enum", "values": ["pending", "active", "repaid"] }
+        ],
+        "actions": [
+          { "name": "Apply",   "type": "write" },
+          { "name": "Approve", "type": "write" }
+        ]
+      }
+    ],
+    "persons": [
+      { "name": "Borrower" },
+      { "name": "Employee" }
+    ],
+    "groups": [{ "name": "BankDepartment" }],
+    "roles": [{ "name": "Underwriter", "scope": "BankDepartment" }]
+  },
+  "memberships": [
+    { "name": "EmployeeUnderwriter", "person": "Employee", "role": "Underwriter" }
+  ],
+  "operations": [
+    {
+      "target": "Loan",
+      "action": "Approve",
+      "name": "Loan.Approve",
+      "changes": [{ "attribute": "status", "set": "active" }]
+    }
+  ],
+  "rules": [
+    { "operation": "Loan.Approve", "type": "access", "allow": [{ "role": "Underwriter" }] }
+  ]
+}`}</code></pre>
+
+  <p>Validate it with <code>dna-core</code>:</p>
+
+  <pre><code class="language-ts">{`import { validateOperational } from '@dna-codes/dna-core';
+import doc from './my-business.json';
+
+const result = validateOperational(doc);
+if (!result.valid) {
+  console.error(result.errors);
+} else {
+  console.log('Valid Operational DNA');
+}`}</code></pre>
+
+  <h2 id="where-next">Where next?</h2>
+
+  <ul>
+    <li>
+      <a href="/docs/operational">Operational reference</a> — every Operational primitive in detail.
+    </li>
+    <li>
+      <a href="/docs/examples">Examples</a> — DNA modeled across seven business domains.
+    </li>
+    <li>
+      <a href="/docs/frameworks">Framework comparisons</a> — if you already model in DDD, BPMN, ArchiMate, C4, Event Storming,
+      or TOGAF.
+    </li>
+  </ul>
+</DocsLayout>

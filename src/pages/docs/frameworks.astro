@@ -1,0 +1,521 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import { slugify } from '~/utils/schema-doc';
+
+const metadata = {
+  title: 'Framework Comparisons — DNA Codes',
+  description: 'Mappings to DDD, BPMN, ArchiMate, C4, Event Storming, and TOGAF.',
+};
+
+const frameworks = [
+  { id: 'ddd', label: 'Domain-Driven Design' },
+  { id: 'bpmn', label: 'BPMN' },
+  { id: 'archimate', label: 'ArchiMate' },
+  { id: 'c4', label: 'C4 Model' },
+  { id: 'event-storming', label: 'Event Storming' },
+  { id: 'togaf', label: 'TOGAF' },
+];
+
+const anchors = frameworks.map((f) => ({ id: f.id, label: f.label }));
+
+const ghBase = 'https://github.com/dna-codes/dna/blob/main';
+---
+
+<DocsLayout
+  metadata={metadata}
+  title="Framework Comparisons"
+  description="If you already model your business in DDD, BPMN, ArchiMate, C4, Event Storming, or run a TOGAF practice — these mappings show where DNA lines up, where it differs, and how to translate."
+  anchors={anchors}
+>
+  <p>
+    None of the frameworks below are replaced wholesale by DNA. DNA is a textual description language tuned for code
+    generation; each of these frameworks optimizes for something else — diagram-driven communication, workshop
+    discovery, enterprise governance. The comparisons here are meant to help you carry vocabulary across, not to argue
+    you should drop your existing practice.
+  </p>
+
+  {/* ──────────────────────────────────────────────────────────────── */}
+
+  <h2 id="ddd" class="scroll-mt-24 mt-12">Domain-Driven Design</h2>
+  <p>
+    Of all the frameworks here, <strong>DDD</strong> (Eric Evans, 2003) is closest in spirit. Both treat the business domain
+    as the source of truth and code as a downstream concern. DNA is the same vocabulary expressed declaratively as JSON; DDD
+    is the methodology + vocabulary expressed in narrative and code.
+  </p>
+
+  <h3>Concept mapping</h3>
+  <table>
+    <thead>
+      <tr><th>DDD</th><th>DNA</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr
+        ><td>Bounded Context</td><td><code>Domain</code> (dot-separated hierarchy)</td><td
+          >1:1. Bounded contexts draw model boundaries; <code>Domain</code> nodes do the same.</td
+        ></tr
+      >
+      <tr
+        ><td>Ubiquitous Language</td><td>The Resource / Action / Operation / Role names you author</td><td
+          >Every primitive name is the team's vocabulary; schemas enforce naming patterns, not semantics.</td
+        ></tr
+      >
+      <tr
+        ><td>Entity</td><td><code>Resource</code> with attributes (identity-bearing)</td><td
+          >DNA doesn't formally distinguish Entities from Value Objects in v1 — usage matters, not declaration.</td
+        ></tr
+      >
+      <tr
+        ><td>Aggregate Root</td><td>A <code>Resource</code> referenced by name from <code>Operation.resource</code></td
+        ><td>The Resource an Operation acts on is the aggregate root for that change.</td></tr
+      >
+      <tr
+        ><td>Application Service</td><td><code>Process</code> (orchestrating multiple Operations)</td><td
+          >DDD's app services orchestrate work across aggregates — that's a Process in DNA.</td
+        ></tr
+      >
+      <tr
+        ><td>Domain Event</td><td
+          ><code>Operation.changes</code> (state mutation) + <code>Trigger.after</code> (downstream reaction)</td
+        ><td
+          >DNA currently has no first-class event primitive; the state-change side lives in <code
+            >Operation.changes</code
+          >, downstream reactions via <code>Trigger.after</code>.</td
+        ></tr
+      >
+      <tr
+        ><td>Specification pattern</td><td><code>Rule</code> (<code>type: condition</code>)</td><td
+          >Condition Rules are named, reusable predicates, composable via <code>Step.conditions</code>.</td
+        ></tr
+      >
+      <tr
+        ><td>Repository / Factory</td><td>Not modeled — Technical-layer concern</td><td
+          >Persistence and construction belong in <code>db-cell</code> or runtime code.</td
+        ></tr
+      >
+    </tbody>
+  </table>
+
+  <h3>Where DNA intentionally differs</h3>
+  <ol>
+    <li>
+      <strong>DNA doesn't formalize Aggregates.</strong> Operations still respect aggregate-style consistency, but you don't
+      draw the boundary explicitly — Relationships document associations, Rules enforce invariants.
+    </li>
+    <li>
+      <strong>DNA doesn't distinguish Entity from Value Object at the schema level.</strong> Both are Resources; the distinction
+      is in usage and matters at the Technical layer.
+    </li>
+    <li>
+      <strong>DNA's Process is more concrete than DDD's Application Service.</strong> A literal DAG of named Steps with <code
+        >startStep</code
+      >, conditions, and dependencies — closer to workflow notation than a service interface.
+    </li>
+    <li>
+      <strong>DNA elevates actors structurally.</strong> Actors (Roles, Users, Groups) live alongside business Entities. DDD
+      typically pushes them to the application layer.
+    </li>
+  </ol>
+
+  <p>
+    <strong>Concrete translation:</strong>{' '}
+    A DDD model for the Lending bounded context maps cleanly to{' '}
+    <a class="text-primary hover:underline" href={`${ghBase}/examples/lending/operational.json`}>
+      <code>examples/lending/operational.json</code>
+    </a>{' '}
+    — Bounded Context → <code>Domain</code>, Aggregate roots → <code>Resource</code>s, Domain services → <code
+      >Operation</code
+    >s, Application service → <code>Process</code>, Specifications → named condition <code>Rule</code>s.
+  </p>
+
+  {/* ──────────────────────────────────────────────────────────────── */}
+
+  <h2 id="bpmn" class="scroll-mt-24 mt-12">BPMN</h2>
+  <p>
+    <strong>BPMN 2.0</strong> (Business Process Model and Notation, OMG) is a graphical process-modeling notation. DNA is
+    a textual description of the broader business — process is one concern among many. The two overlap most in DNA's <code
+      >Process</code
+    > / <code>Step</code>{' '}
+    / <code>Task</code> primitives.
+  </p>
+
+  <h3>Concept mapping</h3>
+  <table>
+    <thead>
+      <tr><th>BPMN</th><th>DNA</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr
+        ><td>Process</td><td><code>Process</code></td><td
+          >1:1. DNA adds explicit <code>startStep</code> and an owning Resource-as-Role.</td
+        ></tr
+      >
+      <tr
+        ><td>Pool / Lane</td><td>Implicit via <code>Task.actor</code></td><td
+          >Swimlanes are computed by grouping Steps by their Task's actor — no separate primitive.</td
+        ></tr
+      >
+      <tr
+        ><td>Task (atomic activity)</td><td><code>Step</code> (orchestration) + <code>Task</code> (assignment)</td><td
+          >BPMN conflates these; DNA splits. The same Task can appear in multiple Steps across multiple Processes.</td
+        ></tr
+      >
+      <tr
+        ><td>Sequence Flow</td><td><code>Step.depends_on</code></td><td
+          >BPMN draws arrows; DNA enumerates predecessor IDs. AND-joins fall out naturally.</td
+        ></tr
+      >
+      <tr
+        ><td>Exclusive Gateway (XOR)</td><td><code>Step.conditions</code> + <code>Step.else</code></td><td
+          >Gate lives on the Step rather than as a separate node.</td
+        ></tr
+      >
+      <tr
+        ><td>Parallel Gateway (AND)</td><td>Multiple Steps with shared <code>depends_on</code></td><td
+          >Fan-out is implicit; fan-in is multiple IDs in <code>depends_on</code>.</td
+        ></tr
+      >
+      <tr
+        ><td>Start Event</td><td><code>Process.startStep</code> + a <code>Trigger</code> targeting the Process</td><td
+          >Split: <code>startStep</code> names where execution begins; the Trigger says how it gets initiated.</td
+        ></tr
+      >
+      <tr
+        ><td>Sub-Process</td><td>A separate <code>Process</code> chained via <code>Trigger.source: operation</code></td
+        ><td>DNA doesn't nest Processes inline.</td></tr
+      >
+      <tr
+        ><td>Boundary Events, Compensation</td><td>Not modeled</td><td
+          >Runtime workflow concerns — deferred to the planned workflow-cell.</td
+        ></tr
+      >
+    </tbody>
+  </table>
+
+  <h3>Where DNA intentionally differs</h3>
+  <ol>
+    <li>
+      <strong>DNA is textual, BPMN is graphical.</strong> DNA round-trips through git diffs cleanly; BPMN diagrams don't.
+    </li>
+    <li>
+      <strong>DNA separates orchestration (<code>Step</code>) from assignment (<code>Task</code>).</strong> Same <code
+        >(actor, operation)</code
+      > binding can appear in many Steps across many Processes.
+    </li>
+    <li>
+      <strong>No Sub-Process primitive.</strong> Processes that trigger other Processes via Operation chaining force a clean
+      boundary instead of nesting.
+    </li>
+    <li>
+      <strong>Actors modeled structurally.</strong> Tasks reference Actor-Resources; Memberships pin Users to Roles within
+      Groups — relationships BPMN doesn't formalize.
+    </li>
+  </ol>
+
+  <p>
+    <strong>Tooling intersection:</strong>{' '}
+    <code>@dna-codes/dna-adapters/output/mermaid</code> renders a flowchart per Process — recognizable to BPMN readers without
+    claiming BPMN compliance. An <code>input/bpmn</code>{' '}
+    adapter is not yet shipped; when written, it would surface each unmodeled construct (boundary events, inclusive gateways)
+    as an explicit warning.
+  </p>
+
+  {/* ──────────────────────────────────────────────────────────────── */}
+
+  <h2 id="archimate" class="scroll-mt-24 mt-12">ArchiMate</h2>
+  <p>
+    <strong>ArchiMate 3</strong> (The Open Group) is an enterprise-architecture modeling language spanning Business, Application,
+    and Technology layers across active / behavior / passive concerns. DNA's three layers align loosely; ArchiMate is broader
+    than DNA (it covers motivation, strategy, physical layers DNA doesn't model).
+  </p>
+
+  <h3>Layer alignment</h3>
+  <table>
+    <thead><tr><th>ArchiMate layer</th><th>DNA layer</th></tr></thead>
+    <tbody>
+      <tr><td>Motivation, Strategy</td><td>Out of scope — supplementary docs</td></tr>
+      <tr><td>Business</td><td>Operational</td></tr>
+      <tr><td>Application</td><td>Product (Core, API, UI)</td></tr>
+      <tr><td>Technology</td><td>Technical (Cell, Construct, Provider, Environment)</td></tr>
+      <tr><td>Physical, Implementation &amp; Migration</td><td>Out of scope</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Business-layer concept mapping</h3>
+  <table>
+    <thead><tr><th>ArchiMate</th><th>DNA</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr
+        ><td>Business Actor / Business Role</td><td
+          ><code>Person</code> + <code>Role</code> + <code>Membership</code></td
+        ><td
+          >ArchiMate distinguishes Actor (org entity) from Role (named function). DNA carries the distinction across
+          separate primitives.</td
+        ></tr
+      >
+      <tr
+        ><td>Business Collaboration</td><td>A <code>Group</code> with Memberships from multiple Roles</td><td
+          >A temporary aggregate of Roles working together.</td
+        ></tr
+      >
+      <tr
+        ><td>Business Process</td><td><code>Process</code> (with <code>Step</code>s and <code>Task</code>s)</td><td
+          >1:1 conceptually.</td
+        ></tr
+      >
+      <tr
+        ><td>Business Service</td><td><code>Operation</code> (when externally observable)</td><td
+          >A discrete, externally-meaningful unit of behavior.</td
+        ></tr
+      >
+      <tr
+        ><td>Business Object</td><td><code>Resource</code> (with attributes)</td><td
+          >A "concept used or produced by behavior."</td
+        ></tr
+      >
+      <tr
+        ><td>Business Event</td><td><code>Trigger</code> (initiation) + <code>Operation.changes</code> (state side)</td
+        ><td
+          >ArchiMate Events are abstract "things that happen"; DNA splits initiation (Trigger) from state mutation.</td
+        ></tr
+      >
+      <tr
+        ><td>Contract</td><td><code>Rule</code> (access + condition); Signal payload schemas at Product layer</td><td
+          >DNA formalizes the access/condition side as named, reusable Rules.</td
+        ></tr
+      >
+    </tbody>
+  </table>
+
+  <h3>When to reach for which</h3>
+  <ul>
+    <li>
+      <strong>Use ArchiMate</strong> for enterprise communication — motivation, strategy, multi-system landscape, stakeholder
+      analysis.
+    </li>
+    <li>
+      <strong>Use DNA</strong> when describing a system you intend to build, with rules tight enough to generate code, documentation,
+      and workflows from.
+    </li>
+    <li>
+      <strong>Use both</strong> — ArchiMate as the upstream architectural sketch, DNA as the downstream specification.
+    </li>
+  </ul>
+
+  {/* ──────────────────────────────────────────────────────────────── */}
+
+  <h2 id="c4" class="scroll-mt-24 mt-12">C4 Model</h2>
+  <p>
+    The <strong>C4 Model</strong> (Simon Brown, 2018) is a software-architecture diagramming technique with four levels: Context
+    → Container → Component → Code. Where DNA describes the <em>business</em> and lets code generation handle the rest, C4
+    starts with software and zooms in.
+  </p>
+
+  <h3>Level-by-level mapping</h3>
+  <table>
+    <thead><tr><th>C4 level</th><th>C4 scope</th><th>DNA equivalent</th></tr></thead>
+    <tbody>
+      <tr
+        ><td>Level 1: System Context</td><td>The system + its external dependencies</td><td
+          ><code>Domain</code> + external-system <code>Resource</code>s + cross-domain Triggers</td
+        ></tr
+      >
+      <tr
+        ><td>Level 2: Container</td><td>Deployable units (apps, services, databases)</td><td
+          >DNA <code>Cell</code> (Technical layer)</td
+        ></tr
+      >
+      <tr
+        ><td>Level 3: Component</td><td>Major building blocks inside a Container</td><td
+          >Not formally modeled — emerges from how Cells consume DNA</td
+        ></tr
+      >
+      <tr><td>Level 4: Code</td><td>Classes / functions inside a Component</td><td>Out of scope — generated</td></tr>
+      <tr
+        ><td>Deployment / Dynamic / Landscape diagrams</td><td>Supplementary views</td><td
+          >Deployment → <code>Environment</code> + <code>Provider</code>; Dynamic → <code>Process</code> flowcharts; Landscape
+          → Domain hierarchy</td
+        ></tr
+      >
+    </tbody>
+  </table>
+
+  <h3>Where C4 is genuinely better</h3>
+  <ul>
+    <li>
+      <strong>Quick architecture communication.</strong> A C4 diagram gets across a system's shape in 30 seconds; a DNA document
+      doesn't and isn't trying to. Render C4-style diagrams from your DNA for onboarding and exec briefings.
+    </li>
+    <li>
+      <strong>Multi-system landscape.</strong> C4's Landscape diagram is more practiced than DNA's "many domains side-by-side"
+      pattern.
+    </li>
+    <li>
+      <strong>Decomposition conversations.</strong> When teams debate "one component or three" / "should this be its own container,"
+      C4 has the vocabulary.
+    </li>
+  </ul>
+
+  <h3>Recommended workflow</h3>
+  <ol>
+    <li>Sketch C4 Context + Container diagrams during architecture exploration.</li>
+    <li>Convert once stable: Personas → Resources, Containers → Cells, adapters → DNA Technical adapters.</li>
+    <li>Author DNA as the source of truth going forward; render C4-style diagrams from it.</li>
+    <li>Keep C4 around for high-altitude conversations DNA isn't optimized for.</li>
+  </ol>
+
+  {/* ──────────────────────────────────────────────────────────────── */}
+
+  <h2 id="event-storming" class="scroll-mt-24 mt-12">Event Storming</h2>
+  <p>
+    <strong>Event Storming</strong> (Alberto Brandolini, 2013) is a collaborative discovery workshop — teams cover a wall
+    with colored sticky notes representing what happens in their domain. The output is structurally close to DNA: the colors
+    map almost 1:1.
+  </p>
+
+  <h3>Sticky-note color → DNA mapping</h3>
+  <table>
+    <thead><tr><th>Sticky</th><th>Workshop name</th><th>DNA primitive</th></tr></thead>
+    <tbody>
+      <tr
+        ><td>🟧 Orange</td><td>Domain Event</td><td
+          >No first-class event primitive in v1. State changes live in <code>Operation.changes</code> on the producing Operation.</td
+        ></tr
+      >
+      <tr
+        ><td>🟦 Blue</td><td>Command</td><td
+          ><code>Operation</code> (Resource.Action) — verb side becomes <code>Action</code>.</td
+        ></tr
+      >
+      <tr
+        ><td>🟨 Yellow</td><td>Actor / User</td><td
+          ><code>Person</code> or <code>Role</code> — workshop usually conflates them.</td
+        ></tr
+      >
+      <tr
+        ><td>🟪 Purple</td><td>Policy ("Whenever X, then Y")</td><td
+          ><code>Trigger</code> (<code>source: operation</code>) targeting the downstream Operation.</td
+        ></tr
+      >
+      <tr
+        ><td>🟩 Light green</td><td>Read Model / Information</td><td
+          >Not in Operational DNA — surface at Product UI Page or Product API Endpoint.</td
+        ></tr
+      >
+      <tr><td>🟫 Tan / Brown</td><td>Aggregate</td><td><code>Resource</code> with attributes and actions.</td></tr>
+      <tr><td>🟥 Red / Pink</td><td>Hot spot / Question</td><td>Not modeled — resolve before authoring DNA.</td></tr>
+      <tr
+        ><td>🌐 Wide light blue</td><td>External system</td><td
+          ><code>Resource</code> representing the integration + <code>Trigger</code> (<code>source: webhook</code>).</td
+        ></tr
+      >
+    </tbody>
+  </table>
+
+  <h3>Recommended workflow</h3>
+  <ol>
+    <li>Run Event Storming as you normally would — don't bake DNA structure into the workshop.</li>
+    <li>Take photos at workshop end. Resolve hot spots offline.</li>
+    <li>
+      Translate the wall into DNA in one pass, color by color (Tan → Resource, Blue → Operation, Yellow → Person/Role,
+      Purple → Trigger, etc.).
+    </li>
+    <li>Validate with <code>@dna-codes/dna-core</code>.</li>
+    <li>
+      The first DNA pass usually surfaces gaps (un-scoped Roles, missing payload fields). Run a short follow-up with the
+      team.
+    </li>
+  </ol>
+
+  <p>
+    <strong>Where DNA exceeds the workshop output:</strong> Scoping (Memberships + <code>Role.scope</code>) —
+    "Underwriter" on a sticky doesn't tell you Underwriter-of-what; DNA forces you to declare it. Step-level
+    orchestration — Storming chains Commands via Policies (graph-shaped), DNA's <code>Process</code> introduces explicit <code
+      >startStep</code
+    > and <code>depends_on</code>. Explicit state mutations — <code>Operation.changes</code> forces the answer the workshop
+    often leaves as "we'll figure it out."
+  </p>
+
+  {/* ──────────────────────────────────────────────────────────────── */}
+
+  <h2 id="togaf" class="scroll-mt-24 mt-12">TOGAF</h2>
+  <p>
+    <strong>TOGAF</strong> (The Open Group Architecture Framework) is a <em>method</em> for doing enterprise architecture
+    — not a modeling language. DNA is one kind of artifact a TOGAF practice would produce in the Business / Information Systems
+    Architecture phases. The two are complementary, not competing.
+  </p>
+
+  <h3>Where DNA fits in the ADM</h3>
+  <table>
+    <thead><tr><th>ADM Phase</th><th>DNA's role</th></tr></thead>
+    <tbody>
+      <tr><td>Preliminary</td><td>Establish DNA as the canonical description format.</td></tr>
+      <tr><td>A. Architecture Vision</td><td>Out of scope. Vision documents are prose + ArchiMate sketches.</td></tr>
+      <tr
+        ><td>B. Business Architecture</td><td
+          >DNA <code>Operational</code> is the deliverable — Resources, Operations, Roles, Processes.</td
+        ></tr
+      >
+      <tr
+        ><td>C. Information Systems Architecture (Data + Application)</td><td
+          >Data side: <code>Resource</code> + <code>Attribute</code> + <code>Relationship</code>. Application side: DNA <code
+            >Product</code
+          > documents.</td
+        ></tr
+      >
+      <tr
+        ><td>D. Technology Architecture</td><td
+          >DNA <code>Technical</code> documents — Cells, Constructs, Providers, Environments.</td
+        ></tr
+      >
+      <tr><td>E. Opportunities &amp; Solutions, F. Migration Planning</td><td>Out of scope.</td></tr>
+      <tr><td>G. Implementation Governance</td><td>DNA validation provides part of the conformance check.</td></tr>
+      <tr><td>H. Architecture Change Management</td><td>Out of scope.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Architecture domain alignment</h3>
+  <table>
+    <thead><tr><th>TOGAF domain</th><th>DNA layer</th></tr></thead>
+    <tbody>
+      <tr><td>Business Architecture</td><td>Operational</td></tr>
+      <tr
+        ><td>Data Architecture</td><td
+          >Operational (<code>Resource</code> + <code>Attribute</code> + <code>Relationship</code>)</td
+        ></tr
+      >
+      <tr><td>Application Architecture</td><td>Product (Core, API, UI)</td></tr>
+      <tr><td>Technology Architecture</td><td>Technical</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Where DNA exceeds TOGAF for a given system</h3>
+  <ul>
+    <li>
+      <strong>Executable specification.</strong> TOGAF deliverables describe what <em>should</em> exist; DNA describes what
+      <em>will</em> exist and is the input to code generation.
+    </li>
+    <li>
+      <strong>Cross-layer enforcement.</strong> A Product Resource must reference a real Operational Resource; an API Endpoint
+      must reference a real Operation.
+    </li>
+    <li>
+      <strong>Tighter actor model.</strong> TOGAF Actor/Role is loose; DNA's Memberships and <code>Role.scope</code> capture
+      authorization-shaped invariants.
+    </li>
+  </ul>
+
+  <h3>Where TOGAF exceeds DNA</h3>
+  <ul>
+    <li>
+      <strong>Governance, change management, capability management.</strong> TOGAF's value is largely in Phases A, E, F, G,
+      H — none of which are DNA's job.
+    </li>
+    <li>
+      <strong>Multi-system landscape.</strong> TOGAF's Architecture Continuum classifies reusable assets across many systems.
+    </li>
+    <li>
+      <strong>Stakeholder + requirements management.</strong> Phase A and the central Requirements Management ring are workshop/tracker
+      disciplines, not artifact shapes.
+    </li>
+  </ul>
+</DocsLayout>

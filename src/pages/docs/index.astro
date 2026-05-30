@@ -1,0 +1,48 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import Card from '~/components/docs/Card.astro';
+
+const metadata = {
+  title: 'Documentation — DNA Codes',
+  description: 'Describe your business; generate documentation, workflows, and software.',
+};
+---
+
+<PageLayout metadata={metadata}>
+  <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">DNA documentation</h1>
+      <p class="mt-4 text-lg text-gray-600 dark:text-slate-400">
+        Describe your business at three layers — what it does, what gets built, how it gets built — then generate
+        documentation, workflows, and software from one source of truth.
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-6 sm:grid-cols-2">
+      <Card
+        title="Getting Started"
+        description="Install, write your first DNA document, learn the three layers."
+        contents="Quickstart · Your first DNA"
+        href="/docs/getting-started"
+      />
+      <Card
+        title="Reference"
+        description="Every primitive in the language, sourced live from the schemas."
+        contents="Operational · Product · Technical"
+        href="/docs/operational"
+      />
+      <Card
+        title="Examples"
+        description="DNA modeled across real business domains."
+        contents="Lending · Mass Tort · Healthcare · Education · Manufacturing · Marketplace · Registry"
+        href="/docs/examples"
+      />
+      <Card
+        title="Framework Comparisons"
+        description="Mappings to the modeling frameworks you already know."
+        contents="DDD · BPMN · ArchiMate · C4 · Event Storming · TOGAF"
+        href="/docs/frameworks"
+      />
+    </div>
+  </section>
+</PageLayout>

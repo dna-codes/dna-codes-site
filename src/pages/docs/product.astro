@@ -1,0 +1,107 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import PrimitiveSection from '~/components/docs/PrimitiveSection.astro';
+import { slugify } from '~/utils/schema-doc';
+
+// Product Layer schemas — three sub-layers: Core, API, UI.
+import coreAction from '~schemas/product/core/action.json';
+import coreField from '~schemas/product/core/field.json';
+import coreOperation from '~schemas/product/core/operation.json';
+import coreResource from '~schemas/product/core/resource.json';
+
+import apiEndpoint from '~schemas/product/api/endpoint.json';
+import apiNamespace from '~schemas/product/api/namespace.json';
+import apiParam from '~schemas/product/api/param.json';
+import apiSchema from '~schemas/product/api/schema.json';
+
+import uiBlock from '~schemas/product/web/block.json';
+import uiLayout from '~schemas/product/web/layout.json';
+import uiPage from '~schemas/product/web/page.json';
+import uiRoute from '~schemas/product/web/route.json';
+
+const metadata = {
+  title: 'Product Layer Reference — DNA Codes',
+  description: 'What gets built — Core resources, API surface, and UI shell.',
+};
+
+type Primitive = { schema: typeof coreResource; related?: string[] };
+type Group = { label: string; description: string; primitives: Primitive[] };
+
+const groups: Group[] = [
+  {
+    label: 'Core',
+    description: 'Product-layer projections of Operational primitives — Resource, Action, Operation, Field.',
+    primitives: [
+      { schema: coreResource, related: ['Action', 'Operation', 'Field'] },
+      { schema: coreAction, related: ['Resource', 'Operation'] },
+      { schema: coreOperation, related: ['Resource', 'Action'] },
+      { schema: coreField, related: ['Resource'] },
+    ],
+  },
+  {
+    label: 'API',
+    description: 'REST surface — Endpoint, Namespace, Param, Schema.',
+    primitives: [
+      { schema: apiEndpoint, related: ['Namespace', 'Param', 'Schema'] },
+      { schema: apiNamespace, related: ['Endpoint'] },
+      { schema: apiParam, related: ['Endpoint'] },
+      { schema: apiSchema, related: ['Endpoint', 'Param'] },
+    ],
+  },
+  {
+    label: 'UI',
+    description: 'Web surface — Layout, Page, Route, Block.',
+    primitives: [
+      { schema: uiLayout, related: ['Page', 'Block'] },
+      { schema: uiPage, related: ['Layout', 'Route', 'Block'] },
+      { schema: uiRoute, related: ['Page'] },
+      { schema: uiBlock, related: ['Layout', 'Page'] },
+    ],
+  },
+];
+
+const anchors = groups.flatMap((g) =>
+  g.primitives.map((p) => ({
+    id: slugify(p.schema.title ?? ''),
+    label: p.schema.title ?? '',
+    group: g.label,
+  }))
+);
+
+const relatedHref = (name: string) => `#${slugify(name)}`;
+---
+
+<DocsLayout
+  metadata={metadata}
+  title="Product"
+  description="The second DNA layer — what gets built. Split into three sub-layers (Core, API, UI) that can be authored independently."
+  anchors={anchors}
+>
+  <p>
+    Product DNA describes what gets built on top of the Operational layer. It is split into three sub-layers that can be
+    authored independently:
+  </p>
+
+  <ul>
+    <li><strong>Core</strong> — materializes Operational concepts into product primitives.</li>
+    <li><strong>API</strong> — the REST surface.</li>
+    <li><strong>UI</strong> — the web surface.</li>
+  </ul>
+
+  {
+    groups.map((g) => (
+      <>
+        <h2 id={slugify(g.label)} class="scroll-mt-24 mt-12">
+          {g.label}
+        </h2>
+        <p>{g.description}</p>
+        {g.primitives.map((p) => (
+          <PrimitiveSection
+            schema={p.schema}
+            related={(p.related ?? []).map((r) => ({ label: r, href: relatedHref(r) }))}
+          />
+        ))}
+      </>
+    ))
+  }
+</DocsLayout>

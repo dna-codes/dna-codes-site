@@ -3,12 +3,11 @@ import { getBlogPermalink, getPermalink } from './utils/permalinks';
 export const headerData = {
   links: [
     { text: 'Playground', href: getPermalink('/playground') },
+    { text: 'Docs', href: getPermalink('/docs') },
     { text: 'Blog', href: getBlogPermalink() },
     // { text: 'Platform', href: getPermalink('/') },
     // { text: 'Pricing', href: getPermalink('/pricing') },
     // { text: 'About', href: getPermalink('/about') },
-    // { text: 'Docs', href: 'https://docs.dna.codes' },
-    // { text: 'Blog', href: getBlogPermalink() },
   ],
   actions: [
     // { text: 'Sign in', href: 'https://app.dna.codes', variant: 'tertiary' as const },

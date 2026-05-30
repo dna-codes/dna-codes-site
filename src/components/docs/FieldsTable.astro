@@ -1,0 +1,41 @@
+---
+export interface FieldRow {
+  name: string;
+  type: string;
+  required: boolean;
+  description: string;
+}
+
+export interface Props {
+  fields: FieldRow[];
+}
+
+const { fields } = Astro.props;
+---
+
+{
+  fields.length > 0 && (
+    <div class="not-prose my-4 overflow-x-auto rounded-lg border border-gray-200 dark:border-slate-700">
+      <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-slate-700">
+        <thead class="bg-gray-50 dark:bg-slate-800">
+          <tr>
+            <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-white">Field</th>
+            <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-white">Type</th>
+            <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-white">Required</th>
+            <th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-white">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-slate-800">
+          {fields.map((f) => (
+            <tr class="align-top">
+              <td class="px-4 py-2 font-mono text-xs text-gray-900 dark:text-white">{f.name}</td>
+              <td class="px-4 py-2 font-mono text-xs text-gray-600 dark:text-slate-400">{f.type}</td>
+              <td class="px-4 py-2 text-xs text-gray-600 dark:text-slate-400">{f.required ? 'yes' : '—'}</td>
+              <td class="px-4 py-2 text-gray-700 dark:text-slate-300">{f.description}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}

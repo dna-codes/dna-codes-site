@@ -1,0 +1,127 @@
+---
+// Sidebar nav for the /docs section.
+// Pattern: top-level buckets collapsed; the current bucket/layer expands inline
+// to show per-section anchors (derived from the page's H3 headings).
+
+export interface Anchor {
+  id: string;
+  label: string;
+  group?: string;
+}
+
+export interface Props {
+  currentPath: string;
+  anchors?: Anchor[];
+}
+
+const { currentPath, anchors = [] } = Astro.props;
+
+type Item = { label: string; href: string };
+type Section = { label: string; href: string; children?: Item[] };
+
+const sections: Section[] = [
+  { label: 'Getting Started', href: '/docs/getting-started' },
+  {
+    label: 'Reference',
+    href: '/docs/operational',
+    children: [
+      { label: 'Operational', href: '/docs/operational' },
+      { label: 'Product', href: '/docs/product' },
+      { label: 'Technical', href: '/docs/technical' },
+    ],
+  },
+  { label: 'Examples', href: '/docs/examples' },
+  { label: 'Frameworks', href: '/docs/frameworks' },
+];
+
+const isActive = (href: string) => currentPath === href || currentPath.startsWith(href + '/');
+const isInReference = ['/docs/operational', '/docs/product', '/docs/technical'].some(
+  (p) => currentPath === p || currentPath.startsWith(p + '/')
+);
+
+// Group anchors by their optional `group` field so the reference pages can
+// surface People / Structures / Activities (Operational) or Core / API / UI (Product).
+const groupedAnchors = anchors.reduce<Record<string, Anchor[]>>((acc, a) => {
+  const key = a.group ?? '';
+  if (!acc[key]) acc[key] = [];
+  acc[key].push(a);
+  return acc;
+}, {});
+const groupKeys = Object.keys(groupedAnchors);
+---
+
+<nav class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-4 text-sm" aria-label="Docs">
+  <ul class="space-y-2">
+    {
+      sections.map((section) => {
+        const active = isActive(section.href);
+        const showRefChildren = section.label === 'Reference' && isInReference;
+
+        return (
+          <li>
+            <a
+              href={section.href}
+              class:list={[
+                'block py-1 transition-colors',
+                active
+                  ? 'font-semibold text-primary'
+                  : 'text-gray-700 hover:text-primary dark:text-slate-300 dark:hover:text-primary',
+              ]}
+            >
+              {section.label}
+            </a>
+
+            {showRefChildren && section.children && (
+              <ul class="mt-1 ml-3 space-y-1 border-l border-gray-200 pl-3 dark:border-slate-700">
+                {section.children.map((child) => {
+                  const childActive = currentPath === child.href;
+                  return (
+                    <li>
+                      <a
+                        href={child.href}
+                        class:list={[
+                          'block py-0.5',
+                          childActive
+                            ? 'font-medium text-primary'
+                            : 'text-gray-600 hover:text-primary dark:text-slate-400 dark:hover:text-primary',
+                        ]}
+                      >
+                        {child.label}
+                      </a>
+
+                      {childActive && anchors.length > 0 && (
+                        <ul class="mt-1 ml-3 space-y-2 border-l border-gray-100 pl-3 dark:border-slate-800">
+                          {groupKeys.map((g) => (
+                            <li>
+                              {g && (
+                                <div class="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-500">
+                                  {g}
+                                </div>
+                              )}
+                              <ul class="space-y-0.5">
+                                {groupedAnchors[g].map((a) => (
+                                  <li>
+                                    <a
+                                      href={`#${a.id}`}
+                                      class="block py-0.5 text-gray-600 hover:text-primary dark:text-slate-400 dark:hover:text-primary"
+                                    >
+                                      {a.label}
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
