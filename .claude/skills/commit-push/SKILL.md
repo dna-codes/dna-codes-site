@@ -1,6 +1,6 @@
 ---
 name: commit-push
-description: Use this skill when the user says "/commit-push", "commit and push", "save and ship", "commit and push", or "commit then deploy". Stages, commits, and pushes to origin in one step — triggering the GitHub Actions build and deploy to GitHub Pages.
+description: Use this skill when the user says "/commit-push", "commit and push", "save and ship", "commit and push", or "commit then deploy". Stages, commits, and pushes to origin in one step — then watches the GitHub Actions build and the Deploy to GitHub Pages workflow through to completion, confirming the deploy succeeded.
 argument-hint: Optional commit message or scope hint
 allowed-tools:
   - Bash(git add:*)
@@ -11,6 +11,9 @@ allowed-tools:
   - Bash(git branch:*)
   - Bash(git push:*)
   - Bash(gh run list:*)
+  - Bash(gh run watch:*)
+  - Bash(gh run view:*)
+  - Bash(gh api:*)
   - Bash(npm run check:*)
   - Bash(npm run check)
   - Bash(npm run fix:*)
@@ -19,7 +22,7 @@ allowed-tools:
 
 # Commit-Push Skill
 
-Stage, commit, and push to origin in a single workflow. Combines the `/commit` and `/push` skills, with a lint gate before the commit lands.
+Stage, commit, and push to origin in a single workflow, then watch the build and deploy through to completion. Combines the `/commit` and `/push` skills, with a lint gate before the commit lands and a deploy-verification gate after. The skill is not done until the site has deployed (or you've reported a concrete failure).
 
 ## Steps
 
@@ -59,10 +62,39 @@ Stage, commit, and push to origin in a single workflow. Combines the `/commit` a
    git push origin main
    ```
 
-7. Report:
-   - Show the commit hash and message (mention any lint fixes rolled in)
-   - Confirm the push succeeded
-   - Tell the user GitHub Actions has been triggered and the site will deploy to GitHub Pages once the workflow passes
+7. Confirm the push succeeded and note the commit hash + message (mention any lint fixes rolled in). Do NOT report final success yet — the deploy still has to pass. Continue to Phase 3.
+
+### Phase 3 — Verify the deploy
+
+The point of this skill is shipping, not just pushing. A green push that fails to deploy is a failure. Always watch both workflows through to completion before reporting back.
+
+8. Find the **GitHub Actions** run for the commit you just pushed and watch it to completion:
+
+   ```bash
+   gh run list --branch main --limit 5
+   gh run watch <run-id> --exit-status
+   gh run view <run-id> --json status,conclusion,jobs -q '.status, .conclusion, (.jobs[] | "\(.name): \(.conclusion)")'
+   ```
+
+   - Match the run to your commit by title/SHA — don't watch a stale run.
+   - If the build or check job fails, the deploy will be skipped. Pull the logs (`gh run view <run-id> --log-failed`), fix the cause, and re-run the whole skill (new commit). Do not stop at a red build.
+
+9. Once GitHub Actions is green, the **Deploy to GitHub Pages** workflow fires via `workflow_run`. Watch it too:
+
+   ```bash
+   gh run list --workflow "Deploy to GitHub Pages" --limit 3
+   gh run watch <deploy-run-id> --exit-status
+   gh run view <deploy-run-id> --json status,conclusion,jobs -q '.status, .conclusion, (.jobs[] | "\(.name): \(.conclusion)")'
+   ```
+
+   - It may take a few seconds to appear after the build goes green — list again if it's not there yet.
+   - A `skipped` Deploy conclusion means the upstream build did not succeed — treat it as a failure and investigate.
+
+10. Final report only after the deploy is confirmed:
+    - Commit hash + message
+    - GitHub Actions result (per-job)
+    - Deploy result, and the live URL (`gh api repos/dna-codes/dna-codes-site/pages -q '.html_url'`)
+    - If anything failed, say so plainly with the failing job and next step — never imply success when the deploy is red or skipped.
 
 ## Notes
 
