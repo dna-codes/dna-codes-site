@@ -98,10 +98,9 @@ export default defineConfig({
     resolve: {
       alias: {
         '~': path.resolve(__dirname, './src'),
-        // Local-dev alias for the sibling `dna` repo's schemas package.
-        // Production will swap to the published `@dna-codes/dna-schemas` npm dep
-        // once the cross-repo workflow is wired (see openspec/changes/add-docs-section).
-        '~schemas': path.resolve(__dirname, '../dna/packages/schemas'),
+        // Resolves via the installed @dna-codes/dna-schemas package.
+        // Swap "file:../dna/packages/schemas" → published version once it ships to npm.
+        '~schemas': path.resolve(__dirname, 'node_modules/@dna-codes/dna-schemas'),
       },
     },
   },

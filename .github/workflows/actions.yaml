@@ -17,6 +17,10 @@ jobs:
           - 22
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: dna-codes/dna
+          path: ../dna
       - name: Use Node.js v${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -30,6 +34,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: dna-codes/dna
+          path: ../dna
       - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
