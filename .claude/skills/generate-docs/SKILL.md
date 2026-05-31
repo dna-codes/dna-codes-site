@@ -26,6 +26,8 @@ Bump the `@dna-codes/dna-schemas` package to a new published version and regener
 
 "Regenerating the docs" is just `npm run build`: the pages read the imported JSON at build time, so field and description changes flow through automatically. The one thing that does NOT flow automatically is the **set** of primitives — each reference page imports and lists its primitives by hand. Adding, removing, or renaming a schema therefore requires editing a page. This skill's real job is catching that.
 
+The same applies to the **Lenses** page (`src/pages/docs/lenses.astro`). Lenses ship in a _different_ package — `@dna-codes/dna-core` under `lenses/` — and resolve via the `~lenses` alias (`node_modules/@dna-codes/dna-core/lenses`) in `astro.config.ts` and `tsconfig.json`. Only the lens JSON is imported (never dna-core's JS runtime). The lenses page lists its six core lenses by hand, so an added/removed/renamed core lens needs a page edit too — reconcile it alongside the schema set (Phase 2 + Phase 4 below).
+
 ## Steps
 
 ### Phase 1 — Pick the target version
@@ -45,6 +47,15 @@ grep -rhoE "~schemas/[a-zA-Z0-9/_-]+\.json" src/pages/docs | sort -u
 ```
 
 The second command is the set of schemas the reference pages actually import. Keep both lists.
+
+If you are also bumping `@dna-codes/dna-core` (or just verifying the lenses page), snapshot the lens set the same way:
+
+```bash
+ls node_modules/@dna-codes/dna-core/lenses/*.json | xargs -n1 basename | sort
+grep -hoE "~lenses/[a-zA-Z0-9/_-]+\.json" src/pages/docs/lenses.astro | sort -u
+```
+
+`base.json` is the LensType contract, not a renderable lens — the page documents it in prose, so it is expected to appear in the package listing but **not** among the page's imports.
 
 ### Phase 3 — Install the new version
 
@@ -75,6 +86,8 @@ The second command is the set of schemas the reference pages actually import. Ke
    - **New schema files** that no page imports → add them. Each layer page (`src/pages/docs/{operational,product,technical}.astro`) imports the JSON, adds an entry to its `primitives`/`groups` array with sensible `related` links, and the sidebar `anchors` derive automatically. Match the existing grouping (e.g. Product's Core/API/UI sub-layers).
    - **Removed/renamed files** that a page still imports → the build will fail on the missing module. Remove or rename the import and its array entry.
    - **Unchanged set** → no page edits needed; field/description changes are picked up by the rebuild alone.
+
+   For **lenses** (`src/pages/docs/lenses.astro`), diff the Phase 2 lens snapshot the same way (ignoring `base.json`): a new lens → add an import and an entry to the right group (`Layer lenses` for node-only lenses, `Subgraph & traversal lenses` for ones with edges); a removed/renamed lens → fix the import or the build fails. Node/edge/sentence changes within an existing lens flow through on rebuild with no edit. The sidebar anchors derive automatically from the page's lens list.
 
 6. **Stability field.** The pages render a stability pill resolved by `getStability()` in `src/utils/schema-doc.ts`: it reads a schema's own top-level `stability` value (enum `experimental | beta | stable | deprecated`, defined in the schemas' base) and otherwise treats the primitive as `stable`. There is no curated map — the schema is the only source. Check which schemas actually declare a value:
 
@@ -116,5 +129,6 @@ The second command is the set of schemas the reference pages actually import. Ke
 ## Notes
 
 - npm-only is a hard rule: never reintroduce a `file:../dna/...` dependency or a sibling-repo checkout to generate docs. If a schema you need isn't published yet, say so rather than reaching for the local repo.
-- The schema-driven pages are `src/pages/docs/operational.astro`, `product.astro`, and `technical.astro`. Prose pages (`getting-started.astro`, `frameworks.astro`, `examples.astro`, `index.astro`) are not schema-driven — only update them if the user asks.
+- The schema-driven pages are `src/pages/docs/operational.astro`, `product.astro`, and `technical.astro` (from `@dna-codes/dna-schemas`), plus `lenses.astro` (generated from `@dna-codes/dna-core`'s `lenses/`). Prose pages (`getting-started.astro`, `frameworks.astro`, `examples.astro`, `index.astro`) are not schema-driven — only update them if the user asks.
+- npm-only applies to lenses too: the lens JSON must resolve from `node_modules/@dna-codes/dna-core/lenses` via the published package, never a sibling checkout.
 - If the user gives a version that isn't published yet, `npm install` will fail — surface the available versions from `npm view ... versions` instead of guessing.

@@ -6,7 +6,8 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["src/*"],
-      "~schemas/*": ["node_modules/@dna-codes/dna-schemas/*"]
+      "~schemas/*": ["node_modules/@dna-codes/dna-schemas/*"],
+      "~lenses/*": ["node_modules/@dna-codes/dna-core/lenses/*"]
     }
   },
   "include": [".astro/types.d.ts", "**/*"],

@@ -100,6 +100,9 @@ export default defineConfig({
         '~': path.resolve(__dirname, './src'),
         // Resolves via the @dna-codes/dna-schemas package published to npm.
         '~schemas': path.resolve(__dirname, 'node_modules/@dna-codes/dna-schemas'),
+        // Lens definitions ship in @dna-codes/dna-core under lenses/ (JSON only —
+        // the page imports these files; dna-core's JS runtime is never loaded).
+        '~lenses': path.resolve(__dirname, 'node_modules/@dna-codes/dna-core/lenses'),
       },
     },
   },

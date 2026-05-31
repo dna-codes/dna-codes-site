@@ -1,0 +1,118 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import LensSection from '~/components/docs/LensSection.astro';
+import { lensAnchor, type LensDoc } from '~/utils/lens-doc';
+
+// Lens definitions — imported directly from @dna-codes/dna-core (via the
+// ~lenses alias defined in astro.config.ts), which ships them under lenses/.
+// Only the JSON is imported; dna-core's JS runtime is never loaded. Lens
+// content stays in sync with the package; if a lens gains/loses a slot or
+// edge, the next build picks it up automatically.
+import operational from '~lenses/operational.json';
+import product from '~lenses/product.json';
+import technical from '~lenses/technical.json';
+import people from '~lenses/people.json';
+import accessControl from '~lenses/access-control.json';
+import execution from '~lenses/execution.json';
+
+const metadata = {
+  title: 'Lenses Reference — DNA Codes',
+  description: 'Named graph patterns over DNA — the layer, traversal, and subgraph lenses that ship with dna-core.',
+};
+
+type Entry = { lens: LensDoc };
+type Group = { label: string; description: string; lenses: Entry[] };
+
+const groups: Group[] = [
+  {
+    label: 'Layer lenses',
+    description: 'Each layer lens groups all the resource types in one DNA layer — nodes, no edges.',
+    lenses: [{ lens: operational }, { lens: product }, { lens: technical }],
+  },
+  {
+    label: 'Subgraph & traversal lenses',
+    description:
+      'These lenses connect resource types across relationships, with a sentence that reads the pattern aloud.',
+    lenses: [{ lens: people }, { lens: accessControl }, { lens: execution }],
+  },
+];
+
+// Sidebar anchors — flat list with group attribution so the sidebar can
+// render the Layer / Subgraph sub-headings (same mechanism as the per-layer pages).
+const anchors = groups.flatMap((g) =>
+  g.lenses.map((e) => ({
+    id: lensAnchor(e.lens),
+    label: e.lens.name,
+    group: g.label,
+  }))
+);
+---
+
+<DocsLayout
+  metadata={metadata}
+  title="Lenses"
+  description="A Lens is a named graph pattern over DNA — typed node slots joined by directed edges — that the same definition uses to both query the graph and assert bindings into it."
+  anchors={anchors}
+>
+  <p>
+    DNA's nouns (<strong>resource types</strong>) and its connections (<strong>relationship types</strong>) describe the
+    graph. A <strong>Lens</strong> names a <em>pattern</em> over that graph: a small set of typed node slots, the directed
+    edges between them, and an optional sentence that reads the pattern in plain language.
+  </p>
+
+  <p>The same Lens definition works in two directions:</p>
+
+  <ul>
+    <li>
+      <strong>Query</strong> — find every subgraph in a DNA document that matches the pattern (e.g. every
+      <em>subject holds assignment within boundary</em> binding that exists).
+    </li>
+    <li>
+      <strong>Command</strong> — assert a specific binding of the pattern into the graph (e.g. grant <em>this</em> subject
+      <em>that</em> assignment). No separate schema is needed for each direction.
+    </li>
+  </ul>
+
+  <h2 id="lenstype" class="scroll-mt-24 mt-12">The LensType contract</h2>
+
+  <p>
+    Every lens — the core ones below and any you declare inside a DNA document's <code>lenses</code> block — composes a shared
+    base contract:
+  </p>
+
+  <ul>
+    <li><code>name</code> — a human-readable name for the pattern.</li>
+    <li>
+      <code>nodes[]</code> — the typed slots. Each declares a <code>type</code> (the resource type it holds) and, when an
+      edge or the sentence references it, a <code>slot</code> identifier.
+    </li>
+    <li>
+      <code>edges[]</code> — directed connections between slots. Each declares <code>from</code> and <code>to</code> (slot
+      names) and <code>via</code> (the relationship type traversed). Layer lenses omit edges entirely.
+    </li>
+    <li>
+      <code>sentence</code> — an optional template with <code>{'{{slot}}'}</code> markers, one per declared slot, giving a
+      readable rendering of the pattern.
+    </li>
+  </ul>
+
+  <p>
+    The lenses below ship with <code>@dna-codes/dna-core</code> and fall into two shapes: <strong>layer lenses</strong>,
+    which group a whole layer's resource types with no edges, and <strong>subgraph &amp; traversal lenses</strong>,
+    which wire a few slots together along named relationships.
+  </p>
+
+  {
+    groups.map((g) => (
+      <>
+        <h2 id={lensAnchor({ name: g.label } as LensDoc)} class="scroll-mt-24 mt-12">
+          {g.label}
+        </h2>
+        <p>{g.description}</p>
+        {g.lenses.map((e) => (
+          <LensSection lens={e.lens} />
+        ))}
+      </>
+    ))
+  }
+</DocsLayout>
