@@ -24,6 +24,18 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
       </aside>
 
       <div class="min-w-0">
+        <!-- Mobile docs nav — the sidebar is hidden below lg, so surface it as a disclosure. -->
+        <details class="mb-8 rounded-lg border border-gray-200 lg:hidden dark:border-slate-700">
+          <summary
+            class="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white"
+          >
+            Docs menu
+          </summary>
+          <div class="border-t border-gray-200 px-4 py-3 dark:border-slate-700">
+            <Sidebar currentPath={currentPath} anchors={anchors} />
+          </div>
+        </details>
+
         {
           title && (
             <header class="mb-10 border-b border-gray-200 pb-6 dark:border-slate-700">
