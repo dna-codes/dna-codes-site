@@ -4,6 +4,7 @@ import Hero from '~/components/widgets/Hero.astro';
 import DnaHelix from '~/components/DnaHelix.astro';
 // import BiggerPicture from '~/components/widgets/BiggerPicture.astro';
 import OperationsLayerC from '~/components/widgets/OperationsLayerC.astro';
+import LensDemo from '~/components/widgets/LensDemo.astro';
 // import ProductLayer from '~/components/widgets/ProductLayer.astro';
 // import TechnologyLayer from '~/components/widgets/TechnologyLayer.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
@@ -34,25 +35,22 @@ const metadata = {
     />
 
     <Fragment slot="title">
-      Finally, process docs that<br />
-      <span class="text-accent">keep up with your business.</span>
-      <!-- Finally, give your processes<br />
-      <span class="text-accent">living DNA.</span> -->
-      <!-- Your processes are scattered.<br />
-      <span class="text-accent">Your team feels it.</span> -->
-      <!-- The source code for<br />
-      <span id="hero-rotating-word" class="text-accent">teams</span> -->
+      One model.<br />
+      <span class="text-accent">Every view.</span>
+      <!-- Finally, process docs that<br />
+      <span class="text-accent">keep up with your business.</span> -->
     </Fragment>
 
     <Fragment slot="subtitle">
-      Your operational DNA acts as the source of truth for every process your team runs —<br class="hidden md:block" />
-      structured, owned, and always current.
-      <!-- DNA Codes turns your existing SOPs into a living operations spec —<br class="hidden md:block" />
-      so your team always knows how things actually work. -->
-      <!-- DNA Codes turns your existing docs into a living operations spec —<br class="hidden md:block" />
-      with owners, SLAs, and flows your whole team can actually follow. -->
-      <!-- Encode Your Business Processes.<br class="hidden md:block" />
-      Build Your Digital DNA. -->
+      Describe your business once in DNA.<br class="hidden md:block" />
+      Operate it through various lenses.
+    </Fragment>
+
+    <!-- The demo lives in the hero's image slot so the headline flows straight into it. -->
+    <Fragment slot="image">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6">
+        <LensDemo />
+      </div>
     </Fragment>
   </Hero>
 
