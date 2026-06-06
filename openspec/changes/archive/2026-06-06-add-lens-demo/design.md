@@ -40,7 +40,7 @@ Render the two ops diagrams with hand-authored SVG/HTML + Tailwind, not a graph/
 
 ### D3 — Standalone framed section between hero and steps (O2) — REVISED
 
-**Decided during implementation (reverses the original in-place plan):** the demo ships as its own lightly-framed section placed directly **between the hero and the `OperationsLayerC` steps**, with a short intuitive headline ("One model. Every view."). `OperationsLayerC` is left fully intact — including its original Act 3 "Generate" output cards.
+**Decided during implementation (reverses the original in-place plan):** the demo ships as its own lightly-framed section placed directly **between the hero and the `OperationsLayerC` steps**, with a short intuitive headline ("One model. Endless views."). `OperationsLayerC` is left fully intact — including its original Act 3 "Generate" output cards.
 
 - **Why the change:** the in-place edit (folding the demo into Act 3) buried the demo three scroll-steps down and removed the well-liked "Generate" artifact cards. The product owner wanted the demo as a simple, intuitive framing bridge right under the hero — and to keep step 3 as it was. A standalone section reads as the thesis statement before the how-it-works steps, rather than competing with them.
 - **Original plan (rejected):** fold the demo into Act 3, replacing the prose/cards payoff. Rejected on placement (too deep) and because it sacrificed liked content.
