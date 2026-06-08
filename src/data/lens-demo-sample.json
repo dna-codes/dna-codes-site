@@ -1,310 +1,172 @@
 {
-  "domain": {
-    "name": "lending",
-    "path": "acme.finance.lending",
-    "description": "A consumer lending operation — the sample business behind the homepage lens demo.",
-    "resources": [
-      {
-        "id": "762e63f7-0a95-470c-be47-ee83135ef217",
-        "type": "resource",
-        "version": "1",
-        "name": "Loan",
-        "description": "A consumer loan application and the resulting loan.",
-        "attributes": [
-          {
-            "name": "amount",
-            "type": "number",
-            "required": true
-          },
-          {
-            "name": "status",
-            "type": "enum",
-            "values": ["pending", "under_review", "approved", "active", "declined"]
-          }
-        ],
-        "actions": [
-          {
-            "name": "Apply",
-            "type": "write"
-          },
-          {
-            "name": "Approve",
-            "type": "write"
-          },
-          {
-            "name": "Close",
-            "type": "write"
-          },
-          {
-            "name": "Disburse",
-            "type": "write"
-          }
-        ]
-      }
-    ],
-    "persons": [
-      {
-        "id": "4b52a769-1a5e-43b4-a050-3d494031b8a0",
-        "type": "person",
-        "version": "1",
-        "name": "Jordan",
-        "description": "Heads the lending team."
-      },
-      {
-        "id": "ee955a03-3f67-4eb8-b326-a127f0fd40bb",
-        "type": "person",
-        "version": "1",
-        "name": "Maya",
-        "description": "Front-line loan officer."
-      },
-      {
-        "id": "e64fefa9-8d5d-42a8-9576-83f4c304746f",
-        "type": "person",
-        "version": "1",
-        "name": "Devin",
-        "description": "Credit underwriter."
-      },
-      {
-        "id": "8ad0f0ea-93ef-4a63-ab30-b9174f4ec630",
-        "type": "person",
-        "version": "1",
-        "name": "Priya",
-        "description": "Closing & funding specialist."
-      },
-      {
-        "id": "faceb858-fa48-43ae-bba1-da6a425b2ff2",
-        "type": "person",
-        "version": "1",
-        "name": "Borrower",
-        "description": "External applicant who applies for a loan."
-      }
-    ],
-    "groups": [
-      {
-        "id": "3aa1d51c-cccb-45fd-97fc-3bb51f7a7dea",
-        "type": "group",
-        "version": "1",
-        "name": "LendingTeam",
-        "description": "The team that originates and services loans.",
-        "attributes": [
-          {
-            "name": "region",
-            "type": "string"
-          }
-        ]
-      }
-    ],
-    "roles": [
-      {
-        "id": "91ecd31d-5d98-4669-a44a-48cfa44bf2c5",
-        "type": "role",
-        "version": "1",
-        "name": "LendingManager",
-        "description": "Owns the lending process end to end.",
-        "scope": "LendingTeam"
-      },
-      {
-        "id": "c16a80a4-c7c5-44c8-bd8c-ffaf546f66d2",
-        "type": "role",
-        "version": "1",
-        "name": "LoanOfficer",
-        "description": "Takes applications and works with borrowers.",
-        "scope": "LendingTeam",
-        "parent": "LendingManager"
-      },
-      {
-        "id": "78864ae7-2e2b-44c8-acf1-7a3a4022fb2e",
-        "type": "role",
-        "version": "1",
-        "name": "Underwriter",
-        "description": "Reviews and approves loan applications.",
-        "scope": "LendingTeam",
-        "parent": "LendingManager"
-      },
-      {
-        "id": "8b107f0d-f505-4b27-8477-1247cd4ff101",
-        "type": "role",
-        "version": "1",
-        "name": "ClosingSpecialist",
-        "description": "Closes approved loans and disburses funds.",
-        "scope": "LendingTeam",
-        "parent": "LendingManager"
-      }
-    ]
-  },
-  "memberships": [
+  "name": "clearpath-lending",
+  "description": "A consumer lending team from application intake to fund disbursement.",
+  "resources": [
+    { "id": "company:clearpath", "type": "company", "name": "ClearPath Lending" },
+    { "id": "dept:lending", "type": "department", "name": "Lending Team" },
+
     {
-      "id": "92c14040-a6f3-4aec-899d-c1c4f54000dc",
-      "type": "membership",
-      "version": "1",
-      "name": "JordanLendingManager",
-      "person": "Jordan",
-      "role": "LendingManager",
-      "group": "LendingTeam"
+      "id": "position:lending-manager",
+      "type": "position",
+      "name": "Lending Manager",
+      "description": "Owns the lending process end to end, setting credit policy and resolving escalations across the team."
     },
     {
-      "id": "c01c6ae8-4799-4edd-989f-81cf689310ff",
-      "type": "membership",
-      "version": "1",
-      "name": "MayaLoanOfficer",
-      "person": "Maya",
-      "role": "LoanOfficer",
-      "group": "LendingTeam"
+      "id": "position:loan-officer",
+      "type": "position",
+      "name": "Loan Officer",
+      "description": "Works directly with borrowers from initial application through to final funding, serving as the primary point of contact."
     },
     {
-      "id": "ac0567fc-f59d-45ad-836d-8871df6798cd",
-      "type": "membership",
-      "version": "1",
-      "name": "DevinUnderwriter",
-      "person": "Devin",
-      "role": "Underwriter",
-      "group": "LendingTeam"
+      "id": "position:underwriter",
+      "type": "position",
+      "name": "Underwriter",
+      "description": "Assesses credit risk and borrower eligibility, issuing approval recommendations based on policy and financials."
     },
     {
-      "id": "feb019c3-0140-40a7-94a0-c3c47581f8ef",
-      "type": "membership",
-      "version": "1",
-      "name": "PriyaClosingSpecialist",
-      "person": "Priya",
-      "role": "ClosingSpecialist",
-      "group": "LendingTeam"
-    }
-  ],
-  "operations": [
-    {
-      "id": "aebd8b4f-7e15-4434-bcc5-d75550de0f5b",
-      "type": "operation",
-      "version": "1",
-      "target": "Loan",
-      "action": "Apply",
-      "name": "Loan.Apply",
-      "description": "Borrower submits a loan application.",
-      "changes": [
-        {
-          "attribute": "status",
-          "set": "under_review"
-        }
-      ]
+      "id": "position:closing-specialist",
+      "type": "position",
+      "name": "Closing Specialist",
+      "description": "Executes closing documentation and disburses approved funds, ensuring regulatory compliance at every step."
     },
+
+    { "id": "person:jordan", "type": "person", "name": "Jordan" },
+    { "id": "person:maya", "type": "person", "name": "Maya" },
+    { "id": "person:devin", "type": "person", "name": "Devin" },
+    { "id": "person:priya", "type": "person", "name": "Priya" },
+
     {
-      "id": "e5274ac2-da9d-4d08-aa15-0de238c6955b",
-      "type": "operation",
-      "version": "1",
-      "target": "Loan",
-      "action": "Approve",
-      "name": "Loan.Approve",
-      "description": "Underwriter approves the application.",
-      "changes": [
-        {
-          "attribute": "status",
-          "set": "approved"
-        }
-      ]
-    },
-    {
-      "id": "1533b069-6306-47f6-a431-8642ff2b64c5",
-      "type": "operation",
-      "version": "1",
-      "target": "Loan",
-      "action": "Close",
-      "name": "Loan.Close",
-      "description": "Closing specialist finalizes the loan.",
-      "changes": [
-        {
-          "attribute": "status",
-          "set": "active"
-        }
-      ]
-    },
-    {
-      "id": "a5342ed3-0fc7-43ac-8d55-209a4a033f35",
-      "type": "operation",
-      "version": "1",
-      "target": "Loan",
-      "action": "Disburse",
-      "name": "Loan.Disburse",
-      "description": "Funds are released to the borrower."
-    }
-  ],
-  "triggers": [
-    {
-      "id": "251e16c9-b001-40cd-9782-cefba9fcb76a",
-      "type": "trigger",
-      "version": "1",
-      "name": "BorrowerSubmitsApplication",
-      "process": "LoanOrigination",
-      "source": "user",
-      "description": "A borrower submits a loan application, starting origination."
-    }
-  ],
-  "tasks": [
-    {
-      "id": "b88fcbb6-446e-4134-a02a-896177ac4f32",
-      "type": "task",
-      "version": "1",
-      "name": "intake-loan",
-      "description": "Take the application.",
-      "actor": "LoanOfficer",
-      "operation": "Loan.Apply"
-    },
-    {
-      "id": "b733b4c2-3a3b-49d8-99bb-c1926ab8140b",
-      "type": "task",
-      "version": "1",
-      "name": "underwrite-loan",
-      "description": "Review and approve.",
-      "actor": "Underwriter",
-      "operation": "Loan.Approve"
-    },
-    {
-      "id": "af2672ce-27f3-423b-a9d0-f5809d743349",
-      "type": "task",
-      "version": "1",
-      "name": "close-loan",
-      "description": "Close the approved loan.",
-      "actor": "ClosingSpecialist",
-      "operation": "Loan.Close"
-    },
-    {
-      "id": "dca8293c-fe13-4926-b66e-ca30a3718531",
-      "type": "task",
-      "version": "1",
-      "name": "disburse-loan",
-      "description": "Release the funds.",
-      "actor": "ClosingSpecialist",
-      "operation": "Loan.Disburse"
-    }
-  ],
-  "processes": [
-    {
-      "id": "cf332d29-1c13-41c6-a55a-d29be3333a96",
+      "id": "process:loan-origination",
       "type": "process",
-      "version": "1",
-      "name": "LoanOrigination",
-      "description": "End-to-end loan origination, from application to disbursement.",
-      "operator": "LendingManager",
-      "startStep": "intake",
-      "steps": [
-        {
-          "id": "intake",
-          "task": "intake-loan"
-        },
-        {
-          "id": "underwrite",
-          "task": "underwrite-loan",
-          "depends_on": ["intake"]
-        },
-        {
-          "id": "close",
-          "task": "close-loan",
-          "depends_on": ["underwrite"]
-        },
-        {
-          "id": "disburse",
-          "task": "disburse-loan",
-          "depends_on": ["close"]
-        }
-      ]
+      "name": "Loan Origination",
+      "description": "End-to-end origination workflow from borrower application to fund disbursement."
+    },
+    {
+      "id": "step:intake",
+      "type": "step",
+      "name": "Intake Application",
+      "description": "Collect and verify borrower information, open a loan file, and confirm application completeness."
+    },
+    {
+      "id": "step:collect-docs",
+      "type": "step",
+      "name": "Collect Documents",
+      "description": "Gather income verification, tax returns, and borrower ID to complete the application file."
+    },
+    {
+      "id": "step:applicant-comm",
+      "type": "step",
+      "name": "Applicant Communication",
+      "description": "Keep borrowers informed of status, outstanding conditions, and next steps throughout the process."
+    },
+    {
+      "id": "step:credit-check",
+      "type": "step",
+      "name": "Run Credit Check",
+      "description": "Pull the borrower's credit report and score to establish a baseline for the underwriting review."
+    },
+    {
+      "id": "step:underwrite",
+      "type": "step",
+      "name": "Underwrite Loan",
+      "description": "Review the borrower's credit profile, debt-to-income ratio, and collateral against current lending policy."
+    },
+    {
+      "id": "step:risk-assessment",
+      "type": "step",
+      "name": "Risk Assessment",
+      "description": "Evaluate collateral value, loan-to-value ratio, and market risk to complete the credit recommendation."
+    },
+    {
+      "id": "step:exception-review",
+      "type": "step",
+      "name": "Exception Review",
+      "description": "Adjudicate loan applications that fall outside standard credit policy parameters, documenting rationale."
+    },
+    {
+      "id": "step:pipeline-mgmt",
+      "type": "step",
+      "name": "Pipeline Management",
+      "description": "Monitor active loan pipeline for SLA adherence, identify bottlenecks, and report on team throughput."
+    },
+    {
+      "id": "step:compliance-signoff",
+      "type": "step",
+      "name": "Compliance Sign-off",
+      "description": "Verify that each approved loan meets applicable regulatory and audit requirements before closing."
+    },
+    {
+      "id": "step:prepare-docs",
+      "type": "step",
+      "name": "Prepare Closing Documents",
+      "description": "Assemble and review all required closing documents, ensuring accuracy before the signing appointment."
+    },
+    {
+      "id": "step:close",
+      "type": "step",
+      "name": "Close Loan",
+      "description": "Prepare and execute closing documents, confirm borrower signatures, and satisfy outstanding conditions."
+    },
+    {
+      "id": "step:disburse",
+      "type": "step",
+      "name": "Disburse Funds",
+      "description": "Release approved funds to the borrower's designated account and update loan status to active."
     }
+  ],
+  "relationships": [
+    { "id": "rel:dept-co", "type": "belongs_to", "from": "dept:lending", "to": "company:clearpath" },
+
+    { "id": "rel:lm-dept", "type": "belongs_to", "from": "position:lending-manager", "to": "dept:lending" },
+    { "id": "rel:lo-dept", "type": "belongs_to", "from": "position:loan-officer", "to": "dept:lending" },
+    { "id": "rel:uw-dept", "type": "belongs_to", "from": "position:underwriter", "to": "dept:lending" },
+    { "id": "rel:cs-dept", "type": "belongs_to", "from": "position:closing-specialist", "to": "dept:lending" },
+
+    { "id": "rel:lo-lm", "type": "reports_to", "from": "position:loan-officer", "to": "position:lending-manager" },
+    { "id": "rel:uw-lm", "type": "reports_to", "from": "position:underwriter", "to": "position:lending-manager" },
+    {
+      "id": "rel:cs-lm",
+      "type": "reports_to",
+      "from": "position:closing-specialist",
+      "to": "position:lending-manager"
+    },
+
+    { "id": "rel:jordan-lm", "type": "fills", "from": "person:jordan", "to": "position:lending-manager" },
+    { "id": "rel:maya-lo", "type": "fills", "from": "person:maya", "to": "position:loan-officer" },
+    { "id": "rel:devin-uw", "type": "fills", "from": "person:devin", "to": "position:underwriter" },
+    { "id": "rel:priya-cs", "type": "fills", "from": "person:priya", "to": "position:closing-specialist" },
+
+    { "id": "rel:proc-co", "type": "belongs_to", "from": "process:loan-origination", "to": "company:clearpath" },
+    { "id": "rel:intake-proc", "type": "belongs_to", "from": "step:intake", "to": "process:loan-origination" },
+    { "id": "rel:uw-proc", "type": "belongs_to", "from": "step:underwrite", "to": "process:loan-origination" },
+    { "id": "rel:close-proc", "type": "belongs_to", "from": "step:close", "to": "process:loan-origination" },
+    { "id": "rel:disburse-proc", "type": "belongs_to", "from": "step:disburse", "to": "process:loan-origination" },
+
+    { "id": "rel:intake-uw", "type": "next_step", "from": "step:intake", "to": "step:underwrite" },
+    { "id": "rel:uw-close", "type": "next_step", "from": "step:underwrite", "to": "step:close" },
+    { "id": "rel:close-disburse", "type": "next_step", "from": "step:close", "to": "step:disburse" },
+
+    { "id": "rel:intake-lo", "type": "assigned_to", "from": "step:intake", "to": "position:loan-officer" },
+    { "id": "rel:collect-docs-lo", "type": "assigned_to", "from": "step:collect-docs", "to": "position:loan-officer" },
+    { "id": "rel:comm-lo", "type": "assigned_to", "from": "step:applicant-comm", "to": "position:loan-officer" },
+    { "id": "rel:credit-check-uw", "type": "assigned_to", "from": "step:credit-check", "to": "position:underwriter" },
+    { "id": "rel:uw-assigned", "type": "assigned_to", "from": "step:underwrite", "to": "position:underwriter" },
+    { "id": "rel:risk-uw", "type": "assigned_to", "from": "step:risk-assessment", "to": "position:underwriter" },
+    {
+      "id": "rel:exception-lm",
+      "type": "assigned_to",
+      "from": "step:exception-review",
+      "to": "position:lending-manager"
+    },
+    { "id": "rel:pipeline-lm", "type": "assigned_to", "from": "step:pipeline-mgmt", "to": "position:lending-manager" },
+    {
+      "id": "rel:compliance-lm",
+      "type": "assigned_to",
+      "from": "step:compliance-signoff",
+      "to": "position:lending-manager"
+    },
+    { "id": "rel:prepare-cs", "type": "assigned_to", "from": "step:prepare-docs", "to": "position:closing-specialist" },
+    { "id": "rel:close-cs", "type": "assigned_to", "from": "step:close", "to": "position:closing-specialist" },
+    { "id": "rel:disburse-cs", "type": "assigned_to", "from": "step:disburse", "to": "position:closing-specialist" }
   ]
 }
