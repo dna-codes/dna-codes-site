@@ -1,9 +1,10 @@
-// Lens-demo data layer — reads the resource-graph DNA sample and shapes it into
-// the four view-models the homepage demo renders: org chart, process flow,
-// runbook, and job descriptions. The sample uses the same resources[]+
-// relationships[] format as the graph-studio lens examples.
+// Lens-demo data layer — reads resource-graph DNA samples and shapes each into
+// four view-models: org chart, process flow, runbook, and job descriptions.
 
-import sample from '~/data/lens-demo-sample.json';
+import lendingSample from '~/data/lens-demo-sample.json';
+import clinicSample from '~/data/lens-demo-clinic.json';
+import ecommerceSample from '~/data/lens-demo-ecommerce.json';
+import softwareSample from '~/data/lens-demo-software.json';
 import peopleLens from '~lenses/people.json';
 import executionLens from '~lenses/execution.json';
 import { lensNodes, type LensDoc } from '~/utils/lens-doc';
@@ -29,15 +30,11 @@ interface ResourceGraph {
   relationships: RelationshipItem[];
 }
 
-const graph = sample as unknown as ResourceGraph;
-
-/** The lens definitions this demo renders through (used for labels + provenance). */
 export const peopleLensDef = peopleLens as unknown as LensDoc;
 export const executionLensDef = executionLens as unknown as LensDoc;
 
 const lensTypes = (lens: LensDoc): string[] => lensNodes(lens).map((n) => n.type);
 
-// Shared lookup helpers
 function byId(g: ResourceGraph) {
   return new Map(g.resources.map((r) => [r.id, r]));
 }
@@ -58,15 +55,12 @@ export interface OrgChart {
   selects: string[];
 }
 
-export function getOrgChart(): OrgChart {
+function buildOrgChart(graph: ResourceGraph): OrgChart {
   const lookup = byId(graph);
   const positions = graph.resources.filter((r) => r.type === 'position');
 
-  // fills: position id → person names
   const fillsMap = new Map<string, string[]>();
-  // reports_to: child position id → parent position id
   const reportsTo = new Map<string, string>();
-  // fills: person ids that are placed
   const placedPersons = new Set<string>();
 
   for (const rel of graph.relationships) {
@@ -120,17 +114,15 @@ export interface ProcessFlow {
   selects: string[];
 }
 
-export function getProcessFlow(): ProcessFlow {
+function buildProcessFlow(graph: ResourceGraph): ProcessFlow {
   const lookup = byId(graph);
   const process = graph.resources.find((r) => r.type === 'process');
   if (!process) return { processName: '', steps: [], selects: lensTypes(executionLensDef) };
 
-  // Steps belonging to this process
   const stepIds = new Set(
     graph.relationships.filter((r) => r.type === 'belongs_to' && r.to === process.id).map((r) => r.from)
   );
 
-  // next_step chain within this process
   const nextMap = new Map<string, string>();
   for (const rel of graph.relationships) {
     if (rel.type === 'next_step' && stepIds.has(rel.from) && stepIds.has(rel.to)) {
@@ -138,7 +130,6 @@ export function getProcessFlow(): ProcessFlow {
     }
   }
 
-  // assigned_to: step id → position name
   const assignedMap = new Map<string, string>();
   for (const rel of graph.relationships) {
     if (rel.type === 'assigned_to' && stepIds.has(rel.from)) {
@@ -147,7 +138,6 @@ export function getProcessFlow(): ProcessFlow {
     }
   }
 
-  // Order steps: start from the one not pointed to by any next_step
   const pointedTo = new Set(nextMap.values());
   const start = graph.resources.find((r) => stepIds.has(r.id) && !pointedTo.has(r.id));
   const ordered: ResourceItem[] = [];
@@ -159,7 +149,6 @@ export function getProcessFlow(): ProcessFlow {
     const nextId = nextMap.get(cur.id);
     cur = nextId ? lookup.get(nextId) : undefined;
   }
-  // Append any orphaned steps in declared order
   for (const r of graph.resources) {
     if (stepIds.has(r.id) && !seen.has(r.id)) ordered.push(r);
   }
@@ -188,8 +177,8 @@ export interface Runbook {
   items: RunbookItem[];
 }
 
-export function getRunbook(): Runbook {
-  const flow = getProcessFlow();
+function buildRunbook(graph: ResourceGraph): Runbook {
+  const flow = buildProcessFlow(graph);
   return {
     processName: flow.processName,
     items: flow.steps.map((s, i) => ({ n: i + 1, title: s.title, owner: s.actor, detail: s.description })),
@@ -218,11 +207,11 @@ export interface JobDescriptions {
   entries: JobDescEntry[];
 }
 
-export function getJobDescriptions(): JobDescriptions {
+function buildJobDescriptions(graph: ResourceGraph): JobDescriptions {
   const lookup = byId(graph);
   const positions = graph.resources.filter((r) => r.type === 'position');
+  const flow = buildProcessFlow(graph);
 
-  // fills: position id → person name
   const fillsMap = new Map<string, string>();
   for (const rel of graph.relationships) {
     if (rel.type === 'fills') {
@@ -231,13 +220,11 @@ export function getJobDescriptions(): JobDescriptions {
     }
   }
 
-  // reports_to: child position id → parent position id
   const reportsToMap = new Map<string, string>();
   for (const rel of graph.relationships) {
     if (rel.type === 'reports_to') reportsToMap.set(rel.from, rel.to);
   }
 
-  // department: walk belongs_to up from position until dept/company
   function deptOf(posId: string): string {
     for (const rel of graph.relationships) {
       if (rel.type === 'belongs_to' && rel.from === posId) {
@@ -248,14 +235,11 @@ export function getJobDescriptions(): JobDescriptions {
     return '';
   }
 
-  // assigned steps: position id → steps (in process order)
-  const flow = getProcessFlow();
   const stepsByPos = new Map<string, JobDescStep[]>();
   for (const rel of graph.relationships) {
     if (rel.type === 'assigned_to') {
       const step = lookup.get(rel.from);
       if (step?.type === 'step') {
-        // Use the ordered flow step to get description
         const flowStep = flow.steps.find((s) => s.id === step.id);
         const list = stepsByPos.get(rel.to) ?? [];
         list.push({ title: step.name, description: flowStep?.description ?? step.description });
@@ -280,6 +264,38 @@ export function getJobDescriptions(): JobDescriptions {
   });
 
   return { groupName: dept?.name ?? graph.name, entries };
+}
+
+// --- Multi-sample API -------------------------------------------------------
+
+export interface DemoSample {
+  key: string;
+  label: string;
+  org: OrgChart;
+  flow: ProcessFlow;
+  runbook: Runbook;
+  jd: JobDescriptions;
+}
+
+const SAMPLE_DEFS: { key: string; label: string; raw: unknown }[] = [
+  { key: 'clinic', label: 'Healthcare', raw: clinicSample },
+  { key: 'shop', label: 'E-commerce', raw: ecommerceSample },
+  { key: 'software', label: 'Engineering', raw: softwareSample },
+  { key: 'lending', label: 'Lending', raw: lendingSample },
+];
+
+export function getAllDemoSamples(): DemoSample[] {
+  return SAMPLE_DEFS.map(({ key, label, raw }) => {
+    const graph = raw as unknown as ResourceGraph;
+    return {
+      key,
+      label,
+      org: buildOrgChart(graph),
+      flow: buildProcessFlow(graph),
+      runbook: buildRunbook(graph),
+      jd: buildJobDescriptions(graph),
+    };
+  });
 }
 
 /** Humanize a kebab/snake identifier for display. */

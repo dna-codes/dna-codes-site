@@ -1,0 +1,135 @@
+{
+  "name": "nova-engineering",
+  "description": "A software engineering team delivering features from requirements through production deployment.",
+  "resources": [
+    { "id": "company:nova", "type": "company", "name": "Nova Engineering" },
+
+    {
+      "id": "position:eng-lead",
+      "type": "position",
+      "name": "Engineering Lead",
+      "description": "Owns the delivery roadmap, sets technical direction, and coordinates cross-functional priorities."
+    },
+    {
+      "id": "position:backend-eng",
+      "type": "position",
+      "name": "Backend Engineer",
+      "description": "Builds and maintains server-side logic, APIs, and data models."
+    },
+    {
+      "id": "position:frontend-eng",
+      "type": "position",
+      "name": "Frontend Engineer",
+      "description": "Implements user interfaces, handles client-state, and ensures cross-browser compatibility."
+    },
+    {
+      "id": "position:qa-eng",
+      "type": "position",
+      "name": "QA Engineer",
+      "description": "Designs test plans, runs regression suites, and tracks defects to closure."
+    },
+
+    { "id": "person:river", "type": "person", "name": "River" },
+    { "id": "person:arjun", "type": "person", "name": "Arjun" },
+    { "id": "person:nina", "type": "person", "name": "Nina" },
+    { "id": "person:leo", "type": "person", "name": "Leo" },
+
+    {
+      "id": "process:feature-delivery",
+      "type": "process",
+      "name": "Feature Delivery",
+      "description": "End-to-end cycle from feature spec through production deployment."
+    },
+    {
+      "id": "step:plan",
+      "type": "step",
+      "name": "Plan",
+      "description": "Define requirements, break down tasks, and assign work for the sprint."
+    },
+    {
+      "id": "step:build",
+      "type": "step",
+      "name": "Build",
+      "description": "Implement the feature across backend and frontend layers with unit test coverage."
+    },
+    {
+      "id": "step:review",
+      "type": "step",
+      "name": "Code Review",
+      "description": "Review pull requests for correctness, style, and test coverage before merge."
+    },
+    {
+      "id": "step:deploy",
+      "type": "step",
+      "name": "Deploy",
+      "description": "Merge to main, run CI, cut a release, and promote to production with observability checks."
+    },
+
+    {
+      "id": "step:api-design",
+      "type": "step",
+      "name": "API Design",
+      "description": "Define contracts, schemas, and versioning strategy for new endpoints."
+    },
+    {
+      "id": "step:ui-build",
+      "type": "step",
+      "name": "UI Development",
+      "description": "Translate designs into responsive components and wire up API integrations."
+    },
+    {
+      "id": "step:test-plan",
+      "type": "step",
+      "name": "Test Planning",
+      "description": "Write test cases covering happy paths, edge cases, and regression scenarios."
+    },
+    {
+      "id": "step:bug-report",
+      "type": "step",
+      "name": "Bug Reporting",
+      "description": "Document defects with reproduction steps, severity, and affected builds."
+    },
+    {
+      "id": "step:sprint-planning",
+      "type": "step",
+      "name": "Sprint Planning",
+      "description": "Prioritize the backlog and commit team capacity for the upcoming sprint."
+    }
+  ],
+  "relationships": [
+    { "id": "rel:el-co", "type": "belongs_to", "from": "position:eng-lead", "to": "company:nova" },
+    { "id": "rel:be-co", "type": "belongs_to", "from": "position:backend-eng", "to": "company:nova" },
+    { "id": "rel:fe-co", "type": "belongs_to", "from": "position:frontend-eng", "to": "company:nova" },
+    { "id": "rel:qa-co", "type": "belongs_to", "from": "position:qa-eng", "to": "company:nova" },
+
+    { "id": "rel:be-el", "type": "reports_to", "from": "position:backend-eng", "to": "position:eng-lead" },
+    { "id": "rel:fe-el", "type": "reports_to", "from": "position:frontend-eng", "to": "position:eng-lead" },
+    { "id": "rel:qa-el", "type": "reports_to", "from": "position:qa-eng", "to": "position:eng-lead" },
+
+    { "id": "rel:river-el", "type": "fills", "from": "person:river", "to": "position:eng-lead" },
+    { "id": "rel:arjun-be", "type": "fills", "from": "person:arjun", "to": "position:backend-eng" },
+    { "id": "rel:nina-fe", "type": "fills", "from": "person:nina", "to": "position:frontend-eng" },
+    { "id": "rel:leo-qa", "type": "fills", "from": "person:leo", "to": "position:qa-eng" },
+
+    { "id": "rel:proc-co", "type": "belongs_to", "from": "process:feature-delivery", "to": "company:nova" },
+    { "id": "rel:plan-proc", "type": "belongs_to", "from": "step:plan", "to": "process:feature-delivery" },
+    { "id": "rel:build-proc", "type": "belongs_to", "from": "step:build", "to": "process:feature-delivery" },
+    { "id": "rel:review-proc", "type": "belongs_to", "from": "step:review", "to": "process:feature-delivery" },
+    { "id": "rel:deploy-proc", "type": "belongs_to", "from": "step:deploy", "to": "process:feature-delivery" },
+
+    { "id": "rel:plan-build", "type": "next_step", "from": "step:plan", "to": "step:build" },
+    { "id": "rel:build-review", "type": "next_step", "from": "step:build", "to": "step:review" },
+    { "id": "rel:review-deploy", "type": "next_step", "from": "step:review", "to": "step:deploy" },
+
+    { "id": "rel:plan-el", "type": "assigned_to", "from": "step:plan", "to": "position:eng-lead" },
+    { "id": "rel:build-be", "type": "assigned_to", "from": "step:build", "to": "position:backend-eng" },
+    { "id": "rel:review-el", "type": "assigned_to", "from": "step:review", "to": "position:eng-lead" },
+    { "id": "rel:deploy-el", "type": "assigned_to", "from": "step:deploy", "to": "position:eng-lead" },
+
+    { "id": "rel:api-be", "type": "assigned_to", "from": "step:api-design", "to": "position:backend-eng" },
+    { "id": "rel:ui-fe", "type": "assigned_to", "from": "step:ui-build", "to": "position:frontend-eng" },
+    { "id": "rel:testplan-qa", "type": "assigned_to", "from": "step:test-plan", "to": "position:qa-eng" },
+    { "id": "rel:bug-qa", "type": "assigned_to", "from": "step:bug-report", "to": "position:qa-eng" },
+    { "id": "rel:sprint-el", "type": "assigned_to", "from": "step:sprint-planning", "to": "position:eng-lead" }
+  ]
+}
