@@ -113,52 +113,222 @@ function delay(ms: number): Promise<void> {
 // Derived from src/components/widgets/OperationsLayerC.astro so the playground
 // reads as a continuation of the homepage demo.
 
-const DNA_BY_PROCESS: Record<ProcessKey, string> = {
-  onboarding: `process: CustomerOnboarding
-  owner: CustomerSuccess
-  steps:
-    - welcome-email
-    - account-setup
-    - intro-call
-    - 30-day-check-in
-  triggers:
-    - new-signup
-    - plan-upgrade
-  sla: 24h response`,
-  launch: `process: ProductLaunch
-  owner: ProductTeam
-  steps:
-    - market-validation
-    - engineering-build
-    - gtm-prep
-    - launch-day
-    - post-launch-review
-  owners:
-    - Product
-    - Engineering
-    - Sales
-    - CustomerSuccess
-  triggers:
-    - roadmap-approval
-    - exec-signoff
-  sla: 90-day cycle`,
-  close: `process: MonthlyClose
-  owner: Finance
-  steps:
-    - close-books
-    - reconcile-accounts
-    - review-variance
-    - exec-report
-    - board-package
-  owners:
-    - Finance
-    - Operations
-    - Leadership
-  triggers:
-    - month-end
-    - quarter-end
-  sla: 5-day close`,
+// The DNA spec is the single source of truth for each process. RACI lives
+// *inside* the spec — every step carries its R/A/C/I assignment against the
+// process roles — so the RACI matrix can be derived directly from the spec
+// rather than maintained as a parallel, drift-prone table. The DNA text shown
+// in the panel and the RACI matrix are both generated from these objects, so
+// they can never disagree.
+
+interface StepRaci {
+  // Exactly one role is Accountable; one or more are Responsible. Consulted /
+  // Informed are optional. A role may appear as both A and R — Accountable wins
+  // when the matrix cell is rendered (see PRECEDENCE below).
+  responsible: string[];
+  accountable: string;
+  consulted?: string[];
+  informed?: string[];
+}
+
+interface ProcessStepSpec {
+  step: string; // kebab-case step id, e.g. "welcome-email"
+  raci: StepRaci;
+}
+
+interface ProcessSpec {
+  process: string;
+  owner: string;
+  sla: string;
+  roles: string[]; // column order of the RACI matrix
+  triggers: string[];
+  steps: ProcessStepSpec[];
+}
+
+const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
+  onboarding: {
+    process: 'CustomerOnboarding',
+    owner: 'CustomerSuccess',
+    sla: '24h response',
+    roles: ['CustomerSuccess', 'Sales', 'Ops', 'Finance'],
+    triggers: ['new-signup', 'plan-upgrade'],
+    steps: [
+      {
+        step: 'welcome-email',
+        raci: { accountable: 'CustomerSuccess', responsible: ['Ops'], informed: ['Sales', 'Finance'] },
+      },
+      {
+        step: 'account-setup',
+        raci: {
+          accountable: 'CustomerSuccess',
+          responsible: ['CustomerSuccess'],
+          consulted: ['Sales'],
+          informed: ['Ops', 'Finance'],
+        },
+      },
+      {
+        step: 'intro-call',
+        raci: { accountable: 'CustomerSuccess', responsible: ['Sales'], consulted: ['Ops'], informed: ['Finance'] },
+      },
+      {
+        step: '30-day-check-in',
+        raci: {
+          accountable: 'CustomerSuccess',
+          responsible: ['CustomerSuccess'],
+          consulted: ['Finance'],
+          informed: ['Sales', 'Ops'],
+        },
+      },
+    ],
+  },
+  launch: {
+    process: 'ProductLaunch',
+    owner: 'Product',
+    sla: '90-day cycle',
+    roles: ['Product', 'Engineering', 'Sales', 'CustomerSuccess'],
+    triggers: ['roadmap-approval', 'exec-signoff'],
+    steps: [
+      {
+        step: 'market-validation',
+        raci: {
+          accountable: 'Product',
+          responsible: ['Product'],
+          consulted: ['Engineering', 'Sales'],
+          informed: ['CustomerSuccess'],
+        },
+      },
+      {
+        step: 'engineering-build',
+        raci: {
+          accountable: 'Product',
+          responsible: ['Engineering'],
+          consulted: ['Product'],
+          informed: ['Sales', 'CustomerSuccess'],
+        },
+      },
+      {
+        step: 'gtm-prep',
+        raci: {
+          accountable: 'Product',
+          responsible: ['Sales'],
+          consulted: ['CustomerSuccess'],
+          informed: ['Engineering'],
+        },
+      },
+      {
+        step: 'launch-day',
+        raci: { accountable: 'Product', responsible: ['Engineering', 'Sales'], consulted: ['CustomerSuccess'] },
+      },
+      {
+        step: 'post-launch-review',
+        raci: {
+          accountable: 'Product',
+          responsible: ['Product'],
+          consulted: ['Engineering', 'Sales', 'CustomerSuccess'],
+        },
+      },
+    ],
+  },
+  close: {
+    process: 'MonthlyClose',
+    owner: 'Finance',
+    sla: '5-day close',
+    roles: ['Finance', 'Operations', 'Leadership', 'Audit'],
+    triggers: ['month-end', 'quarter-end'],
+    steps: [
+      {
+        step: 'close-books',
+        raci: {
+          accountable: 'Finance',
+          responsible: ['Finance'],
+          consulted: ['Operations'],
+          informed: ['Leadership', 'Audit'],
+        },
+      },
+      {
+        step: 'reconcile-accounts',
+        raci: {
+          accountable: 'Finance',
+          responsible: ['Finance'],
+          consulted: ['Operations', 'Audit'],
+          informed: ['Leadership'],
+        },
+      },
+      {
+        step: 'review-variance',
+        raci: {
+          accountable: 'Operations',
+          responsible: ['Operations'],
+          consulted: ['Finance'],
+          informed: ['Leadership', 'Audit'],
+        },
+      },
+      {
+        step: 'exec-report',
+        raci: {
+          accountable: 'Finance',
+          responsible: ['Finance'],
+          consulted: ['Operations'],
+          informed: ['Leadership', 'Audit'],
+        },
+      },
+      {
+        step: 'board-package',
+        raci: { accountable: 'Leadership', responsible: ['Finance'], consulted: ['Operations'], informed: ['Audit'] },
+      },
+    ],
+  },
 };
+
+// Accountable beats Responsible beats Consulted beats Informed when a role
+// carries more than one designation for a step.
+function raciCell(role: string, raci: StepRaci): RaciCell {
+  if (role === raci.accountable) return 'A';
+  if (raci.responsible.includes(role)) return 'R';
+  if (raci.consulted?.includes(role)) return 'C';
+  if (raci.informed?.includes(role)) return 'I';
+  return '';
+}
+
+// "welcome-email" → "Welcome email", "30-day-check-in" → "30 day check in"
+function prettyStep(step: string): string {
+  const spaced = step.replace(/-/g, ' ');
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
+function deriveRaci(spec: ProcessSpec): RaciResult {
+  return {
+    type: 'raci',
+    roles: spec.roles,
+    rows: spec.steps.map((s) => ({
+      process: prettyStep(s.step),
+      cells: spec.roles.map((role) => raciCell(role, s.raci)),
+    })),
+  };
+}
+
+// Renders the spec as the YAML-ish DNA text shown in the panel. RACI is shown
+// per step so the on-screen spec visibly contains what the matrix is built from.
+function renderDnaText(spec: ProcessSpec): string {
+  const fmtList = (xs?: string[]) => (xs && xs.length ? xs.join(', ') : '—');
+  const lines: string[] = [
+    `process: ${spec.process}`,
+    `owner: ${spec.owner}`,
+    `sla: ${spec.sla}`,
+    'roles:',
+    ...spec.roles.map((r) => `  - ${r}`),
+    'triggers:',
+    ...spec.triggers.map((t) => `  - ${t}`),
+    'steps:',
+  ];
+  for (const s of spec.steps) {
+    lines.push(`  - step: ${s.step}`);
+    lines.push(`    responsible: ${fmtList(s.raci.responsible)}`);
+    lines.push(`    accountable: ${s.raci.accountable}`);
+    lines.push(`    consulted: ${fmtList(s.raci.consulted)}`);
+    lines.push(`    informed: ${fmtList(s.raci.informed)}`);
+  }
+  return lines.join('\n');
+}
 
 const PROCESS_FLOW_BY_PROCESS: Record<ProcessKey, ProcessFlowResult> = {
   onboarding: {
@@ -191,39 +361,6 @@ const PROCESS_FLOW_BY_PROCESS: Record<ProcessKey, ProcessFlowResult> = {
       { name: 'Review variance', owner: 'Operations', timing: 'day 3' },
       { name: 'Exec report', owner: 'Finance', timing: 'day 4' },
       { name: 'Board package', owner: 'Leadership', timing: 'day 5' },
-    ],
-  },
-};
-
-const RACI_BY_PROCESS: Record<ProcessKey, RaciResult> = {
-  onboarding: {
-    type: 'raci',
-    roles: ['Ops', 'Sales', 'Customer Success', 'Finance'],
-    rows: [
-      { process: 'Onboarding', cells: ['A', 'C', 'R', 'I'] },
-      { process: 'Lead handoff', cells: ['I', 'R', 'A', 'I'] },
-      { process: 'Monthly close', cells: ['A', 'I', 'I', 'R'] },
-      { process: 'Vendor review', cells: ['R', 'C', 'I', 'A'] },
-    ],
-  },
-  launch: {
-    type: 'raci',
-    roles: ['Product', 'Engineering', 'Sales', 'Customer Success'],
-    rows: [
-      { process: 'Market validation', cells: ['R', 'C', 'I', 'I'] },
-      { process: 'Engineering build', cells: ['A', 'R', 'I', 'I'] },
-      { process: 'GTM prep', cells: ['C', 'I', 'R', 'A'] },
-      { process: 'Launch day', cells: ['A', 'R', 'R', 'R'] },
-    ],
-  },
-  close: {
-    type: 'raci',
-    roles: ['Finance', 'Operations', 'Leadership', 'Audit'],
-    rows: [
-      { process: 'Close books', cells: ['R', 'C', 'I', 'A'] },
-      { process: 'Reconcile accounts', cells: ['R', 'A', 'I', 'C'] },
-      { process: 'Variance review', cells: ['C', 'R', 'A', 'I'] },
-      { process: 'Board package', cells: ['A', 'I', 'R', 'I'] },
     ],
   },
 };
@@ -285,11 +422,11 @@ export async function convert(args: { from: From; to: To }): Promise<ConvertResu
 
   switch (to.type) {
     case 'dna':
-      return { type: 'dna', content: DNA_BY_PROCESS[key] };
+      return { type: 'dna', content: renderDnaText(PROCESS_SPECS[key]) };
     case 'process-flow':
       return PROCESS_FLOW_BY_PROCESS[key];
     case 'raci':
-      return RACI_BY_PROCESS[key];
+      return deriveRaci(PROCESS_SPECS[key]);
     case 'sop':
       return SOP_BY_PROCESS[key];
     case 'runbook':
