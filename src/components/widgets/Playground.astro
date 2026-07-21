@@ -1,5 +1,14 @@
 ---
 import { Icon } from 'astro-icon/components';
+
+const KNOWLEDGE_SOURCES = [
+  { name: 'Slack', icon: 'simple-icons:slack' },
+  { name: 'Notion', icon: 'simple-icons:notion' },
+  { name: 'Confluence', icon: 'simple-icons:confluence' },
+  { name: 'Docs', icon: 'simple-icons:googledocs' },
+  { name: 'Gmail', icon: 'simple-icons:gmail' },
+  { name: 'Zoom', icon: 'simple-icons:zoom' },
+];
 ---
 
 <section id="playground" class="py-12 sm:py-16">
@@ -12,12 +21,12 @@ import { Icon } from 'astro-icon/components';
         Playground
       </h1>
       <h2 class="text-3xl sm:text-4xl font-bold text-slate-100 mb-3">
-        Paste a transcript.<br class="sm:hidden" />
-        <span class="text-accent"> Watch it become DNA.</span>
+        Knowledge in.<br class="sm:hidden" />
+        <span class="text-accent"> Operating model out.</span>
       </h2>
       <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-        Drop in meeting notes or a process write-up. DNA Codes generates a living spec — and the artifacts your team
-        actually uses.
+        DNA Codes compiles meeting notes and docs into a living spec and generates the runbooks, SOPs, and agents your
+        team runs on.
       </p>
     </div>
 
@@ -34,7 +43,7 @@ import { Icon } from 'astro-icon/components';
               >
                 <span class="text-xs font-black text-primary font-mono">01</span>
               </div>
-              <span class="text-xs font-bold uppercase tracking-widest text-primary">Transcript</span>
+              <span class="text-xs font-bold uppercase tracking-widest text-primary">Input</span>
             </div>
             <div class="flex items-center gap-2">
               <label for="pg-example" class="sr-only">Load an example</label>
@@ -59,19 +68,18 @@ import { Icon } from 'astro-icon/components';
             placeholder="Pick an example above to load a transcript and watch it become DNA. Pasting your own transcript is coming soon."
           ></textarea>
 
-          <div class="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
-            <p class="text-xs text-slate-500 leading-snug">
-              Live conversion of your own transcripts is coming soon — pick an example to see it in action.
-            </p>
-            <button
-              id="pg-convert"
-              type="button"
-              disabled
-              title="Live conversion is coming soon"
-              class="btn-primary w-full sm:w-auto px-5 py-2.5 text-sm font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Convert
-            </button>
+          <div class="mt-3">
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500 mb-2">Works with</p>
+            <div class="flex flex-wrap gap-1.5">
+              {
+                KNOWLEDGE_SOURCES.map(({ name, icon }) => (
+                  <span class="inline-flex items-center gap-1.5 bg-slate-800/60 border border-white/10 rounded-lg px-2.5 py-1.5">
+                    <Icon name={icon} class="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                    <span class="text-xs text-slate-400">{name}</span>
+                  </span>
+                ))
+              }
+            </div>
           </div>
         </div>
 
@@ -147,23 +155,40 @@ import { Icon } from 'astro-icon/components';
                 >
                   Process Flow
                 </button>
+                <!-- RACI disabled — not used widely; re-enable by uncommenting this tab, the
+                     matching panel below, and 'raci' in the client script's OUTPUT_TYPES array.
                 <button
                   data-out="raci"
                   class="pg-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
                 >
                   RACI
                 </button>
+                -->
                 <button
                   data-out="sop"
                   class="pg-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
                 >
                   SOP
                 </button>
+                <!-- Runbook disabled — SOP kept instead; re-enable the same way as RACI above.
                 <button
                   data-out="runbook"
                   class="pg-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
                 >
                   Runbook
+                </button>
+                -->
+                <button
+                  data-out="agents"
+                  class="pg-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
+                >
+                  Agents
+                </button>
+                <button
+                  data-out="app"
+                  class="pg-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
+                >
+                  App
                 </button>
               </div>
             </div>
@@ -171,7 +196,14 @@ import { Icon } from 'astro-icon/components';
 
           <div class="p-4 sm:p-5 flex-1">
             {
-              ['process-flow', 'raci', 'sop', 'runbook'].map((t, i) => (
+              [
+                'process-flow',
+                // 'raci', // disabled — not used widely
+                'sop',
+                // 'runbook', // disabled — SOP kept instead
+                'agents',
+                'app',
+              ].map((t, i) => (
                 <div id={`out-${t}`} class:list={['pg-out', i === 0 ? '' : 'hidden']}>
                   <div data-state="empty" class="text-sm text-slate-500 italic min-h-[12rem] flex items-center">
                     Run a conversion to see this artifact.
@@ -298,7 +330,9 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
   };
 
   type ArtifactType = Exclude<ToType, 'dna'>;
-  const ARTIFACTS: ArtifactType[] = ['process-flow', 'raci', 'sop', 'runbook'];
+  // 'raci' and 'runbook' are disabled (see the tab strip and panel list above) but
+  // stay valid ArtifactType members so re-enabling them is a one-line change here.
+  const ARTIFACTS: ArtifactType[] = ['process-flow', 'sop', 'agents', 'app'];
 
   const $ = <T extends Element = Element>(sel: string, root: ParentNode = document) =>
     root.querySelector(sel) as T | null;
@@ -306,21 +340,14 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
     Array.from(root.querySelectorAll(sel)) as T[];
 
   const textarea = $<HTMLTextAreaElement>('#transcript-input');
-  const convertBtn = $<HTMLButtonElement>('#pg-convert');
   const exampleSelect = $<HTMLSelectElement>('#pg-example');
   const dnaPanel = $<HTMLElement>('#pg-dna-panel');
 
-  if (!textarea || !convertBtn || !exampleSelect || !dnaPanel) {
+  if (!textarea || !exampleSelect || !dnaPanel) {
     // Defensive — markup above guarantees these exist; if not, do nothing.
   } else {
     let currentDna = '';
     const inFlight: Partial<Record<'dna' | ArtifactType, AbortController>> = {};
-
-    // The Convert button is disabled until the live API lands — examples drive
-    // the demo. Keep it disabled regardless of textarea contents.
-    const setConvertEnabled = () => {
-      convertBtn.disabled = true;
-    };
 
     const setPanelState = (panel: HTMLElement, state: 'empty' | 'loading' | 'error' | 'ready') => {
       $$('[data-state]', panel).forEach((el) => {
@@ -558,6 +585,123 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
         <div class="space-y-2">${groups}</div>`;
     };
 
+    const renderAgentWorkflow = (r: Extract<ConvertResult, { type: 'agents' }>): string => {
+      const steps = r.steps ?? [];
+      const rows = steps.map((s, i) => {
+        const isLast = i === steps.length - 1;
+        const isAgent = s.actor === 'agent';
+        const actorBadge = isAgent
+          ? `<span class="rounded-full bg-cyan-500/20 border border-cyan-500/30 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-cyan-300">Agent</span>`
+          : `<span class="rounded-full bg-white/8 border border-white/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-400">Human</span>`;
+        const owner = s.owner
+          ? `<span class="rounded bg-white/8 px-1.5 py-0.5 text-xs text-slate-400">${escapeHtml(s.owner)}</span>`
+          : '';
+        const timing = s.timing ? `<span class="text-xs text-slate-500">${escapeHtml(s.timing)}</span>` : '';
+        const connector = isLast
+          ? ''
+          : `<div class="w-px flex-1 min-h-[16px] ${isAgent ? 'bg-cyan-500/30' : 'bg-white/10'} my-0.5"></div>`;
+        return `
+          <div class="flex gap-2.5">
+            <div class="flex flex-col items-center flex-shrink-0">
+              <div class="w-5 h-5 rounded-full border flex items-center justify-center ${isAgent ? 'bg-cyan-500/20 border-cyan-500/40' : 'bg-white/10 border-white/20'}">
+                <span class="text-[10px] font-bold ${isAgent ? 'text-cyan-300' : 'text-slate-300'}">${i + 1}</span>
+              </div>
+              ${connector}
+            </div>
+            <div class="pb-3">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <p class="text-sm text-slate-200 leading-tight">${escapeHtml(s.name ?? '')}</p>
+                ${actorBadge}
+              </div>
+              <div class="mt-1 flex items-center gap-2 flex-wrap">${owner}${timing}</div>
+            </div>
+          </div>`;
+      });
+      return `
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <span class="text-xs font-bold uppercase tracking-widest text-cyan-300 bg-cyan-500/20 border border-cyan-500/30 rounded-full px-2.5 py-1">
+            Agent Workflow
+          </span>
+          <span class="text-xs text-slate-500 font-mono">${escapeHtml(r.process ?? '')}</span>
+        </div>
+        <div>${rows.join('')}</div>`;
+    };
+
+    const renderApp = (r: Extract<ConvertResult, { type: 'app' }>): string => {
+      const badge = `
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <span class="text-xs font-bold uppercase tracking-widest text-orange-300 bg-orange-500/20 border border-orange-500/30 rounded-full px-2.5 py-1">
+            Application
+          </span>
+          <span class="text-xs text-slate-500 font-mono">generated UI</span>
+        </div>`;
+
+      if (r.kind === 'none') {
+        return `${badge}
+          <div class="min-h-[10rem] flex items-center justify-center text-center py-8">
+            <p class="text-sm text-slate-500 italic">${escapeHtml(r.emptyMessage ?? 'No application generated for this process.')}</p>
+          </div>`;
+      }
+
+      if (r.kind === 'stepper') {
+        const steps = r.steps ?? [];
+        const active = steps[0];
+        const nav = steps
+          .map(
+            (_, i) => `
+          <div class="flex items-center ${i === 0 ? '' : 'flex-1'}">
+            ${i > 0 ? '<div class="h-px flex-1 bg-white/10"></div>' : ''}
+            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${i === 0 ? 'bg-primary text-slate-950' : 'bg-white/10 text-slate-400 border border-white/15'}">${i + 1}</div>
+          </div>`
+          )
+          .join('');
+        const fields = (active?.fields ?? [])
+          .map(
+            (f) => `
+          <div>
+            <label class="block text-[10px] font-semibold uppercase tracking-wide text-slate-500 mb-1">${escapeHtml(f)}</label>
+            <div class="h-8 rounded-lg bg-slate-800/60 border border-slate-700"></div>
+          </div>`
+          )
+          .join('');
+        return `${badge}
+          <div class="rounded-xl border border-white/10 bg-slate-950/40 p-4">
+            <div class="text-sm font-semibold text-slate-200 mb-3">${escapeHtml(r.title ?? '')}</div>
+            <div class="flex items-center mb-4">${nav}</div>
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">${escapeHtml(active?.name ?? '')}</div>
+            <div class="space-y-3">${fields}</div>
+            <div class="mt-4 flex justify-end gap-2">
+              <button type="button" disabled class="text-xs font-semibold text-slate-500 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 cursor-not-allowed">Back</button>
+              <button type="button" disabled class="btn-primary text-xs font-semibold rounded-lg px-3 py-1.5 opacity-50 cursor-not-allowed">Continue</button>
+            </div>
+          </div>
+          <p class="mt-2 text-[11px] text-slate-500">Step 1 of ${steps.length}</p>`;
+      }
+
+      // kind === 'review'
+      const items = (r.reviewItems ?? [])
+        .map(
+          (it) => `
+        <div class="flex items-center justify-between gap-2 py-2 border-b border-white/5 last:border-0">
+          <span class="text-sm text-slate-300">${escapeHtml(it.label)}</span>
+          <span class="text-sm font-mono ${it.flagged ? 'text-amber-300' : 'text-slate-400'} flex items-center gap-1.5">
+            ${it.flagged ? '<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>' : ''}${escapeHtml(it.value)}
+          </span>
+        </div>`
+        )
+        .join('');
+      return `${badge}
+        <div class="rounded-xl border border-white/10 bg-slate-950/40 p-4">
+          <div class="text-sm font-semibold text-slate-200 mb-1">${escapeHtml(r.title ?? '')}</div>
+          <p class="text-xs text-slate-500 mb-3">Flagged rows exceed variance threshold.</p>
+          <div>${items}</div>
+          <div class="mt-4 flex justify-end gap-2">
+            <button type="button" disabled class="text-xs font-semibold text-slate-500 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 cursor-not-allowed">Escalate</button>
+            <button type="button" disabled class="btn-primary text-xs font-semibold rounded-lg px-3 py-1.5 opacity-50 cursor-not-allowed">Approve</button>
+          </div>
+        </div>`;
+    };
+
     const renderArtifact = (type: ArtifactType, result: ConvertResult) => {
       const panel = getArtifactPanel(type);
       if (!panel) return;
@@ -568,6 +712,8 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
       else if (type === 'raci' && result.type === 'raci') html = renderRaci(result);
       else if (type === 'sop' && result.type === 'sop') html = renderSop(result);
       else if (type === 'runbook' && result.type === 'runbook') html = renderRunbook(result);
+      else if (type === 'agents' && result.type === 'agents') html = renderAgentWorkflow(result);
+      else if (type === 'app' && result.type === 'app') html = renderApp(result);
       ready.innerHTML = html;
       setPanelState(panel, 'ready');
     };
@@ -590,7 +736,6 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
 
     const runDna = async (transcript: string) => {
       setPanelState(dnaPanel, 'loading');
-      convertBtn.disabled = true;
       try {
         const result = await convert({
           from: { type: 'transcript', content: transcript },
@@ -613,8 +758,6 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
           const p = getArtifactPanel(t);
           if (p) setPanelState(p, 'empty');
         });
-      } finally {
-        setConvertEnabled();
       }
     };
 
@@ -627,9 +770,6 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
       const p = getArtifactPanel(t);
       if (p) setPanelState(p, 'empty');
     });
-
-    // Convert is disabled until the live backend lands; examples drive the demo.
-    setConvertEnabled();
 
     exampleSelect.addEventListener('change', () => {
       const transcript = EXAMPLES[exampleSelect.value];

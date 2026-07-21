@@ -43,7 +43,7 @@ export default defineConfig({
           'database',
         ],
         logos: ['google-drive', 'notion', 'confluence', 'dropbox', 'slack', 'airtable', 'jira', 'asana', 'monday'],
-        'simple-icons': ['linear'],
+        'simple-icons': ['linear', 'slack', 'notion', 'confluence', 'googledocs', 'gmail', 'zoom'],
         mdi: ['microsoft-sharepoint'],
         ri: ['notion-fill'],
         devicon: ['slack'],

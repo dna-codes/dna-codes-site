@@ -8,7 +8,7 @@
 // should not require changes anywhere else.
 
 export type FromType = 'transcript' | 'dna';
-export type ToType = 'dna' | 'process-flow' | 'raci' | 'sop' | 'runbook';
+export type ToType = 'dna' | 'process-flow' | 'raci' | 'sop' | 'runbook' | 'agents' | 'app';
 
 export interface From {
   type: FromType;
@@ -63,7 +63,51 @@ export interface RunbookResult {
   groups: RunbookGroup[];
 }
 
-export type ConvertResult = DnaResult | ProcessFlowResult | RaciResult | SopResult | RunbookResult;
+export type AgentActor = 'agent' | 'human';
+
+export interface AgentWorkflowStep {
+  name: string;
+  actor: AgentActor;
+  owner?: string;
+  timing?: string;
+}
+
+export interface AgentsResult {
+  type: 'agents';
+  process: string;
+  steps: AgentWorkflowStep[];
+}
+
+export type AppKind = 'stepper' | 'review' | 'none';
+
+export interface AppStep {
+  name: string;
+  fields: string[];
+}
+
+export interface AppReviewItem {
+  label: string;
+  value: string;
+  flagged?: boolean;
+}
+
+export interface AppResult {
+  type: 'app';
+  kind: AppKind;
+  title?: string;
+  steps?: AppStep[];
+  reviewItems?: AppReviewItem[];
+  emptyMessage?: string;
+}
+
+export type ConvertResult =
+  | DnaResult
+  | ProcessFlowResult
+  | RaciResult
+  | SopResult
+  | RunbookResult
+  | AgentsResult
+  | AppResult;
 
 export class ConvertError extends Error {
   constructor(
@@ -389,6 +433,80 @@ const SOP_BY_PROCESS: Record<ProcessKey, SopResult> = {
   },
 };
 
+// Mirrors PROCESS_FLOW_BY_PROCESS but tags each step with who actually does
+// the work, so the same process reads as "where agents carry load vs. where a
+// human has to be in the loop" instead of just a list of steps.
+const AGENTS_BY_PROCESS: Record<ProcessKey, AgentsResult> = {
+  onboarding: {
+    type: 'agents',
+    process: 'CustomerOnboarding',
+    steps: [
+      { name: 'Welcome email sent', actor: 'agent', timing: 'on trigger' },
+      { name: 'CRM record enriched', actor: 'agent', timing: 'within minutes' },
+      { name: 'Account setup call', actor: 'human', owner: 'Customer Success', timing: 'within 24h' },
+      { name: 'Call notes summarized', actor: 'agent', timing: 'after call' },
+      { name: 'Intro walkthrough', actor: 'human', owner: 'Customer Success', timing: 'day 3' },
+      { name: '30-day check-in', actor: 'human', owner: 'Customer Success', timing: 'day 30' },
+    ],
+  },
+  launch: {
+    type: 'agents',
+    process: 'ProductLaunch',
+    steps: [
+      { name: 'Market validation', actor: 'human', owner: 'Product', timing: 'week 1' },
+      { name: 'Engineering build', actor: 'human', owner: 'Engineering', timing: 'weeks 2–10' },
+      { name: 'Release notes drafted', actor: 'agent', timing: 'week 11' },
+      { name: 'GTM prep', actor: 'human', owner: 'Sales', timing: 'week 11' },
+      { name: 'Launch day', actor: 'human', owner: 'Cross-functional', timing: 'week 12' },
+      { name: 'Post-launch metrics summarized', actor: 'agent', timing: 'week 14' },
+    ],
+  },
+  close: {
+    type: 'agents',
+    process: 'MonthlyClose',
+    steps: [
+      { name: 'Transactions reconciled', actor: 'agent', timing: 'day 1' },
+      { name: 'Close books', actor: 'human', owner: 'Finance', timing: 'day 1' },
+      { name: 'Variance flagged', actor: 'agent', timing: 'day 2' },
+      { name: 'Review variance', actor: 'human', owner: 'Operations', timing: 'day 3' },
+      { name: 'Exec report drafted', actor: 'agent', timing: 'day 4' },
+      { name: 'Board package', actor: 'human', owner: 'Leadership', timing: 'day 5' },
+    ],
+  },
+};
+
+// One generated UI per process — deliberately uneven, since not every process
+// warrants an application. Launch stays blank on purpose.
+const APP_BY_PROCESS: Record<ProcessKey, AppResult> = {
+  onboarding: {
+    type: 'app',
+    kind: 'stepper',
+    title: 'Account Setup',
+    steps: [
+      { name: 'Company details', fields: ['Company name', 'Industry', 'Team size'] },
+      { name: 'Plan & billing', fields: ['Plan tier', 'Billing contact', 'Payment method'] },
+      { name: 'Integrations', fields: ['SSO provider', 'Data import source'] },
+      { name: 'Review & launch', fields: ['Assigned CSM', 'Confirm settings'] },
+    ],
+  },
+  launch: {
+    type: 'app',
+    kind: 'none',
+    emptyMessage: 'Product Launch doesn’t need an operational UI — no application generated for this process.',
+  },
+  close: {
+    type: 'app',
+    kind: 'review',
+    title: 'Review Variance',
+    reviewItems: [
+      { label: 'Marketing spend', value: '+12% vs budget', flagged: true },
+      { label: 'Payroll', value: '-2% vs budget' },
+      { label: 'Software & tools', value: '+34% vs budget', flagged: true },
+      { label: 'Travel & entertainment', value: '-18% vs budget' },
+    ],
+  },
+};
+
 const RUNBOOK: RunbookResult = {
   type: 'runbook',
   groups: [
@@ -431,6 +549,10 @@ export async function convert(args: { from: From; to: To }): Promise<ConvertResu
       return SOP_BY_PROCESS[key];
     case 'runbook':
       return RUNBOOK;
+    case 'agents':
+      return AGENTS_BY_PROCESS[key];
+    case 'app':
+      return APP_BY_PROCESS[key];
     default: {
       const _exhaustive: never = to.type;
       throw new ConvertError('Unsupported output type.', _exhaustive);
