@@ -642,14 +642,46 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
         <div>${rows.join('')}</div>`;
     };
 
+    const API_METHOD_CLASS: Record<string, string> = {
+      GET: 'bg-sky-500/20 text-sky-300',
+      POST: 'bg-emerald-500/20 text-emerald-300',
+      PATCH: 'bg-amber-500/20 text-amber-300',
+      DELETE: 'bg-rose-500/20 text-rose-300',
+    };
+
+    const renderApiSection = (api: NonNullable<Extract<ConvertResult, { type: 'app' }>['api']>): string => {
+      if (!api.length) return '';
+      const rows = api
+        .map(
+          (ep) => `
+        <div class="flex items-start gap-2.5 py-2 border-b border-white/5 last:border-0">
+          <span class="flex-shrink-0 w-14 text-center text-[10px] font-bold rounded px-1.5 py-0.5 ${API_METHOD_CLASS[ep.method] ?? 'bg-white/10 text-slate-300'}">${ep.method}</span>
+          <div class="min-w-0">
+            <div class="text-xs font-mono text-slate-300 truncate">${escapeHtml(ep.path)}</div>
+            <div class="text-xs text-slate-500">${escapeHtml(ep.description)}</div>
+          </div>
+        </div>`
+        )
+        .join('');
+      return `
+        <div class="mt-4 rounded-xl border border-white/10 bg-slate-950/40 p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-widest text-orange-300">Generated API</span>
+            <span class="text-xs text-slate-500 font-mono">REST</span>
+          </div>
+          <div>${rows}</div>
+        </div>`;
+    };
+
     const renderApp = (r: Extract<ConvertResult, { type: 'app' }>): string => {
       const badge = `
         <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
           <span class="text-xs font-bold uppercase tracking-widest text-orange-300 bg-orange-500/20 border border-orange-500/30 rounded-full px-2.5 py-1">
             Application
           </span>
-          <span class="text-xs text-slate-500 font-mono">generated UI</span>
+          <span class="text-xs text-slate-500 font-mono">generated UI + API</span>
         </div>`;
+      const apiSection = renderApiSection(r.api ?? []);
 
       if (r.kind === 'none') {
         return `${badge}
@@ -690,7 +722,8 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
               <button type="button" disabled class="btn-primary text-xs font-semibold rounded-lg px-3 py-1.5 opacity-50 cursor-not-allowed">Continue</button>
             </div>
           </div>
-          <p class="mt-2 text-[11px] text-slate-500">Step 1 of ${steps.length}</p>`;
+          <p class="mt-2 text-[11px] text-slate-500">Step 1 of ${steps.length}</p>
+          ${apiSection}`;
       }
 
       // kind === 'review'
@@ -714,7 +747,8 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
             <button type="button" disabled class="text-xs font-semibold text-slate-500 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 cursor-not-allowed">Escalate</button>
             <button type="button" disabled class="btn-primary text-xs font-semibold rounded-lg px-3 py-1.5 opacity-50 cursor-not-allowed">Approve</button>
           </div>
-        </div>`;
+        </div>
+        ${apiSection}`;
     };
 
     const renderArtifact = (type: ArtifactType, result: ConvertResult) => {
