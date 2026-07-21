@@ -91,6 +91,14 @@ export interface AppReviewItem {
   flagged?: boolean;
 }
 
+export type ApiMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+
+export interface AppApiEndpoint {
+  method: ApiMethod;
+  path: string;
+  description: string;
+}
+
 export interface AppResult {
   type: 'app';
   kind: AppKind;
@@ -98,6 +106,7 @@ export interface AppResult {
   steps?: AppStep[];
   reviewItems?: AppReviewItem[];
   emptyMessage?: string;
+  api?: AppApiEndpoint[];
 }
 
 export type ConvertResult =
@@ -154,54 +163,159 @@ function delay(ms: number): Promise<void> {
 }
 
 // ── Canned payloads ────────────────────────────────────────────────────────
-// Derived from src/components/widgets/OperationsLayerC.astro so the playground
-// reads as a continuation of the homepage demo.
-
-// The DNA spec is the single source of truth for each process. RACI lives
-// *inside* the spec — every step carries its R/A/C/I assignment against the
-// process roles — so the RACI matrix can be derived directly from the spec
-// rather than maintained as a parallel, drift-prone table. The DNA text shown
-// in the panel and the RACI matrix are both generated from these objects, so
-// they can never disagree.
+// Vocabulary matches the Operational + Product schemas documented at
+// /docs/operational and /docs/product (@dna-codes/dna-schemas): a Resource
+// declares attributes[] and an actions[] catalog (read/write/destructive);
+// an Operation is a Resource.Action pair; a Process is an ordered set of
+// steps, each a Role performing one Operation (a Task).
+//
+// The 02 panel shows a *simplified* projection of the spec below — resource
+// shape, action catalog, and the process's core steps only (see
+// renderDnaText). The 03 output tabs read the full spec: Process Flow / SOP
+// show the core steps; Agents shows every step including agent-only
+// automation (e.g. "CRM record enriched") that never appears in the
+// simplified panel; App derives its form/review UI directly from the
+// Resource's attributes[], and its "Generated API" from whichever actions[]
+// entries declare an HTTP `method` (the rest are internal-only Operations,
+// invoked by Tasks rather than called over the API).
 
 interface StepRaci {
   // Exactly one role is Accountable; one or more are Responsible. Consulted /
   // Informed are optional. A role may appear as both A and R — Accountable wins
-  // when the matrix cell is rendered (see PRECEDENCE below).
+  // when the matrix cell is rendered (see raciCell PRECEDENCE below).
   responsible: string[];
   accountable: string;
   consulted?: string[];
   informed?: string[];
 }
 
-interface ProcessStepSpec {
-  step: string; // kebab-case step id, e.g. "welcome-email"
-  raci: StepRaci;
+interface DnaAttribute {
+  name: string; // snake_case, matches product/core/field
+  label: string;
+  type: 'string' | 'number' | 'boolean' | 'date' | 'enum';
+  required?: boolean;
+  values?: string[]; // when type === 'enum'
 }
 
+type DnaActionType = 'read' | 'write' | 'destructive';
+
+interface DnaAction {
+  name: string; // PascalCase verb
+  type: DnaActionType;
+  description: string;
+  // Present only when this action is exposed as a public API endpoint (see
+  // deriveApi). Actions without a method are internal — invoked by a Task
+  // within the process, not callable directly.
+  method?: ApiMethod;
+}
+
+interface DnaResource {
+  name: string; // PascalCase, e.g. "Account"
+  domain: string;
+  attributes: DnaAttribute[];
+  actions: DnaAction[];
+  // Representative instance rows — used as stub data for review-style App UIs.
+  examples?: Record<string, unknown>[];
+}
+
+interface ProcessStep {
+  id: string; // kebab-case
+  label: string;
+  actor: 'agent' | 'human';
+  owner?: string; // display role, human steps only
+  timing?: string;
+  core: boolean; // shown in the simplified 02 panel, Process Flow, SOP, and RACI
+  raci?: StepRaci; // set on core steps only
+}
+
+type AppSpec =
+  | { kind: 'stepper'; title: string; uiSteps: { name: string; fields: string[] }[] }
+  | { kind: 'review'; title: string; reviewFields: { label: string; value: string; flagged?: string } }
+  | { kind: 'none'; emptyMessage: string };
+
 interface ProcessSpec {
-  process: string;
-  owner: string;
+  process: string; // PascalCase
+  title: string; // display name
+  operator: string; // PascalCase Role
+  operatorLabel: string; // display name
   sla: string;
-  roles: string[]; // column order of the RACI matrix
+  roles: string[]; // RACI column order
   triggers: string[];
-  steps: ProcessStepSpec[];
+  resource: DnaResource;
+  steps: ProcessStep[];
+  app: AppSpec;
 }
 
 const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
   onboarding: {
     process: 'CustomerOnboarding',
-    owner: 'CustomerSuccess',
+    title: 'Customer Onboarding',
+    operator: 'CustomerSuccess',
+    operatorLabel: 'Customer Success Team',
     sla: '24h response',
     roles: ['CustomerSuccess', 'Sales', 'Ops', 'Finance'],
     triggers: ['new-signup', 'plan-upgrade'],
+    resource: {
+      name: 'Account',
+      domain: 'dna.success.onboarding',
+      attributes: [
+        { name: 'company_name', label: 'Company name', type: 'string', required: true },
+        { name: 'industry', label: 'Industry', type: 'string' },
+        { name: 'team_size', label: 'Team size', type: 'number' },
+        { name: 'plan_tier', label: 'Plan tier', type: 'enum', values: ['free', 'pro', 'enterprise'] },
+        { name: 'billing_contact', label: 'Billing contact', type: 'string' },
+        { name: 'payment_method', label: 'Payment method', type: 'string' },
+        { name: 'sso_provider', label: 'SSO provider', type: 'string' },
+        { name: 'data_import_source', label: 'Data import source', type: 'string' },
+        { name: 'assigned_csm', label: 'Assigned CSM', type: 'string' },
+      ],
+      actions: [
+        { name: 'CompleteSetup', type: 'write', method: 'POST', description: 'Finalize setup and assign a CSM' },
+        { name: 'SendWelcomeEmail', type: 'write', description: 'Send the automated welcome email' },
+        { name: 'EnrichCrmRecord', type: 'write', description: 'Enrich the CRM record from signup data' },
+        { name: 'BookIntroCall', type: 'write', description: 'Book the intro call' },
+        { name: 'SummarizeCallNotes', type: 'write', description: 'Summarize intro call notes' },
+        { name: 'RunWalkthrough', type: 'write', description: 'Walk the account through the product' },
+        { name: 'CompleteCheckIn', type: 'write', description: 'Complete the 30-day check-in' },
+      ],
+    },
+    app: {
+      kind: 'stepper',
+      title: 'Account Setup',
+      uiSteps: [
+        { name: 'Company details', fields: ['company_name', 'industry', 'team_size'] },
+        { name: 'Plan & billing', fields: ['plan_tier', 'billing_contact', 'payment_method'] },
+        { name: 'Integrations', fields: ['sso_provider', 'data_import_source'] },
+        { name: 'Review & launch', fields: ['assigned_csm'] },
+      ],
+    },
     steps: [
       {
-        step: 'welcome-email',
+        id: 'welcome-email',
+        label: 'Welcome email sent',
+        actor: 'agent',
+        timing: 'on trigger',
+        core: true,
         raci: { accountable: 'CustomerSuccess', responsible: ['Ops'], informed: ['Sales', 'Finance'] },
       },
+      { id: 'enrich-crm-record', label: 'CRM record enriched', actor: 'agent', timing: 'within minutes', core: false },
       {
-        step: 'account-setup',
+        id: 'intro-call',
+        label: 'Intro call booked',
+        actor: 'human',
+        owner: 'Sales',
+        timing: 'within 24h',
+        core: true,
+        raci: { accountable: 'CustomerSuccess', responsible: ['Sales'], consulted: ['Ops'], informed: ['Finance'] },
+      },
+      { id: 'summarize-call-notes', label: 'Call notes summarized', actor: 'agent', timing: 'after call', core: false },
+      {
+        id: 'product-walkthrough',
+        label: 'Product walkthrough',
+        actor: 'human',
+        owner: 'Customer Success',
+        timing: 'day 3',
+        core: true,
         raci: {
           accountable: 'CustomerSuccess',
           responsible: ['CustomerSuccess'],
@@ -210,11 +324,12 @@ const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
         },
       },
       {
-        step: 'intro-call',
-        raci: { accountable: 'CustomerSuccess', responsible: ['Sales'], consulted: ['Ops'], informed: ['Finance'] },
-      },
-      {
-        step: '30-day-check-in',
+        id: 'thirty-day-check-in',
+        label: '30-day check-in',
+        actor: 'human',
+        owner: 'Customer Success',
+        timing: 'day 30',
+        core: true,
         raci: {
           accountable: 'CustomerSuccess',
           responsible: ['CustomerSuccess'],
@@ -226,13 +341,43 @@ const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
   },
   launch: {
     process: 'ProductLaunch',
-    owner: 'Product',
+    title: 'Product Launch',
+    operator: 'Product',
+    operatorLabel: 'Product Team',
     sla: '90-day cycle',
     roles: ['Product', 'Engineering', 'Sales', 'CustomerSuccess'],
     triggers: ['roadmap-approval', 'exec-signoff'],
+    resource: {
+      name: 'Release',
+      domain: 'dna.product.launch',
+      attributes: [
+        { name: 'name', label: 'Release name', type: 'string', required: true },
+        { name: 'target_date', label: 'Target date', type: 'date' },
+        { name: 'status', label: 'Status', type: 'enum', values: ['planning', 'building', 'gtm', 'launched'] },
+      ],
+      // No action carries a `method` — Launch intentionally has no exposed API (see app.kind below).
+      actions: [
+        { name: 'ValidateMarket', type: 'write', description: 'Validate market demand before committing' },
+        { name: 'Build', type: 'write', description: 'Engineering builds the release' },
+        { name: 'PrepGtm', type: 'write', description: 'Prepare go-to-market materials' },
+        { name: 'Ship', type: 'write', description: 'Ship the release on launch day' },
+        { name: 'ReviewPostLaunch', type: 'write', description: 'Review post-launch metrics' },
+        { name: 'DraftReleaseNotes', type: 'write', description: 'Draft release notes' },
+        { name: 'SummarizePostLaunchMetrics', type: 'write', description: 'Summarize post-launch metrics' },
+      ],
+    },
+    app: {
+      kind: 'none',
+      emptyMessage: 'Product Launch doesn’t need an operational UI or API — none generated for this process.',
+    },
     steps: [
       {
-        step: 'market-validation',
+        id: 'market-validation',
+        label: 'Market validation',
+        actor: 'human',
+        owner: 'Product',
+        timing: 'week 1',
+        core: true,
         raci: {
           accountable: 'Product',
           responsible: ['Product'],
@@ -241,7 +386,12 @@ const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
         },
       },
       {
-        step: 'engineering-build',
+        id: 'engineering-build',
+        label: 'Engineering build',
+        actor: 'human',
+        owner: 'Engineering',
+        timing: 'weeks 2–10',
+        core: true,
         raci: {
           accountable: 'Product',
           responsible: ['Engineering'],
@@ -249,8 +399,14 @@ const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
           informed: ['Sales', 'CustomerSuccess'],
         },
       },
+      { id: 'draft-release-notes', label: 'Release notes drafted', actor: 'agent', timing: 'week 11', core: false },
       {
-        step: 'gtm-prep',
+        id: 'gtm-prep',
+        label: 'GTM prep',
+        actor: 'human',
+        owner: 'Sales',
+        timing: 'week 11',
+        core: true,
         raci: {
           accountable: 'Product',
           responsible: ['Sales'],
@@ -259,11 +415,28 @@ const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
         },
       },
       {
-        step: 'launch-day',
+        id: 'launch-day',
+        label: 'Launch day',
+        actor: 'human',
+        owner: 'Cross-functional',
+        timing: 'week 12',
+        core: true,
         raci: { accountable: 'Product', responsible: ['Engineering', 'Sales'], consulted: ['CustomerSuccess'] },
       },
       {
-        step: 'post-launch-review',
+        id: 'summarize-post-launch-metrics',
+        label: 'Post-launch metrics summarized',
+        actor: 'agent',
+        timing: 'week 14',
+        core: false,
+      },
+      {
+        id: 'post-launch-review',
+        label: 'Post-launch review',
+        actor: 'human',
+        owner: 'Product',
+        timing: 'week 14',
+        core: true,
         raci: {
           accountable: 'Product',
           responsible: ['Product'],
@@ -274,13 +447,52 @@ const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
   },
   close: {
     process: 'MonthlyClose',
-    owner: 'Finance',
+    title: 'Monthly Close',
+    operator: 'Finance',
+    operatorLabel: 'Finance Team',
     sla: '5-day close',
     roles: ['Finance', 'Operations', 'Leadership', 'Audit'],
     triggers: ['month-end', 'quarter-end'],
+    resource: {
+      name: 'VarianceLine',
+      domain: 'dna.finance.close',
+      attributes: [
+        { name: 'category', label: 'Category', type: 'string', required: true },
+        { name: 'variance_pct', label: 'Variance %', type: 'number', required: true },
+        { name: 'amount', label: 'Amount', type: 'number' },
+      ],
+      actions: [
+        { name: 'List', type: 'read', method: 'GET', description: 'List variance line items for the current close' },
+        { name: 'Approve', type: 'write', method: 'POST', description: 'Approve a flagged line item' },
+        { name: 'Escalate', type: 'write', method: 'POST', description: 'Escalate a flagged line item' },
+        { name: 'ReconcileTransactions', type: 'write', description: 'Auto-reconcile transactions' },
+        { name: 'CloseBooks', type: 'write', description: 'Close the books' },
+        { name: 'FlagVariance', type: 'write', description: 'Flag line items exceeding the variance threshold' },
+        { name: 'DraftExecReport', type: 'write', description: 'Draft the exec report' },
+        { name: 'PublishExecReport', type: 'write', description: 'Publish the exec report' },
+        { name: 'ApproveBoardPackage', type: 'write', description: 'Leadership signs off on the board package' },
+      ],
+      examples: [
+        { category: 'Marketing spend', variance: '+12% vs budget', flagged: true },
+        { category: 'Payroll', variance: '-2% vs budget', flagged: false },
+        { category: 'Software & tools', variance: '+34% vs budget', flagged: true },
+        { category: 'Travel & entertainment', variance: '-18% vs budget', flagged: false },
+      ],
+    },
+    app: {
+      kind: 'review',
+      title: 'Review Variance',
+      reviewFields: { label: 'category', value: 'variance', flagged: 'flagged' },
+    },
     steps: [
+      { id: 'reconcile-transactions', label: 'Transactions reconciled', actor: 'agent', timing: 'day 1', core: false },
       {
-        step: 'close-books',
+        id: 'close-books',
+        label: 'Close books',
+        actor: 'human',
+        owner: 'Finance',
+        timing: 'day 1',
+        core: true,
         raci: {
           accountable: 'Finance',
           responsible: ['Finance'],
@@ -289,7 +501,12 @@ const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
         },
       },
       {
-        step: 'reconcile-accounts',
+        id: 'reconcile-accounts',
+        label: 'Reconcile accounts',
+        actor: 'human',
+        owner: 'Finance',
+        timing: 'day 2',
+        core: true,
         raci: {
           accountable: 'Finance',
           responsible: ['Finance'],
@@ -297,8 +514,14 @@ const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
           informed: ['Leadership'],
         },
       },
+      { id: 'flag-variance', label: 'Variance flagged', actor: 'agent', timing: 'day 2', core: false },
       {
-        step: 'review-variance',
+        id: 'review-variance',
+        label: 'Review variance',
+        actor: 'human',
+        owner: 'Operations',
+        timing: 'day 3',
+        core: true,
         raci: {
           accountable: 'Operations',
           responsible: ['Operations'],
@@ -306,8 +529,14 @@ const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
           informed: ['Leadership', 'Audit'],
         },
       },
+      { id: 'draft-exec-report', label: 'Exec report drafted', actor: 'agent', timing: 'day 4', core: false },
       {
-        step: 'exec-report',
+        id: 'exec-report',
+        label: 'Exec report',
+        actor: 'human',
+        owner: 'Finance',
+        timing: 'day 4',
+        core: true,
         raci: {
           accountable: 'Finance',
           responsible: ['Finance'],
@@ -316,8 +545,18 @@ const PROCESS_SPECS: Record<ProcessKey, ProcessSpec> = {
         },
       },
       {
-        step: 'board-package',
-        raci: { accountable: 'Leadership', responsible: ['Finance'], consulted: ['Operations'], informed: ['Audit'] },
+        id: 'board-package',
+        label: 'Board package',
+        actor: 'human',
+        owner: 'Leadership',
+        timing: 'day 5',
+        core: true,
+        raci: {
+          accountable: 'Leadership',
+          responsible: ['Finance'],
+          consulted: ['Operations'],
+          informed: ['Audit'],
+        },
       },
     ],
   },
@@ -333,178 +572,155 @@ function raciCell(role: string, raci: StepRaci): RaciCell {
   return '';
 }
 
-// "welcome-email" → "Welcome email", "30-day-check-in" → "30 day check in"
-function prettyStep(step: string): string {
-  const spaced = step.replace(/-/g, ' ');
-  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
-}
-
 function deriveRaci(spec: ProcessSpec): RaciResult {
+  const raciSteps = spec.steps.filter((s): s is ProcessStep & { raci: StepRaci } => !!s.raci);
   return {
     type: 'raci',
     roles: spec.roles,
-    rows: spec.steps.map((s) => ({
-      process: prettyStep(s.step),
+    rows: raciSteps.map((s) => ({
+      process: s.label,
       cells: spec.roles.map((role) => raciCell(role, s.raci)),
     })),
   };
 }
 
-// Renders the spec as the YAML-ish DNA text shown in the panel. RACI is shown
-// per step so the on-screen spec visibly contains what the matrix is built from.
+// "CompleteSetup" → "complete-setup"
+function kebabCase(pascal: string): string {
+  return pascal.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+}
+
+// Renders the spec as the YAML-ish DNA text shown in the panel — the
+// simplified projection (see the block comment above). Non-core steps and
+// action detail beyond the name (type, method) stay in the spec (for
+// deriveRaci, deriveAgents, deriveApp/deriveApi) but are left out of this text.
 function renderDnaText(spec: ProcessSpec): string {
-  const fmtList = (xs?: string[]) => (xs && xs.length ? xs.join(', ') : '—');
+  const { resource } = spec;
   const lines: string[] = [
+    `resource: ${resource.name}`,
+    `domain: ${resource.domain}`,
+    'attributes:',
+    ...resource.attributes.map((a) => {
+      const type = a.type === 'enum' ? `enum [${(a.values ?? []).join(', ')}]` : a.type;
+      return `  - ${a.name}: ${type}${a.required ? ' (required)' : ''}`;
+    }),
+    'actions:',
+    ...resource.actions.map((a) => `  - ${a.name}`),
     `process: ${spec.process}`,
-    `owner: ${spec.owner}`,
+    `operator: ${spec.operator}`,
     `sla: ${spec.sla}`,
-    'roles:',
-    ...spec.roles.map((r) => `  - ${r}`),
     'triggers:',
     ...spec.triggers.map((t) => `  - ${t}`),
     'steps:',
+    ...spec.steps.filter((s) => s.core).map((s) => `  - ${s.id}`),
   ];
-  for (const s of spec.steps) {
-    lines.push(`  - step: ${s.step}`);
-    lines.push(`    responsible: ${fmtList(s.raci.responsible)}`);
-    lines.push(`    accountable: ${s.raci.accountable}`);
-    lines.push(`    consulted: ${fmtList(s.raci.consulted)}`);
-    lines.push(`    informed: ${fmtList(s.raci.informed)}`);
-  }
   return lines.join('\n');
 }
 
+function deriveProcessFlow(spec: ProcessSpec): ProcessFlowResult {
+  return {
+    type: 'process-flow',
+    process: spec.process,
+    steps: spec.steps
+      .filter((s) => s.core)
+      .map((s) => ({ name: s.label, owner: s.actor === 'agent' ? 'Auto' : s.owner, timing: s.timing })),
+  };
+}
+
+function deriveSop(spec: ProcessSpec): SopResult {
+  return {
+    type: 'sop',
+    title: `${spec.title} SOP`,
+    owner: spec.operatorLabel,
+    steps: spec.steps.filter((s) => s.core).map((s) => s.label),
+    sla: spec.sla,
+  };
+}
+
+// Full step list (core + agent-only automation) — the fuller DNA that backs
+// this tab, vs. the core-only subset shown in Process Flow/SOP/the 02 panel.
+function deriveAgents(spec: ProcessSpec): AgentsResult {
+  return {
+    type: 'agents',
+    process: spec.process,
+    steps: spec.steps.map((s) => ({
+      name: s.label,
+      actor: s.actor,
+      owner: s.actor === 'human' ? s.owner : undefined,
+      timing: s.timing,
+    })),
+  };
+}
+
+// Only actions with a declared `method` are exposed over the API — the rest
+// are internal Operations invoked by Tasks within the process.
+function deriveApi(resource: DnaResource): AppApiEndpoint[] {
+  const exposed = resource.actions.filter((a): a is DnaAction & { method: ApiMethod } => !!a.method);
+  if (!exposed.length) return [];
+  const base = `/api/${kebabCase(resource.name)}s`;
+  return exposed.map((a) => {
+    const path = ['Create', 'List'].includes(a.name)
+      ? base
+      : ['Get', 'Update', 'Delete'].includes(a.name)
+        ? `${base}/{id}`
+        : `${base}/{id}/${kebabCase(a.name)}`;
+    return { method: a.method, path, description: a.description };
+  });
+}
+
+// The App's UI is generated straight from the Resource's attributes[]; its
+// API from whichever actions[] declare a method (see deriveApi). Same
+// Resource, two surfaces — matches product/core/{resource,action}.json.
+function deriveApp(spec: ProcessSpec): AppResult {
+  const api = deriveApi(spec.resource);
+  if (spec.app.kind === 'none') {
+    return { type: 'app', kind: 'none', emptyMessage: spec.app.emptyMessage };
+  }
+  if (spec.app.kind === 'stepper') {
+    const label = (name: string) => spec.resource.attributes.find((a) => a.name === name)?.label ?? name;
+    return {
+      type: 'app',
+      kind: 'stepper',
+      title: spec.app.title,
+      steps: spec.app.uiSteps.map((s) => ({ name: s.name, fields: s.fields.map(label) })),
+      api,
+    };
+  }
+  const { label: labelKey, value: valueKey, flagged: flaggedKey } = spec.app.reviewFields;
+  return {
+    type: 'app',
+    kind: 'review',
+    title: spec.app.title,
+    reviewItems: (spec.resource.examples ?? []).map((ex) => ({
+      label: String(ex[labelKey] ?? ''),
+      value: String(ex[valueKey] ?? ''),
+      flagged: flaggedKey ? Boolean(ex[flaggedKey]) : undefined,
+    })),
+    api,
+  };
+}
+
 const PROCESS_FLOW_BY_PROCESS: Record<ProcessKey, ProcessFlowResult> = {
-  onboarding: {
-    type: 'process-flow',
-    process: 'CustomerOnboarding',
-    steps: [
-      { name: 'Welcome email sent', owner: 'Auto', timing: 'on trigger' },
-      { name: 'Account setup call', owner: 'Customer Success', timing: 'within 24h' },
-      { name: 'Intro walkthrough', owner: 'Customer Success', timing: 'day 3' },
-      { name: '30-day check-in', owner: 'Customer Success', timing: 'day 30' },
-    ],
-  },
-  launch: {
-    type: 'process-flow',
-    process: 'ProductLaunch',
-    steps: [
-      { name: 'Market validation', owner: 'Product', timing: 'week 1' },
-      { name: 'Engineering build', owner: 'Engineering', timing: 'weeks 2–10' },
-      { name: 'GTM prep', owner: 'Sales', timing: 'week 11' },
-      { name: 'Launch day', owner: 'Cross-functional', timing: 'week 12' },
-      { name: 'Post-launch review', owner: 'Product', timing: 'week 14' },
-    ],
-  },
-  close: {
-    type: 'process-flow',
-    process: 'MonthlyClose',
-    steps: [
-      { name: 'Close books', owner: 'Finance', timing: 'day 1' },
-      { name: 'Reconcile accounts', owner: 'Finance', timing: 'day 2' },
-      { name: 'Review variance', owner: 'Operations', timing: 'day 3' },
-      { name: 'Exec report', owner: 'Finance', timing: 'day 4' },
-      { name: 'Board package', owner: 'Leadership', timing: 'day 5' },
-    ],
-  },
+  onboarding: deriveProcessFlow(PROCESS_SPECS.onboarding),
+  launch: deriveProcessFlow(PROCESS_SPECS.launch),
+  close: deriveProcessFlow(PROCESS_SPECS.close),
 };
 
 const SOP_BY_PROCESS: Record<ProcessKey, SopResult> = {
-  onboarding: {
-    type: 'sop',
-    title: 'Customer Onboarding SOP',
-    owner: 'Customer Success Team',
-    steps: ['Welcome email', 'Account setup', 'Intro call', '30-day check-in'],
-    sla: '24h response guaranteed',
-  },
-  launch: {
-    type: 'sop',
-    title: 'Product Launch SOP',
-    owner: 'Product Team',
-    steps: ['Market validation', 'Engineering build', 'GTM prep', 'Launch day', 'Post-launch review'],
-    sla: '90-day cycle',
-  },
-  close: {
-    type: 'sop',
-    title: 'Monthly Close SOP',
-    owner: 'Finance Team',
-    steps: ['Close books', 'Reconcile accounts', 'Review variance', 'Exec report', 'Board package'],
-    sla: '5-day close',
-  },
+  onboarding: deriveSop(PROCESS_SPECS.onboarding),
+  launch: deriveSop(PROCESS_SPECS.launch),
+  close: deriveSop(PROCESS_SPECS.close),
 };
 
-// Mirrors PROCESS_FLOW_BY_PROCESS but tags each step with who actually does
-// the work, so the same process reads as "where agents carry load vs. where a
-// human has to be in the loop" instead of just a list of steps.
 const AGENTS_BY_PROCESS: Record<ProcessKey, AgentsResult> = {
-  onboarding: {
-    type: 'agents',
-    process: 'CustomerOnboarding',
-    steps: [
-      { name: 'Welcome email sent', actor: 'agent', timing: 'on trigger' },
-      { name: 'CRM record enriched', actor: 'agent', timing: 'within minutes' },
-      { name: 'Account setup call', actor: 'human', owner: 'Customer Success', timing: 'within 24h' },
-      { name: 'Call notes summarized', actor: 'agent', timing: 'after call' },
-      { name: 'Intro walkthrough', actor: 'human', owner: 'Customer Success', timing: 'day 3' },
-      { name: '30-day check-in', actor: 'human', owner: 'Customer Success', timing: 'day 30' },
-    ],
-  },
-  launch: {
-    type: 'agents',
-    process: 'ProductLaunch',
-    steps: [
-      { name: 'Market validation', actor: 'human', owner: 'Product', timing: 'week 1' },
-      { name: 'Engineering build', actor: 'human', owner: 'Engineering', timing: 'weeks 2–10' },
-      { name: 'Release notes drafted', actor: 'agent', timing: 'week 11' },
-      { name: 'GTM prep', actor: 'human', owner: 'Sales', timing: 'week 11' },
-      { name: 'Launch day', actor: 'human', owner: 'Cross-functional', timing: 'week 12' },
-      { name: 'Post-launch metrics summarized', actor: 'agent', timing: 'week 14' },
-    ],
-  },
-  close: {
-    type: 'agents',
-    process: 'MonthlyClose',
-    steps: [
-      { name: 'Transactions reconciled', actor: 'agent', timing: 'day 1' },
-      { name: 'Close books', actor: 'human', owner: 'Finance', timing: 'day 1' },
-      { name: 'Variance flagged', actor: 'agent', timing: 'day 2' },
-      { name: 'Review variance', actor: 'human', owner: 'Operations', timing: 'day 3' },
-      { name: 'Exec report drafted', actor: 'agent', timing: 'day 4' },
-      { name: 'Board package', actor: 'human', owner: 'Leadership', timing: 'day 5' },
-    ],
-  },
+  onboarding: deriveAgents(PROCESS_SPECS.onboarding),
+  launch: deriveAgents(PROCESS_SPECS.launch),
+  close: deriveAgents(PROCESS_SPECS.close),
 };
 
-// One generated UI per process — deliberately uneven, since not every process
-// warrants an application. Launch stays blank on purpose.
 const APP_BY_PROCESS: Record<ProcessKey, AppResult> = {
-  onboarding: {
-    type: 'app',
-    kind: 'stepper',
-    title: 'Account Setup',
-    steps: [
-      { name: 'Company details', fields: ['Company name', 'Industry', 'Team size'] },
-      { name: 'Plan & billing', fields: ['Plan tier', 'Billing contact', 'Payment method'] },
-      { name: 'Integrations', fields: ['SSO provider', 'Data import source'] },
-      { name: 'Review & launch', fields: ['Assigned CSM', 'Confirm settings'] },
-    ],
-  },
-  launch: {
-    type: 'app',
-    kind: 'none',
-    emptyMessage: 'Product Launch doesn’t need an operational UI — no application generated for this process.',
-  },
-  close: {
-    type: 'app',
-    kind: 'review',
-    title: 'Review Variance',
-    reviewItems: [
-      { label: 'Marketing spend', value: '+12% vs budget', flagged: true },
-      { label: 'Payroll', value: '-2% vs budget' },
-      { label: 'Software & tools', value: '+34% vs budget', flagged: true },
-      { label: 'Travel & entertainment', value: '-18% vs budget' },
-    ],
-  },
+  onboarding: deriveApp(PROCESS_SPECS.onboarding),
+  launch: deriveApp(PROCESS_SPECS.launch),
+  close: deriveApp(PROCESS_SPECS.close),
 };
 
 const RUNBOOK: RunbookResult = {
