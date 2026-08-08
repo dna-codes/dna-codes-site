@@ -116,12 +116,6 @@ read the facets → pick "Add to bag" → "Nothing governs this control."_ A `De
 the real panel shows the signed-in person. Fusing this with the hero saves a section and matches the
 site's existing pattern; a visitor who steps through it has understood the product.
 
-The `OverlayDemo` sits in the hero's `image` slot, exactly where `LensDemo` sits on the homepage — a
-miniature storefront with the panel docked right, and two or three scripted steps: _pick a control →
-read the facets → pick "Add to bag" → "Nothing governs this control."_ A `Demo mode` badge sits where
-the real panel shows the signed-in person. Fusing this with the hero saves a section and matches the
-site's existing pattern; a visitor who steps through it has understood the product.
-
 **1. Most of your product is ungoverned.**
 
 The wedge is **absence, not distance.** An earlier draft opened on _your governance is in another
@@ -213,6 +207,84 @@ read where the work happens — and the same model is what Design writes and Run
 **5. Pricing summary, then FAQ, then the closing CTA.**
 Three cards — Starter / Team / Business — price, one line, `Get early access`, and _See the full
 comparison →_ to `/pricing`. Not a repeat of the table. See below.
+
+## Prototype mode and the tracker claim — hint now, argue later
+
+Prototype mode is one sentence in this launch (§3). It is worth writing down what that sentence is
+deliberately not saying yet, because the claim underneath it is the largest one this product has.
+
+### The thesis
+
+From the prototyping walkthrough's own opening: **the request, the specification, the acceptance test
+and the release gate are one object, and the address is all four.** A product manager places a control
+that does not exist, writes a sentence about why, and hands a developer an address. The developer
+stamps that address on a real control. On the next build the overlay stops drawing the sketch and the
+proposal reports the surface `BUILT` — _with nobody touching anything_. Somebody holding `ratify`
+then makes it `LIVE`.
+
+### What it actually replaces, and it is not "Jira"
+
+Decompose a ticket and the overlap is partial but lands on the worst part:
+
+| A ticket holds                               | The Overlay                                                                                    |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| What is wanted                               | the sketch, drawn from your own design system                                                  |
+| **Where it goes**                            | the address — no prose, no ambiguity, no "which button did you mean"                           |
+| Acceptance criteria                          | the address is bound. Machine-checkable rather than negotiated                                 |
+| **Status**                                   | **derived, never asserted** — `BUILT` means a build published a manifest carrying that address |
+| Link to the PR                               | the manifest names the build                                                                   |
+| Assignee, priority, sprint, estimate         | **nothing**                                                                                    |
+| Epics, dependencies, roadmaps                | **nothing**                                                                                    |
+| Bugs, backend work, anything with no address | **nothing**                                                                                    |
+
+So the honest line is not _replace your tracker_. It is: **it replaces the part of the tracker that
+lies.** Status in Jira or Linear is a human assertion, and it drifts the moment somebody forgets to
+move a card — "Done" means somebody dragged a rectangle. Here `BUILT` is a fact about what a build
+emitted, and `LIVE` is a decision a named person with the grant made. Nobody reopens a ticket and
+nobody closes one.
+
+That is the same argument as the rest of the product, which is why it belongs to this platform and
+not to a tracker vendor: _the model and the application are the same thing._ A tracker is a
+description of work kept beside the work; this is the work describing itself.
+
+### Why it is a hint and not a section, for this launch
+
+Four reasons, and the first is the one that decides it:
+
+- **Six replacement claims read as vaporware where four read as focused.** The page already says it
+  replaces permissions, feature flags, analytics and audit. Adding "and your issue tracker" to that
+  list is the sentence a skeptical reader stops at.
+- **It changes the buyer.** Governance sells to a platform lead or a head of engineering. Tracker
+  replacement sells to product management. Two motions, two objection sets, one page — and the
+  governance motion is the one with the priced comparison behind it.
+- **It invites questions the answer to which is no.** Sprints, estimates, capacity, dependencies,
+  cross-team roadmaps, and any work that is not a UI control. A prospect who asks and gets four
+  "no"s remembers the no's.
+- **Console support is still partial.** A library's per-component mapping cannot be edited in the
+  console (gap **C**), so the shelf that makes a sketch read as _their_ product needs us in the room.
+
+### What the hint should say
+
+One clause more than the current sentence, carrying the derived-status point, because that is the
+whole differentiator and it costs eight words: _when the address turns up in a build, the request
+marks itself delivered — nobody moves a card._ That is enough for a reader who has felt the problem
+to lean in, and not enough to constitute a claim we would have to defend.
+
+### What would have to be true to lead with it
+
+- Prototype mode reachable without us in the room — which means gap **C** closed.
+- A worked before/after against a real customer's tracker, with numbers.
+- An answer to assignment and discussion, or an explicit, comfortable integration story with the
+  tracker rather than a replacement one. _Proposals sync to Linear as issues, status flows back from
+  the build_ is a far easier sale than replacement, and it may be the better product.
+
+### The pricing note
+
+It reinforces the ladder rather than disturbing it. Prototype is gated at **Team ($499)**, and a
+20-person team on Linear-class per-seat pricing is already paying roughly $250–350/mo for the tracker
+alone. So the tier that includes Prototype is defensible against a budget line the buyer already has,
+without inventing a meter. Worth stating on a sales call; **not** worth putting on the pricing page,
+because a published comparison to a tracker commits us to the replacement claim above.
 
 ## Homepage hooks
 

@@ -1,5 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import logoPng from '~/assets/images/logo.png';
 
 // A scripted miniature of the Inspect panel, built stub-first: the shape is the real
 // panel's, the data is staged, and the footer says so where the live panel names the
@@ -20,29 +22,35 @@ const orders = [
   data-overlay-demo
   class="bg-slate-900/90 rounded-2xl border-2 border-primary shadow-[0_0_48px_rgba(13,148,136,0.35)] overflow-hidden"
 >
-  <!-- Chrome -->
-  <div class="flex items-center gap-3 px-3 py-2.5 border-b border-white/8">
-    <div class="flex items-center gap-2">
-      <div class="w-6 h-6 rounded-lg bg-primary/25 border border-primary/40 flex items-center justify-center">
-        <Icon name="tabler:dna" class="w-3.5 h-3.5 text-primary" />
-      </div>
-      <span class="text-xs font-bold text-primary uppercase tracking-widest">Juniper Lane</span>
+  <!-- Chrome. Its two regions are the same widths as the two columns below, so each
+       label sits directly over the thing it names and stays there — no reveal to miss
+       and nothing covering the UI it is introducing. -->
+  <div class="flex border-b border-white/8">
+    <div class="flex-1 flex items-center gap-2.5 px-3 py-2.5 min-w-0">
+      <span class="text-xs font-bold text-slate-300 uppercase tracking-widest truncate">Juniper Lane</span>
+      <span
+        class="flex-shrink-0 text-[10px] font-semibold uppercase tracking-wider text-slate-300 bg-white/8 border border-white/20 rounded px-1.5 py-0.5"
+        >Your app</span
+      >
+      <button
+        data-demo-reset
+        class="ml-auto flex-shrink-0 text-[11px] text-slate-500 hover:text-slate-300 transition-colors duration-150 inline-flex items-center gap-1"
+      >
+        <Icon name="tabler:refresh" class="w-3 h-3" /> Reset
+      </button>
     </div>
-    <span
-      class="text-[10px] font-semibold uppercase tracking-wider text-amber-300/90 bg-amber-400/10 border border-amber-400/25 rounded px-1.5 py-0.5"
-      >Staging</span
+
+    <div
+      class="hidden md:flex w-[19rem] flex-shrink-0 items-center gap-2 px-3 py-2.5 border-l-2 border-primary/45 bg-primary/[0.06]"
     >
-    <button
-      data-demo-reset
-      class="ml-auto text-[11px] text-slate-500 hover:text-slate-300 transition-colors duration-150 inline-flex items-center gap-1"
-    >
-      <Icon name="tabler:refresh" class="w-3 h-3" /> Reset
-    </button>
+      <Image src={logoPng} alt="" width={13} height={17} style="transform:rotate(45deg)" />
+      <span class="text-[10px] font-bold text-primary uppercase tracking-[0.18em]">DNA Overlay</span>
+    </div>
   </div>
 
   <div class="flex flex-col md:flex-row min-h-[22rem]">
     <!-- The application -->
-    <div class="flex-1 p-4 bg-slate-950/40">
+    <div class="flex-1 p-4 bg-slate-950/70">
       <p class="text-[11px] text-slate-500 mb-3">
         <Icon name="tabler:pointer" class="w-3.5 h-3.5 inline-block -mt-0.5 mr-0.5" />
         Click a control — the panel answers for it.
@@ -107,8 +115,13 @@ const orders = [
 
     <!-- The panel -->
     <div
-      class="w-full md:w-[19rem] flex-shrink-0 border-t md:border-t-0 md:border-l border-white/10 bg-slate-900 flex flex-col"
+      class="w-full md:w-[19rem] flex-shrink-0 border-t-2 md:border-t-0 md:border-l-2 border-primary/45 bg-slate-900 flex flex-col"
     >
+      <div class="md:hidden flex items-center gap-2 px-3 py-2 border-b border-white/8">
+        <Image src={logoPng} alt="" width={13} height={17} style="transform:rotate(45deg)" />
+        <span class="text-[10px] font-bold text-primary uppercase tracking-[0.18em]">DNA Overlay</span>
+      </div>
+
       <div class="flex items-center gap-2 px-3 py-2 border-b border-white/8">
         <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5">Inspect</span>
         <span class="text-[11px] text-slate-500">Prototype</span>
