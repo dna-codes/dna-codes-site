@@ -1,0 +1,145 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import DnaHelix from '~/components/DnaHelix.astro';
+import OverlayDemo from '~/components/widgets/OverlayDemo.astro';
+import EarlyAccessForm from '~/components/widgets/EarlyAccessForm.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+
+import OverlayFacets from '~/components/widgets/OverlayFacets.astro';
+import OverlayInstall from '~/components/widgets/OverlayInstall.astro';
+
+const metadata = {
+  title: 'DNA Overlay — Every control, under control',
+  description:
+    'Permissions, feature flags, user analytics and audit logs — running inside your product, on the control itself.',
+  ignoreTitleTemplate: true,
+  // Shipping quietly: live at its URL for anyone given the link, kept out of
+  // search until the launch goes public. Paired with a sitemap exclusion in
+  // astro.config.ts — drop both together.
+  robots: { index: false, follow: false },
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <Hero tagline="DNA Overlay · Early access">
+    <DnaHelix
+      slot="bg"
+      orientation="horizontal"
+      helixWidth={120}
+      nodeSize={12}
+      filled
+      style="height:58%;margin-top:5%"
+    />
+
+    <Fragment slot="title">
+      Every control,<br />
+      <span class="text-accent">under control</span>.
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Permissions, feature flags, user analytics and audit logs.<br class="hidden sm:block" />
+      Running inside your product.
+    </Fragment>
+
+    <Fragment slot="actions">
+      <div class="flex w-full sm:w-auto">
+        <a href="#early-access" class="btn-primary w-full sm:mb-0">Get early access</a>
+      </div>
+      <div class="flex w-full sm:w-auto">
+        <a href="#install" class="btn w-full sm:mb-0">How it installs</a>
+      </div>
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <OverlayDemo />
+      </div>
+    </Fragment>
+  </Hero>
+
+  <!-- ── 1. Permissions · flags · analytics · audit ───────────────────── -->
+  <OverlayFacets />
+
+  <!-- ── 2. Install + what it buys you + trust ────────────────────────── -->
+  <OverlayInstall />
+
+  <!-- ── 3. Pricing, as a pointer rather than a section ───────────────── -->
+  <WidgetWrapper containerClass="max-w-3xl mx-auto">
+    <div
+      class="rounded-2xl border border-white/10 bg-slate-900/50 px-6 py-6 sm:px-8 flex flex-col sm:flex-row sm:items-center gap-5"
+    >
+      <div>
+        <p class="text-lg font-bold text-white">Included in every paid plan.</p>
+        <p class="mt-1.5 text-sm text-muted leading-relaxed">
+          The Overlay is a surface on your model, not a product beside it — so it is never sold separately. Reading the
+          panel is free and unlimited on all plans; we charge for authority, not for looking.
+        </p>
+      </div>
+      <a
+        href="/pricing"
+        class="btn-primary flex-shrink-0 whitespace-nowrap px-6 py-2.5 text-sm font-semibold rounded-full"
+      >
+        See pricing
+      </a>
+    </div>
+  </WidgetWrapper>
+
+  <FAQs
+    title="FAQ"
+    columns={2}
+    classes={{ container: 'max-w-5xl' }}
+    items={[
+      {
+        title: 'Do I have to replace my feature flags?',
+        description:
+          'No. Start with the controls that have no governance at all — which is most of them — and leave what works alone. Teams that later consolidate do it because they wanted one answer per control, not because we required it.',
+      },
+      {
+        title: 'What does it do to my bundle?',
+        description:
+          'Almost nothing. The overlay is fetched separately rather than bundled, and can be served only where you want it. What lands in your own output is attributes — your markup is byte-identical apart from those.',
+      },
+      {
+        title: 'Can anyone who loads my page see our rules?',
+        description:
+          'No. The publishable key carries no capabilities at all. Until somebody identifies, the panel can inspect and nothing more, and names of people are only ever returned to a caller who may govern — a roster served to anyone who views source would be a staff directory.',
+      },
+      {
+        title: 'Does it work if my app is not React?',
+        description:
+          'Vite and Next.js have a one-step install today. Beyond those, <code>npx dna publish</code> reads your source directly — nothing about it is bundler-specific — so you get addresses and governance without a framework integration at all. Tell us your stack on the form; which one we deepen next is decided by who is asking.',
+      },
+      {
+        title: 'What happens when I turn it off?',
+        description:
+          'The page is exactly what it was. <code>stop()</code> removes the container, the watchers, the outlines and both sessionStorage entries, and taking the install out restores every file byte-for-byte.',
+      },
+      {
+        title: 'Is this ready for production?',
+        description:
+          'It runs against a live stack and every screenshot on this page was taken walking a real script. It is early access rather than generally available: the package is private, we set you up by hand, and we are choosing 20 design partners we can be genuinely useful to.',
+      },
+    ]}
+  />
+
+  <!-- ── Early access ─────────────────────────────────────────────────── -->
+  <WidgetWrapper containerClass="max-w-4xl mx-auto">
+    <div
+      class="rounded-2xl border border-primary/40 bg-slate-900/70 p-6 sm:p-10 shadow-[0_0_48px_rgba(13,148,136,0.18)]"
+    >
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold tracking-tight">See it on your own controls.</h2>
+        <p class="mt-4 text-muted max-w-xl mx-auto leading-relaxed">
+          Install it, open the panel, and read what governs each button in your product. The answer is
+          <em>nothing</em> more often than most teams expect — and that is usually a more interesting conversation than the
+          install was.
+        </p>
+      </div>
+
+      <EarlyAccessForm />
+    </div>
+  </WidgetWrapper>
+</Layout>

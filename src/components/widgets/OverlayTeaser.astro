@@ -1,0 +1,52 @@
+---
+import { Icon } from 'astro-icon/components';
+import Image from '~/components/common/Image.astro';
+import imgFacets from '~/assets/images/overlay/06-picked-fulfillment-facets.png';
+
+// Mirrors OperationsLayerC's shape — eyebrow pill, one sentence, one artefact, one link —
+// so the homepage reads as one argument continuing rather than a second pitch starting.
+---
+
+<section id="overlay" class="py-16 sm:py-20 scroll-mt-20">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-10 intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+      <h2
+        class="inline-flex items-center px-5 py-2 rounded-full border-2 border-primary bg-primary/10 text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-4"
+      >
+        Product Layer
+      </h2>
+      <p class="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight mb-3">
+        More control over your product.<br class="hidden sm:block" />
+        <span class="text-slate-500">Not more product.</span>
+      </p>
+      <p class="text-slate-400 max-w-xl mx-auto leading-relaxed text-sm sm:text-base">
+        <strong class="text-slate-300">DNA Overlay</strong> puts who may use each control, what is on, and everything that
+        has happened to it — on the control itself, inside your running app. One script tag.
+      </p>
+    </div>
+
+    <div
+      class="intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade rounded-2xl border border-primary/50 shadow-[0_0_40px_rgba(13,148,136,0.2)] overflow-hidden"
+    >
+      <Image
+        src={imgFacets}
+        alt="A control outlined in a running shop, with the DNA Overlay panel beside it answering who may use it"
+        class="w-full"
+        layout="responsive"
+        widths={[600, 1200]}
+        sizes="(max-width: 767px) 100vw, 768px"
+        format="webp"
+      />
+    </div>
+
+    <div class="mt-8 text-center intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+      <a
+        href="/overlay"
+        class="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-accent transition-colors duration-150"
+      >
+        See the Overlay
+        <Icon name="tabler:arrow-right" class="w-4 h-4" />
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,242 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+// Kept deliberately close to packages/react/README.md. Every claim below is one that
+// repo asserts with a test, so when the install changes this section changes with it.
+
+const viteConfig = `// vite.config.ts — the whole installation
+import { dna } from "@dna/react/vite";
+
+export default defineConfig({
+  plugins: [dna({ host: "app-billing", key: "pk_live_…" }), react()]
+});`;
+
+const nextLayout = `// app/layout.tsx — the whole installation
+import { DnaOverlay } from "@dna/react";
+
+<body>
+  {children}
+  <DnaOverlay dnaKey={process.env.NEXT_PUBLIC_DNA_KEY ?? ""} />
+</body>`;
+
+const nextCi = `# after the build, in CI
+- run: npx dna publish app
+  env: { DNA_HOST: app-billing, DNA_API_KEY: "\${{ secrets.DNA_KEY }}" }`;
+
+// Each rung earns the next: an address is worth having on its own, a binding needs an
+// address, and nothing can be governed until there is an act to attach a rule to.
+const ladder = [
+  {
+    title: 'Addressable',
+    body: 'Every control carries a stable address. You can point at a button and be understood — in a rule, in a ticket, in a conversation — instead of guessing which flag key somebody meant.',
+  },
+  {
+    title: 'Bindable',
+    body: 'An address reaches an <em>operation</em> — the act the control performs. Now the button has a subject, and two buttons that do the same thing are known to do the same thing.',
+  },
+  {
+    title: 'Governable',
+    body: 'Rules attach to the act. <strong class="text-white">Permissions</strong> — who may perform it. <strong class="text-white">Release</strong> — whether it is on at all. <strong class="text-white">Usage</strong> — how often, by how many people. <strong class="text-white">Audit</strong> — everything that has happened, refusals included, and who was refused.',
+  },
+];
+
+const promises = [
+  {
+    icon: 'tabler:file-diff',
+    title: 'Your markup is unchanged',
+    body: 'Rendered output is byte-identical apart from <code>data-dna</code> attributes, and removing the install restores every file byte-for-byte.',
+  },
+  {
+    icon: 'tabler:ear-off',
+    title: 'It never listens to your buttons',
+    body: 'Usage is <em>read</em> from occurrences the platform already writes — never collected by attaching handlers to controls you own.',
+  },
+  {
+    icon: 'tabler:building-factory',
+    title: 'It cannot fail your build',
+    body: 'Unreachable, slow, refusing, or answering a proxy’s HTML — publishing resolves and reports. Your key is never printed, including in transport errors.',
+  },
+  {
+    icon: 'tabler:key',
+    title: 'The key in your markup is powerless',
+    body: 'It identifies the application and nothing more. Which environment this is, whether the overlay may run here, and what the viewer may do are all the server’s answer.',
+  },
+  {
+    icon: 'tabler:git-pull-request',
+    title: 'Nothing publishes without a key',
+    body: 'A developer’s local build, and a pull request from a fork where the secret is unavailable, send no request at all rather than one that would be refused.',
+  },
+  {
+    icon: 'tabler:shield-check',
+    title: 'Refusals are enforced twice',
+    body: 'The panel hides what you may not do; the server checks again and names which gate stopped a request forged past it. A rule that only exists on the client is not a rule.',
+  },
+  {
+    icon: 'tabler:trash',
+    title: 'Removal is one call',
+    body: 'Take the install out and the page is exactly what it was — container, watchers, outlines and both <code>sessionStorage</code> entries, gone.',
+  },
+];
+---
+
+<WidgetWrapper id="install" containerClass="max-w-5xl mx-auto">
+  <div class="text-center mb-10">
+    <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Installing it</p>
+    <h2 class="text-3xl md:text-4xl font-bold tracking-tight">One call. That is the whole install.</h2>
+    <p class="mt-5 text-muted max-w-xl mx-auto leading-relaxed">
+      No provider to mount, no components to adopt, no concepts to learn first.
+    </p>
+  </div>
+
+  <div data-install-tabs class="max-w-2xl mx-auto">
+    <div class="flex gap-1 mb-3" role="tablist" aria-label="Choose your framework">
+      {
+        [
+          { id: 'vite', label: 'Vite' },
+          { id: 'next', label: 'Next.js' },
+        ].map((t, i) => (
+          <button
+            role="tab"
+            data-install-tab={t.id}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            class="install-tab px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-150"
+          >
+            {t.label}
+          </button>
+        ))
+      }
+    </div>
+
+    <!-- Vite -->
+    <div data-install-panel="vite" role="tabpanel">
+      <div class="rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden">
+        <pre class="p-4 text-xs leading-relaxed overflow-x-auto"><code class="text-slate-300">{viteConfig}</code></pre>
+      </div>
+      <p class="mt-3 text-sm text-muted leading-relaxed">
+        That one call stamps every element with an address, writes the overlay&rsquo;s script tag into your document,
+        publishes the build manifest if your pipeline holds a key, and prints coverage at the end of the build.
+      </p>
+    </div>
+
+    <!-- Next.js -->
+    <div data-install-panel="next" role="tabpanel" hidden>
+      <div class="rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden">
+        <pre class="p-4 text-xs leading-relaxed overflow-x-auto"><code class="text-slate-300">{nextLayout}</code></pre>
+      </div>
+      <div class="mt-3 rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden">
+        <pre class="p-4 text-xs leading-relaxed overflow-x-auto"><code class="text-slate-300">{nextCi}</code></pre>
+      </div>
+      <p class="mt-3 text-sm text-muted leading-relaxed">
+        <strong class="text-white"
+          >No <code class="text-accent">next.config</code> entry, no loader, no SWC plugin, and no opinion about Turbopack.</strong
+        > Declared addresses are literal props, and React forwards them to the DOM unaided — so they arrive with no build
+        integration at all. One answer covers the App Router and the Pages Router, Turbopack and webpack, because none of
+        them is involved.
+      </p>
+    </div>
+  </div>
+
+  <p class="mt-5 text-center text-sm text-slate-500 max-w-2xl mx-auto leading-relaxed">
+    On anything else, <code class="text-accent">npx dna publish</code> reads your source directly — nothing about it is bundler-specific.
+  </p>
+
+  <!-- What the install actually buys — three rungs, each earning the next. Held to the
+       same 2xl column as the install blocks, and joined to them by the site's existing
+       connector, so it reads as the payoff rather than a new topic. -->
+  <div class="flex flex-col items-center">
+    <div class="w-px h-8 bg-gradient-to-b from-transparent to-primary/50"></div>
+    <div
+      class="w-8 h-8 rounded-full border-2 border-primary bg-primary/10 shadow-[0_0_16px_rgba(13,148,136,0.4)] flex items-center justify-center"
+    >
+      <Icon name="tabler:arrow-down" class="w-4 h-4 text-primary" />
+    </div>
+    <div class="w-px h-8 bg-gradient-to-b from-primary/50 to-transparent"></div>
+  </div>
+
+  <p class="text-center text-sm font-bold uppercase tracking-[0.2em] text-primary mb-6">What that gets you</p>
+
+  <div class="max-w-2xl mx-auto space-y-3">
+    {
+      ladder.map((rung, i) => (
+        <div class="flex gap-4 rounded-2xl border border-white/10 bg-slate-900/40 p-5">
+          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/15 border border-primary/40 flex items-center justify-center">
+            <span class="text-xs font-black text-primary font-mono">{`0${i + 1}`}</span>
+          </div>
+          <div>
+            <h4 class="text-base font-bold text-white mb-1.5">{rung.title}</h4>
+            <p class="text-sm text-muted leading-relaxed" set:html={rung.body} />
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <div
+    class="mt-5 max-w-2xl mx-auto rounded-2xl border border-primary/40 bg-primary/8 px-5 py-4 flex items-start gap-3"
+  >
+    <Icon name="tabler:flask" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+    <p class="text-sm text-slate-300 leading-relaxed">
+      <strong class="text-white">
+        <code>@dna/react</code> is in private beta.
+      </strong>
+      It is not on npm yet. Early-access customers get the package and half an hour of setup with us.
+    </p>
+  </div>
+
+  <h3 class="text-xl font-bold text-white mt-16 mb-2 text-center">Seven things it will never do</h3>
+  <p class="text-center text-muted mb-10 max-w-2xl mx-auto">
+    It arrives in a product nobody asked it about. Every one of these is enforced, not promised.
+  </p>
+
+  <div class="grid sm:grid-cols-2 gap-x-8 gap-y-6">
+    {
+      promises.map((p) => (
+        <div class="flex gap-3">
+          <Icon name={p.icon} class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+          <div>
+            <h4 class="text-sm font-bold text-white mb-1">{p.title}</h4>
+            <p
+              class="text-sm text-muted leading-relaxed [&_code]:text-accent [&_code]:text-[0.9em]"
+              set:html={p.body}
+            />
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <p class="mt-10 text-sm text-slate-500 leading-relaxed max-w-2xl mx-auto text-center border-t border-white/8 pt-8">
+    The same panel can also place a control that <em>does not exist yet</em> — drawn from your own design system, and handed
+    to a developer as an address rather than a ticket. When that address turns up in a build, the request marks itself delivered.
+    <span class="text-slate-400">Nobody moves a card.</span> Ask us about Prototype mode.
+  </p>
+</WidgetWrapper>
+
+<style>
+  .install-tab {
+    color: rgb(148 163 184);
+    background-color: rgb(30 41 59 / 50%);
+  }
+  .install-tab:hover {
+    color: rgb(226 232 240);
+  }
+  .install-tab[aria-selected='true'] {
+    color: white;
+    background-color: var(--aw-color-primary);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-install-tabs]').forEach((group) => {
+    const tabs = Array.from(group.querySelectorAll<HTMLElement>('[data-install-tab]'));
+    const panels = Array.from(group.querySelectorAll<HTMLElement>('[data-install-panel]'));
+
+    const select = (id: string) => {
+      tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.installTab === id)));
+      panels.forEach((p) => (p.hidden = p.dataset.installPanel !== id));
+    };
+
+    tabs.forEach((t) => t.addEventListener('click', () => select(t.dataset.installTab!)));
+  });
+</script>

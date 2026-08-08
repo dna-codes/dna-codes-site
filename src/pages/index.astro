@@ -4,6 +4,7 @@ import Hero from '~/components/widgets/Hero.astro';
 import DnaHelix from '~/components/DnaHelix.astro';
 // import BiggerPicture from '~/components/widgets/BiggerPicture.astro';
 import OperationsLayerC from '~/components/widgets/OperationsLayerC.astro';
+// import OverlayTeaser from '~/components/widgets/OverlayTeaser.astro';
 import LensDemo from '~/components/widgets/LensDemo.astro';
 // import ProductLayer from '~/components/widgets/ProductLayer.astro';
 // import TechnologyLayer from '~/components/widgets/TechnologyLayer.astro';
@@ -56,7 +57,8 @@ const metadata = {
 
   <OperationsLayerC />
 
-  <!-- Arrow connector (ops → product) -->
+  <!-- Arrow connector (ops → product) — re-enable with <OverlayTeaser /> below when
+       the Overlay launch goes public. -->
   <!-- <div class="flex flex-col items-center -mt-8 -mb-8 relative z-10">
     <div class="w-0.5 h-12 bg-gradient-to-b from-primary/60 to-primary"></div>
     <div
@@ -67,7 +69,7 @@ const metadata = {
     <div class="w-0.5 h-12 bg-gradient-to-b from-primary to-primary/60"></div>
   </div>
 
-  <ProductLayer /> -->
+  <OverlayTeaser /> -->
 
   <!-- Arrow connector (product → technology) -->
   <!-- <div class="flex flex-col items-center -mt-8 -mb-8 relative z-10">

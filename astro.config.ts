@@ -26,7 +26,12 @@ export default defineConfig({
   output: 'static',
 
   integrations: [
-    sitemap(),
+    sitemap({
+      // Shipping the Overlay launch quietly. These pages are live and reachable by
+      // anyone given the link, but they are not advertised to crawlers. Remove the
+      // filter (and the `robots` metadata on both pages) when it goes public.
+      filter: (page) => !/\/(overlay|pricing)\/?$/.test(page),
+    }),
     mdx(),
     icon({
       include: {

@@ -1,0 +1,243 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+// Four things most teams buy separately, shown as four readings of one control.
+// Each block reuses the hero demo's panel chrome deliberately: the argument is that
+// these are not four products, so they must not look like four products.
+---
+
+<WidgetWrapper id="facets" containerClass="max-w-5xl mx-auto">
+  <div class="text-center mb-14">
+    <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Four features, one control</p>
+    <h2 class="text-3xl md:text-4xl font-bold tracking-tight">
+      Everything you already buy separately,<br class="hidden sm:block" /> answered in one place.
+    </h2>
+    <p class="mt-5 text-muted max-w-2xl mx-auto leading-relaxed">
+      Permissions, feature flags, usage and audit are four readings of the same act — so the Overlay puts them on the
+      control itself rather than in four consoles that have never rendered your product.
+    </p>
+  </div>
+
+  <div class="space-y-16 sm:space-y-20">
+    <!-- ── Permissions ──────────────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div>
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:lock" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">Permissions</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Who may press this?</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          Ask it standing on the button, and get an answer for whoever is actually looking. Change it here too — name
+          the seats that may perform the act, or detach the rule entirely.
+        </p>
+        <p class="text-muted leading-relaxed">
+          The subject is the <em>act</em>, not the button. Two controls that refund an order cannot disagree about who
+          may refund one.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5">Inspect</span>
+          <span class="ml-auto text-[10px] font-mono text-slate-500">order.refund</span>
+        </div>
+        <div class="p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[9px] uppercase tracking-wider text-slate-500">You may</span>
+            <span
+              class="text-[9px] font-bold uppercase tracking-wider bg-primary/20 text-accent border border-primary/40 rounded px-1.5 py-0.5"
+              >Yes</span
+            >
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[9px] uppercase tracking-wider text-slate-500">Who may</span>
+            <span class="text-[11px] text-slate-300">Fulfillment desk · Store manager</span>
+          </div>
+          <div class="pt-2.5 border-t border-white/8">
+            <p class="text-[9px] uppercase tracking-wider text-slate-500 mb-1.5">View as</p>
+            <div class="space-y-1">
+              <div class="flex items-center justify-between rounded bg-slate-800/60 px-2 py-1">
+                <span class="text-[11px] text-slate-300">Priya Raman · Store manager</span>
+                <span class="text-[9px] font-bold uppercase text-accent">Yes</span>
+              </div>
+              <div class="flex items-center justify-between rounded bg-slate-800/60 px-2 py-1">
+                <span class="text-[11px] text-slate-300">Avery Nunes · no seat</span>
+                <span class="text-[9px] font-bold uppercase text-rose-300">No</span>
+              </div>
+              <div class="flex items-center justify-between rounded bg-slate-800/60 px-2 py-1">
+                <span class="text-[11px] text-slate-300">Nobody · signed out</span>
+                <span class="text-[9px] font-bold uppercase text-rose-300">No</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Feature flags ────────────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div class="md:order-last">
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:toggle-left" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">Feature flags</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Is this on, and for whom?</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          Flip a feature from inside the product, on the control it affects — no hunting for
+          <code class="text-accent text-[0.9em]">refund_v2_enabled</code> in a list and hoping it still means this button.
+        </p>
+        <p class="text-muted leading-relaxed">
+          A new flag arrives <strong class="text-white">proposed</strong> and governs nothing until somebody with the authority
+          puts it in force. Writing a rule and making it decide are separate grants.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5">Inspect</span>
+          <span class="ml-auto text-[10px] font-mono text-slate-500">order.refund</span>
+        </div>
+        <div class="p-3.5">
+          <p class="text-[9px] uppercase tracking-wider text-slate-500 mb-2">Policies · 2 attached</p>
+          <div class="space-y-2">
+            <div class="rounded-lg border border-white/10 bg-slate-800/50 px-2.5 py-2">
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] text-slate-200 font-medium">Instant refunds</span>
+                <span
+                  class="text-[8px] font-bold uppercase tracking-wider bg-slate-700 text-slate-300 rounded px-1 py-0.5"
+                  >release</span
+                >
+                <span class="ml-auto inline-flex items-center gap-1">
+                  <span class="text-[9px] uppercase tracking-wider text-accent font-bold">On</span>
+                  <span class="w-6 h-3.5 rounded-full bg-primary/70 relative">
+                    <span class="absolute right-0.5 top-0.5 w-2.5 h-2.5 rounded-full bg-white"></span>
+                  </span>
+                </span>
+              </div>
+            </div>
+            <div class="rounded-lg border border-amber-400/25 bg-amber-400/5 px-2.5 py-2">
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] text-slate-200 font-medium">Partial refunds</span>
+                <span
+                  class="text-[8px] font-bold uppercase tracking-wider bg-amber-400/15 text-amber-300 rounded px-1 py-0.5"
+                  >proposed</span
+                >
+                <button
+                  class="ml-auto text-[9px] font-semibold text-primary border border-primary/40 rounded px-1.5 py-0.5"
+                  >Put in force</button
+                >
+              </div>
+              <p class="mt-1.5 text-[10px] text-slate-500">Governs nothing until somebody ratifies it.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── User analytics ───────────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div>
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:chart-line" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">User analytics</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Is anyone actually using it?</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          How often this control has been used and by how many people, on a window the panel states rather than assumes.
+          A control nothing has happened to has no Used row at all, rather than a row of zeroes.
+        </p>
+        <p class="text-muted leading-relaxed">
+          And it is <strong class="text-white">read, never collected</strong> — no event taxonomy to maintain, and no handlers
+          attached to buttons you own.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5">Inspect</span>
+          <span class="ml-auto text-[10px] font-mono text-slate-500">order.refund</span>
+        </div>
+        <div class="p-3.5">
+          <div class="flex items-baseline justify-between mb-1">
+            <span class="text-[9px] uppercase tracking-wider text-slate-500">Used · last 7 days</span>
+          </div>
+          <div class="flex items-baseline gap-4 mb-3">
+            <div>
+              <p class="text-2xl font-extrabold text-white leading-none">128</p>
+              <p class="text-[10px] text-slate-500 mt-0.5">times</p>
+            </div>
+            <div>
+              <p class="text-2xl font-extrabold text-white leading-none">14</p>
+              <p class="text-[10px] text-slate-500 mt-0.5">people</p>
+            </div>
+          </div>
+          <!-- Sparkline: seven days, drawn from the platform's own trend. -->
+          <div class="flex items-end gap-1 h-12" aria-hidden="true">
+            {
+              [38, 52, 30, 61, 74, 45, 88].map((h) => (
+                <div class="flex-1 rounded-t bg-primary/50" style={`height:${h}%`} />
+              ))
+            }
+          </div>
+          <p class="mt-2 text-[10px] text-slate-500">The window is stated, not assumed.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Audit logs ───────────────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div class="md:order-last">
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:history" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">Audit logs</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Who did it, and who was stopped?</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          Everything that has happened to this control, newest first, with the refusals drawn as refusals. Not a
+          separate export you reconcile later — the same reading, on the same button.
+        </p>
+        <p class="text-muted leading-relaxed">
+          <em>Somebody who could not say who they were tried to refund an order</em> is the most interesting line a log can
+          hold, so an unidentified attempt is recorded like any other rather than dropped for want of a name.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5">Inspect</span>
+          <span class="ml-auto text-[10px] font-mono text-slate-500">order.refund</span>
+        </div>
+        <div class="p-3.5">
+          <p class="text-[9px] uppercase tracking-wider text-slate-500 mb-2">Activity</p>
+          <div class="space-y-1.5">
+            {
+              [
+                { who: 'June Alcott', when: '2m ago', outcome: 'Performed', bad: false },
+                { who: 'Avery Nunes', when: '1h ago', outcome: 'Refused', bad: true },
+                { who: 'Unidentified', when: '3h ago', outcome: 'Refused', bad: true },
+                { who: 'Priya Raman', when: 'Yesterday', outcome: 'Performed', bad: false },
+              ].map((row) => (
+                <div class="flex items-center gap-2 rounded bg-slate-800/50 px-2 py-1.5">
+                  <span class="text-[11px] text-slate-300 truncate">{row.who}</span>
+                  <span class="text-[10px] text-slate-600 ml-auto whitespace-nowrap">{row.when}</span>
+                  <span
+                    class:list={[
+                      'text-[9px] font-bold uppercase tracking-wider rounded px-1.5 py-0.5 whitespace-nowrap',
+                      row.bad
+                        ? 'bg-rose-500/15 text-rose-300 border border-rose-400/30'
+                        : 'bg-primary/15 text-accent border border-primary/30',
+                    ]}
+                  >
+                    {row.outcome}
+                  </span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</WidgetWrapper>
