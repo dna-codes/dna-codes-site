@@ -2,11 +2,12 @@ import { getBlogPermalink, getPermalink } from './utils/permalinks';
 
 export const headerData = {
   links: [
+    // Overlay leads: it is the only entry a stranger can evaluate in sixty seconds.
+    { text: 'Overlay', href: getPermalink('/overlay') },
     { text: 'Playground', href: getPermalink('/playground') },
     { text: 'Docs', href: getPermalink('/docs') },
+    { text: 'Pricing', href: getPermalink('/pricing') },
     { text: 'Blog', href: getBlogPermalink() },
-    // { text: 'Platform', href: getPermalink('/') },
-    // { text: 'Pricing', href: getPermalink('/pricing') },
     // { text: 'About', href: getPermalink('/about') },
   ],
   actions: [{ text: 'Playground', href: getPermalink('/playground'), variant: 'primary' as const }],
@@ -14,20 +15,22 @@ export const headerData = {
 
 export const footerData = {
   links: [
-    // {
-    //   title: 'Platform',
-    //   links: [
-    //     { text: 'Pricing', href: getPermalink('/pricing') },
-    //     { text: 'Playground', href: 'https://app.dna.codes/playground' },
-    //   ],
-    // },
-    // {
-    //   title: 'Developers',
-    //   links: [
-    //     { text: 'Documentation', href: 'https://docs.dna.codes' },
-    //     { text: 'API Reference', href: 'https://docs.dna.codes/api' },
-    //   ],
-    // },
+    {
+      title: 'Platform',
+      links: [
+        { text: 'Overlay', href: getPermalink('/overlay') },
+        { text: 'Pricing', href: getPermalink('/pricing') },
+        { text: 'Playground', href: getPermalink('/playground') },
+      ],
+    },
+    {
+      title: 'Developers',
+      links: [
+        { text: 'Documentation', href: getPermalink('/docs') },
+        { text: 'Getting started', href: getPermalink('/docs/getting-started') },
+        { text: 'Blog', href: getBlogPermalink() },
+      ],
+    },
   ],
   secondaryLinks: [
     { text: 'Terms', href: getPermalink('/terms') },

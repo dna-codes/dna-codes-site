@@ -1,244 +1,228 @@
 ---
+import { Icon } from 'astro-icon/components';
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
-import Prices from '~/components/widgets/Pricing.astro';
+import PricingCards from '~/components/widgets/PricingCards.astro';
+import PricingTable from '~/components/widgets/PricingTable.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
-import Steps from '~/components/widgets/Steps.astro';
-import Features3 from '~/components/widgets/Features3.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import { TIERS, ADD_ONS } from '~/data/pricing';
 
 const metadata = {
-  title: 'Pricing',
+  title: 'Pricing — DNA Codes',
+  description:
+    'One ladder for the DNA suite. The Overlay is included from the first paid plan up — a surface on your model, not a product beside it.',
+  ignoreTitleTemplate: true,
 };
+
+const free = TIERS.find((t) => t.key === 'free')!;
+const enterprise = TIERS.find((t) => t.key === 'enterprise')!;
+
+const pillars = [
+  {
+    name: 'Design',
+    verb: 'Model it',
+    status: 'In build',
+    description: 'Your semantic and ontological layers. Define your DNA, and what gets built on it.',
+    icon: 'tabler:vector-triangle',
+  },
+  {
+    name: 'Overlay',
+    verb: 'Govern it',
+    status: 'Early access',
+    description:
+      'Who may use each control, what is on, and everything that has happened — inside your running product.',
+    icon: 'tabler:layers-subtract',
+    live: true,
+  },
+  {
+    name: 'Run',
+    verb: 'Run it',
+    status: 'In build',
+    description: 'Operate what you modelled. Live architecture, and operational agents under gates.',
+    icon: 'tabler:player-play',
+  },
+];
 ---
 
 <Layout metadata={metadata}>
-  <!-- HeroText Widget ******************* -->
+  <HeroText tagline="Pricing" title="One ladder for the whole suite.">
+    <Fragment slot="subtitle">
+      The Overlay is a surface on your model, not a product beside it — so it is included from the first paid plan up,
+      never sold separately.
+    </Fragment>
+  </HeroText>
 
-  <HeroText
-    tagline="Pricing"
-    title="Stellar Pricing for Every Journey"
-    subtitle="Choose the perfect plan that aligns with your cosmic goals."
-  />
+  <!-- Early-access notice. The product is pre-GA; every CTA is a form, not a checkout. -->
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 -mt-4">
+    <div class="rounded-2xl border border-primary/40 bg-primary/8 px-5 py-4 flex items-start gap-3">
+      <Icon name="tabler:flask" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+      <p class="text-sm text-slate-300 leading-relaxed">
+        <strong class="text-white">Early access.</strong> These are the real prices, published so you can circulate them.
+        The first 20 design partners keep them for two years. Every plan below starts with a conversation rather than a checkout
+        — we hand you the package and half an hour of setup.
+      </p>
+    </div>
+  </div>
 
-  <!-- Pricing Widget ******************* -->
+  <WidgetWrapper containerClass="max-w-6xl mx-auto">
+    <PricingCards />
+  </WidgetWrapper>
 
-  <Prices
-    title="Our prices"
-    subtitle="Only pay for what you need"
-    prices={[
+  <!-- Free and Enterprise as bookends: the three cards above are where the money is,
+       and a five-card row reads as a menu rather than a recommendation. -->
+  <WidgetWrapper containerClass="max-w-5xl mx-auto !pt-0">
+    <div class="grid gap-5 sm:grid-cols-2">
       {
-        title: 'basic',
-        subtitle: 'Optimal choice for personal use',
-        price: 29,
-        period: 'per month',
-        items: [
-          {
-            description: 'Etiam in libero, et volutpat',
-          },
-          {
-            description: 'Aenean ac nunc dolor tristique',
-          },
-          {
-            description: 'Cras scelerisque accumsan lib',
-          },
-          {
-            description: 'In hac habitasse',
-          },
-        ],
-        callToAction: {
-          target: '_blank',
-          text: 'Get started',
-          href: '#',
-        },
-      },
-      {
-        title: 'standard',
-        subtitle: 'Optimal choice for small teams',
-        price: 69,
-        period: 'Per Month',
-        items: [
-          {
-            description: 'Proin vel laoreet',
-          },
-          {
-            description: 'Ut efficitur habitasse egestas',
-          },
-          {
-            description: 'Volutpat hac curabitur',
-          },
-          {
-            description: 'Pellentesque blandit ut nibh',
-          },
-          {
-            description: 'Donec fringilla sem',
-          },
-        ],
-        callToAction: {
-          target: '_blank',
-          text: 'Get started',
-          href: '#',
-        },
-        hasRibbon: true,
-        ribbonTitle: 'popular',
-      },
-      {
-        title: 'premium',
-        subtitle: 'Optimal choice for companies',
-        price: 199,
-        period: 'Per Month',
-        items: [
-          {
-            description: 'Curabitur suscipit risus',
-          },
-          {
-            description: 'Aliquam habitasse malesuada',
-          },
-          {
-            description: 'Suspendisse sit amet blandit',
-          },
-          {
-            description: 'Suspendisse auctor blandit dui',
-          },
-        ],
-        callToAction: {
-          target: '_blank',
-          text: 'Get started',
-          href: '#',
-        },
-      },
-    ]}
-  />
+        [free, enterprise].map((tier) => (
+          <div class="rounded-2xl border border-white/10 bg-slate-900/50 p-6">
+            <div class="flex items-baseline justify-between gap-3">
+              <p class="text-xs font-bold uppercase tracking-widest text-slate-400">{tier.name}</p>
+              <p class="text-xl font-bold text-white">{tier.priceLabel}</p>
+            </div>
+            <p class="mt-2 text-sm text-slate-400">{tier.audience}</p>
+            <ul class="mt-4 space-y-1.5">
+              {tier.highlights.map((h) => (
+                <li class="flex items-start gap-2 text-sm text-slate-400 leading-snug">
+                  <Icon name="tabler:point" class="w-3.5 h-3.5 text-slate-600 flex-shrink-0 mt-1" />
+                  <span>{h}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
 
-  <!-- Features3 Widget ************** -->
+    <p class="mt-5 text-center text-sm text-slate-500 max-w-2xl mx-auto leading-relaxed">
+      Free plans get development and staging keys, never a production key. That is not a limit we invented — the
+      environment is read off the key itself, so it is the same boundary the platform already enforces. Build against it
+      for free; pay when it faces your users.
+    </p>
+  </WidgetWrapper>
 
-  <Features3
-    title="Price-related features"
-    subtitle="Discover the advantages of choosing our plans"
-    columns={2}
-    items={[
-      {
-        title: 'Tiered Pricing Plans',
-        description: 'Choose from a range of pricing plans designed to accommodate different budgets and requirements.',
-        icon: 'tabler:stairs',
-      },
-      {
-        title: 'Transparent Pricing',
-        description: 'Clearly displayed pricing details for each plan, with no hidden costs or unexpected charges.',
-        icon: 'tabler:flip-vertical',
-      },
-      {
-        title: 'Secure Payment Methods',
-        description: 'Secure payment gateways to protect your financial information during transactions.',
-        icon: 'tabler:shield-lock',
-      },
-      {
-        title: 'Instant Access',
-        description: `Immediate access to your chosen plan's features and templates upon subscription.`,
-        icon: 'tabler:accessible',
-      },
-      {
-        title: 'Upgrade Value',
-        description: 'Upgrade to higher-tier plans to unlock more features and benefits for an enhanced experience.',
-        icon: 'tabler:chevrons-up',
-      },
-      {
-        title: '24H support',
-        description: 'Questions answered via live chat, email or phone, every calendar day.',
-        icon: 'tabler:headset',
-      },
-    ]}
-    classes={{ container: 'max-w-5xl' }}
-  />
+  <!-- Full comparison -->
+  <WidgetWrapper id="compare" containerClass="max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold tracking-tight text-center mb-2">Every row, side by side</h2>
+    <p class="text-center text-muted mb-12">
+      Meters that mean the same thing whichever part of the suite you are using.
+    </p>
+    <PricingTable />
+  </WidgetWrapper>
 
-  <!-- Steps Widget ****************** -->
+  <!-- Add-ons -->
+  <WidgetWrapper containerClass="max-w-4xl mx-auto !pt-0">
+    <div class="rounded-2xl border border-white/10 bg-slate-900/50 p-6 sm:p-8">
+      <h3 class="text-lg font-bold text-white">Add-ons</h3>
+      <p class="mt-1.5 text-sm text-slate-400">So nobody has to jump a tier for one dimension.</p>
+      <div class="mt-5 grid gap-3 sm:grid-cols-3">
+        {
+          ADD_ONS.map((a) => (
+            <div class="rounded-xl border border-white/8 bg-slate-800/40 px-4 py-3">
+              <p class="text-lg font-bold text-primary">{a.price}</p>
+              <p class="text-sm text-slate-300 leading-snug">{a.label}</p>
+              <p class="text-xs text-slate-500">{a.period}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </WidgetWrapper>
 
-  <Steps
-    title="A guided journey from plans to creativity"
-    tagline="simplified process"
-    isReversed={true}
-    items={[
-      {
-        title: 'Explore plans',
-        icon: 'tabler:number-1',
-      },
-      {
-        title: 'Select a plan',
-        icon: 'tabler:number-2',
-      },
-      {
-        title: 'Sign Up / Log In',
-        icon: 'tabler:number-3',
-      },
-      {
-        title: 'Review order',
-        icon: 'tabler:number-4',
-      },
-      {
-        title: 'Enter payment details',
-        icon: 'tabler:number-5',
-      },
-      {
-        title: 'Confirmation',
-        icon: 'tabler:number-6',
-      },
-      {
-        title: 'Download and start using the template(s)',
-        icon: 'tabler:number-7',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1536816579748-4ecb3f03d72a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80',
-      alt: 'Steps image',
-    }}
-  />
+  <!-- The promise that makes publishing a ladder now safe. -->
+  <WidgetWrapper containerClass="max-w-5xl mx-auto">
+    <div class="text-center mb-10">
+      <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">Model it. Govern it. Run it.</p>
+      <h2 class="text-3xl font-bold tracking-tight">Your seats and applications carry forward.</h2>
+      <p class="mt-4 text-muted max-w-2xl mx-auto leading-relaxed">
+        The suite is three surfaces on one model. As Design and Run land, they light up rows on the plan you already
+        have — you will not be asked to buy a second product to keep using the first.
+      </p>
+    </div>
 
-  <!-- FAQs Widget ******************* -->
+    <div class="grid gap-4 sm:grid-cols-3">
+      {
+        pillars.map((p) => (
+          <div
+            class:list={[
+              'rounded-2xl border p-5',
+              p.live ? 'border-primary/50 bg-primary/5' : 'border-white/10 bg-slate-900/40',
+            ]}
+          >
+            <div class="flex items-center gap-2.5 mb-3">
+              <Icon name={p.icon} class:list={['w-5 h-5', p.live ? 'text-primary' : 'text-slate-500']} />
+              <span class="text-sm font-bold text-white">{p.name}</span>
+              <span
+                class:list={[
+                  'ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
+                  p.live ? 'bg-primary/20 text-primary' : 'bg-slate-700/60 text-slate-400',
+                ]}
+              >
+                {p.status}
+              </span>
+            </div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-1.5">{p.verb}</p>
+            <p class="text-sm text-slate-400 leading-relaxed">{p.description}</p>
+          </div>
+        ))
+      }
+    </div>
+  </WidgetWrapper>
 
   <FAQs
-    title="Pricing FAQs"
-    subtitle="Choosing the right plan is important, and we're here to answer your questions. If you have queries about our pricing options, you're in the right place."
+    title="Pricing questions"
     columns={1}
+    classes={{ container: 'max-w-4xl' }}
     items={[
       {
-        title: 'Do the plans come with customer support?',
+        title: 'Can I buy the Overlay on its own?',
         description:
-          'Absolutely, all plans include access to our dedicated customer support to assist you with any queries or concerns.',
+          'No, and that is deliberate. The Overlay reads and writes the same model the rest of the suite uses — selling the in-app surface apart from the graph underneath it would ship you half a product. Every paid plan includes it.',
       },
       {
-        title: 'Is there a trial period for the different plans?',
+        title: 'What counts as an application?',
         description:
-          "Unfortunately, we don't offer trial periods for the plans. However, you can check out our demo section to preview the quality of our templates.",
+          'One deployed product with its own key — the thing a person opens. Staging and development environments of the same product do not count separately; a second product with its own users does.',
       },
       {
-        title: 'Can I switch between plans?',
+        title: 'Who needs to be an editor?',
         description:
-          'Certainly! You can easily upgrade or downgrade your plan, at any time, to find the one that best suits your evolving requirements.',
+          'Anyone who writes a rule. Reading the panel — asking who may use a control, and why — is free and unlimited on every plan, including Free. We charge for authority, not for looking.',
       },
       {
-        title: 'What payment methods do you accept?',
+        title: 'What is the difference between an editor and a ratifier?',
         description:
-          'We accept major credit cards and online payment methods to ensure a convenient and secure transaction process.',
+          'An editor may write a rule. A ratifier may put it in force. Being able to write something must never imply being able to make it decide, so they are separate grants in the product and separate seats on the plan.',
       },
       {
-        title: 'Are there any hidden fees beyond the displayed cost?',
+        title: 'Do you meter events, page views or monthly active users?',
         description:
-          'No, the subscription cost covers all the features and templates listed under each plan. There are no hidden fees or extra charges.',
+          'No. Your occurrence log grows with your own traffic, and metering it would price you for your success and give you a reason to instrument less. We meter applications and seats — figures you can predict when you sign.',
+      },
+      {
+        title: 'What happens to my price when Design and Run ship?',
+        description:
+          'Nothing. They light up rows on your existing plan, using the same seats and applications you are already paying for. Design partners who join during early access keep their rate for two years.',
+      },
+      {
+        title: 'Is there a trial?',
+        description:
+          'The Free plan is the trial, and it does not expire — one application on development and staging keys, one editor, unlimited inspectors. Asking for a production key is the moment it becomes a paid conversation.',
       },
     ]}
   />
-
-  <!-- CallToAction Widget *********** -->
 
   <CallToAction
-    title="Ready to boost your projects?"
-    subtitle="Join our community of satisfied customers who have transformed their work with our templates."
     actions={[
-      {
-        variant: 'primary',
-        text: 'Get started now',
-        href: '/',
-      },
+      { variant: 'primary', text: 'Get early access', href: '/overlay#early-access' },
+      { text: 'See the Overlay', href: '/overlay' },
     ]}
-  />
+  >
+    <Fragment slot="title">See it on your own controls.</Fragment>
+    <Fragment slot="subtitle">
+      Install it, open the panel, and read what governs each button in your product. Permissions, flags, usage and audit
+      — in one reading.
+    </Fragment>
+  </CallToAction>
 </Layout>

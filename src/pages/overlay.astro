@@ -1,0 +1,304 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import DnaHelix from '~/components/DnaHelix.astro';
+import OverlayDemo from '~/components/widgets/OverlayDemo.astro';
+import EarlyAccessForm from '~/components/widgets/EarlyAccessForm.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+
+import OverlayFacets from '~/components/widgets/OverlayFacets.astro';
+
+const metadata = {
+  title: 'DNA Overlay — Every control, under control',
+  description:
+    'Permissions, feature flags, user analytics and audit logs — running inside your product, on the control itself.',
+  ignoreTitleTemplate: true,
+};
+
+// Each rung earns the next: an address is worth having on its own, a binding needs an
+// address, and nothing can be governed until there is an act to attach a rule to.
+const ladder = [
+  {
+    title: 'Addressable',
+    body: 'Every control carries a stable address, stamped at build time from your own source. You can point at a button and be understood — in a rule, in a ticket, in a conversation — instead of guessing which flag key somebody meant.',
+  },
+  {
+    title: 'Bindable',
+    body: 'An address reaches an <em>operation</em> — the act the control performs. Now the button has a subject, and two buttons that do the same thing are known to do the same thing.',
+  },
+  {
+    title: 'Governable',
+    body: 'Rules attach to the act. <strong class="text-white">Permissions</strong> — who may perform it. <strong class="text-white">Release</strong> — whether it is on at all. <strong class="text-white">Usage</strong> — how often, by how many people. <strong class="text-white">Audit</strong> — everything that has happened, refusals included, and who was refused.',
+  },
+];
+
+const promises = [
+  {
+    icon: 'tabler:file-diff',
+    title: 'Your markup is unchanged',
+    body: 'Rendered output is byte-identical apart from <code>data-dna</code> attributes. The transform is insertion-only, so deleting the plugin restores every file byte-for-byte.',
+  },
+  {
+    icon: 'tabler:ear-off',
+    title: 'It never listens to your buttons',
+    body: 'Usage is <em>read</em> from occurrences the platform already writes — never collected by attaching handlers to controls you own.',
+  },
+  {
+    icon: 'tabler:building-factory',
+    title: 'It cannot fail your build',
+    body: 'Unreachable, slow, refusing, or answering a proxy’s HTML — publishing resolves and reports. Your key is never printed, including in transport errors.',
+  },
+  {
+    icon: 'tabler:key',
+    title: 'The key in your markup is powerless',
+    body: 'Which app this is, which environment, and what the viewer may do are all the server’s answer. A page that could name its own environment could call itself staging.',
+  },
+  {
+    icon: 'tabler:git-pull-request',
+    title: 'Nothing publishes without a key',
+    body: 'A developer’s local build, and a pull request from a fork where the secret is unavailable, send no request at all rather than one that would be refused.',
+  },
+  {
+    icon: 'tabler:shield-check',
+    title: 'Refusals are enforced twice',
+    body: 'The panel hides what you may not do; the server checks again and names which gate stopped a request forged past it. A rule that only exists on the client is not a rule.',
+  },
+  {
+    icon: 'tabler:trash',
+    title: 'Removal is one call',
+    body: '<code>boot</code> returns <code>stop()</code> to whoever installed it — container, watchers, outlines and both <code>sessionStorage</code> entries, gone.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <Hero tagline="DNA Overlay · Early access">
+    <DnaHelix
+      slot="bg"
+      orientation="horizontal"
+      helixWidth={120}
+      nodeSize={12}
+      filled
+      style="height:58%;margin-top:5%"
+    />
+
+    <Fragment slot="title">
+      Every control,<br />
+      <span class="text-accent">under control</span>.
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Permissions, feature flags, user analytics and audit logs.<br class="hidden sm:block" />
+      Running inside your product.
+    </Fragment>
+
+    <Fragment slot="actions">
+      <div class="flex w-full sm:w-auto">
+        <a href="#early-access" class="btn-primary w-full sm:mb-0">Get early access</a>
+      </div>
+      <div class="flex w-full sm:w-auto">
+        <a href="#install" class="btn w-full sm:mb-0">How it installs</a>
+      </div>
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <OverlayDemo />
+      </div>
+    </Fragment>
+  </Hero>
+
+  <!-- ── 1. Permissions · flags · analytics · audit ───────────────────── -->
+  <OverlayFacets />
+
+  <!-- ── 2. Install + what it buys you + trust ────────────────────────── -->
+  <WidgetWrapper id="install" containerClass="max-w-5xl mx-auto">
+    <div class="text-center mb-12">
+      <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Installing it</p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Two halves. You own one of them.</h2>
+    </div>
+
+    <div class="max-w-2xl mx-auto rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden">
+      <p class="px-4 py-2.5 border-b border-white/8 text-xs font-semibold text-slate-400">
+        Your half — <code class="text-accent">@dna/react</code>
+      </p>
+      <pre
+        class="p-4 text-xs leading-relaxed overflow-x-auto"><code class="text-slate-300">{`import { DnaProvider } from "@dna/react";
+
+<DnaProvider app="juniper-lane" environment="production">
+  <App />
+</DnaProvider>`}</code></pre>
+      <p class="px-4 pb-4 text-xs text-slate-500 leading-relaxed">
+        Plus a build plugin from the same package, which stamps a stable address onto every control. Both ship in your
+        bundle.
+      </p>
+    </div>
+
+    <!-- The obvious question is why a script tag is needed at all when the provider is
+         already mounted. The answer is the reason for the split, so it leads. -->
+    <div class="mt-5 max-w-2xl mx-auto rounded-2xl border border-white/10 bg-slate-900/40 px-5 py-4">
+      <p class="text-xs font-semibold text-slate-400 mb-2">Our half — one line of HTML</p>
+      <p class="text-sm text-muted leading-relaxed">
+        A script tag carrying a publishable key and an endpoint, and
+        <strong class="text-white">nothing else</strong>. Which application this is, which environment it runs in,
+        whether the overlay may run here at all, and what the person looking at it may do are every one of them the
+        server&rsquo;s answer — because a page that could name its own environment could call itself staging, and one
+        that could name its own capabilities could grant them.
+      </p>
+      <p class="mt-3 text-sm text-muted leading-relaxed">
+        Keeping it out of your bundle is also what lets you turn the overlay off without a redeploy, and what makes this
+        half framework-agnostic. Only the address stamping is React-specific.
+      </p>
+    </div>
+
+    <!-- What the install actually buys — three rungs, each earning the next. Held to
+         the same 2xl column as the install blocks, and joined to them by the site's
+         existing connector, so it reads as the payoff rather than a new topic. -->
+    <div class="flex flex-col items-center">
+      <div class="w-px h-8 bg-gradient-to-b from-transparent to-primary/50"></div>
+      <div
+        class="w-8 h-8 rounded-full border-2 border-primary bg-primary/10 shadow-[0_0_16px_rgba(13,148,136,0.4)] flex items-center justify-center"
+      >
+        <Icon name="tabler:arrow-down" class="w-4 h-4 text-primary" />
+      </div>
+      <div class="w-px h-8 bg-gradient-to-b from-primary/50 to-transparent"></div>
+    </div>
+
+    <p class="text-center text-sm font-bold uppercase tracking-[0.2em] text-primary mb-6">What that gets you</p>
+
+    <div class="max-w-2xl mx-auto space-y-3">
+      {
+        ladder.map((rung, i) => (
+          <div class="flex gap-4 rounded-2xl border border-white/10 bg-slate-900/40 p-5">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/15 border border-primary/40 flex items-center justify-center">
+              <span class="text-xs font-black text-primary font-mono">{`0${i + 1}`}</span>
+            </div>
+            <div>
+              <h4 class="text-base font-bold text-white mb-1.5">{rung.title}</h4>
+              <p class="text-sm text-muted leading-relaxed" set:html={rung.body} />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <div
+      class="mt-5 max-w-2xl mx-auto rounded-2xl border border-primary/40 bg-primary/8 px-5 py-4 flex items-start gap-3"
+    >
+      <Icon name="tabler:flask" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+      <p class="text-sm text-slate-300 leading-relaxed">
+        <strong class="text-white">
+          <code>@dna/react</code> is in private beta.
+        </strong>
+        It is not on npm yet. Early-access customers get the package and half an hour of setup with us.
+      </p>
+    </div>
+
+    <h3 class="text-xl font-bold text-white mt-16 mb-2 text-center">Seven things it will never do</h3>
+    <p class="text-center text-muted mb-10 max-w-2xl mx-auto">
+      It arrives on a script tag, in a product nobody asked it about. Every one of these is enforced, not promised.
+    </p>
+
+    <div class="grid sm:grid-cols-2 gap-x-8 gap-y-6">
+      {
+        promises.map((p) => (
+          <div class="flex gap-3">
+            <Icon name={p.icon} class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 class="text-sm font-bold text-white mb-1">{p.title}</h4>
+              <p
+                class="text-sm text-muted leading-relaxed [&_code]:text-accent [&_code]:text-[0.9em]"
+                set:html={p.body}
+              />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="mt-10 text-sm text-slate-500 leading-relaxed max-w-2xl mx-auto text-center border-t border-white/8 pt-8">
+      The same panel can also place a control that <em>does not exist yet</em> — drawn from your own design system, and handed
+      to a developer as an address rather than a ticket. That is a story of its own; ask us about Prototype mode.
+    </p>
+  </WidgetWrapper>
+
+  <!-- ── 3. Pricing, as a pointer rather than a section ───────────────── -->
+  <WidgetWrapper containerClass="max-w-3xl mx-auto">
+    <div
+      class="rounded-2xl border border-white/10 bg-slate-900/50 px-6 py-6 sm:px-8 flex flex-col sm:flex-row sm:items-center gap-5"
+    >
+      <div>
+        <p class="text-lg font-bold text-white">Included in every paid plan.</p>
+        <p class="mt-1.5 text-sm text-muted leading-relaxed">
+          The Overlay is a surface on your model, not a product beside it — so it is never sold separately. Reading the
+          panel is free and unlimited on all plans; we charge for authority, not for looking.
+        </p>
+      </div>
+      <a
+        href="/pricing"
+        class="btn-primary flex-shrink-0 whitespace-nowrap px-6 py-2.5 text-sm font-semibold rounded-full"
+      >
+        See pricing
+      </a>
+    </div>
+  </WidgetWrapper>
+
+  <FAQs
+    title="FAQ"
+    columns={2}
+    classes={{ container: 'max-w-5xl' }}
+    items={[
+      {
+        title: 'Do I have to replace my feature flags?',
+        description:
+          'No. Start with the controls that have no governance at all — which is most of them — and leave what works alone. Teams that later consolidate do it because they wanted one answer per control, not because we required it.',
+      },
+      {
+        title: 'What does it do to my bundle?',
+        description:
+          'The overlay itself is a script tag the browser fetches separately, and it can be served only where you want it. The build plugin adds attributes, not runtime — your rendered output is byte-identical apart from those.',
+      },
+      {
+        title: 'Can anyone who loads my page see our rules?',
+        description:
+          'No. The publishable key carries no capabilities at all. Until somebody identifies, the panel can inspect and nothing more, and names of people are only ever returned to a caller who may govern — a roster served to anyone who views source would be a staff directory.',
+      },
+      {
+        title: 'Does it work if my app is not React?',
+        description:
+          'The overlay half is a script tag and is framework-agnostic. The adapter that stamps addresses at build time is React today; tell us your stack on the form, because which one we write next is decided by who is asking.',
+      },
+      {
+        title: 'What happens when I turn it off?',
+        description:
+          'The script tag comes out and the page is exactly what it was. <code>stop()</code> removes the container, the watchers, the outlines and both sessionStorage entries; deleting the build plugin restores every file byte-for-byte.',
+      },
+      {
+        title: 'Is this ready for production?',
+        description:
+          'It runs against a live stack and every screenshot on this page was taken walking a real script. It is early access rather than generally available: the package is private, we set you up by hand, and we are choosing 20 design partners we can be genuinely useful to.',
+      },
+    ]}
+  />
+
+  <!-- ── Early access ─────────────────────────────────────────────────── -->
+  <WidgetWrapper containerClass="max-w-4xl mx-auto">
+    <div
+      class="rounded-2xl border border-primary/40 bg-slate-900/70 p-6 sm:p-10 shadow-[0_0_48px_rgba(13,148,136,0.18)]"
+    >
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold tracking-tight">See it on your own controls.</h2>
+        <p class="mt-4 text-muted max-w-xl mx-auto leading-relaxed">
+          Install it, open the panel, and read what governs each button in your product. The answer is
+          <em>nothing</em> more often than most teams expect — and that is usually a more interesting conversation than the
+          install was.
+        </p>
+      </div>
+
+      <EarlyAccessForm />
+    </div>
+  </WidgetWrapper>
+</Layout>

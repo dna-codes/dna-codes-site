@@ -1,0 +1,398 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// A scripted miniature of the Inspect panel, built stub-first: the shape is the real
+// panel's, the data is staged, and the footer says so where the live panel names the
+// signed-in person. Clicking a control drives it — the same gesture the product uses.
+//
+// The ungoverned exhibit is Refund, deliberately. An ungoverned "Add to cart" proves
+// nothing: it *should* be ungoverned, so a reader nods and moves on. A refund button
+// that anyone can reach and nothing records is the same finding with teeth.
+
+const orders = [
+  { id: '#4412', customer: 'A. Nunes', total: '$128.00' },
+  { id: '#4411', customer: 'P. Raman', total: '$34.00' },
+  { id: '#4409', customer: 'T. Reyes', total: '$212.00' },
+];
+---
+
+<div
+  data-overlay-demo
+  class="bg-slate-900/90 rounded-2xl border-2 border-primary shadow-[0_0_48px_rgba(13,148,136,0.35)] overflow-hidden"
+>
+  <!-- Chrome -->
+  <div class="flex items-center gap-3 px-3 py-2.5 border-b border-white/8">
+    <div class="flex items-center gap-2">
+      <div class="w-6 h-6 rounded-lg bg-primary/25 border border-primary/40 flex items-center justify-center">
+        <Icon name="tabler:dna" class="w-3.5 h-3.5 text-primary" />
+      </div>
+      <span class="text-xs font-bold text-primary uppercase tracking-widest">Juniper Lane</span>
+    </div>
+    <span
+      class="text-[10px] font-semibold uppercase tracking-wider text-amber-300/90 bg-amber-400/10 border border-amber-400/25 rounded px-1.5 py-0.5"
+      >Staging</span
+    >
+    <button
+      data-demo-reset
+      class="ml-auto text-[11px] text-slate-500 hover:text-slate-300 transition-colors duration-150 inline-flex items-center gap-1"
+    >
+      <Icon name="tabler:refresh" class="w-3 h-3" /> Reset
+    </button>
+  </div>
+
+  <div class="flex flex-col md:flex-row min-h-[22rem]">
+    <!-- The application -->
+    <div class="flex-1 p-4 bg-slate-950/40">
+      <p class="text-[11px] text-slate-500 mb-3">
+        <Icon name="tabler:pointer" class="w-3.5 h-3.5 inline-block -mt-0.5 mr-0.5" />
+        Click a control — the panel answers for it.
+      </p>
+
+      <div class="flex gap-3">
+        <!-- Nav rail -->
+        <nav class="w-24 flex-shrink-0 space-y-1">
+          <p class="text-[9px] font-bold uppercase tracking-widest text-slate-600 mb-1.5 px-1">Storefront</p>
+          <div class="px-2 py-1.5 rounded-lg text-[11px] text-slate-500">Shop</div>
+          <div class="px-2 py-1.5 rounded-lg text-[11px] text-slate-500">Cart</div>
+          <p class="text-[9px] font-bold uppercase tracking-widest text-slate-600 mb-1.5 mt-3 px-1">Back office</p>
+          <div class="px-2 py-1.5 rounded-lg bg-primary/20 text-[11px] text-slate-200 font-medium">Orders</div>
+          <button
+            data-demo-control="fulfillment"
+            class="demo-control demo-invite w-full text-left px-2 py-1.5 rounded-lg text-[11px] text-slate-300 flex items-center gap-1.5"
+          >
+            <Icon name="tabler:lock" class="w-3 h-3 flex-shrink-0 text-slate-500" />
+            Fulfillment
+          </button>
+        </nav>
+
+        <!-- Orders table -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-2">
+            <p class="text-sm font-bold text-white">Orders</p>
+            <button
+              data-demo-control="export"
+              class="demo-control demo-invite ml-auto rounded border border-white/15 px-2 py-1 text-[10px] text-slate-300 inline-flex items-center gap-1"
+            >
+              <Icon name="tabler:lock" class="w-2.5 h-2.5 text-slate-500" />
+              Export CSV
+            </button>
+          </div>
+
+          <div class="rounded-lg border border-white/8 overflow-hidden">
+            <div
+              class="grid grid-cols-[1fr_1fr_auto_auto] gap-2 px-2.5 py-1.5 bg-slate-800/50 text-[9px] font-bold uppercase tracking-wider text-slate-500"
+            >
+              <span>Order</span><span>Customer</span><span>Total</span><span></span>
+            </div>
+            {
+              orders.map((o) => (
+                <div class="grid grid-cols-[1fr_1fr_auto_auto] gap-2 items-center px-2.5 py-1.5 border-t border-white/5">
+                  <span class="text-[11px] font-mono text-slate-300">{o.id}</span>
+                  <span class="text-[11px] text-slate-400 truncate">{o.customer}</span>
+                  <span class="text-[11px] text-slate-300">{o.total}</span>
+                  <button
+                    data-demo-control="refund"
+                    class="demo-control demo-invite rounded px-2 py-0.5 text-[10px] font-semibold text-rose-200 bg-rose-500/15 inline-flex items-center gap-1"
+                  >
+                    <Icon name="tabler:lock" class="refund-lock w-2.5 h-2.5 text-rose-200/70" />
+                    Refund
+                  </button>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The panel -->
+    <div
+      class="w-full md:w-[19rem] flex-shrink-0 border-t md:border-t-0 md:border-l border-white/10 bg-slate-900 flex flex-col"
+    >
+      <div class="flex items-center gap-2 px-3 py-2 border-b border-white/8">
+        <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5">Inspect</span>
+        <span class="text-[11px] text-slate-500">Prototype</span>
+        <span class="text-[11px] text-slate-500">Settings</span>
+      </div>
+
+      <div class="flex-1 p-3">
+        <!-- Empty: the coverage line is the finding, not a statistic -->
+        <div data-demo-panel="empty">
+          <div class="rounded-lg border border-dashed border-white/12 px-3 py-6 text-center">
+            <p class="text-xs text-slate-500">Click any control</p>
+          </div>
+          <div class="mt-3 rounded-lg bg-primary/10 border border-primary/25 px-3 py-2.5">
+            <p class="text-xs text-slate-200 leading-relaxed">
+              <span class="font-bold text-primary"><span data-coverage-count>2</span> of 3</span> controls are governed by
+              something.
+            </p>
+          </div>
+          <p class="mt-2 text-[10px] text-slate-600 leading-relaxed">
+            Counted for this screen. It moves as you walk the product.
+          </p>
+        </div>
+
+        <!-- Governed, routed elsewhere -->
+        <div data-demo-panel="fulfillment" hidden>
+          <p class="text-sm font-bold text-white">Fulfillment link</p>
+          <dl class="mt-3 space-y-1.5">
+            <div class="flex gap-2">
+              <dt class="text-[9px] uppercase tracking-wider text-slate-500 w-16 flex-shrink-0 pt-0.5">Address</dt>
+              <dd class="text-[11px] font-mono text-slate-300 break-all">chrome.fulfillment-link</dd>
+            </div>
+            <div class="flex gap-2">
+              <dt class="text-[9px] uppercase tracking-wider text-slate-500 w-16 flex-shrink-0 pt-0.5">Operation</dt>
+              <dd class="text-[11px] font-mono text-slate-300">order.fulfill</dd>
+            </div>
+          </dl>
+          <div class="mt-3 pt-3 border-t border-white/8 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">You may</span>
+              <span
+                class="text-[9px] font-bold uppercase tracking-wider bg-primary/20 text-accent border border-primary/40 rounded px-1.5 py-0.5"
+                >Yes</span
+              >
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">Who may</span>
+              <span class="text-[11px] text-slate-300">Fulfillment desk</span>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">Used</span>
+              <span class="text-[11px] text-slate-300">14 times · 3 people · 7d</span>
+            </div>
+          </div>
+          <p class="mt-3 text-[10px] text-slate-500 leading-relaxed border-t border-white/8 pt-2.5">
+            You hold the fulfillment desk, so you may open it. Tomas Reyes and June Alcott do too.
+          </p>
+        </div>
+
+        <!-- Governed, restricted -->
+        <div data-demo-panel="export" hidden>
+          <p class="text-sm font-bold text-white">Export CSV</p>
+          <dl class="mt-3 space-y-1.5">
+            <div class="flex gap-2">
+              <dt class="text-[9px] uppercase tracking-wider text-slate-500 w-16 flex-shrink-0 pt-0.5">Address</dt>
+              <dd class="text-[11px] font-mono text-slate-300 break-all">admin.orders.export</dd>
+            </div>
+            <div class="flex gap-2">
+              <dt class="text-[9px] uppercase tracking-wider text-slate-500 w-16 flex-shrink-0 pt-0.5">Operation</dt>
+              <dd class="text-[11px] font-mono text-slate-300">customer.export</dd>
+            </div>
+          </dl>
+          <div class="mt-3 pt-3 border-t border-white/8 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">You may</span>
+              <span
+                class="text-[9px] font-bold uppercase tracking-wider bg-rose-500/15 text-rose-300 border border-rose-400/30 rounded px-1.5 py-0.5"
+                >No</span
+              >
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">Who may</span>
+              <span class="text-[11px] text-slate-300">Store manager</span>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">Used</span>
+              <span class="text-[11px] text-slate-300">2 times · 1 person · 7d</span>
+            </div>
+          </div>
+          <p class="mt-3 text-[10px] text-slate-500 leading-relaxed border-t border-white/8 pt-2.5">
+            Exporting customers is the store manager&rsquo;s. You do not hold that seat.
+          </p>
+        </div>
+
+        <!-- Ungoverned: the finding that matters -->
+        <div data-demo-panel="refund" hidden>
+          <p class="text-sm font-bold text-white">Refund</p>
+          <dl class="mt-3 space-y-1.5">
+            <div class="flex gap-2">
+              <dt class="text-[9px] uppercase tracking-wider text-slate-500 w-16 flex-shrink-0 pt-0.5">Address</dt>
+              <dd class="text-[11px] font-mono text-slate-300 break-all">admin.orders.refund</dd>
+            </div>
+          </dl>
+          <div class="mt-3 flex items-start gap-2 rounded-lg border border-rose-400/25 bg-rose-500/8 px-2.5 py-2">
+            <Icon name="tabler:circle-dashed" class="w-3.5 h-3.5 flex-shrink-0 text-rose-300/80 mt-[3px]" />
+            <p class="text-xs text-slate-200 leading-relaxed">
+              Nothing governs this control — no access rule, no flag, no recorded use.
+            </p>
+          </div>
+          <p class="mt-3 text-[10px] text-slate-500 leading-relaxed">
+            Anyone who reaches this screen can refund any order, and nothing will record that they did.
+          </p>
+
+          <div class="mt-3 pt-3 border-t border-white/8">
+            <p class="text-[9px] uppercase tracking-wider text-slate-500 mb-1.5">Restrict to</p>
+            <button
+              data-demo-govern
+              class="w-full rounded-lg bg-primary/90 hover:bg-primary text-white text-[11px] font-semibold py-1.5 transition-colors duration-150"
+            >
+              Fulfillment desk
+            </button>
+            <p class="mt-1.5 text-[10px] text-slate-600">Written from here. No deploy.</p>
+          </div>
+        </div>
+
+        <!-- ...and the same control a moment later, governed from inside the app -->
+        <div data-demo-panel="refund-governed" hidden>
+          <p class="text-sm font-bold text-white">Refund</p>
+          <dl class="mt-3 space-y-1.5">
+            <div class="flex gap-2">
+              <dt class="text-[9px] uppercase tracking-wider text-slate-500 w-16 flex-shrink-0 pt-0.5">Address</dt>
+              <dd class="text-[11px] font-mono text-slate-300 break-all">admin.orders.refund</dd>
+            </div>
+            <div class="flex gap-2">
+              <dt class="text-[9px] uppercase tracking-wider text-slate-500 w-16 flex-shrink-0 pt-0.5">Operation</dt>
+              <dd class="text-[11px] font-mono text-slate-300">order.refund</dd>
+            </div>
+          </dl>
+
+          <div class="mt-3 pt-3 border-t border-white/8 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">You may</span>
+              <span
+                class="text-[9px] font-bold uppercase tracking-wider bg-primary/20 text-accent border border-primary/40 rounded px-1.5 py-0.5"
+                >Yes</span
+              >
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">Who may</span>
+              <span class="text-[11px] text-slate-300">Fulfillment desk</span>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">Everyone else</span>
+              <span
+                class="text-[9px] font-bold uppercase tracking-wider bg-rose-500/15 text-rose-300 border border-rose-400/30 rounded px-1.5 py-0.5"
+                >Blocked</span
+              >
+            </div>
+          </div>
+
+          <div class="mt-3 rounded-lg border border-primary/30 bg-primary/8 px-3 py-2.5">
+            <p class="text-[11px] text-slate-200 leading-relaxed">
+              Now governed. Every refund from here on is recorded, refusals included.
+            </p>
+          </div>
+
+          <button
+            data-demo-ungovern
+            class="mt-3 text-[10px] text-slate-500 hover:text-slate-300 transition-colors duration-150 inline-flex items-center gap-1"
+          >
+            <Icon name="tabler:arrow-back-up" class="w-3 h-3" /> Undo
+          </button>
+        </div>
+      </div>
+
+      <div class="px-3 py-2 border-t border-white/8 flex items-center gap-2">
+        <span class="text-[10px] text-slate-500 border border-white/10 rounded px-1.5 py-0.5">Pick</span>
+        <span class="text-[10px] text-slate-500 border border-white/10 rounded px-1.5 py-0.5">Hover</span>
+        <span
+          class="ml-auto text-[9px] font-bold uppercase tracking-wider text-amber-300/90 bg-amber-400/10 border border-amber-400/25 rounded px-1.5 py-0.5"
+          >Demo mode</span
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .demo-control {
+    position: relative;
+    cursor: pointer;
+    outline: 1px dashed rgb(148 163 184 / 35%);
+    outline-offset: 1px;
+    transition:
+      outline-color 0.15s ease,
+      background-color 0.15s ease;
+  }
+  .demo-control:hover {
+    outline-color: rgb(45 212 191 / 70%);
+  }
+  .demo-control[data-selected='true'] {
+    outline: 2px solid rgb(45 212 191);
+    outline-offset: 1px;
+    animation: none;
+  }
+
+  /* Invite the first click. Removed for every control as soon as one is picked —
+     an attractor that keeps pulsing after you have engaged is just noise. */
+  .demo-invite {
+    animation: demo-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes demo-pulse {
+    0%,
+    100% {
+      outline-color: rgb(148 163 184 / 35%);
+      box-shadow: 0 0 0 0 rgb(45 212 191 / 0%);
+    }
+    50% {
+      outline-color: rgb(45 212 191 / 90%);
+      box-shadow: 0 0 0 3px rgb(45 212 191 / 18%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .demo-invite {
+      animation: none;
+      outline-color: rgb(45 212 191 / 70%);
+    }
+  }
+
+  /* The padlock only exists once a rule does. */
+  .refund-lock {
+    display: none;
+  }
+  [data-refund-governed='true'] .refund-lock {
+    display: inline-block;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-overlay-demo]').forEach((demo) => {
+    const controls = Array.from(demo.querySelectorAll<HTMLElement>('[data-demo-control]'));
+    const panels = Array.from(demo.querySelectorAll<HTMLElement>('[data-demo-panel]'));
+
+    const isGoverned = () => demo.getAttribute('data-refund-governed') === 'true';
+
+    // A control does not map one-to-one onto a panel: once a rule has been written from
+    // inside the app, Refund reads governed. Resolving here rather than at each call site
+    // is what keeps a second click on Refund from silently undoing the rule.
+    const panelFor = (control: string) => (control === 'refund' && isGoverned() ? 'refund-governed' : control);
+
+    const show = (control: string) => {
+      const panel = panelFor(control);
+      panels.forEach((p) => (p.hidden = p.dataset.demoPanel !== panel));
+      // Selecting draws at *every* occurrence of the address, not just the one clicked —
+      // the clearest statement the product makes about what an address is. Keyed on the
+      // control rather than the panel, so the outlines survive the governed reading.
+      controls.forEach((c) => c.setAttribute('data-selected', String(c.dataset.demoControl === control)));
+    };
+
+    controls.forEach((c) =>
+      c.addEventListener('click', () => {
+        controls.forEach((other) => other.classList.remove('demo-invite'));
+        show(c.dataset.demoControl!);
+      })
+    );
+
+    // Authoring, simulated: a rule written from inside the application, with the
+    // control's own appearance changing to match. The padlock is the point — the
+    // change lands on the button, not in a console somebody has to go and check.
+    const coverage = demo.querySelector<HTMLElement>('[data-coverage-count]');
+    const setGoverned = (governed: boolean) => {
+      demo.setAttribute('data-refund-governed', String(governed));
+      if (coverage) coverage.textContent = governed ? '3' : '2';
+      show('refund');
+    };
+
+    demo.querySelector<HTMLElement>('[data-demo-govern]')?.addEventListener('click', () => setGoverned(true));
+    demo.querySelector<HTMLElement>('[data-demo-ungovern]')?.addEventListener('click', () => setGoverned(false));
+
+    demo.querySelector<HTMLElement>('[data-demo-reset]')?.addEventListener('click', () => {
+      demo.setAttribute('data-refund-governed', 'false');
+      if (coverage) coverage.textContent = '2';
+      show('empty');
+    });
+  });
+</script>
