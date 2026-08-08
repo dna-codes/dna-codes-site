@@ -2,11 +2,13 @@ import { getBlogPermalink, getPermalink } from './utils/permalinks';
 
 export const headerData = {
   links: [
-    // Overlay leads: it is the only entry a stranger can evaluate in sixty seconds.
-    { text: 'Overlay', href: getPermalink('/overlay') },
+    // Overlay and Pricing are deliberately absent while the Overlay ships quietly —
+    // both pages are live at their URLs and reachable by anyone given the link, but
+    // nothing on the site points at them. Restore these two when it goes public:
+    //   { text: 'Overlay', href: getPermalink('/overlay') },
+    //   { text: 'Pricing', href: getPermalink('/pricing') },
     { text: 'Playground', href: getPermalink('/playground') },
     { text: 'Docs', href: getPermalink('/docs') },
-    { text: 'Pricing', href: getPermalink('/pricing') },
     { text: 'Blog', href: getBlogPermalink() },
     // { text: 'About', href: getPermalink('/about') },
   ],
@@ -18,8 +20,7 @@ export const footerData = {
     {
       title: 'Platform',
       links: [
-        { text: 'Overlay', href: getPermalink('/overlay') },
-        { text: 'Pricing', href: getPermalink('/pricing') },
+        // Overlay and Pricing rejoin this list when the launch goes public.
         { text: 'Playground', href: getPermalink('/playground') },
       ],
     },

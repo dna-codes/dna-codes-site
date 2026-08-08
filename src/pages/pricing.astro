@@ -14,6 +14,10 @@ const metadata = {
   description:
     'One ladder for the DNA suite. The Overlay is included from the first paid plan up — a surface on your model, not a product beside it.',
   ignoreTitleTemplate: true,
+  // Shipping quietly: live at its URL for anyone given the link, kept out of
+  // search until the launch goes public. Paired with a sitemap exclusion in
+  // astro.config.ts — drop both together.
+  robots: { index: false, follow: false },
 };
 
 const free = TIERS.find((t) => t.key === 'free')!;
