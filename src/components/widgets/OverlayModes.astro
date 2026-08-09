@@ -1,0 +1,167 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import OverlayFacets from '~/components/widgets/OverlayFacets.astro';
+import OverlayPrototype from '~/components/widgets/OverlayPrototype.astro';
+
+// The hero plays both modes as one story; this is where a reader stops and reads whichever
+// half they came for. A toggle rather than two stacked sections because they are two
+// readings of one panel — stacking them would say "and here is the other product".
+//
+// Both halves are rendered, and switching only flips `hidden`: the page is static, the
+// second mode is a few kilobytes of markup, and the tab that is not selected is still in
+// the document for find-in-page and for anyone arriving without JavaScript.
+const modes = [
+  {
+    id: 'inspect',
+    icon: 'tabler:zoom-scan',
+    label: 'Inspect',
+    blurb: 'What governs the controls you already shipped',
+  },
+  {
+    id: 'prototype',
+    icon: 'tabler:wand',
+    label: 'Prototype',
+    blurb: 'Ask for one that does not exist yet',
+  },
+];
+---
+
+<div data-overlay-modes class="scroll-mt-[72px]">
+  <WidgetWrapper id="modes" containerClass="max-w-3xl mx-auto pb-0 md:pb-0 lg:pb-0">
+    <div class="text-center">
+      <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Two modes, one panel</p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Read what is there. Ask for what is not.</h2>
+      <p class="mt-5 text-muted leading-relaxed">
+        Same install, same addresses, same panel — and the second mode only works because the first one gave every
+        control a name.
+      </p>
+    </div>
+
+    <div
+      role="tablist"
+      aria-label="Overlay modes"
+      class="mt-8 mx-auto flex max-w-xl flex-col sm:flex-row gap-2 rounded-2xl border border-white/10 bg-slate-900/60 p-2"
+    >
+      {
+        modes.map((m, i) => (
+          <button
+            role="tab"
+            id={`mode-tab-${m.id}`}
+            data-mode-tab={m.id}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            aria-controls={`mode-panel-${m.id}`}
+            tabindex={i === 0 ? 0 : -1}
+            class="mode-tab flex-1 rounded-xl px-4 py-3 text-left"
+          >
+            <span class="flex items-center gap-2">
+              <Icon name={m.icon} class="w-4 h-4 flex-shrink-0" />
+              <span class="text-sm font-bold">{m.label}</span>
+            </span>
+            <span class="mode-tab-sub mt-0.5 block text-xs leading-snug">{m.blurb}</span>
+          </button>
+        ))
+      }
+    </div>
+  </WidgetWrapper>
+
+  <div id="mode-panel-inspect" role="tabpanel" aria-labelledby="mode-tab-inspect" data-mode-panel="inspect">
+    <OverlayFacets />
+  </div>
+
+  <div
+    id="mode-panel-prototype"
+    role="tabpanel"
+    aria-labelledby="mode-tab-prototype"
+    data-mode-panel="prototype"
+    hidden
+  >
+    <OverlayPrototype />
+  </div>
+</div>
+
+<style>
+  .mode-tab {
+    cursor: pointer;
+    color: rgb(148 163 184);
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .mode-tab:hover {
+    color: rgb(226 232 240);
+    background-color: rgb(255 255 255 / 5%);
+  }
+  .mode-tab[aria-selected='true'] {
+    color: white;
+    background-color: var(--aw-color-primary);
+  }
+  .mode-tab-sub {
+    color: rgb(100 116 139);
+  }
+  .mode-tab:hover .mode-tab-sub {
+    color: rgb(148 163 184);
+  }
+  .mode-tab[aria-selected='true'] .mode-tab-sub {
+    color: rgb(255 255 255 / 78%);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-overlay-modes]').forEach((group) => {
+    const tabs = Array.from(group.querySelectorAll<HTMLElement>('[data-mode-tab]'));
+    const panels = Array.from(group.querySelectorAll<HTMLElement>('[data-mode-panel]'));
+    const ids = tabs.map((t) => t.dataset.modeTab!);
+
+    const select = (id: string, focus = false) => {
+      if (!ids.includes(id)) return;
+      tabs.forEach((t) => {
+        const on = t.dataset.modeTab === id;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        if (on && focus) t.focus();
+      });
+      panels.forEach((p) => (p.hidden = p.dataset.modePanel !== id));
+    };
+
+    tabs.forEach((t) =>
+      t.addEventListener('click', () => {
+        select(t.dataset.modeTab!);
+        // replaceState rather than a hash assignment: switching modes should be linkable
+        // without adding a history entry the back button then has to walk through.
+        history.replaceState(null, '', `#${t.dataset.modeTab}`);
+      })
+    );
+
+    // Arrow keys move between tabs, which is the one thing a tablist owes a keyboard.
+    group.addEventListener('keydown', (e) => {
+      const key = (e as KeyboardEvent).key;
+      if (key !== 'ArrowRight' && key !== 'ArrowLeft') return;
+      const i = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
+      if (i < 0 || !tabs.includes(document.activeElement as HTMLElement)) return;
+      e.preventDefault();
+      select(ids[(i + (key === 'ArrowRight' ? 1 : ids.length - 1)) % ids.length], true);
+    });
+
+    // `#prototype` is a real link anyone may hold — from the install section, from us in an
+    // email — so it has to select the mode as well as land on the section. There is no
+    // element carrying that id, so the scroll is ours to do.
+    const fromHash = (smooth: boolean) => {
+      const id = location.hash.slice(1);
+      if (!ids.includes(id)) return;
+      select(id);
+      group.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+    };
+
+    document.querySelectorAll<HTMLAnchorElement>('a[href="#inspect"], a[href="#prototype"]').forEach((a) =>
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        history.replaceState(null, '', a.getAttribute('href'));
+        fromHash(true);
+      })
+    );
+
+    window.addEventListener('hashchange', () => fromHash(true));
+    fromHash(false);
+  });
+</script>

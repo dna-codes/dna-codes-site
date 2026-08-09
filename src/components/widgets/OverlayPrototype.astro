@@ -1,0 +1,323 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+// The second mode, in the same shape as OverlayFacets — four blocks, alternating, each
+// with one artefact beside it. Deliberate: Inspect and Prototype are one panel, so the
+// two sections must not look like two products.
+//
+// The control asked for here is the same one the hero governs. Partial refunds is the
+// natural next request from a desk that just got refunds restricted to it, so the reader
+// arrives already knowing the screen, the address and who the seat belongs to.
+
+const shelf = [
+  {
+    group: 'Controls',
+    items: [
+      { name: 'Primary button', kind: 'button' },
+      { name: 'Quiet button', kind: 'button', picked: true },
+      { name: 'Text field', kind: 'input' },
+      { name: 'Note', kind: 'label' },
+    ],
+  },
+  {
+    group: 'Back office',
+    items: [
+      { name: 'Orders table', kind: 'table' },
+      { name: 'Status badge', kind: 'badge' },
+      { name: 'Filter bar', kind: 'toolbar' },
+      { name: 'Empty state', kind: 'panel' },
+    ],
+  },
+];
+---
+
+<WidgetWrapper containerClass="max-w-5xl mx-auto">
+  <div class="text-center mb-14">
+    <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Four steps, one address</p>
+    <h2 class="text-3xl md:text-4xl font-bold tracking-tight">
+      Ask for a control that<br class="hidden sm:block" /> does not exist yet.
+    </h2>
+    <p class="mt-5 text-muted max-w-2xl mx-auto leading-relaxed">
+      The panel that reads your controls can also place one. Pick a piece off your own shelf, put it where it goes, say
+      who it is for — and hand a developer an address instead of a ticket.
+    </p>
+  </div>
+
+  <div class="space-y-16 sm:space-y-20">
+    <!-- ── 1. Select component ──────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div>
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:components" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">01 · Select a component</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Pick it off your own shelf.</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          The shelf is your design system — your Storybook, grouped the way your product is grouped. Nothing on it is
+          ours, so what you place reads as your product rather than as a wireframe of somebody else&rsquo;s.
+        </p>
+        <p class="text-muted leading-relaxed">
+          A library is registered once. After that the person asking is choosing from the same pieces the person
+          building would have reached for anyway — which is most of the argument a mockup usually has to win.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5"
+            >Prototype</span
+          >
+          <span class="ml-auto text-[10px] text-slate-500 truncate">Juniper Lane Storybook</span>
+        </div>
+        <div class="p-3.5">
+          {
+            shelf.map((group, gi) => (
+              <div class:list={[gi > 0 && 'mt-3']}>
+                <p class="text-[9px] font-bold uppercase tracking-widest text-slate-600 mb-1.5">{group.group}</p>
+                <div class="grid grid-cols-2 gap-1.5">
+                  {group.items.map((item) => (
+                    <div
+                      class:list={[
+                        'rounded-lg border px-2.5 py-1.5',
+                        item.picked ? 'border-primary/70 bg-primary/12' : 'border-white/10 bg-slate-800/40',
+                      ]}
+                    >
+                      <p
+                        class:list={[
+                          'text-[11px] leading-tight truncate',
+                          item.picked ? 'text-white font-semibold' : 'text-slate-300',
+                        ]}
+                      >
+                        {item.name}
+                      </p>
+                      <p class="text-[9px] font-mono text-slate-600">{item.kind}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 2. Place in your app ─────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div class="md:order-last">
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:crosshair" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">02 · Place it in your app</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Put it where it goes.</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          Draw it in the running product, against a real control. It anchors to that control&rsquo;s address — <em
+            >beside</em
+          >
+          <code class="text-accent text-[0.9em]">admin.orders.refund</code> — instead of to a paragraph about which button
+          you meant.
+        </p>
+        <p class="text-muted leading-relaxed">
+          That address is the specification, and it is machine-checkable. A developer stamps it on a real control, and
+          neither of you can turn out to have meant a different button.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Juniper Lane</span>
+          <span
+            class="text-[10px] font-semibold uppercase tracking-wider text-slate-300 bg-white/8 border border-white/20 rounded px-1.5 py-0.5"
+            >Your app</span
+          >
+        </div>
+        <div class="p-3.5 bg-slate-950/60">
+          <div class="rounded-lg border border-white/8 overflow-hidden">
+            <div
+              class="grid grid-cols-[1fr_auto_auto] gap-2 px-2.5 py-1.5 bg-slate-800/50 text-[9px] font-bold uppercase tracking-wider text-slate-500"
+            >
+              <span>Order</span><span>Total</span><span></span>
+            </div>
+            {
+              [
+                { id: '#4412', total: '$128.00', sketch: true },
+                { id: '#4411', total: '$34.00', sketch: false },
+              ].map((o) => (
+                <div class="grid grid-cols-[1fr_auto_auto] gap-2 items-center px-2.5 py-2 border-t border-white/5">
+                  <span class="text-[11px] font-mono text-slate-300">{o.id}</span>
+                  <span class="text-[11px] text-slate-300">{o.total}</span>
+                  <div class="flex flex-col items-end gap-1">
+                    <span
+                      class:list={[
+                        'rounded px-2 py-0.5 text-[10px] font-semibold text-rose-200 bg-rose-500/15 inline-flex items-center gap-1',
+                        o.sketch && 'outline-2 outline-primary outline-offset-1',
+                      ]}
+                    >
+                      <Icon name="tabler:lock" class="w-2.5 h-2.5 text-rose-200/70" />
+                      Refund
+                    </span>
+                    {o.sketch && (
+                      <span class="rounded px-2 py-0.5 text-[10px] font-semibold inline-flex items-center gap-1 border border-dashed border-primary/70 bg-primary/10 text-accent">
+                        Partial refund
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+
+          <div class="mt-3 rounded-lg border border-primary/30 bg-primary/8 px-3 py-2.5">
+            <p class="text-[9px] uppercase tracking-wider text-slate-500 mb-1">Anchored to</p>
+            <p class="text-[11px] font-mono text-slate-200 break-all">beside admin.orders.refund</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3. Determine controls ────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div>
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:lock-plus" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">03 · Determine its controls</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Say who may press it — first.</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          Name the act it will perform, the seats that may perform it, and whether it is on at all. The rule attaches to
+          the act, which already exists as a concept even when the button does not.
+        </p>
+        <p class="text-muted leading-relaxed">
+          So the control arrives <strong class="text-white">governed</strong> rather than being governed later, and the release
+          starts <strong class="text-white">proposed</strong> — written down, deciding nothing, until somebody with the authority
+          puts it in force.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5"
+            >Prototype</span
+          >
+          <span class="ml-auto text-[10px] font-mono text-slate-500">Partial refund</span>
+        </div>
+        <div class="p-3.5">
+          <div class="flex gap-2">
+            <span class="text-[9px] uppercase tracking-wider text-slate-500 w-16 flex-shrink-0 pt-0.5">Operation</span>
+            <span class="text-[11px] font-mono text-slate-300 break-all inline-flex items-center gap-1.5">
+              order.refund.partial
+              <span
+                class="text-[8px] font-sans font-bold uppercase tracking-wider bg-white/10 text-slate-300 rounded px-1 py-0.5"
+                >new</span
+              >
+            </span>
+          </div>
+
+          <div class="mt-3 pt-3 border-t border-white/8 space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">Who may</span>
+              <span class="text-[11px] text-slate-300">Fulfillment desk</span>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">Everyone else</span>
+              <span
+                class="text-[9px] font-bold uppercase tracking-wider bg-rose-500/15 text-rose-300 border border-rose-400/30 rounded px-1.5 py-0.5"
+                >Blocked</span
+              >
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[9px] uppercase tracking-wider text-slate-500">Release</span>
+              <span
+                class="text-[9px] font-bold uppercase tracking-wider bg-amber-400/15 text-amber-300 border border-amber-400/30 rounded px-1.5 py-0.5"
+                >Proposed</span
+              >
+            </div>
+          </div>
+
+          <p class="mt-3 pt-3 border-t border-white/8 text-[10px] text-slate-500 leading-relaxed">
+            Decided before it exists — so the day it ships it is already the desk&rsquo;s, and nobody has to remember to
+            come back and lock it.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 4. Submit proposal ───────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div class="md:order-last">
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:send" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">04 · Submit the proposal</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Then stop tracking it.</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          A proposal is what is being asked for, where it goes, and one sentence about what is missing and for whom.
+          Anyone may ask; nothing they ask for governs anything until it is built and put in force.
+        </p>
+        <p class="text-muted leading-relaxed">
+          When that address turns up in a build, the proposal reports <strong class="text-white">Built</strong> on its own
+          — a fact about what shipped rather than a card somebody dragged. Somebody holding <code
+            class="text-accent text-[0.9em]">ratify</code
+          > makes it live.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5"
+            >Prototype</span
+          >
+          <span class="ml-auto text-[10px] text-slate-500">Proposals · 1</span>
+        </div>
+        <div class="p-3.5">
+          <div class="rounded-lg border border-white/10 bg-slate-800/50 px-2.5 py-2">
+            <p class="text-[11px] text-slate-200 font-medium">Partial refund</p>
+            <p class="mt-0.5 text-[10px] font-mono text-slate-500 break-all">beside admin.orders.refund</p>
+            <p class="mt-2 text-[11px] text-slate-400 leading-relaxed border-t border-white/8 pt-2">
+              &ldquo;Support is refunding whole orders when one item arrives damaged.&rdquo;
+            </p>
+          </div>
+
+          <ol class="mt-3 space-y-2.5">
+            {
+              [
+                { state: 'Proposed', by: 'June Alcott · Tuesday', done: true },
+                { state: 'Built', by: 'derived from build 4e19a2 · 3 minutes ago', done: true },
+                { state: 'Live', by: 'waiting on somebody who may ratify', done: false },
+              ].map((row) => (
+                <li class="flex items-start gap-2">
+                  <Icon
+                    name={row.done ? 'tabler:circle-check-filled' : 'tabler:circle-dashed'}
+                    class:list={['w-4 h-4 flex-shrink-0 mt-[1px]', row.done ? 'text-primary' : 'text-slate-600']}
+                  />
+                  <span class="text-[11px] leading-relaxed">
+                    <strong class:list={[row.done ? 'text-slate-100' : 'text-slate-400']}>{row.state}</strong>
+                    <span class="text-slate-500"> · {row.by}</span>
+                  </span>
+                </li>
+              ))
+            }
+          </ol>
+
+          <p class="mt-3 pt-3 border-t border-white/8 text-[10px] text-slate-500 leading-relaxed">
+            Nobody moved a card. <strong class="text-slate-300">Built</strong> means a build published a manifest carrying
+            that address.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What it is not — said before anybody has to ask. -->
+  <div class="mt-16 max-w-3xl mx-auto rounded-2xl border border-white/10 bg-slate-900/50 px-6 py-6 sm:px-8">
+    <p class="text-lg font-bold text-white">It is not a tracker, and it does not want to be.</p>
+    <p class="mt-2 text-sm text-muted leading-relaxed">
+      No sprints, estimates, assignees or roadmaps, and nothing that has no address — a proposal only holds things you
+      can point at on a screen. What it does hold is a status nobody has to keep up to date.
+    </p>
+    <p class="mt-4 text-sm text-slate-500 leading-relaxed">
+      Prototype mode is included from <a href="/pricing" class="text-primary hover:text-accent font-semibold">Team</a> upward,
+      along with registering your own component library.
+    </p>
+  </div>
+</WidgetWrapper>

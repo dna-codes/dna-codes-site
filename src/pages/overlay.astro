@@ -7,13 +7,13 @@ import EarlyAccessForm from '~/components/widgets/EarlyAccessForm.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 
-import OverlayFacets from '~/components/widgets/OverlayFacets.astro';
+import OverlayModes from '~/components/widgets/OverlayModes.astro';
 import OverlayInstall from '~/components/widgets/OverlayInstall.astro';
 
 const metadata = {
   title: 'DNA Overlay — Every control, under control',
   description:
-    'Permissions, feature flags, user analytics and audit logs — running inside your product, on the control itself.',
+    'Permissions, feature flags, user analytics, audit logs — and prototyping. Running inside your product, on the control itself.',
   ignoreTitleTemplate: true,
   // Shipping quietly: live at its URL for anyone given the link, kept out of
   // search until the launch goes public. Paired with a sitemap exclusion in
@@ -40,8 +40,8 @@ const metadata = {
     </Fragment>
 
     <Fragment slot="subtitle">
-      Permissions, feature flags, user analytics and audit logs.<br class="hidden sm:block" />
-      Running inside your product.
+      Permissions, feature flags, user analytics, audit logs<br class="hidden sm:block" />
+      &mdash; and prototyping. Running inside your product.
     </Fragment>
 
     <Fragment slot="actions">
@@ -60,8 +60,8 @@ const metadata = {
     </Fragment>
   </Hero>
 
-  <!-- ── 1. Permissions · flags · analytics · audit ───────────────────── -->
-  <OverlayFacets />
+  <!-- ── 1. Inspect (permissions · flags · analytics · audit) and Prototype ─ -->
+  <OverlayModes />
 
   <!-- ── 2. Install + what it buys you + trust ────────────────────────── -->
   <OverlayInstall />
