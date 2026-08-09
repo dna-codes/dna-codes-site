@@ -1,0 +1,776 @@
+---
+import { twMerge } from 'tailwind-merge';
+
+// The abstraction ladder: Intent → Machine, rendered as a DNA-style rail with
+// the layers as rungs and the handoffs between them as labelled chips.
+//
+// Two modes, toggled by the reader:
+//   leap   — how it works today: one jump from Intent straight to Code, with
+//            everything between it ghosted ("decided, never written down").
+//   ladder — how it could work: every layer named, every handoff named.
+//
+// The rail column and the card column are two columns of one grid. Layer i sits
+// on grid row 2i+1, the handoff below it on row 2i+2, so the leap chute can be
+// placed as a normal grid item spanning rows 1–11 (Intent through Code) instead
+// of being measured and positioned at runtime.
+
+type Layer = {
+  n: string;
+  name: string;
+  question: string;
+  example: string;
+  what: string;
+  written: string;
+  implicit: string;
+  /** Where this layer is already practiced today — it's optional, not absent. */
+  practice: string;
+  /** Marks the Operational Model layer — the one DNA is built around. */
+  core?: boolean;
+};
+
+type Handoff = {
+  name: string;
+  note: string;
+  status: 'missing' | 'emerging' | 'solved';
+};
+
+const layers: Layer[] = [
+  {
+    n: '01',
+    name: 'Intent',
+    question: 'What do I want to accomplish?',
+    example: 'A customer should be able to pay an invoice.',
+    what: 'The outcome someone wants, in their own words. No structure, no types, no system boundaries — just a goal.',
+    written: 'A sentence. A ticket. A hallway conversation that someone remembered to write down.',
+    implicit: 'Acceptance criteria stay in one person’s head, so "done" gets decided after the fact.',
+    practice:
+      'User stories, PRDs, tickets, acceptance criteria — universal, and almost never precise enough to hand off.',
+  },
+  {
+    n: '02',
+    name: 'Semantics',
+    question: 'What does everything mean?',
+    example: 'customer, invoice, pay',
+    what: 'The vocabulary. Which words are terms of art here, and what each one denotes in this particular business.',
+    written:
+      'A glossary with teeth: <em>Invoice</em> — a demand for payment issued against a completed order. Not a Receipt. Not a Statement.',
+    implicit:
+      '<code>customer</code> quietly means the billing contact in one module and the parent account in another. Two correct programs, one wrong system.',
+    practice:
+      'Domain-Driven Design’s ubiquitous language, data catalogs, dbt docs, schema registries, controlled vocabularies.',
+  },
+  {
+    n: '03',
+    name: 'Ontology',
+    question: 'What exists, and how is it related?',
+    example: 'Customer → owns → Invoice',
+    what: 'The entities and the edges between them — what can exist, what each thing holds, and what it points at.',
+    written:
+      'An <code>Invoice</code> carries <code>amount_due</code> and <code>status</code>, and points at the <code>Customer</code> it was issued to. A <code>Payment</code> settles it.',
+    implicit:
+      'Relationships get rediscovered feature by feature. The schema ends up as an archaeology of past tickets rather than a model of the business.',
+    practice:
+      'OWL, RDF and SPARQL go back decades; knowledge graphs run production search; Palantir built a company on programming against “the ontology.”',
+  },
+  {
+    n: '04',
+    name: 'Operational Model',
+    question: 'What can happen, by whom, and with what effects?',
+    example: 'Pay Invoice: Customer → Invoice → status becomes Paid',
+    core: true,
+    what: 'Operations — the named things that can happen. Each one names an actor, a target, its preconditions, and the state it leaves behind.',
+    written:
+      '<strong>Pay Invoice</strong> — actor <code>Customer</code> · target <code>Invoice</code> where <code>status: Issued</code> · effect <code>status → Paid</code> · rule: the payment must equal the amount due',
+    implicit:
+      'Every consumer re-derives the rules for itself. The API permits a payment the UI forbids — and an agent will find that gap before your QA does.',
+    practice:
+      'BPMN, statecharts and XState, workflow engines like Temporal and Camunda, DDD aggregates and commands, OPA policy, TLA+ in formal-methods shops.',
+  },
+  {
+    n: '05',
+    name: 'Execution Model',
+    question: 'How can that operation be exposed and executed?',
+    example: 'POST /invoices/:id/pay · MCP tool · workflow step · UI command',
+    what: 'The surfaces an operation is reachable through, and the contract each surface honors.',
+    written:
+      'One operation, four projections: a REST endpoint, an MCP tool, a queue consumer, a button. Same preconditions, same effects, same errors.',
+    implicit:
+      'The tool description and the endpoint drift apart. An agent calls what it was told exists, not what actually does.',
+    practice:
+      'The most standardized of the four: OpenAPI, protobuf, GraphQL SDL, AsyncAPI, JSON Schema — and now MCP tool definitions.',
+  },
+  {
+    n: '06',
+    name: 'Code / Program',
+    question: 'How do I implement it?',
+    example: 'Python, TypeScript, SQL — classes, functions, migrations',
+    what: 'The actual instructions: control flow, persistence, validation, error handling.',
+    written: 'A <code>pay_invoice</code> function, a migration, a test for the underpayment case, an error path.',
+    implicit:
+      'Not possible — this is the one layer we have always been forced to write down. Which is exactly why it absorbs every decision from the layers above it.',
+    practice: 'Universal. Nobody ships without it, which is why it quietly absorbs every decision from above.',
+  },
+  {
+    n: '07',
+    name: 'Technology Stack',
+    question: 'What frameworks and runtimes do I use?',
+    example: 'Django, React, Next.js, PostgreSQL',
+    what: 'The chosen substrate — framework conventions, libraries, data store, deployment target.',
+    written: 'A Django app, Postgres for state, a background worker for the receipt email, deployed on a container.',
+    implicit:
+      'Rarely implicit — but a stack picked before the operations are known will quietly bend the operations to fit it.',
+    practice:
+      'Framework conventions, dependency manifests, infrastructure-as-code — well-documented and loudly argued about.',
+  },
+  {
+    n: '08',
+    name: 'Machine / Runtime',
+    question: 'How does the machine execute it?',
+    example: 'JS engine, Python interpreter, CPU instructions',
+    what: 'Bytecode, JIT, syscalls, silicon. The layer nobody opens.',
+    written: 'You almost never look — and that is the point.',
+    implicit:
+      'Never implicit. Decades of compiler work made this handoff so dependable it became invisible. That is the bar for every layer above it.',
+    practice: 'Compilers, interpreters, JITs. Fully standardized, fully mechanical, entirely invisible.',
+  },
+];
+
+const handoffs: Handoff[] = [
+  { name: 'Elicitation', note: 'ad hoc, per team', status: 'missing' },
+  { name: 'Structuring', note: 'niche: OWL, ER models', status: 'missing' },
+  { name: 'Derivation', note: 'BPMN, statecharts — siloed', status: 'missing' },
+  { name: 'Projection', note: 'generated from the model', status: 'emerging' },
+  { name: 'Generation', note: 'contract-first codegen', status: 'emerging' },
+  { name: 'Binding', note: 'frameworks, packages', status: 'solved' },
+  { name: 'Compilation', note: 'compilers, interpreters', status: 'solved' },
+];
+
+// Layers 1–6 (Intent → Code) and the five handoffs between them are what the
+// single leap skips. `leaped` marks the rail/chip cells hidden in leap mode.
+const LEAP_LAST_LAYER = 5; // zero-based index of Code / Program
+const leapRowEnd = 2 * LEAP_LAST_LAYER + 2; // exclusive grid-row end for the chute
+
+// The default classes break the figure out of a `prose` column, which is what a
+// blog post needs. On a normal page pass `class="lg:mx-0 xl:mx-0"` (or any other
+// margin) to cancel the breakout — twMerge drops the conflicting defaults.
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+// Derived per-row flags. Computed here rather than inline in the template: the
+// Astro compiler reads a `<` inside a template expression as the start of a tag.
+const rows = layers.map((layer, i) => ({
+  layer,
+  handoff: handoffs[i],
+  row: 2 * i + 1,
+  /** Rail hidden in leap mode — the chute covers Intent through Code. */
+  leaped: i <= LEAP_LAST_LAYER,
+  /** Handoff chip hidden in leap mode. */
+  handoffLeaped: i < LEAP_LAST_LAYER,
+  /** Ghosted card: the four layers the leap silently decides. */
+  ghost: i > 0 && i < 5,
+}));
+---
+
+<figure data-abstraction-stack data-mode="leap" class={twMerge('not-prose my-10 lg:-mx-20 xl:-mx-32', className)}>
+  <div
+    class="rounded-2xl border-2 border-primary bg-slate-900/90 shadow-[0_0_48px_rgba(13,148,136,0.25)] overflow-hidden"
+  >
+    <!-- Header + mode toggle -->
+    <div class="flex flex-wrap items-center gap-3 gap-y-2 border-b border-white/8 p-3 sm:px-4">
+      <div class="flex flex-shrink-0 items-center gap-2">
+        <div
+          class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg border border-primary/40 bg-primary/25"
+        >
+          <svg class="h-3.5 w-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              stroke-linecap="round"
+              d="M4 3c0 6 16 12 16 18M20 3c0 6-16 12-16 18M6.5 6h11M5 10h14M5 14h14M6.5 18h11"></path>
+          </svg>
+        </div>
+        <span class="text-xs font-bold uppercase tracking-widest text-primary">Intent → Execution</span>
+      </div>
+      <div class="ml-auto flex gap-1" role="group" aria-label="View">
+        <button data-mode-btn="leap" aria-pressed="true" class="mode-btn">Today: one jump</button>
+        <button data-mode-btn="ladder" aria-pressed="false" class="mode-btn">Ahead: layer by layer</button>
+      </div>
+    </div>
+
+    <!-- Caption, swapped by mode -->
+    <p class="border-b border-white/8 px-4 py-2.5 text-xs leading-relaxed text-slate-400 sm:px-5">
+      <span data-caption="leap">
+        One jump from a sentence to a program. The four layers in between still get decided — they just rarely get
+        written down, so nothing can review them, diff them, or hold a correction. Each one is practiced somewhere in
+        the industry. None of them is the default.
+      </span>
+      <span data-caption="ladder" hidden>
+        Every layer named, every handoff named. Short hops an agent can take one at a time, each with an artifact you
+        can read and check. <span class="text-slate-500">Colors mark how standardized each handoff is today.</span>
+      </span>
+    </p>
+
+    <div class="stack-grid px-3 py-4 sm:px-5 sm:py-6">
+      <!-- The leap: one chute from Intent down to Code / Program -->
+      <div class="leap" style={`grid-row: 1 / ${leapRowEnd}`} aria-hidden="true">
+        <span class="leap-cap"></span>
+        <span class="leap-line"></span>
+        <span class="leap-label">4 layers, usually inferred</span>
+        <span class="leap-line"></span>
+        <svg class="leap-arrow" viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2 2l6 6 6-6"></path>
+        </svg>
+      </div>
+
+      {
+        rows.map(({ layer, handoff, row, leaped, handoffLeaped, ghost }) => {
+          return (
+            <>
+              <div class="rail" style={`grid-row: ${row}`} data-leaped={leaped ? '' : undefined}>
+                <span class="rung" />
+              </div>
+
+              <div class="cell" style={`grid-row: ${row}`} data-ghost={ghost ? '' : undefined}>
+                <button type="button" class="card" data-card aria-expanded="false">
+                  <span class="idx">{layer.n}</span>
+                  <span class="head">
+                    <span class="lname">
+                      {layer.name}
+                      {layer.core && <span class="pill">DNA&rsquo;s layer</span>}
+                      <span class="pill pill-ghost">usually inferred</span>
+                    </span>
+                    <span class="lq">{layer.question}</span>
+                  </span>
+                  <span class="ex">
+                    <code>{layer.example}</code>
+                  </span>
+                  <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6l4 4 4-4" />
+                  </svg>
+                </button>
+
+                <div class="detail" hidden>
+                  <p class="dwhat">{layer.what}</p>
+                  <p class="dnote dnote-written">
+                    <span class="dlabel">Written down</span>
+                    <span set:html={layer.written} />
+                  </p>
+                  <p class="dnote dnote-implicit">
+                    <span class="dlabel">Implicit</span>
+                    <span set:html={layer.implicit} />
+                  </p>
+                  <p class="dnote dnote-practice">
+                    <span class="dlabel">Where it already exists</span>
+                    <span set:html={layer.practice} />
+                  </p>
+                </div>
+              </div>
+
+              {handoff && (
+                <>
+                  <div class="rail" style={`grid-row: ${row + 1}`} data-leaped={handoffLeaped ? '' : undefined} />
+                  <div class="hand" style={`grid-row: ${row + 1}`} data-leaped={handoffLeaped ? '' : undefined}>
+                    <span class={`chip chip-${handoff.status}`}>
+                      <span class="dot" />
+                      {handoff.name}
+                      <span class="chip-note">{handoff.note}</span>
+                    </span>
+                  </div>
+                </>
+              )}
+            </>
+          );
+        })
+      }
+    </div>
+
+    <!-- Legend (ladder mode only) + footer -->
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/8 px-4 py-3 sm:px-5">
+      <div data-legend hidden class="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+        <span class="leg"><span class="dot dot-solved"></span>standard and mechanical</span>
+        <span class="leg"><span class="dot dot-emerging"></span>emerging</span>
+        <span class="leg"><span class="dot dot-missing"></span>practiced in pockets, not standard</span>
+      </div>
+      <span data-footnote class="text-xs text-slate-500">Tap a layer to open it.</span>
+    </div>
+  </div>
+
+  <figcaption class="mt-3 px-4 text-center text-xs text-slate-500">
+    The eight abstraction layers between intent and execution — and the single jump we ask a model to make across them
+    today.
+  </figcaption>
+</figure>
+
+<style>
+  .mode-btn {
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    color: rgb(100 116 139);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.375rem 0.75rem;
+    transition:
+      color 0.15s,
+      background-color 0.15s,
+      border-color 0.15s;
+  }
+  .mode-btn:hover {
+    background: rgb(255 255 255 / 0.07);
+    border-color: rgb(255 255 255 / 0.1);
+    color: rgb(203 213 225);
+  }
+  .mode-btn[aria-pressed='true'] {
+    background: rgb(13 148 136 / 0.2);
+    border-color: rgb(13 148 136 / 0.4);
+    color: rgb(45 212 191);
+  }
+
+  .stack-grid {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    column-gap: 0.5rem;
+    row-gap: 0;
+  }
+  @media (min-width: 640px) {
+    .stack-grid {
+      grid-template-columns: 3rem minmax(0, 1fr);
+      column-gap: 0.875rem;
+    }
+  }
+
+  /* ── Rail: two strands with a rung at each layer ─────────────────── */
+  .rail {
+    grid-column: 1;
+    position: relative;
+    transition: opacity 0.25s ease;
+  }
+  .rail::before,
+  .rail::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, rgb(13 148 136 / 0.45), rgb(13 148 136 / 0.25));
+  }
+  .rail::before {
+    left: 28%;
+  }
+  .rail::after {
+    right: 28%;
+  }
+  .rung {
+    position: absolute;
+    top: 50%;
+    left: 28%;
+    right: 28%;
+    height: 2px;
+    margin-top: -1px;
+    background: linear-gradient(to right, rgb(45 212 191 / 0.9), rgb(13 148 136 / 0.5));
+    border-radius: 2px;
+  }
+  .rung::before,
+  .rung::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    margin-top: -3.5px;
+    border-radius: 9999px;
+  }
+  .rung::before {
+    left: -3.5px;
+    background: rgb(45 212 191);
+    box-shadow: 0 0 10px rgb(45 212 191 / 0.6);
+  }
+  .rung::after {
+    right: -3.5px;
+    background: rgb(13 148 136);
+    box-shadow: 0 0 10px rgb(13 148 136 / 0.45);
+  }
+
+  [data-mode='leap'] .rail[data-leaped] {
+    opacity: 0;
+  }
+
+  /* ── The leap chute (leap mode only) ─────────────────────────────── */
+  .leap {
+    grid-column: 1;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.75rem 0;
+    color: rgb(45 212 191);
+    transition: opacity 0.25s ease;
+  }
+  [data-mode='ladder'] .leap {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .leap-cap {
+    width: 9px;
+    height: 9px;
+    border-radius: 9999px;
+    background: rgb(45 212 191);
+    box-shadow: 0 0 14px rgb(45 212 191 / 0.8);
+    flex-shrink: 0;
+  }
+  .leap-line {
+    flex: 1 1 auto;
+    width: 0;
+    border-left: 2px dashed rgb(45 212 191 / 0.55);
+    min-height: 1rem;
+  }
+  .leap-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgb(45 212 191 / 0.85);
+    padding: 0.5rem 0;
+    white-space: nowrap;
+  }
+  .leap-arrow {
+    width: 16px;
+    height: 10px;
+    flex-shrink: 0;
+    margin-top: -1px;
+  }
+  @media (max-width: 480px) {
+    .leap-label {
+      display: none;
+    }
+  }
+
+  /* ── Layer cards ─────────────────────────────────────────────────── */
+  .cell {
+    grid-column: 2;
+    padding: 0.25rem 0;
+    min-width: 0;
+  }
+  .card {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'idx head'
+      'ex  ex';
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    text-align: left;
+    cursor: pointer;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: 0.75rem;
+    background: rgb(30 41 59 / 0.55);
+    padding: 0.625rem 0.75rem;
+    transition:
+      border-color 0.15s,
+      background-color 0.15s,
+      opacity 0.25s ease;
+  }
+  @media (min-width: 768px) {
+    .card {
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      grid-template-areas: 'idx head ex chev';
+      gap: 0.875rem;
+    }
+  }
+  .card:hover {
+    border-color: rgb(13 148 136 / 0.45);
+    background: rgb(30 41 59 / 0.9);
+  }
+  .card:focus-visible {
+    outline: 2px solid rgb(45 212 191 / 0.7);
+    outline-offset: 2px;
+  }
+  .idx {
+    grid-area: idx;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: rgb(100 116 139);
+    font-variant-numeric: tabular-nums;
+  }
+  .head {
+    grid-area: head;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+  .lname {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: rgb(241 245 249);
+    line-height: 1.2;
+  }
+  .lq {
+    font-size: 0.75rem;
+    color: rgb(148 163 184);
+    line-height: 1.35;
+  }
+  .ex {
+    grid-area: ex;
+    min-width: 0;
+  }
+  .ex code {
+    display: inline-block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.6875rem;
+    line-height: 1.35;
+    color: rgb(148 163 184);
+    background: rgb(15 23 42 / 0.7);
+    border: 1px solid rgb(255 255 255 / 0.07);
+    border-radius: 0.375rem;
+    padding: 0.1875rem 0.4375rem;
+  }
+  @media (min-width: 768px) {
+    .ex {
+      max-width: 17rem;
+      text-align: right;
+    }
+  }
+  .chev {
+    grid-area: chev;
+    width: 14px;
+    height: 14px;
+    color: rgb(100 116 139);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .chev {
+      display: block;
+    }
+  }
+  .card[aria-expanded='true'] {
+    border-color: rgb(13 148 136 / 0.55);
+    background: rgb(30 41 59 / 0.95);
+  }
+  .card[aria-expanded='true'] .chev {
+    transform: rotate(180deg);
+    color: rgb(45 212 191);
+  }
+
+  .pill {
+    border-radius: 9999px;
+    border: 1px solid rgb(13 148 136 / 0.45);
+    background: rgb(13 148 136 / 0.15);
+    color: rgb(45 212 191);
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.0625rem 0.375rem;
+    white-space: nowrap;
+  }
+  .pill-ghost {
+    display: none;
+    border-color: rgb(245 158 11 / 0.4);
+    background: rgb(245 158 11 / 0.12);
+    color: rgb(252 211 77);
+  }
+  [data-mode='leap'] .cell[data-ghost] .pill-ghost {
+    display: inline;
+  }
+  [data-mode='leap'] .cell[data-ghost] .card {
+    opacity: 0.5;
+    border-style: dashed;
+  }
+  [data-mode='leap'] .cell[data-ghost] .card:hover,
+  [data-mode='leap'] .cell[data-ghost] .card[aria-expanded='true'] {
+    opacity: 1;
+  }
+
+  /* ── Expandable detail ───────────────────────────────────────────── */
+  .detail {
+    padding: 0.75rem 0.75rem 0.25rem 0.75rem;
+  }
+  @media (min-width: 768px) {
+    .detail {
+      padding-left: 2.75rem;
+    }
+  }
+  .dwhat {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: rgb(203 213 225);
+    margin: 0 0 0.625rem;
+  }
+  .dnote {
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: rgb(148 163 184);
+    border-left: 2px solid;
+    padding-left: 0.75rem;
+    margin: 0 0 0.5rem;
+  }
+  .dnote-written {
+    border-color: rgb(13 148 136 / 0.6);
+  }
+  .dnote-implicit {
+    border-color: rgb(245 158 11 / 0.5);
+  }
+  .dnote-practice {
+    border-color: rgb(148 163 184 / 0.45);
+  }
+  .dlabel {
+    display: block;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.125rem;
+  }
+  .dnote-written .dlabel {
+    color: rgb(45 212 191);
+  }
+  .dnote-implicit .dlabel {
+    color: rgb(252 211 77);
+  }
+  .dnote-practice .dlabel {
+    color: rgb(148 163 184);
+  }
+  .detail :global(code) {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.6875rem;
+    color: rgb(203 213 225);
+    background: rgb(15 23 42 / 0.7);
+    border-radius: 0.25rem;
+    padding: 0.0625rem 0.1875rem;
+  }
+  .detail :global(strong) {
+    color: rgb(241 245 249);
+    font-weight: 600;
+  }
+  .detail :global(em) {
+    color: rgb(226 232 240);
+    font-style: italic;
+  }
+
+  /* ── Handoff chips ───────────────────────────────────────────────── */
+  .hand {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    padding: 0.3125rem 0;
+    transition: opacity 0.25s ease;
+  }
+  [data-mode='leap'] .hand[data-leaped] {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+    border-radius: 9999px;
+    border: 1px solid rgb(255 255 255 / 0.09);
+    background: rgb(15 23 42 / 0.6);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: rgb(148 163 184);
+    padding: 0.1875rem 0.625rem;
+    margin-left: 0.25rem;
+  }
+  .chip-note {
+    font-weight: 400;
+    font-size: 0.625rem;
+    color: rgb(100 116 139);
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    flex-shrink: 0;
+  }
+  .chip-solved,
+  .dot-solved {
+    --dot: rgb(45 212 191);
+  }
+  .chip-emerging,
+  .dot-emerging {
+    --dot: rgb(13 148 136);
+  }
+  .chip-missing,
+  .dot-missing {
+    --dot: rgb(245 158 11);
+  }
+  .chip .dot,
+  .leg .dot {
+    background: var(--dot);
+  }
+  .chip-solved {
+    border-color: rgb(45 212 191 / 0.35);
+    color: rgb(203 213 225);
+  }
+  .chip-emerging {
+    border-color: rgb(13 148 136 / 0.3);
+  }
+  .chip-missing {
+    border-color: rgb(245 158 11 / 0.3);
+  }
+  .chip-emerging .dot {
+    box-shadow: 0 0 0 2px rgb(13 148 136 / 0.2);
+  }
+
+  .leg {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.6875rem;
+    color: rgb(100 116 139);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rail,
+    .leap,
+    .hand,
+    .card,
+    .chev {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-abstraction-stack]').forEach((root) => {
+    const modeBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-mode-btn]'));
+    const captions = Array.from(root.querySelectorAll<HTMLElement>('[data-caption]'));
+    const legend = root.querySelector<HTMLElement>('[data-legend]');
+    const footnote = root.querySelector<HTMLElement>('[data-footnote]');
+
+    const setMode = (mode: string) => {
+      root.dataset.mode = mode;
+      modeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modeBtn === mode)));
+      captions.forEach((c) => (c.hidden = c.dataset.caption !== mode));
+      if (legend) legend.hidden = mode !== 'ladder';
+      if (footnote) footnote.classList.toggle('ml-auto', mode === 'ladder');
+    };
+
+    modeBtns.forEach((btn) => btn.addEventListener('click', () => setMode(btn.dataset.modeBtn!)));
+
+    root.querySelectorAll<HTMLButtonElement>('[data-card]').forEach((card) => {
+      const detail = card.nextElementSibling as HTMLElement | null;
+      if (!detail) return;
+      card.addEventListener('click', () => {
+        const open = card.getAttribute('aria-expanded') === 'true';
+        card.setAttribute('aria-expanded', String(!open));
+        detail.hidden = open;
+      });
+    });
+  });
+</script>

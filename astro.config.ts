@@ -25,6 +25,15 @@ export default defineConfig({
   site: 'https://dna.codes',
   output: 'static',
 
+  // Posts moved from /%slug% to /blog/%slug% (see src/config.yaml). These two
+  // were already published at the root, so the old URLs are kept alive. GitHub
+  // Pages can't serve real 301s — for a static build Astro emits a meta-refresh
+  // page with a canonical link, which is the standard substitute.
+  redirects: {
+    '/operational-dna-processes-like-source-code': '/blog/operational-dna-processes-like-source-code',
+    '/why-sops-go-out-of-date': '/blog/why-sops-go-out-of-date',
+  },
+
   integrations: [
     sitemap({
       // Shipping the Overlay launch quietly. These pages are live and reachable by
