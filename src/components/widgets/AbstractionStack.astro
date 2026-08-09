@@ -24,7 +24,7 @@ type Layer = {
   implicit: string;
   /** Where this layer is already practiced today — it's optional, not absent. */
   practice: string;
-  /** Marks the Operational Model layer — the one DNA is built around. */
+  /** Marks the Operational Model layer — the missing layer DNA implements. */
   core?: boolean;
 };
 
@@ -84,7 +84,7 @@ const layers: Layer[] = [
     implicit:
       'Every consumer re-derives the rules for itself. The API permits a payment the UI forbids — and an agent will find that gap before your QA does.',
     practice:
-      'BPMN, statecharts and XState, workflow engines like Temporal and Camunda, DDD aggregates and commands, OPA policy, TLA+ in formal-methods shops.',
+      'BPMN, statecharts and XState, workflow engines like Temporal and Camunda, DDD aggregates and commands, policy rules in an authorization service — each modeling one slice, none of them the layer itself.',
   },
   {
     n: '05',
@@ -237,7 +237,7 @@ const rows = layers.map((layer, i) => ({
                   <span class="head">
                     <span class="lname">
                       {layer.name}
-                      {layer.core && <span class="pill">DNA&rsquo;s layer</span>}
+                      {layer.core && <span class="pill">The missing layer</span>}
                       <span class="pill pill-ghost">usually inferred</span>
                     </span>
                     <span class="lq">{layer.question}</span>
