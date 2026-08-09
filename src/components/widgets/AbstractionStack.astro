@@ -80,7 +80,7 @@ const layers: Layer[] = [
     core: true,
     what: 'Operations — the named things that can happen. Each one names an actor, a target, its preconditions, and the state it leaves behind.',
     written:
-      '<strong>Pay Invoice</strong> — actor <code>Customer</code> · target <code>Invoice</code> where <code>status: Issued</code> · effect <code>status → Paid</code> · rule: the payment must equal the amount due',
+      '<strong>Pay Invoice</strong> — actor <code>Customer</code> · target <code>Invoice</code> where <code>status: Issued</code> · effect <code>Invoice.status → Paid</code> · rule: the payment must equal the amount due',
     implicit:
       'Every consumer re-derives the rules for itself. The API permits a payment the UI forbids — and an agent will find that gap before your QA does.',
     practice:
