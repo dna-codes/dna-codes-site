@@ -70,9 +70,13 @@ optional fourth beat on enterprise and marketplace surfaces, where federation is
 ## What Changes
 
 - **NEW** `/overlay` — a product page, **five sections** plus hero and closing CTA.
-- **NEW** `OverlayDemo` component — an in-page, scripted walkthrough of the Inspect panel, following
-  the stub-first pattern established on `/playground`: real component signature, staged data, a
+- **NEW** `OverlayDemo` component — an in-page, scripted walkthrough of the panel, following the
+  stub-first pattern established on `/playground`: real component signature, staged data, a
   demo-mode badge. Lives in the hero's `image` slot, the way `LensDemo` does on the homepage.
+  _(2026-08-09: now narrates both modes as one nine-step story — four Inspect readings of a Refund
+  button, then five Prototype steps asking for the partial refund the same desk wants.)_
+- **NEW** `OverlayModes` + `OverlayPrototype` — _added 2026-08-09._ A toggle under the hero swapping
+  the existing `OverlayFacets` (Inspect) against a four-step Prototype section in the same shape.
 - **NEW** `OverlayTeaser` homepage section, slotted after `OperationsLayerC` — the product-layer band
   that `index.astro` already has commented-out scaffolding and an arrow connector for.
 - **MODIFIED** `src/pages/pricing.astro` — replace the template placeholder content entirely with the
@@ -82,8 +86,12 @@ optional fourth beat on enterprise and marketplace surfaces, where federation is
 - **MODIFIED** `src/pages/index.astro` — hero actions, the teaser section, the closing CTA.
 - **NEW** `public/images/overlay/*` — marketing-cropped exports of the walkthrough screenshots.
 
-**Out of scope:** self-serve checkout; a public `@dna/react` install path; `/docs/overlay`;
-**selling Prototype mode** (see §3 below — it is mentioned, not pitched).
+**Out of scope:** self-serve checkout; a public `@dna/react` install path; `/docs/overlay`.
+
+> **Superseded, 2026-08-09.** Prototype mode was out of scope for the launch and is now a section of
+> the page — see [Prototype mode and the tracker claim](#prototype-mode-and-the-tracker-claim--shipped-as-a-section)
+> below, rewritten to record what shipped and why the original reasoning no longer holds. Shipped in
+> [#6](https://github.com/dna-codes/dna-codes-site/pull/6).
 
 ## The page: `/overlay`
 
@@ -189,10 +197,13 @@ every one of them enforced somewhere real:
 - Refusals are enforced twice, and the server's is the real one.
 - Removal is `stop()`, returned to whoever installed it.
 
-**Prototype mode is mentioned here in one sentence and nowhere else.** It is a second product story,
-it dilutes a launch built on the governance wedge, and its console support is still partial (gap
-**C**). One line — _the same panel can place a control that does not exist yet, and hand a developer
-an address_ — and a link to the walkthrough post for anyone who bites.
+~~**Prototype mode is mentioned here in one sentence and nowhere else.** It is a second product
+story, it dilutes a launch built on the governance wedge, and its console support is still partial
+(gap **C**). One line — _the same panel can place a control that does not exist yet, and hand a
+developer an address_ — and a link to the walkthrough post for anyone who bites.~~
+
+**Superseded.** The install section keeps one sentence, but it now links to a Prototype section
+rather than ending the topic. See the rewritten section below.
 
 **4. One model. Three surfaces.**
 The wedge invites an obvious retort — _so you are a fourth tool_ — and this section is the answer, so
@@ -208,10 +219,16 @@ read where the work happens — and the same model is what Design writes and Run
 Three cards — Starter / Team / Business — price, one line, `Get early access`, and _See the full
 comparison →_ to `/pricing`. Not a repeat of the table. See below.
 
-## Prototype mode and the tracker claim — hint now, argue later
+## Prototype mode and the tracker claim — shipped as a section
 
-Prototype mode is one sentence in this launch (§3). It is worth writing down what that sentence is
-deliberately not saying yet, because the claim underneath it is the largest one this product has.
+> **This section was rewritten on 2026-08-09.** It originally argued for one sentence and no more.
+> That call was reversed and Prototype now has a section of its own; the reasoning below is kept
+> because the analysis of _what the claim is_ turned out to be the copy, and because the four
+> objections it raised are the ones the shipped page had to answer rather than avoid.
+
+Prototype is the second half of `/overlay`, reachable from a toggle under the hero. The claim
+underneath it is the largest one this product has, so what it does and does not say is worth keeping
+written down.
 
 ### The thesis
 
@@ -247,30 +264,40 @@ That is the same argument as the rest of the product, which is why it belongs to
 not to a tracker vendor: _the model and the application are the same thing._ A tracker is a
 description of work kept beside the work; this is the work describing itself.
 
-### Why it is a hint and not a section, for this launch
+### The four objections, and how the section answers them
 
-Four reasons, and the first is the one that decides it:
+These were the reasons for holding it to one sentence. Structure answered three of them; the fourth
+is unchanged and is a real limit.
 
-- **Six replacement claims read as vaporware where four read as focused.** The page already says it
-  replaces permissions, feature flags, analytics and audit. Adding "and your issue tracker" to that
-  list is the sentence a skeptical reader stops at.
-- **It changes the buyer.** Governance sells to a platform lead or a head of engineering. Tracker
-  replacement sells to product management. Two motions, two objection sets, one page — and the
-  governance motion is the one with the priced comparison behind it.
-- **It invites questions the answer to which is no.** Sprints, estimates, capacity, dependencies,
-  cross-team roadmaps, and any work that is not a UI control. A prospect who asks and gets four
-  "no"s remembers the no's.
-- **Console support is still partial.** A library's per-component mapping cannot be edited in the
-  console (gap **C**), so the shelf that makes a sketch read as _their_ product needs us in the room.
+- **Six replacement claims read as vaporware where four read as focused.** Answered by never making
+  the sixth claim. The section says _it is not a tracker, and it does not want to be_ — no sprints,
+  estimates, assignees or roadmaps, and nothing without an address — and then makes the narrower
+  claim that is actually defensible: a status nobody has to keep up to date.
+- **It changes the buyer.** Answered by the toggle. Inspect is the default and the page still opens
+  on the governance wedge; Prototype is one click away rather than in the scroll path, so the
+  platform lead is never made to read the product-management pitch to reach the FAQ.
+- **It invites questions the answer to which is no.** Answered by giving the no's first, in our
+  words, in the closing panel — cheaper than being asked.
+- **Console support is still partial.** Unchanged. Gap **C** is still open, the shelf still needs us
+  in the room, and the section does not pretend otherwise: the page is early access throughout, and
+  Prototype is marked as gated at Team with your own component library alongside it.
 
-### What the hint should say
+### What the section says
 
-One clause more than the current sentence, carrying the derived-status point, because that is the
-whole differentiator and it costs eight words: _when the address turns up in a build, the request
-marks itself delivered — nobody moves a card._ That is enough for a reader who has felt the problem
-to lean in, and not enough to constitute a claim we would have to defend.
+The four steps are the walkthrough's own: **select a component** from your library, **place it**
+against a real control, **determine its controls** before it exists, **submit the proposal**. The
+last step carries the differentiator, and it is the same clause the hint was going to use: _when the
+address turns up in a build, the request marks itself delivered — nobody moves a card._
 
-### What would have to be true to lead with it
+The hero demo tells the same story ahead of it, which is what earned the section: Inspect governs a
+Refund button, and Prototype asks for the partial refund the same desk now wants. One control, two
+modes — so the second half reads as the first half continuing rather than a second product starting.
+
+### What would have to be true to _lead_ with it
+
+Shipping a section is not leading with it. Governance is still the wedge: it is the default half of
+the toggle, it is what the headline and the install section argue, and it is what the priced
+comparison sits behind. Moving Prototype above that still wants all three of these.
 
 - Prototype mode reachable without us in the room — which means gap **C** closed.
 - A worked before/after against a real customer's tracker, with numbers.
@@ -500,3 +527,6 @@ otherwise costs.
 5. `OverlayDemo` — the interactive panel. Largest piece, and the page is publishable without it, so
    it ships second rather than blocking launch.
 6. The customer-facing walkthrough post as the long-tail entry point.
+7. _Added 2026-08-09._ Prototype as the page's second mode — the narrated hero and the
+   `OverlayModes` / `OverlayPrototype` sections. Everything above shipped first, which is why the
+   toggle could be added without disturbing the wedge.
