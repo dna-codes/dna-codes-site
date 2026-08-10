@@ -34,10 +34,16 @@
 - [x] Sidebar nav links work; current-page expansion works
 - [x] Landing cards link to correct destinations
 
-## Phase 6: Cleanup
+## Phase 6: Cleanup — handed off to the `dna` repo
 
-- [ ] Mark `dna/docs/frameworks/README.md` as superseded by `https://dna.codes/docs/frameworks` (in dna repo, separate change)
-- [ ] Decide on the fate of `dna/docs/concepts/` (in dna repo, separate decision — likely retire or shrink to a README pointing at the dna.codes/docs link)
+Both items act on files in the `dna` repo, so neither can be done from here. Forwarded 2026-08-10 as
+the `reconcile-docs-with-dna-codes-site` change in that repo, which also records two findings that
+changed their shape: the site carries six of the eight framework comparisons (`cedar.md` and
+`triggers-and-events.md` were never ported), and `docs/concepts/` has four live inbound links from
+the `dna` README plus an open task in `domain-home-edge-migration`.
+
+- Mark `dna/docs/frameworks/README.md` as superseded → `reconcile-docs-with-dna-codes-site` Phase 2
+- Decide the fate of `dna/docs/concepts/` → `reconcile-docs-with-dna-codes-site` Phase 3
 
 ## Out of v1
 
