@@ -20,8 +20,14 @@ type Layer = {
   question: string;
   example: string;
   what: string;
-  written: string;
+  explicit: string;
   implicit: string;
+  /**
+   * The fix, appended to the implicit note in ladder mode only. Leap mode is the
+   * status quo and has to read as a cost; ladder mode is where it gets resolved.
+   * Absent on the two layers that are never implicit to begin with.
+   */
+  remedy?: string;
   /** Where this layer is already practiced today — it's optional, not absent. */
   practice: string;
   /** Marks the Operational Model layer — the missing layer DNA implements. */
@@ -41,8 +47,9 @@ const layers: Layer[] = [
     question: 'What do I want to accomplish?',
     example: 'A customer should be able to pay an invoice.',
     what: 'The outcome someone wants, in their own words. No structure, no types, no system boundaries — just a goal.',
-    written: 'A sentence. A ticket. A hallway conversation that someone remembered to write down.',
+    explicit: 'A sentence. A ticket. A hallway conversation that someone remembered to write down.',
     implicit: 'Acceptance criteria stay in one person’s head, so "done" gets decided after the fact.',
+    remedy: 'Instead, write the outcome and what counts as done in one place, up front.',
     practice:
       'User stories, PRDs, tickets, acceptance criteria — universal, and almost never precise enough to hand off.',
   },
@@ -51,11 +58,12 @@ const layers: Layer[] = [
     name: 'Semantics',
     question: 'What does everything mean?',
     example: 'customer, invoice, pay',
-    what: 'The vocabulary. Which words are terms of art here, and what each one denotes in this particular business.',
-    written:
+    what: 'The vocabulary. Which words carry a specific meaning here, and exactly what each one refers to in this business.',
+    explicit:
       'A glossary with teeth: <em>Invoice</em> — a demand for payment issued against a completed order. Not a Receipt. Not a Statement.',
     implicit:
       '<code>customer</code> quietly means the billing contact in one module and the parent account in another. Two correct programs, one wrong system.',
+    remedy: 'Instead, define the term once, where every layer below reads it.',
     practice:
       'Domain-Driven Design’s ubiquitous language, data catalogs, dbt docs, schema registries, controlled vocabularies.',
   },
@@ -64,25 +72,27 @@ const layers: Layer[] = [
     name: 'Ontology',
     question: 'What exists, and how is it related?',
     example: 'Customer → owns → Invoice',
-    what: 'The entities and the edges between them — what can exist, what each thing holds, and what it points at.',
-    written:
+    what: 'The entities and the relationships between them — what can exist, what each thing holds, and what it points at.',
+    explicit:
       'An <code>Invoice</code> carries <code>amount_due</code> and <code>status</code>, and points at the <code>Customer</code> it was issued to. A <code>Payment</code> settles it.',
     implicit:
       'Relationships get rediscovered feature by feature. The schema ends up as an archaeology of past tickets rather than a model of the business.',
+    remedy: 'Instead, declare the entities and relationships as a model, and let the schema follow.',
     practice:
       'OWL, RDF and SPARQL go back decades; knowledge graphs run production search; Palantir built a company on programming against “the ontology.”',
   },
   {
     n: '04',
     name: 'Operational Model',
-    question: 'What can happen, by whom, and with what effects?',
+    question: 'What can happen, and by whom?',
     example: 'Pay Invoice: Customer → Invoice → status becomes Paid',
     core: true,
-    what: 'Operations — the named things that can happen. Each one names an actor, a target, its preconditions, and the state it leaves behind.',
-    written:
-      '<strong>Pay Invoice</strong> — actor <code>Customer</code> · target <code>Invoice</code> where <code>status: Issued</code> · effect <code>Invoice.status → Paid</code> · rule: the payment must equal the amount due',
+    what: 'Operations — the behavior the system allows. Each one names an actor, a target, its preconditions, and the state it leaves behind.',
+    explicit:
+      '<strong>Pay Invoice</strong> — actor <code>Customer</code> · target <code>Invoice</code> where <code>status: Issued</code> · changes <code>Invoice.status → Paid</code> · rule: the payment must equal the amount due',
     implicit:
       'Every consumer re-derives the rules for itself. The API permits a payment the UI forbids — and an agent will find that gap before your QA does.',
+    remedy: 'Instead, name the operation once — actor, target, preconditions, resulting state.',
     practice:
       'BPMN, statecharts and XState, workflow engines like Temporal and Camunda, DDD aggregates and commands, policy rules in an authorization service — each modeling one slice, none of them the layer itself.',
   },
@@ -92,12 +102,12 @@ const layers: Layer[] = [
     question: 'How can that operation be exposed and executed?',
     example: 'POST /invoices/:id/pay · MCP tool · workflow step · UI command',
     what: 'The surfaces an operation is reachable through, and the contract each surface honors.',
-    written:
+    explicit:
       'One operation, four projections: a REST endpoint, an MCP tool, a queue consumer, a button. Same preconditions, same effects, same errors.',
     implicit:
       'The tool description and the endpoint drift apart. An agent calls what it was told exists, not what actually does.',
-    practice:
-      'The most standardized of the four: OpenAPI, protobuf, GraphQL SDL, AsyncAPI, JSON Schema — and now MCP tool definitions.',
+    remedy: 'Instead, project every surface from the one operation.',
+    practice: 'OpenAPI, protobuf, GraphQL SDL, AsyncAPI, JSON Schema — and now MCP tool definitions.',
   },
   {
     n: '06',
@@ -105,7 +115,7 @@ const layers: Layer[] = [
     question: 'How do I implement it?',
     example: 'Python, TypeScript, SQL — classes, functions, migrations',
     what: 'The actual instructions: control flow, persistence, validation, error handling.',
-    written: 'A <code>pay_invoice</code> function, a migration, a test for the underpayment case, an error path.',
+    explicit: 'A <code>pay_invoice</code> function, a migration, a test for the underpayment case, an error path.',
     implicit:
       'Not possible — this is the one layer we have always been forced to write down. Which is exactly why it absorbs every decision from the layers above it.',
     practice: 'Universal. Nobody ships without it, which is why it quietly absorbs every decision from above.',
@@ -116,9 +126,10 @@ const layers: Layer[] = [
     question: 'What frameworks and runtimes do I use?',
     example: 'Django, React, Next.js, PostgreSQL',
     what: 'The chosen substrate — framework conventions, libraries, data store, deployment target.',
-    written: 'A Django app, Postgres for state, a background worker for the receipt email, deployed on a container.',
+    explicit: 'A Django app, Postgres for state, a background worker for the receipt email, deployed on a container.',
     implicit:
       'Rarely implicit — but a stack picked before the operations are known will quietly bend the operations to fit it.',
+    remedy: 'Instead, choose the substrate after the operations are settled.',
     practice:
       'Framework conventions, dependency manifests, infrastructure-as-code — well-documented and loudly argued about.',
   },
@@ -128,7 +139,7 @@ const layers: Layer[] = [
     question: 'How does the machine execute it?',
     example: 'JS engine, Python interpreter, CPU instructions',
     what: 'Bytecode, JIT, syscalls, silicon. The layer nobody opens.',
-    written: 'You almost never look — and that is the point.',
+    explicit: 'You almost never look — and that is the point.',
     implicit:
       'Never implicit. Decades of compiler work made this handoff so dependable it became invisible. That is the bar for every layer above it.',
     practice: 'Compilers, interpreters, JITs. Fully standardized, fully mechanical, entirely invisible.',
@@ -144,6 +155,14 @@ const handoffs: Handoff[] = [
   { name: 'Binding', note: 'frameworks, packages', status: 'solved' },
   { name: 'Compilation', note: 'compilers, interpreters', status: 'solved' },
 ];
+
+// The three notes inside an expanded card. Same markup, same shape — the key
+// picks the field off the layer, and doubles as the tone modifier class.
+const noteKinds = [
+  { key: 'explicit', label: 'Explicit' },
+  { key: 'implicit', label: 'Implicit' },
+  { key: 'practice', label: 'Where it already exists' },
+] as const;
 
 // Layers 1–6 (Intent → Code) and the five handoffs between them are what the
 // single leap skips. `leaped` marks the rail/chip cells hidden in leap mode.
@@ -194,7 +213,7 @@ const rows = layers.map((layer, i) => ({
       </div>
       <div class="ml-auto flex gap-1" role="group" aria-label="View">
         <button data-mode-btn="leap" aria-pressed="true" class="mode-btn">Today: one jump</button>
-        <button data-mode-btn="ladder" aria-pressed="false" class="mode-btn">Ahead: layer by layer</button>
+        <button data-mode-btn="ladder" aria-pressed="false" class="mode-btn">Tomorrow: layer by layer</button>
       </div>
     </div>
 
@@ -252,18 +271,15 @@ const rows = layers.map((layer, i) => ({
 
                 <div class="detail" hidden>
                   <p class="dwhat">{layer.what}</p>
-                  <p class="dnote dnote-written">
-                    <span class="dlabel">Written down</span>
-                    <span set:html={layer.written} />
-                  </p>
-                  <p class="dnote dnote-implicit">
-                    <span class="dlabel">Implicit</span>
-                    <span set:html={layer.implicit} />
-                  </p>
-                  <p class="dnote dnote-practice">
-                    <span class="dlabel">Where it already exists</span>
-                    <span set:html={layer.practice} />
-                  </p>
+                  {noteKinds.map((kind) => (
+                    <p class={`dnote dnote-${kind.key}`}>
+                      <span class="dlabel">{kind.label}</span>
+                      <span set:html={layer[kind.key]} />
+                      {kind.key === 'implicit' && layer.remedy && (
+                        <span class="dremedy" set:html={` ${layer.remedy}`} />
+                      )}
+                    </p>
+                  ))}
                 </div>
               </div>
 
@@ -617,7 +633,7 @@ const rows = layers.map((layer, i) => ({
     padding-left: 0.75rem;
     margin: 0 0 0.5rem;
   }
-  .dnote-written {
+  .dnote-explicit {
     border-color: rgb(13 148 136 / 0.6);
   }
   .dnote-implicit {
@@ -634,7 +650,7 @@ const rows = layers.map((layer, i) => ({
     text-transform: uppercase;
     margin-bottom: 0.125rem;
   }
-  .dnote-written .dlabel {
+  .dnote-explicit .dlabel {
     color: rgb(45 212 191);
   }
   .dnote-implicit .dlabel {
@@ -642,6 +658,14 @@ const rows = layers.map((layer, i) => ({
   }
   .dnote-practice .dlabel {
     color: rgb(148 163 184);
+  }
+  /* The fix belongs to ladder mode only — in leap mode the note has to sting. */
+  .dremedy {
+    display: none;
+    color: rgb(94 234 212);
+  }
+  [data-mode='ladder'] .dremedy {
+    display: inline;
   }
   .detail :global(code) {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
