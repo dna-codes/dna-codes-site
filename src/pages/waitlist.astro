@@ -10,18 +10,16 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 // page, under a heading about controls they had not been reading about.
 const metadata = {
   title: 'Join the waitlist — DNA Codes',
-  description: 'We are choosing 20 design partners. Tell us what you are trying to run, and a person writes back.',
+  description: 'Want a living operating model? We are looking for design partners: contact us below.',
   ignoreTitleTemplate: true,
 };
 ---
 
 <Layout metadata={metadata}>
-  <!-- "Choosing" rather than "waiting": the button that got somebody here says waitlist to
-       keep the ask cheap, so the page has to be the place that says we select. -->
-  <HeroText tagline="Early access" title="Tell us what you are trying to run.">
-    <Fragment slot="subtitle">
-      We are choosing 20 design partners. Write a few lines, and a person writes back.
-    </Fragment>
+  <!-- The button that got somebody here says waitlist to keep the ask cheap, so the page
+       is where we say what we actually want: design partners, not a queue. -->
+  <HeroText tagline="Early access" title="Want a living operating model?">
+    <Fragment slot="subtitle"> We are looking for design partners: contact us below. </Fragment>
   </HeroText>
 
   <WidgetWrapper containerClass="max-w-4xl mx-auto !pt-0">
