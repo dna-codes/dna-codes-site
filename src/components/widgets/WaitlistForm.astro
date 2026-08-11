@@ -6,25 +6,25 @@ import { Icon } from 'astro-icon/components';
 // Overlay, and somebody who has not decided — which is why nothing above the interest
 // question mentions either product.
 //
-// TODO(launch): paste the endpoint here and the form starts working. Nothing else
-// needs to change — submission, the success state and the honeypot are already wired.
-//
 // The site is `output: 'static'` on GitHub Pages, so there is no server to POST to:
-// it has to be a third-party endpoint. Formspree (https://formspree.io/f/xxxxxxxx)
-// is the recommendation; Basin and Web3Forms take the same shape.
+// it has to be a third-party endpoint. Formspree it is; Basin and Web3Forms take the
+// same shape if we ever move. The endpoint is not a secret — it ships in the page HTML
+// either way, so it lives here rather than in a build-time env var: nothing to
+// configure in CI, nothing to forget on a fresh clone.
 //
-// Whatever it becomes must accept `interest` REPEATED (it is a multi-select, and a
-// provider that keeps only the last value silently discards the answer that matters
-// most), plus name, email, company, stack and context. `context` is the qualification
-// field: an answer naming a flag vendor and an authz vendor is a priced comparison in
-// one line, and an answer naming Notion and a folder of SOPs is a different
-// conversation entirely — so it must not be dropped by an email tool that only
-// understands name and address.
+// It has to accept `interest` REPEATED (it is a multi-select, and a provider that
+// keeps only the last value silently discards the answer that matters most), plus
+// name, email, company, stack and context. `context` is the qualification field: an
+// answer naming a flag vendor and an authz vendor is a priced comparison in one line,
+// and an answer naming Notion and a folder of SOPs is a different conversation
+// entirely — so it must not be dropped by an email tool that only understands name
+// and address. Formspree keeps both: repeated names arrive as a list, and unknown
+// fields are passed through rather than mapped onto a fixed contact schema.
 //
-// Until it is set, the form refuses loudly rather than appearing to succeed into a
-// void: somebody who believes they are on a list they are not on is the worst
+// If it is ever emptied, the form refuses loudly rather than appearing to succeed into
+// a void: somebody who believes they are on a list they are not on is the worst
 // outcome available here.
-const ACTION_URL = '';
+const ACTION_URL = 'https://formspree.io/f/moeadkla';
 
 export interface Props {
   /** Tick an interest up front when the form sits inside a product's own page. */
