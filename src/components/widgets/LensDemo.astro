@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { getAllDemoSamples } from '~/utils/lens-demo';
+import { WAITLIST_HREF } from '~/navigation';
 
 const samples = getAllDemoSamples();
 
@@ -115,7 +116,7 @@ const lensTabDefs = [
 
           {/* Runbook */}
           <div data-lens-panel="runbook" role="tabpanel" hidden>
-            <p class="text-xs text-slate-500 mb-5 text-center">Step by step — who does each part</p>
+            <p class="text-xs text-slate-500 mb-5 text-center">Step by step: who does each part</p>
             <div class="max-w-md mx-auto space-y-2.5">
               {s.runbook.items.map((item) => (
                 <div class="flex gap-3 rounded-xl bg-slate-800/60 border border-white/10 px-4 py-3">
@@ -142,7 +143,7 @@ const lensTabDefs = [
           <div data-lens-panel="jd" role="tabpanel" hidden>
             <div data-jd-list>
               <p class="text-xs text-slate-500 mb-4 text-center">
-                Each role's responsibilities — derived from the DNA. Click to expand.
+                Each role's responsibilities, derived from the DNA. Click to expand.
               </p>
               <div class="space-y-2 max-w-md mx-auto">
                 {s.jd.entries.map((entry, i) => (
@@ -245,8 +246,10 @@ const lensTabDefs = [
   <!-- Footer CTA -->
   <div class="flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-t border-white/8">
     <span class="text-xs text-slate-500">Same document. Different lens.</span>
+    <!-- The demo now lives on /operations, so pointing there would be a link to the page
+         you are already reading. Building your own for real is the waitlist. -->
     <a
-      href="/playground"
+      href={WAITLIST_HREF}
       class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
     >
       Build your own

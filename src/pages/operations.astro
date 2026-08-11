@@ -1,0 +1,59 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import OperationsDemo from '~/components/widgets/OperationsDemo.astro';
+import LensDemo from '~/components/widgets/LensDemo.astro';
+import OperationsLayerC from '~/components/widgets/OperationsLayerC.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const metadata = {
+  title: 'Operations — DNA Codes',
+  description:
+    'Feed DNA Codes your knowledge and watch it compile into a living operating model, plus Process Flow, SOP, Agent Workflow, and App artifacts.',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Demo first: the fastest way to understand Operations is to watch a transcript
+       become a spec. The "how it works" walkthrough below is what the demo just did,
+       slowed down — which is why it lives here now rather than on the homepage. -->
+  <OperationsDemo />
+
+  <!-- The demo above shows one spec being generated. This shows the same kind of spec
+       being read four ways, which is the argument the homepage used to open with and
+       could not support: it needs a spec on screen first. -->
+  <section class="py-14 sm:py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-8">
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">One DNA, many views</p>
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight">One model. Every view your team asks for.</h2>
+        <p class="mt-4 text-muted leading-relaxed">
+          An org chart, a process flow, a runbook and a job description are not four documents to keep in sync. They are
+          four readings of one spec.
+        </p>
+      </div>
+      <LensDemo />
+    </div>
+  </section>
+
+  <OperationsLayerC />
+
+  <!-- Same form as /waitlist, Operations already ticked. A product page ends with its own
+       conversion rather than a button that sends you somewhere to find one. -->
+  <WidgetWrapper containerClass="max-w-4xl mx-auto">
+    <div
+      class="rounded-2xl border border-primary/40 bg-slate-900/70 p-6 sm:p-10 shadow-[0_0_48px_rgba(13,148,136,0.18)]"
+    >
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold tracking-tight">Run it on your own processes.</h2>
+        <p class="mt-4 text-muted max-w-xl mx-auto leading-relaxed">
+          Bring the notes and docs you already have. The interesting part is usually how much of how your team works has
+          never been written down anywhere, and how quickly that shows up once it is.
+        </p>
+      </div>
+
+      <WaitlistForm preselect="operations" />
+    </div>
+  </WidgetWrapper>
+</Layout>

@@ -94,6 +94,29 @@
   display: block;
 }
 
+/* Current-page marker. Header.astro has always applied this class; until now nothing
+   defined it, so every nav item rendered identically on every page. */
+.aw-link-active {
+  @apply text-primary dark:text-accent font-semibold;
+}
+
+/* Top-level items carry a rule under the label. Inset from the item's own padding so it
+   sits under the word rather than the hit area. */
+#header nav > ul > li > .aw-link-active {
+  @apply relative;
+}
+#header nav > ul > li > .aw-link-active::after {
+  content: '';
+  @apply absolute left-4 right-4 bottom-1.5 h-0.5 rounded-full bg-primary;
+}
+
+/* Children get an edge marker instead — an underline would collide with the menu's own
+   padding, and these rows are two lines tall when they carry a description. */
+#header .dropdown-menu .aw-link-active {
+  @apply bg-primary/10 dark:bg-primary/15;
+  box-shadow: inset 2px 0 0 0 var(--aw-color-primary);
+}
+
 [astro-icon].icon-light > * {
   stroke-width: 1.2;
 }

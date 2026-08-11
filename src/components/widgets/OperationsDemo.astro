@@ -11,21 +11,22 @@ const KNOWLEDGE_SOURCES = [
 ];
 ---
 
-<section id="playground" class="py-12 sm:py-16">
+<section id="operations-demo" class="py-12 sm:py-16">
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
     <!-- Header -->
     <div class="text-center mb-10">
       <h1
-        class="inline-flex items-center px-5 py-2 rounded-full border-2 border-primary bg-primary/10 text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-4"
+        class="inline-flex items-center gap-2 px-5 py-2 rounded-full border-2 border-primary bg-primary/10 text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-4"
       >
-        Playground
+        Operations
+        <span class="text-[10px] font-bold tracking-widest text-primary/70 normal-case">Interactive demo</span>
       </h1>
       <h2 class="text-3xl sm:text-4xl font-bold text-slate-100 mb-3">
         Knowledge in.&nbsp;<br class="sm:hidden" /><span class="text-accent">Operating model out.</span>
       </h2>
       <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
         DNA Codes compiles meeting notes and docs into a living spec and generates the runbooks, SOPs, and agents your
-        team runs on.
+        team runs on. Run it on an example below. No account, nothing to install.
       </p>
     </div>
 
@@ -58,16 +59,32 @@ const KNOWLEDGE_SOURCES = [
             </div>
           </div>
 
-          <label for="transcript-input" class="sr-only">Example transcript</label>
+          <label for="transcript-input" class="sr-only">Transcript</label>
           <textarea
             id="transcript-input"
-            readonly
-            aria-readonly="true"
-            class="w-full min-h-[12rem] px-3 py-3 rounded-lg bg-slate-800/50 border border-slate-700 text-slate-300 placeholder-slate-500 text-sm focus:outline-none resize-y cursor-default"
-            placeholder="Pick an example above to load a transcript and watch it become DNA. Pasting your own transcript is coming soon."
+            class="w-full min-h-[12rem] px-3 py-3 rounded-lg bg-slate-800/50 border border-slate-700 text-slate-300 placeholder-slate-500 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-y"
+            placeholder="Paste meeting notes, a process doc, or anything describing how work gets done. Or load an example above."
           ></textarea>
 
-          <div class="mt-3">
+          <div class="mt-3 flex items-center gap-3 flex-wrap">
+            <button
+              type="button"
+              id="pg-generate"
+              class="btn-primary text-sm font-semibold rounded-lg px-5 py-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Generate
+            </button>
+            <p id="pg-hint" class="text-xs text-slate-500 leading-snug">Edit the transcript, or paste your own.</p>
+          </div>
+
+          <!-- Accurate for the stub: conversion runs entirely in this tab, so there is no
+               request to make and nothing to store. Revisit this wording in the same change
+               that swaps the stub for the live API. -->
+          <p class="mt-2.5 text-xs text-slate-500 leading-snug">
+            Nothing you paste leaves your browser. It is not sent anywhere, and not stored.
+          </p>
+
+          <div class="mt-4">
             <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500 mb-2">Works with</p>
             <div class="flex flex-wrap gap-1.5">
               {
@@ -233,21 +250,21 @@ const KNOWLEDGE_SOURCES = [
 </section>
 
 <style>
-  :global(#playground ::-webkit-scrollbar) {
+  :global(#operations-demo ::-webkit-scrollbar) {
     width: 8px;
     height: 8px;
   }
-  :global(#playground ::-webkit-scrollbar-track) {
+  :global(#operations-demo ::-webkit-scrollbar-track) {
     background: rgb(15 22 40);
   }
-  :global(#playground ::-webkit-scrollbar-thumb) {
+  :global(#operations-demo ::-webkit-scrollbar-thumb) {
     background: rgb(13 148 136);
     border-radius: 4px;
   }
-  :global(#playground ::-webkit-scrollbar-thumb:hover) {
+  :global(#operations-demo ::-webkit-scrollbar-thumb:hover) {
     background: rgb(45 212 191);
   }
-  :global(#playground *) {
+  :global(#operations-demo *) {
     scrollbar-width: thin;
     scrollbar-color: rgb(13 148 136) rgb(15 22 40);
   }
@@ -778,13 +795,18 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
         const result = await convert({ from: { type: 'dna', content: dna }, to: { type } });
         renderArtifact(type, result);
       } catch (err) {
-        console.error('[playground] artifact failed', type, err);
+        console.error('[operations-demo] artifact failed', type, err);
         setPanelError(panel, userMessage(err));
       }
     };
 
     const runDna = async (transcript: string) => {
       setPanelState(dnaPanel, 'loading');
+      const btn = $<HTMLButtonElement>('#pg-generate');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Generating…';
+      }
       try {
         const result = await convert({
           from: { type: 'transcript', content: transcript },
@@ -800,13 +822,18 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
           void runArtifact(t, currentDna);
         });
       } catch (err) {
-        console.error('[playground] dna failed', err);
+        console.error('[operations-demo] dna failed', err);
         setPanelError(dnaPanel, userMessage(err));
         // Reset artifact panels to empty since we have no DNA to fan out from.
         ARTIFACTS.forEach((t) => {
           const p = getArtifactPanel(t);
           if (p) setPanelState(p, 'empty');
         });
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Generate';
+        }
       }
     };
 
@@ -820,14 +847,51 @@ Farah: The SLA is a 5-day close, and the same flow runs at quarter-end.`,
       if (p) setPanelState(p, 'empty');
     });
 
+    const generateBtn = $<HTMLButtonElement>('#pg-generate');
+    const hint = $<HTMLElement>('#pg-hint');
+
+    // The stub reads the transcript for keywords and routes to the closest sample
+    // process (see pickProcess in dnaApi). That is a real response to what somebody
+    // typed, but it is not a model reading their notes — so once the text stops
+    // matching an example verbatim, say so rather than implying more than we do.
+    const isVerbatimExample = () => Object.values(EXAMPLES).some((t) => t === textarea.value);
+
+    const updateHint = () => {
+      if (!hint) return;
+      hint.textContent = isVerbatimExample()
+        ? 'Edit the transcript, or paste your own.'
+        : 'Demo mode matches your text to the closest sample process.';
+    };
+
+    const generate = () => {
+      const value = textarea.value.trim();
+      if (!value) {
+        setPanelError(dnaPanel, 'Add some transcript text before converting.');
+        return;
+      }
+      void runDna(value);
+    };
+
     const loadExample = (key: string) => {
       const transcript = EXAMPLES[key];
       if (!transcript) return;
       textarea.value = transcript;
+      updateHint();
       void runDna(transcript);
     };
 
     exampleSelect.addEventListener('change', () => loadExample(exampleSelect.value));
+    generateBtn?.addEventListener('click', generate);
+    textarea.addEventListener('input', updateHint);
+
+    // Cmd/Ctrl+Enter from inside the textarea, the shortcut anyone who has used a
+    // console will try first.
+    textarea.addEventListener('keydown', (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        generate();
+      }
+    });
 
     // Pre-populate with the option selected by default so the full pipeline
     // (DNA spec + outputs) is already visible on first paint, not just the

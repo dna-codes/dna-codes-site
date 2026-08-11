@@ -3,12 +3,13 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import DnaHelix from '~/components/DnaHelix.astro';
 // import BiggerPicture from '~/components/widgets/BiggerPicture.astro';
-import OperationsLayerC from '~/components/widgets/OperationsLayerC.astro';
 // import OverlayTeaser from '~/components/widgets/OverlayTeaser.astro';
-import LensDemo from '~/components/widgets/LensDemo.astro';
+import ProductsHighlight from '~/components/widgets/ProductsHighlight.astro';
+import SocialProof from '~/components/widgets/SocialProof.astro';
 // import ProductLayer from '~/components/widgets/ProductLayer.astro';
 // import TechnologyLayer from '~/components/widgets/TechnologyLayer.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
+import { WAITLIST_HREF, WAITLIST_TEXT } from '~/navigation';
 // import { Icon } from 'astro-icon/components';
 
 const metadata = {
@@ -22,7 +23,7 @@ const metadata = {
   <Hero
     tagline="AI-native operations"
     actions={[
-      { variant: 'primary', text: 'Playground', href: '/playground' },
+      { variant: 'primary', text: WAITLIST_TEXT, href: WAITLIST_HREF },
       { text: 'Docs', href: '/docs' },
     ]}
   >
@@ -44,18 +45,15 @@ const metadata = {
       The future of work is humans + agents.<br />
       DNA is the structure and engine behind it.
     </Fragment>
-
-    <!-- The demo lives in the hero's image slot so the headline flows straight into it. -->
-    <Fragment slot="image">
-      <div class="max-w-3xl mx-auto px-4 sm:px-6">
-        <LensDemo />
-      </div>
-    </Fragment>
   </Hero>
 
   <!-- <BiggerPicture /> -->
 
-  <OperationsLayerC />
+  <!-- Straight from the headline into the two products, each carrying a real shot of
+       itself. The lens demo that used to occupy this space asked a visitor to understand
+       "one model, many views" before they knew what either product was; it now runs on
+       /operations, where that argument has something to attach to. -->
+  <ProductsHighlight />
 
   <!-- Arrow connector (ops → product) — re-enable with <OverlayTeaser /> below when
        the Overlay launch goes public. -->
@@ -84,10 +82,14 @@ const metadata = {
 
   <TechnologyLayer /> -->
 
+  <SocialProof
+    note="Building at the intersection of operations and engineering. One shared model across disciplines."
+  />
+
   <CallToAction
     actions={[
-      { variant: 'primary', text: 'Playground', href: '/playground' },
-      { text: 'Docs', href: '/docs' },
+      { variant: 'primary', text: WAITLIST_TEXT, href: WAITLIST_HREF },
+      { text: 'Explore the products', href: '/operations' },
     ]}
   >
     <Fragment slot="title">

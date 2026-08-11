@@ -1,0 +1,123 @@
+---
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+// Captured from the live miniature on /overlay rather than from the product screenshots in
+// this folder: every one of those has a light host application, which next to the dark
+// Operations panel made the pair look like two unrelated sites.
+import overlayShot from '~/assets/images/overlay/panel-on-dark-app.png';
+import operationsShot from '~/assets/images/operations/process-flow-output.png';
+
+// Two products, two sentences each, side by side. This is the first thing below the hero,
+// so its job is to make a visitor understand in one glance that there are exactly two
+// things and which of them is theirs. Everything else is on the product page.
+//
+// Each card leads with a real shot of the thing rather than an icon: the Overlay's panel
+// docked into a running host app, and the Operations output panel mid-run. Both are taken
+// from the product pages they link to, so what the card promises is what the click gives.
+// They are screenshots of our own UI, which means they go stale silently — retake them in
+// any change that alters the panel chrome on either page.
+//
+// Deliberately parallel in shape: same card, same number of lines, same verb ending in a
+// link. Asymmetry here would read as one product mattering more than the other.
+const products = [
+  {
+    name: 'Operations',
+    verb: 'Model it',
+    icon: 'tabler:vector-triangle',
+    headline: 'Knowledge in. Operating model out.',
+    body: 'Meeting notes, docs and tribal knowledge compile into a living spec, and the runbooks, SOPs and agents your team actually runs on.',
+    href: '/operations',
+    cta: 'Try the demo',
+    status: 'Live demo',
+    image: operationsShot,
+    alt: 'The Operations output panel showing a generated process flow: welcome email sent, intro call booked, product walkthrough and a 30-day check-in, each with its owning team and timing.',
+  },
+  {
+    name: 'Overlay',
+    verb: 'Govern it',
+    icon: 'tabler:layers-subtract',
+    headline: 'Operational controls, in your app.',
+    body: 'The same model, reaching into your product. Every button carries the operation it performs, so who may press it, whether it is on, and everything it has done are answered on the control itself.',
+    href: '/overlay',
+    cta: 'Explore the Overlay',
+    status: 'Early access',
+    image: overlayShot,
+    alt: 'The Overlay panel docked beside a running application, answering for a refund button with its address, the operation it performs, who may press it, and a note that every refund is now recorded.',
+  },
+];
+---
+
+<section class="py-14 sm:py-20">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+    {
+      /* Pill, then one line. The cards say the rest, and the shots say it faster than a
+        paragraph would — but the heading alone floated without a section label above it.
+        Same pill as the Operations Layer section, so the site reads as one system. */
+    }
+    <div class="text-center mb-10">
+      <p
+        class="inline-flex items-center px-5 py-2 rounded-full border-2 border-primary bg-primary/10 text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-5"
+      >
+        Products
+      </p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Two products, one model.</h2>
+    </div>
+
+    <div class="grid gap-5 md:grid-cols-2">
+      {
+        products.map(({ name, verb, icon, headline, body, href, cta, status, image, alt }) => (
+          <a
+            href={href}
+            class="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 transition-colors duration-200 hover:border-primary/50 hover:bg-slate-900/80"
+          >
+            {/* Both sources are captured at 4:3, so they fill this frame edge to edge with
+                nothing letterboxed and nothing cropped at render time. The Operations panel
+                is captured with room to spare; the Overlay shot takes its crop out of the
+                host app's left side so the whole docked panel survives. */}
+            <div class="border-b border-white/10 bg-page">
+              <Image
+                src={image}
+                alt={alt}
+                widths={[520, 1040]}
+                sizes="(min-width: 768px) 480px, 100vw"
+                loading="lazy"
+                class="aspect-[4/3] w-full object-cover"
+              />
+            </div>
+
+            <div class="flex flex-col flex-1 p-6 sm:p-7">
+              <div class="flex items-center gap-2.5 mb-4">
+                <div class="w-9 h-9 rounded-lg bg-primary/15 border border-primary/40 flex items-center justify-center flex-shrink-0">
+                  <Icon name={icon} class="w-5 h-5 text-primary" />
+                </div>
+                <span class="text-base font-bold text-white">{name}</span>
+                <span class="ml-auto rounded-full bg-primary/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary whitespace-nowrap">
+                  {status}
+                </span>
+              </div>
+
+              <p class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">{verb}</p>
+              <h3 class="text-xl font-bold text-white mb-2.5 leading-snug">{headline}</h3>
+              <p class="text-sm text-muted leading-relaxed">{body}</p>
+
+              {/* A button rather than a text link, and pinned to the foot of the card with
+                  mt-auto so both read at the same height whatever the copy above does.
+                  Outlined rather than filled: the filled green is the waitlist everywhere
+                  else on the site, and two greens competing in one viewport would make
+                  neither mean anything. It fills on hover, so the affordance is obvious. */}
+              <span class="mt-auto pt-6">
+                <span class="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-5 py-2.5 text-sm font-semibold text-primary transition-colors duration-200 group-hover:bg-primary group-hover:border-primary group-hover:text-white">
+                  {cta}
+                  <Icon
+                    name="tabler:arrow-right"
+                    class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                  />
+                </span>
+              </span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>

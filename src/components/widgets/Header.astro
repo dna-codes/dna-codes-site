@@ -14,6 +14,8 @@ interface Link {
   href?: string;
   ariaLabel?: string;
   icon?: string;
+  /** Optional one-liner rendered under the label inside a dropdown. */
+  description?: string;
 }
 
 interface MenuLink extends Link {
@@ -45,6 +47,21 @@ const {
 } = Astro.props;
 
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+
+// Prefix-aware so a page inside a section lights up that section: /docs/getting-started
+// marks Docs, and /blog/some-post marks Blog. Exact-match alone left every nested page
+// looking like it belonged to no section at all.
+const isCurrent = (href?: string): boolean =>
+  !!href && href !== '/' && (href === currentPath || currentPath.startsWith(`${href}/`));
+
+// Product surfaces are marked: an accent rail across the header and a chip beside the
+// logo, so it is obvious you have stepped out of the pitch and into something you can
+// operate. Landing pages (home, pricing, blog) deliberately get neither.
+const PRODUCT_SECTIONS = [
+  { path: '/overlay', label: 'Overlay' },
+  { path: '/operations', label: 'Operations' },
+];
+const section = PRODUCT_SECTIONS.find(({ path }) => isCurrent(path));
 ---
 
 <header
@@ -56,6 +73,14 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
   {...id ? { id } : {}}
 >
   <div class="absolute inset-0"></div>
+  {
+    section && (
+      <div
+        class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0"
+        aria-hidden="true"
+      />
+    )
+  }
   <div
     class:list={[
       'relative text-default py-3 px-3 md:px-6 mx-auto w-full',
@@ -74,6 +99,14 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
       <a class="flex items-center" href={getHomePermalink()}>
         <Logo />
       </a>
+      {
+        section && (
+          <span class="hidden sm:inline-flex items-center gap-1.5 ml-3 self-center rounded-full border border-primary/40 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-primary whitespace-nowrap">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+            {section.label}
+          </span>
+        )
+      }
       <div class="flex items-center md:hidden">
         <ToggleMenu />
       </div>
@@ -92,22 +125,31 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                 <>
                   <button
                     type="button"
-                    class="hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap"
+                    class:list={[
+                      'hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap',
+                      // A parent is "where you are" whenever one of its children is.
+                      { 'aw-link-active': links.some(({ href: childHref }) => isCurrent(childHref)) },
+                    ]}
                   >
                     {text}{' '}
                     <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline" />
                   </button>
-                  <ul class="dropdown-menu md:backdrop-blur-md dark:md:bg-dark rounded md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-white/90 md:min-w-[200px] drop-shadow-xl">
-                    {links.map(({ text: text2, href: href2 }) => (
+                  <ul class="dropdown-menu md:backdrop-blur-md dark:md:bg-dark rounded md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-white/90 md:min-w-[280px] drop-shadow-xl">
+                    {links.map(({ text: text2, href: href2, description }) => (
                       <li>
                         <a
                           class:list={[
                             'first:rounded-t last:rounded-b md:hover:bg-gray-100 hover:text-link dark:hover:text-white dark:hover:bg-gray-700 py-2 px-5 block whitespace-no-wrap',
-                            { 'aw-link-active': href2 === currentPath },
+                            { 'aw-link-active': isCurrent(href2) },
                           ]}
                           href={href2}
                         >
                           {text2}
+                          {description && (
+                            <span class="block text-xs md:text-[0.75rem] font-normal text-muted leading-snug mt-0.5 whitespace-normal">
+                              {description}
+                            </span>
+                          )}
                         </a>
                       </li>
                     ))}
@@ -117,7 +159,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                 <a
                   class:list={[
                     'hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap',
-                    { 'aw-link-active': href === currentPath },
+                    { 'aw-link-active': isCurrent(href) },
                   ]}
                   href={href}
                 >
