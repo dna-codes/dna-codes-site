@@ -2,7 +2,7 @@
 publishDate: 2026-08-09T00:00:00Z
 author: Tim Kleier
 title: 'The Future of Programming: The Abstraction Layers Between Intent and Execution'
-excerpt: Today an LLM leaps straight from a sentence to a program, guessing everything in between. The next era of software engineering fills that gap with real abstraction layers — semantics, ontology, operational model, execution model — each with a checkable handoff to the next.
+excerpt: 'Today an LLM leaps straight from a prompt to code, deciding everything in between and writing none of it down. The next era of software engineering fills that gap with real abstraction layers: semantics, ontology, operational model, and execution model. Every handoff checkable, nothing guessed.'
 image: '~/assets/images/abstraction-layers.png'
 category: Engineering
 tags:
@@ -19,124 +19,58 @@ Hand that sentence to a coding agent today and you'll get a pull request back in
 
 Both outcomes come out of the same process. That's the problem.
 
-Between that sentence and that code, a dozen decisions got made. What a customer is. What an invoice is. What "pay" does to one. Who's allowed to do it. What happens when the amount is short, or paid twice, or paid on an invoice that was already voided. The model decided every one of them. None of them were written down anywhere you can point at.
+Between that sentence and that code, a dozen decisions got made. What a customer is. What "pay" does to an invoice. What happens when the amount is short, or paid twice, or paid against an invoice that was already voided. The model decided every one of them, and none of them were written down anywhere you can point at.
 
-That's the leap. And I think the most important thing that happens to programming over the next decade isn't that models get better at making it. It's that we stop asking them to. What replaces it isn't a better jump — it's a set of abstraction layers we haven't standardized yet, and the handoffs between them.
+## The Current Paradigm
 
-## The bottom half of the ladder
+That's the leap: one jump, from a prompt straight to code.
 
-Programming has always advanced the same way: by adding a layer of abstraction, and then engineering the handoff beneath it until the handoff became boring.
+<AbstractionStack mode="leap" />
 
-Assembly to machine code. C to assembly. Bytecode, JIT, linkers, package managers, query planners. Every one of those is a layer with a mechanical, checkable transformation into the layer below it. And the payoff wasn't just less typing. It was that a whole category of decisions got made once, correctly, in a piece of machinery — instead of being remade by hand, slightly differently, every time.
+The four layers in the middle don't disappear. They get decided — silently, once per feature, by whatever happened to be in context at the time. Three things follow from that, and all three cost money.
 
-Nobody debugs register allocation anymore. Not because it stopped mattering, but because the handoff got engineered so thoroughly it went invisible. Compilers and interpreters are the most reliable machinery our industry has ever produced.
+**You can't review what was assumed.** The code shows you what the model did, never what it decided on the way. To recover the assumption about `customer` you'd have to infer it from which table the key points at and which case the tests quietly skip. That's archaeology, not review — and it's why the wrong assumption sails through. A diff built on a bad definition looks exactly like a diff built on a good one.
 
-Above `Code / Program`, almost none of that is standard. There's a sentence, and then there's a program. Everything in between lives in someone's head — and increasingly, in a model's weights.
+**Corrections don't stick.** You tell the agent a customer is the parent account. It fixes the code. Next feature, next session, it guesses again — because there was nowhere for that correction to live. A correction with nowhere to live is a correction you will make again.
 
-## Patterns in biology
+**It isn't repeatable.** Run the same intent twice and you get two different implicit models. Run it across fifty features and you get fifty of them, each internally sensible, collectively incoherent. Consistency is precisely what a large system needs and precisely what one-shot inference can't give you.
 
-A genome doesn't become an organism in one step.
+None of this is a model-intelligence problem, and here's the test: a very good human engineer, handed that one sentence and no other context, would also produce something plausible and possibly wrong. Not from lack of intelligence. From lack of input.
 
-DNA is transcribed into RNA. RNA is translated into protein. Proteins fold, assemble, and do work. Each stage has its own alphabet, its own machinery for reading that alphabet, and its own error-checking. The information gets carried forward in a form the _next_ stage can actually read — never a form it has to guess at.
+## The Future
 
-That staging is exactly why it's repeatable. The same genome yields the same organism, cell after cell, generation after generation. Not because any single step is magic, but because every step is short, typed, and checked before the next one runs.
+Programming has always advanced the same way — add a layer, then engineer the handoff beneath it until the handoff gets boring. Assembly to machine code. C to assembly. Bytecode, JIT, linkers, query planners. Nobody debugs register allocation anymore, not because it stopped mattering, but because that handoff got engineered so thoroughly it went invisible.
 
-We're currently asking a language model to go from genome to organism in one jump. Sometimes what comes out lives.
+Above `Code / Program`, almost none of that exists yet. Here's what fills it.
 
-## New abstraction layers
+<AbstractionStack mode="ladder" />
 
-Here's the full stack as I think it settles out — eight layers, each answering one question. The toggle switches between how it works today and how it could work.
+The bottom three layers you already have. The four in the middle are the ones that get inferred today instead of stated:
 
-<AbstractionStack />
+**Semantics** is the vocabulary — not a glossary in a wiki nobody reads, but the binding definition of which terms carry a specific meaning here and what each one refers to. An integration bug is usually two systems that never agreed on a concept.
 
-The bottom three layers you already know — they're the ones we've had for decades. The interesting ones are the four in the middle, the ones that usually get inferred rather than stated:
+**Ontology** is what exists and how it connects. Some of this leaks into your database schema, but a schema answers "how do we store this," not "what is this."
 
-**Semantics** is the vocabulary. Not a glossary that lives in a Confluence page nobody reads, but the actual, binding definition of which words carry a specific meaning here and what each one refers to. An integration bug is usually two systems that never agreed on a word.
+**The Operational Model** answers: what can happen, and by whom? `Pay Invoice` is performed by a `Customer`, against an `Invoice` in status `Issued`, and moves it to `Paid` when the amount matches what's due. Without somewhere to say that once, operations dissolve into the code: a precondition here, a status transition there, a permission check three files away, a rule that survives only because someone remembered it in review.
 
-**Ontology** is what exists and how it connects. Entities, their attributes, the relationships between them. Some of this leaks into your database schema — but a schema answers "how do we store this," not "what is this." The model is in there somewhere, under the normalization and the indexes and the two columns someone added in a hurry. Reading it back out is often guesswork.
+**The Execution Model** is how an operation becomes reachable. The same `Pay Invoice` surfaces as a REST endpoint, an MCP tool, a workflow step, and a button. Written four times by four people, they drift apart immediately. Projected from one operation, they can't: same preconditions, same effects, same errors, by construction.
 
-**The Operational Model** is a missing abstraction layer in programming — and DNA is an implementation of it. That's the strongest claim in this piece, so let me be precise about it. The layer answers: what can happen, and by whom? Its primitive is the operation: an actor, an action, and a target, with the preconditions that must hold and the state it leaves behind. `Pay Invoice` is an operation. It's performed by a `Customer`, against an `Invoice` in status `Issued`, and it moves that invoice to `Paid` when the amount matches `amount_due`.
+None of this is hypothetical. Semantics is Domain-Driven Design's ubiquitous language and the premise of every data catalog. Ontology has OWL, knowledge graphs running production search, and Palantir's entire business behind it. The operational model shows up as BPMN, as statecharts, as Temporal and Camunda, as DDD aggregates and commands. Execution has OpenAPI and now MCP. The problem was never that the industry failed to figure these out — it's that each lives in its own pocket, optional and disconnected, and nothing carries a definition from one layer into the next. That's the difference between a practice and an abstraction layer.
 
-Every other layer on this ladder has somewhere canonical to live. Semantics has a glossary, ontology has a schema, execution has an OpenAPI file. Operations have nowhere, so they dissolve — a precondition here, a status transition there, a permission check three files away, a rule that only exists because someone remembered it in review. What your business actually _does_ is the one thing the stack has no slot for.
+The middle is also having a moment: [Why Agentic Systems Need Ontologies](https://www.youtube.com/watch?v=Sir59K8ZDPU) was the most-watched talk at this year's AI Engineer World's Fair. The people closest to agents in production are arriving at the same gap from a different direction.
 
-Notice that this isn't code, and it isn't a diagram, and it isn't documentation. It's a definition — the kind of thing a person can review in ten seconds and a machine can check.
+Layering also changes where agents fit. Today we point them at the widest gap on the ladder, which is also the one where their output is hardest to verify. The layered version is many short hops, each ending in something readable: an agent proposes the vocabulary and you confirm it, proposes an ontology and you read the diff, derives operations and you correct the two it got wrong. After that, generation is mostly mechanical — and the closer the input gets to a precise model, the less of the remaining work needs a language model at all.
 
-**The Execution Model** is how an operation becomes reachable. The same `Pay Invoice` can surface as a REST endpoint, an MCP tool, a workflow step, and a button. Today those four are written four times by four people and drift apart immediately. If they're projections of one operation, they can't drift: same preconditions, same effects, same errors, by construction.
-
-## Not hypothetical, just not standard
-
-It would be easy to read that diagram as a wish list. It isn't. Every one of those middle layers has a serious tradition behind it, some of them decades old. The problem isn't that the industry never figured them out. It's that each one lives in its own pocket, and almost none of them connect.
-
-**Semantics** is Domain-Driven Design's ubiquitous language, and it's the whole premise of a data catalog. Teams that keep a real glossary — dbt docs, a schema registry, a controlled vocabulary — get exactly the benefit you'd predict.
-
-It's also the most elusive of the four, because the work isn't collecting words — it's separating what people say from what they mean. A room can agree on a sentence and still be describing different things: the word is shared, the referent isn't. And the mismatch doesn't surface in the conversation, where it would be cheap to fix. It surfaces much later, in a number that doesn't reconcile. That's what a glossary is actually for — not documenting the agreement, but forcing the disagreement while it's still an argument about a word.
-
-**Ontology** has the deepest lineage of the four. OWL, RDF, and SPARQL go back decades. Knowledge graphs run production search at Google. Palantir built a company on making "the ontology" the thing you program against.
-
-It's also the layer that agents have pulled back into fashion. [Why Agentic Systems Need Ontologies](https://www.youtube.com/watch?v=Sir59K8ZDPU), Frank Coyle's talk from this year's AI Engineer World's Fair, was the most-watched of the conference. His argument is that a language model has no way to tell truth from hallucination on its own, so the typed entities and constraints of an ontology are what stop an agent from refunding the same order twice — probabilistic reasoning on the inside, logic on the outside. The people closest to agents in production are arriving at the missing middle from a different direction.
-
-**The Operational Model** shows up as BPMN, as statecharts and XState, as workflow engines like Temporal and Camunda, as aggregates and commands in DDD, as policy rules in an authorization service. At the strictest end, safety-critical teams write the rules down as a formal specification and prove properties about them before anyone writes code.
-
-Notice what those have in common, though: each models one slice of the layer, off to the side of the code, and gets reconciled with it by hand. A workflow engine knows the steps but not the vocabulary. A policy service knows who may act but not what the act does. None of them is a thing the rest of the system gets generated from — which is why I'd still call the layer missing, even with all of that on the shelf.
-
-**The Execution Model** is the most standardized of the four — OpenAPI, protobuf, GraphQL SDL, AsyncAPI, JSON Schema, and now MCP tool definitions. That's not a coincidence: it's exactly why the handoff below it is the one that already generates working code.
-
-So the honest version of the claim isn't that these layers don't exist. It's that they're optional, siloed, and disconnected. The team doing serious ontology work is usually not the team writing BPMN. The glossary lives in one tool and the API contract in another, and neither knows the other exists. Adopting any one of them in isolation still leaves you handing a model a sentence and hoping — because nothing carries a definition from one layer into the next.
-
-That gap is the difference between a practice and an abstraction layer. Assembly didn't become an abstraction layer because some people wrote it carefully. It became one when the transformation beneath it turned mechanical, universal, and boring.
-
-## A dangerous leap
-
-The usual framing is that agents write buggy code because models aren't smart enough yet. I think that's mostly wrong, and here's the test: a very good human engineer, handed that one sentence and no other context, would also produce something plausible and possibly wrong. Not from lack of intelligence. From lack of input.
-
-Four specific things break when the middle layers stay implicit:
-
-**The decisions are unreviewable.** You can review the code, sure — but the code shows you what the model did, never what it assumed. To recover the assumption about `customer` you have to infer it from the shape of the change: which table the foreign key points at, which object got the method, which case the tests quietly skip. That's archaeology, not review. And it's why the wrong assumption sails through: a diff built on a bad definition looks exactly like a diff built on a good one.
-
-**Corrections don't stick.** You tell the agent that a customer is the parent account. It fixes the code. Next feature, next session, it guesses again — because there was nowhere for that correction to live. A correction with nowhere to live is a correction you will make again. Write it into the ontology once and every layer below it inherits it, forever.
-
-**It isn't reproducible.** Run the same intent twice and you get two different implicit ontologies. Run it across fifty features and you get fifty of them, each internally sensible, collectively incoherent. Consistency across a codebase is precisely what a big system needs and precisely what one-shot inference can't give you.
-
-**Nothing can be checked mechanically.** Between layers with defined shapes, you can _validate_: does every operation name an actor? Does every endpoint correspond to an operation? Does the UI expose any transition the rules forbid? Between a sentence and a program, the only available check is "does this look right to me?"
-
-That last one is the real cost. Not the errors themselves — errors are fine, we've always had errors. The cost is that the leap gives you no place to stand while you look for them.
-
-## The handoffs are the actual product
-
-Layers are easy to name. What makes them worth anything is the transformation between them — the adapter, the generator, the compiler. Flip the diagram above to "layer by layer" and read the chips sitting between the layers; that's where the work is.
-
-Some of those handoffs are already deterministic. Going from an operational model to an execution model is projection: given an operation with an actor, a target, and effects, the REST endpoint, the tool schema, and the form fields largely follow. Going from an execution model to code scaffolding is generation — the same thing OpenAPI generators have done for years, except starting from a description of the _business_ rather than a description of the API.
-
-That's the part I find most underrated. **The closer the input gets to a precise model, the less of the remaining work needs a language model at all.** The generator gets to be a compiler again — boring, fast, deterministic, tested once. You spend intelligence where there's genuine ambiguity, and spend templates where there isn't.
-
-The handoffs near the top stay judgment calls. Turning "a customer should be able to pay an invoice" into a vocabulary and then a set of operations requires knowing things about the business that aren't in the sentence. That's a conversation. But it's a conversation that ends in an artifact — and the artifact is the thing that survives.
-
-## Where agents actually fit
-
-This is the part that I think gets the framing backwards today. We currently point agents at the widest gap on the ladder, which is also the one where their output is hardest to verify. The layered version is the opposite: many short hops, each ending in something readable.
-
-An agent proposes the vocabulary implied by an intent, and you confirm it. An agent proposes an ontology from that vocabulary — and it's a diff, so you can actually read it. An agent derives candidate operations from the ontology, with actors and effects filled in, and you correct the two it got wrong. From there, generation is mostly mechanical.
-
-Small hops with an artifact at the end of each one aren't merely easier for a model. They're the only kind of step you can verify _before_ taking the next one. That's not a property of the model; it's a property of the ladder.
-
-And it runs the other direction too. An agent that operates your business — not one that writes code, but one that actually pays invoices, escalates tickets, onboards employees — needs the operational model to know what it's permitted to do and what its actions mean. Prose in a system prompt is a bad substitute for a definition. The same layer that makes generation reliable makes delegation safe.
-
-Coyle's instinct is right here, and I'd push it one layer further. An ontology can tell you that an order may only be refunded once — that's a constraint, and constraints are what keep an agent from corrupting your data. But it's the operational model that says who may issue that refund, what has to be true before they can, and what state the order lands in afterward. Constraints stop an agent doing damage. Operations are what let it do the job at all.
+It runs the other direction as well. An agent that operates your business — not one that writes code, but one that actually pays invoices and escalates tickets — needs the operational model to know what it's permitted to do and what its actions mean. Prose in a system prompt is a bad substitute for a definition. The same layer that makes generation reliable makes delegation safe.
 
 ## What we're building
 
-DNA is an implementation of that missing layer. Its three layers — [operational](/docs/operational), [product](/docs/product), and [technical](/docs/technical) — line up with the operational model, execution model, and technology stack on the ladder above. The operational layer is the core of it: people, structures, and activities, with operations that name an actor, a target, the rules that govern them, and the state they produce. Everything below is generated from it. Everything above is a conversation that lands in it.
+DNA is a format for writing these layers down. Its three layers — [operational](/docs/operational), [product](/docs/product), and [technical](/docs/technical) — span the middle of the stack, from what your business does through the surfaces that expose it to the substrate it runs on. The operational layer is the center of gravity: people, structures, and activities, with operations that name an actor, a target, the rules that govern them, and the state they produce. Everything below is generated from it. Everything above is a conversation that lands in it. You can [poke at the model directly in the Operations demo](/operations) — define resources and actions, and watch the API surface fall out of them.
 
-You can [poke at the model directly in the Operations demo](/operations) — define resources and actions, watch the API surface fall out of them.
+One separation worth making: the stack needing these layers doesn't depend on DNA being the thing that supplies them. If someone else's format wins, every argument above still holds. The interesting fight is over whether the layers belong on the ladder at all.
 
-One thing worth separating, though: the proposal and the product are not the same claim. Programming needing an operational-model layer doesn't depend on DNA being the thing that supplies it. If the layer becomes standard and somebody else's format wins, every argument above still holds — and I'd count that as the better outcome than being right about a file format nobody adopted. The interesting fight is over whether the layer belongs on the ladder at all.
-
-None of this makes the leap go away. Models will keep getting better at it, and for a throwaway script the leap is exactly the right tool. But for the systems a business actually runs on, "impressive most of the time" isn't the bar. The bottom half of this ladder is invisible because it's dependable.
-
-So that's the future of programming, as far as I can see it: not a model that leaps further, but a stack that makes the leap unnecessary. One layer at a time, one handoff at a time, until the top half of the stack is as dull and dependable as the bottom — until "a customer should be able to pay an invoice" reaches production the same way a line of Python reaches the CPU, and nobody thinks about the trip.
-
-The only question left is which layer gets engineered first.
+None of this makes the leap go away, and for a throwaway script the leap is exactly the right tool. But for the systems a business actually runs on, "impressive most of the time" isn't the bar. The future of programming isn't a model that leaps further — it's a stack that makes the leap unnecessary, one layer at a time, until the top half is as dull and dependable as the bottom.
 
 ---
 
-We're building DNA Codes to make the middle of this ladder real. If this is how you're thinking about the problem too, [join the waitlist](#waitlist-form) — we'd like to have you involved.
+We're building DNA Codes to make the middle of this ladder real. If this is how you're thinking about the problem too, [join the waitlist](/waitlist) — we'd like to have you involved.

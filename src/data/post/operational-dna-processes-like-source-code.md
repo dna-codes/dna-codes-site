@@ -71,4 +71,4 @@ That's the operating model DNA Codes is built around: your business processes as
 
 ---
 
-We're building DNA Codes to make this model accessible to operations teams at every stage. If this framing resonates with how you're thinking about your own operations, [join the waitlist](#waitlist-form) — we'd love to have you involved as we build.
+We're building DNA Codes to make this model accessible to operations teams at every stage. If this framing resonates with how you're thinking about your own operations, [join the waitlist](/waitlist) — we'd love to have you involved as we build.
