@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 // The abstraction ladder: Intent → Machine, rendered as a DNA-style rail with
 // the layers as rungs and the handoffs between them as labelled chips.
 //
-// Two modes, toggled by the reader:
+// Two modes — toggled by the reader, or locked to one via the `mode` prop:
 //   leap   — how it works today: one jump from Intent straight to Code, with
 //            everything between it ghosted ("decided, never written down").
 //   ladder — how it could work: every layer named, every handoff named.
@@ -30,8 +30,6 @@ type Layer = {
   remedy?: string;
   /** Where this layer is already practiced today — it's optional, not absent. */
   practice: string;
-  /** Marks the Operational Model layer — the missing layer DNA implements. */
-  core?: boolean;
 };
 
 type Handoff = {
@@ -62,7 +60,7 @@ const layers: Layer[] = [
     explicit:
       'A glossary with teeth: <em>Invoice</em> — a demand for payment issued against a completed order. Not a Receipt. Not a Statement.',
     implicit:
-      '<code>customer</code> quietly means the billing contact in one module and the parent account in another. Two correct programs, one wrong system.',
+      '<code>customer</code> quietly means the billing contact in one module and the parent account in another. Two correct implementations, one wrong system.',
     remedy: 'Instead, define the term once, where every layer below reads it.',
     practice:
       'Domain-Driven Design’s ubiquitous language, data catalogs, dbt docs, schema registries, controlled vocabularies.',
@@ -86,7 +84,6 @@ const layers: Layer[] = [
     name: 'Operational Model',
     question: 'What can happen, and by whom?',
     example: 'Pay Invoice: Customer → Invoice → status becomes Paid',
-    core: true,
     what: 'Operations — the behavior the system allows. Each one names an actor, a target, its preconditions, and the state it leaves behind.',
     explicit:
       '<strong>Pay Invoice</strong> — actor <code>Customer</code> · target <code>Invoice</code> where <code>status: Issued</code> · changes <code>Invoice.status → Paid</code> · rule: the payment must equal the amount due',
@@ -172,11 +169,30 @@ const leapRowEnd = 2 * LEAP_LAST_LAYER + 2; // exclusive grid-row end for the ch
 // The default classes break the figure out of a `prose` column, which is what a
 // blog post needs. On a normal page pass `class="lg:mx-0 xl:mx-0"` (or any other
 // margin) to cancel the breakout — twMerge drops the conflicting defaults.
+//
+// Pass `mode` to lock the figure to one view: the toggle is replaced by a static
+// label, and only that mode's caption renders. Omit it for the interactive
+// two-mode version.
 export interface Props {
   class?: string;
+  mode?: 'leap' | 'ladder';
 }
 
-const { class: className } = Astro.props;
+const { class: className, mode } = Astro.props;
+
+const locked = mode !== undefined;
+const initialMode = mode ?? 'leap';
+
+const modeLabels = {
+  leap: 'Today: one jump',
+  ladder: 'Tomorrow: layer by layer',
+} as const;
+
+const figcaptions = {
+  leap: 'One jump from a prompt to code — and the four layers it decides along the way without writing any of them down.',
+  ladder: 'The eight abstraction layers between intent and execution, and the handoff beneath each one.',
+  both: 'The eight abstraction layers between intent and execution — and the single jump we ask a model to make across them today.',
+} as const;
 
 // Derived per-row flags. Computed here rather than inline in the template: the
 // Astro compiler reads a `<` inside a template expression as the start of a tag.
@@ -193,7 +209,11 @@ const rows = layers.map((layer, i) => ({
 }));
 ---
 
-<figure data-abstraction-stack data-mode="leap" class={twMerge('not-prose my-10 lg:-mx-20 xl:-mx-32', className)}>
+<figure
+  data-abstraction-stack
+  data-mode={initialMode}
+  class={twMerge('not-prose my-10 lg:-mx-20 xl:-mx-32', className)}
+>
   <div
     class="rounded-2xl border-2 border-primary bg-slate-900/90 shadow-[0_0_48px_rgba(13,148,136,0.25)] overflow-hidden"
   >
@@ -211,23 +231,42 @@ const rows = layers.map((layer, i) => ({
         </div>
         <span class="text-xs font-bold uppercase tracking-widest text-primary">Intent → Execution</span>
       </div>
-      <div class="ml-auto flex gap-1" role="group" aria-label="View">
-        <button data-mode-btn="leap" aria-pressed="true" class="mode-btn">Today: one jump</button>
-        <button data-mode-btn="ladder" aria-pressed="false" class="mode-btn">Tomorrow: layer by layer</button>
-      </div>
+      {
+        locked ? (
+          <span class="mode-label ml-auto">{modeLabels[initialMode]}</span>
+        ) : (
+          <div class="ml-auto flex gap-1" role="group" aria-label="View">
+            <button data-mode-btn="leap" aria-pressed="true" class="mode-btn">
+              {modeLabels.leap}
+            </button>
+            <button data-mode-btn="ladder" aria-pressed="false" class="mode-btn">
+              {modeLabels.ladder}
+            </button>
+          </div>
+        )
+      }
     </div>
 
     <!-- Caption, swapped by mode -->
     <p class="border-b border-white/8 px-4 py-2.5 text-xs leading-relaxed text-slate-400 sm:px-5">
-      <span data-caption="leap">
-        One jump from a sentence to a program. The four layers in between still get decided — they just rarely get
-        written down, so nothing can review them, diff them, or hold a correction. Each one is practiced somewhere in
-        the industry. None of them is the default.
-      </span>
-      <span data-caption="ladder" hidden>
-        Every layer named, every handoff named. Short hops an agent can take one at a time, each with an artifact you
-        can read and check. <span class="text-slate-500">Colors mark how standardized each handoff is today.</span>
-      </span>
+      {
+        (!locked || mode === 'leap') && (
+          <span data-caption="leap">
+            One jump from a prompt to code. The four layers in between still get decided — they just rarely get written
+            down, so nothing can review them, diff them, or hold a correction. Each one is practiced somewhere in the
+            industry. None of them is the default.
+          </span>
+        )
+      }
+      {
+        (!locked || mode === 'ladder') && (
+          <span data-caption="ladder" hidden={!locked}>
+            Every layer named, every handoff named. Short hops an agent can take one at a time, each with an artifact
+            you can read and check.{' '}
+            <span class="text-slate-500">Colors mark how standardized each handoff is today.</span>
+          </span>
+        )
+      }
     </p>
 
     <div class="stack-grid px-3 py-4 sm:px-5 sm:py-6">
@@ -256,8 +295,7 @@ const rows = layers.map((layer, i) => ({
                   <span class="head">
                     <span class="lname">
                       {layer.name}
-                      {layer.core && <span class="pill">The missing layer</span>}
-                      <span class="pill pill-ghost">usually inferred</span>
+                      <span class="pill-ghost">usually inferred</span>
                     </span>
                     <span class="lq">{layer.question}</span>
                   </span>
@@ -303,18 +341,19 @@ const rows = layers.map((layer, i) => ({
 
     <!-- Legend (ladder mode only) + footer -->
     <div class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/8 px-4 py-3 sm:px-5">
-      <div data-legend hidden class="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+      <div data-legend hidden={initialMode !== 'ladder'} class="flex flex-wrap items-center gap-x-4 gap-y-1.5">
         <span class="leg"><span class="dot dot-solved"></span>standard and mechanical</span>
         <span class="leg"><span class="dot dot-emerging"></span>emerging</span>
         <span class="leg"><span class="dot dot-missing"></span>practiced in pockets, not standard</span>
       </div>
-      <span data-footnote class="text-xs text-slate-500">Tap a layer to open it.</span>
+      <span data-footnote class:list={['text-xs text-slate-500', initialMode === 'ladder' && 'ml-auto']}>
+        Tap a layer to open it.
+      </span>
     </div>
   </div>
 
   <figcaption class="mt-3 px-4 text-center text-xs text-slate-500">
-    The eight abstraction layers between intent and execution — and the single jump we ask a model to make across them
-    today.
+    {locked ? figcaptions[initialMode] : figcaptions.both}
   </figcaption>
 </figure>
 
@@ -341,6 +380,17 @@ const rows = layers.map((layer, i) => ({
     background: rgb(13 148 136 / 0.2);
     border-color: rgb(13 148 136 / 0.4);
     color: rgb(45 212 191);
+  }
+
+  /* Locked-mode stand-in for the toggle: same slot, same weight, not a control. */
+  .mode-label {
+    border: 1px solid rgb(13 148 136 / 0.4);
+    border-radius: 0.5rem;
+    background: rgb(13 148 136 / 0.2);
+    color: rgb(45 212 191);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.375rem 0.75rem;
   }
 
   .stack-grid {
@@ -580,23 +630,19 @@ const rows = layers.map((layer, i) => ({
     color: rgb(45 212 191);
   }
 
-  .pill {
+  /* Shown in leap mode only, on the layers the single jump silently decides. */
+  .pill-ghost {
+    display: none;
     border-radius: 9999px;
-    border: 1px solid rgb(13 148 136 / 0.45);
-    background: rgb(13 148 136 / 0.15);
-    color: rgb(45 212 191);
+    border: 1px solid rgb(245 158 11 / 0.4);
+    background: rgb(245 158 11 / 0.12);
+    color: rgb(252 211 77);
     font-size: 0.5625rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 0.0625rem 0.375rem;
     white-space: nowrap;
-  }
-  .pill-ghost {
-    display: none;
-    border-color: rgb(245 158 11 / 0.4);
-    background: rgb(245 158 11 / 0.12);
-    color: rgb(252 211 77);
   }
   [data-mode='leap'] .cell[data-ghost] .pill-ghost {
     display: inline;
