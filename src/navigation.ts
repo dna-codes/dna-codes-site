@@ -1,18 +1,39 @@
 import { getBlogPermalink, getPermalink } from './utils/permalinks';
 
+// Single source of truth for the waitlist. Product pages embed the same form inline with
+// their own interest pre-ticked; every other primary button on the site comes here.
+export const WAITLIST_HREF = '/waitlist';
+export const WAITLIST_TEXT = 'Join the waitlist';
+
 export const headerData = {
   links: [
-    // Overlay and Pricing are deliberately absent while the Overlay ships quietly —
-    // both pages are live at their URLs and reachable by anyone given the link, but
-    // nothing on the site points at them. Restore these two when it goes public:
-    //   { text: 'Overlay', href: getPermalink('/overlay') },
-    //   { text: 'Pricing', href: getPermalink('/pricing') },
-    { text: 'Playground', href: getPermalink('/playground') },
+    // Products groups the two surfaces you can actually operate. Header.astro marks the
+    // parent active whenever one of its children is the current page, so a visitor who
+    // arrives deep in the site can see where they are without reading the URL.
+    {
+      text: 'Products',
+      links: [
+        {
+          text: 'Overlay',
+          href: getPermalink('/overlay'),
+          description: 'Operational controls inside your running app',
+        },
+        {
+          text: 'Operations',
+          href: getPermalink('/operations'),
+          description: 'Turn your knowledge into a living operating model',
+        },
+      ],
+    },
+    { text: 'Pricing', href: getPermalink('/pricing') },
     { text: 'Docs', href: getPermalink('/docs') },
     { text: 'Blog', href: getBlogPermalink() },
     // { text: 'About', href: getPermalink('/about') },
   ],
-  actions: [{ text: 'Playground', href: getPermalink('/playground'), variant: 'primary' as const }],
+  // The one primary button on the site is the one conversion available pre-GA. Navigating
+  // to a product is what the Products menu and the homepage cards are for, so the green
+  // button never spends itself on a link a visitor already has two ways to reach.
+  actions: [{ text: 'Join the waitlist', href: WAITLIST_HREF, variant: 'primary' as const }],
 };
 
 export const footerData = {
@@ -20,8 +41,9 @@ export const footerData = {
     {
       title: 'Platform',
       links: [
-        // Overlay and Pricing rejoin this list when the launch goes public.
-        { text: 'Playground', href: getPermalink('/playground') },
+        { text: 'Overlay', href: getPermalink('/overlay') },
+        { text: 'Operations', href: getPermalink('/operations') },
+        { text: 'Pricing', href: getPermalink('/pricing') },
       ],
     },
     {

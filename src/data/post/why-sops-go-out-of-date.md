@@ -67,4 +67,4 @@ This is the gap that most operations teams are sitting in right now: they have d
 
 The good news is that this is a solvable problem — not by writing better docs or enforcing stricter reviews, but by rethinking what a process system actually needs to do. Static files can't keep up. Operations need to be a living, owned, connected layer of how your team works — not a record of how it used to work.
 
-That's the idea behind DNA Codes. If you're building out your operations infrastructure, [join the waitlist](#waitlist-form) and follow along as we build it.
+That's the idea behind DNA Codes. If you're building out your operations infrastructure, [join the waitlist](/waitlist) and follow along as we build it.

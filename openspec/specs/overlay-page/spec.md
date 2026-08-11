@@ -24,7 +24,7 @@ The site SHALL serve a product page for DNA Overlay at `/overlay`, built from a 
 
 ### Requirement: The panel is demonstrated in-page, stub-first
 
-The page SHALL include an in-page walkthrough of the Overlay panel rather than only screenshots of it. The walkthrough SHALL follow the stub-first pattern already used on `/playground`: the real component signature, staged data behind it, and a visible demo-mode badge, so that nothing on the page implies a live connection to a customer's stack.
+The page SHALL include an in-page walkthrough of the Overlay panel rather than only screenshots of it. The walkthrough SHALL follow the stub-first pattern already used on `/operations`: the real component signature, staged data behind it, and a visible demo-mode badge, so that nothing on the page implies a live connection to a customer's stack.
 
 #### Scenario: A visitor sees the panel work
 
@@ -52,15 +52,20 @@ The page SHALL present Inspect and Prototype as two modes of the same product, t
 - **WHEN** a visitor follows the demo through both modes
 - **THEN** the Prototype steps MUST act on the same control the Inspect steps read
 
-### Requirement: Early access, not self-serve signup
+### Requirement: The waitlist, not self-serve signup
 
-Because the product is pre-GA, the page SHALL ask for early access rather than offer self-serve signup or a public install path. The page SHALL carry an early-access form as its conversion point.
+Because the product is pre-GA, the page SHALL ask a visitor to join the waitlist rather than offer self-serve signup or a public install path. The page SHALL carry the shared waitlist form as its conversion point, with the Overlay pre-selected. Wording, fields and submit behaviour are specified in `waitlist`.
 
-#### Scenario: The conversion point is early access
+#### Scenario: The conversion point is the waitlist
 
 - **WHEN** a visitor reaches the foot of the page
-- **THEN** an early-access form MUST be present
+- **THEN** the shared waitlist form MUST be present with the Overlay selected
 - **AND** no self-serve checkout or public package install path MUST be offered
+
+#### Scenario: Exploring the product costs nothing
+
+- **WHEN** the page's hero is rendered
+- **THEN** a secondary action MUST offer to show how the product works without joining anything
 
 ### Requirement: Install and trust are answered on the page
 

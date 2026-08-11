@@ -32,15 +32,14 @@ export default defineConfig({
   redirects: {
     '/operational-dna-processes-like-source-code': '/blog/operational-dna-processes-like-source-code',
     '/why-sops-go-out-of-date': '/blog/why-sops-go-out-of-date',
+    // The page was called Playground while it looked like a sandbox. It is the
+    // Operations product's demo, so it lives at /operations; this keeps every link
+    // that was circulated under the old name working.
+    '/playground': '/operations',
   },
 
   integrations: [
-    sitemap({
-      // Shipping the Overlay launch quietly. These pages are live and reachable by
-      // anyone given the link, but they are not advertised to crawlers. Remove the
-      // filter (and the `robots` metadata on both pages) when it goes public.
-      filter: (page) => !/\/(overlay|pricing)\/?$/.test(page),
-    }),
+    sitemap(),
     mdx(),
     icon({
       include: {

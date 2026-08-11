@@ -1,25 +1,296 @@
 ---
-// Connect to your waitlist service by replacing the action URL
-// e.g. Mailchimp: https://yourlist.us1.list-manage.com/subscribe/post?u=...
-// e.g. ConvertKit: https://app.convertkit.com/forms/...
-// e.g. Your own API: /api/waitlist
-const ACTION_URL = '#';
+import { Icon } from 'astro-icon/components';
+
+// The one waitlist form on the site. Every primary button on every page resolves here,
+// so it has to work for somebody who came for Operations, somebody who came for the
+// Overlay, and somebody who has not decided — which is why nothing above the interest
+// question mentions either product.
+//
+// TODO(launch): paste the endpoint here and the form starts working. Nothing else
+// needs to change — submission, the success state and the honeypot are already wired.
+//
+// The site is `output: 'static'` on GitHub Pages, so there is no server to POST to:
+// it has to be a third-party endpoint. Formspree (https://formspree.io/f/xxxxxxxx)
+// is the recommendation; Basin and Web3Forms take the same shape.
+//
+// Whatever it becomes must accept `interest` REPEATED (it is a multi-select, and a
+// provider that keeps only the last value silently discards the answer that matters
+// most), plus name, email, company, stack and context. `context` is the qualification
+// field: an answer naming a flag vendor and an authz vendor is a priced comparison in
+// one line, and an answer naming Notion and a folder of SOPs is a different
+// conversation entirely — so it must not be dropped by an email tool that only
+// understands name and address.
+//
+// Until it is set, the form refuses loudly rather than appearing to succeed into a
+// void: somebody who believes they are on a list they are not on is the worst
+// outcome available here.
+const ACTION_URL = '';
+
+export interface Props {
+  /** Tick an interest up front when the form sits inside a product's own page. */
+  preselect?: 'operations' | 'overlay';
+  /** Overridden only where two instances could collide on one page. */
+  id?: string;
+}
+
+const { preselect, id = 'waitlist' } = Astro.props;
+
+interface Field {
+  name: string;
+  label: string;
+  type: 'text' | 'email';
+  autocomplete?: string;
+  placeholder?: string;
+  required: boolean;
+  /** Sits in one of two columns rather than spanning the row. */
+  half: boolean;
+}
+
+const identityFields: Field[] = [
+  { name: 'name', label: 'Name', type: 'text', autocomplete: 'name', required: true, half: true },
+  { name: 'email', label: 'Work email', type: 'email', autocomplete: 'email', required: true, half: true },
+  { name: 'company', label: 'Company', type: 'text', autocomplete: 'organization', required: true, half: false },
+];
+
+// Multi-select rather than a toggle: the two products are surfaces on one model, so
+// wanting both is the common answer rather than a fence-sit. "Not sure yet" is a real
+// answer too, and cheaper to give than a wrong one — it routes to a conversation
+// instead of a demo of the wrong half.
+const interests = [
+  {
+    value: 'operations',
+    label: 'Operations',
+    blurb: 'Turn how we work into a living operating model',
+    icon: 'tabler:vector-triangle',
+  },
+  {
+    value: 'overlay',
+    label: 'Overlay',
+    blurb: 'Govern the controls inside our product',
+    icon: 'tabler:layers-subtract',
+  },
+  {
+    value: 'undecided',
+    label: 'Not sure yet',
+    blurb: 'Show me which one fits what we are doing',
+    icon: 'tabler:help-circle',
+  },
+];
 ---
 
-<div id="waitlist-form" style="position: relative; top: -150px; visibility: hidden; pointer-events: none;"></div>
-<form class="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto" action={ACTION_URL} method="POST">
-  <label for="waitlist-email" class="sr-only">Work email</label>
-  <input
-    id="waitlist-email"
-    name="email"
-    type="email"
-    required
-    autocomplete="email"
-    placeholder="your@company.com"
-    class="flex-1 px-4 py-3 rounded-lg bg-slate-800/80 border border-slate-600 text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-  />
-  <button type="submit" class="btn-primary px-6 py-3 whitespace-nowrap text-sm font-semibold rounded-lg">
-    Join the waitlist
-  </button>
-</form>
-<p class="text-xs text-slate-500 mt-3 text-center">We don't like spam, so we won't spam you.</p>
+<div id={id} class="scroll-mt-24">
+  <form data-waitlist class="max-w-xl mx-auto text-left" {...ACTION_URL ? { action: ACTION_URL, method: 'POST' } : {}}>
+    <!-- Honeypot. Bots fill every field they find; people never see this one.
+         `_gotcha` is the name Formspree and Basin both recognise. -->
+    <div aria-hidden="true" class="sr-only">
+      <label>
+        Leave this empty
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+      </label>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      {
+        identityFields.map((f) => (
+          <div class:list={[f.half ? 'sm:col-span-1' : 'sm:col-span-2']}>
+            <label for={`${id}-${f.name}`} class="block text-xs font-semibold text-slate-300 mb-1.5">
+              {f.label}
+            </label>
+            <input
+              id={`${id}-${f.name}`}
+              name={f.name}
+              type={f.type}
+              required={f.required}
+              autocomplete={f.autocomplete}
+              placeholder={f.placeholder}
+              class="w-full px-3.5 py-2.5 rounded-lg bg-slate-800/80 border border-slate-600 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            />
+          </div>
+        ))
+      }
+    </div>
+
+    <fieldset class="mt-5" data-waitlist-interest>
+      <legend class="block text-xs font-semibold text-slate-300 mb-2">
+        Which parts are you interested in? <span class="font-normal text-slate-500">Pick as many as apply.</span>
+      </legend>
+
+      <div class="grid gap-2.5 sm:grid-cols-3">
+        {
+          interests.map(({ value, label, blurb, icon }) => (
+            <label
+              class="interest-option group flex flex-col gap-1.5 rounded-xl border border-white/10 bg-slate-800/50 px-3.5 py-3 cursor-pointer transition-colors duration-150 hover:border-primary/40"
+              for={`${id}-interest-${value}`}
+            >
+              <span class="flex items-center gap-2">
+                <input
+                  id={`${id}-interest-${value}`}
+                  type="checkbox"
+                  name="interest"
+                  value={value}
+                  checked={preselect === value}
+                  class="interest-checkbox w-4 h-4 flex-shrink-0 rounded border-slate-500 bg-slate-900 text-primary accent-[var(--aw-color-primary)] focus:ring-1 focus:ring-primary"
+                />
+                <Icon name={icon} class="w-4 h-4 text-primary flex-shrink-0" />
+                <span class="text-sm font-semibold text-slate-100">{label}</span>
+              </span>
+              <span class="text-xs text-slate-400 leading-snug">{blurb}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <!-- Only meaningful for the Overlay, which installs into a running application.
+         Hidden until it is, so an Operations visitor is never asked to describe a
+         codebase to get on a list. Optional either way. -->
+    <div class="mt-4" data-waitlist-stack hidden>
+      <label for={`${id}-stack`} class="block text-xs font-semibold text-slate-300 mb-1.5">
+        What is your application built with? <span class="font-normal text-slate-500">Optional.</span>
+      </label>
+      <input
+        id={`${id}-stack`}
+        name="stack"
+        type="text"
+        placeholder="React, Vue, Rails + Hotwire…"
+        class="w-full px-3.5 py-2.5 rounded-lg bg-slate-800/80 border border-slate-600 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+      />
+    </div>
+
+    <div class="mt-4">
+      <label for={`${id}-context`} class="block text-xs font-semibold text-slate-300 mb-1.5">
+        Where are you starting from? <span class="font-normal text-slate-500">Optional.</span>
+      </label>
+      <textarea
+        id={`${id}-context`}
+        name="context"
+        rows="3"
+        placeholder="Processes live in Notion and in people's heads. Flags in LaunchDarkly, roles in our own middleware, audit… nowhere, honestly."
+        class="w-full px-3.5 py-2.5 rounded-lg bg-slate-800/80 border border-slate-600 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-y"
+      ></textarea>
+      <p class="mt-1.5 text-xs text-slate-500">
+        The most useful box on this page. Rough is fine, and “nowhere, honestly” is a real answer and a common one.
+      </p>
+    </div>
+
+    <button type="submit" data-waitlist-submit class="btn-primary w-full mt-5 py-3 text-sm font-semibold rounded-lg">
+      Join the waitlist
+    </button>
+
+    <p data-waitlist-error class="mt-3 text-sm text-amber-300 text-center" hidden></p>
+
+    <p class="mt-4 text-xs text-slate-500 text-center leading-relaxed">
+      We reply by hand, usually within a day. No sequence, no drip, no spam.
+    </p>
+  </form>
+
+  <div data-waitlist-success class="max-w-xl mx-auto text-center py-8" hidden>
+    <div
+      class="w-12 h-12 rounded-full bg-primary/15 border border-primary/40 flex items-center justify-center mx-auto mb-4"
+    >
+      <Icon name="tabler:check" class="w-6 h-6 text-primary" />
+    </div>
+    <p class="text-lg font-bold text-white">Got it, thank you.</p>
+    <p class="mt-2 text-sm text-muted leading-relaxed">
+      We read every one of these by hand. Expect a reply from a person, usually within a day.
+    </p>
+  </div>
+</div>
+
+<style>
+  /* Checked options read as chosen without needing to find the small box. */
+  .interest-option:has(.interest-checkbox:checked) {
+    border-color: color-mix(in oklab, var(--aw-color-primary) 55%, transparent);
+    background-color: color-mix(in oklab, var(--aw-color-primary) 10%, transparent);
+  }
+  .interest-option:has(.interest-checkbox:focus-visible) {
+    outline: 2px solid var(--aw-color-primary);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-waitlist]').forEach((form) => {
+    const error = form.querySelector<HTMLElement>('[data-waitlist-error]');
+    const submit = form.querySelector<HTMLButtonElement>('[data-waitlist-submit]');
+    const success = form.parentElement?.querySelector<HTMLElement>('[data-waitlist-success]');
+    const stackBlock = form.querySelector<HTMLElement>('[data-waitlist-stack]');
+    const boxes = Array.from(form.querySelectorAll<HTMLInputElement>('input[name="interest"]'));
+
+    const fail = (message: string) => {
+      if (!error) return;
+      error.textContent = message;
+      error.hidden = false;
+    };
+
+    // The stack question only applies to the Overlay, so it appears when the Overlay
+    // does. Its value is cleared on the way out — a field nobody can see must not
+    // still be submitting an answer somebody typed before changing their mind.
+    const syncStack = () => {
+      if (!stackBlock) return;
+      const wantsOverlay = boxes.some((b) => b.value === 'overlay' && b.checked);
+      stackBlock.hidden = !wantsOverlay;
+      if (!wantsOverlay) {
+        const input = stackBlock.querySelector<HTMLInputElement>('input');
+        if (input) input.value = '';
+      }
+    };
+
+    boxes.forEach((b) =>
+      b.addEventListener('change', () => {
+        syncStack();
+        if (error && boxes.some((x) => x.checked)) error.hidden = true;
+      })
+    );
+    syncStack();
+
+    form.addEventListener('submit', async (event) => {
+      // A checkbox group cannot express "at least one" natively, and this is the field
+      // that decides who replies and about what — so it is checked before anything else.
+      if (!boxes.some((b) => b.checked)) {
+        event.preventDefault();
+        fail('Pick at least one — “Not sure yet” is a fine answer.');
+        boxes[0]?.focus();
+        return;
+      }
+
+      const action = form.getAttribute('action');
+
+      // An unconfigured form that silently "succeeds" is worse than one that refuses:
+      // the visitor believes they are on a list they are not on.
+      if (!action) {
+        event.preventDefault();
+        fail('This form is not connected yet. Email tim@upgradesolutions.io and we will set you up.');
+        return;
+      }
+
+      // Submit in place. A native POST navigates to the form provider's own page,
+      // which loses the visitor at the exact moment they committed.
+      event.preventDefault();
+      if (error) error.hidden = true;
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = 'Sending…';
+      }
+
+      try {
+        const response = await fetch(action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+
+        if (!response.ok) throw new Error(String(response.status));
+
+        form.hidden = true;
+        if (success) success.hidden = false;
+      } catch {
+        fail('That did not go through. Try again, or email tim@upgradesolutions.io.');
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = 'Join the waitlist';
+        }
+      }
+    });
+  });
+</script>

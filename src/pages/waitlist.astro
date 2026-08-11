@@ -1,0 +1,37 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import SocialProof from '~/components/widgets/SocialProof.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+// Every primary button on the site resolves here. It exists because the alternative was
+// sending somebody who came for Operations to a form buried in the Overlay's product
+// page, under a heading about controls they had not been reading about.
+const metadata = {
+  title: 'Join the waitlist — DNA Codes',
+  description: 'We are choosing 20 design partners. Tell us what you are trying to run, and a person writes back.',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- "Choosing" rather than "waiting": the button that got somebody here says waitlist to
+       keep the ask cheap, so the page has to be the place that says we select. -->
+  <HeroText tagline="Early access" title="Tell us what you are trying to run.">
+    <Fragment slot="subtitle">
+      We are choosing 20 design partners. Write a few lines, and a person writes back.
+    </Fragment>
+  </HeroText>
+
+  <WidgetWrapper containerClass="max-w-4xl mx-auto !pt-0">
+    <div
+      class="rounded-2xl border border-primary/40 bg-slate-900/70 p-6 sm:p-10 shadow-[0_0_48px_rgba(13,148,136,0.18)]"
+    >
+      <WaitlistForm />
+    </div>
+  </WidgetWrapper>
+
+  <!-- No note: the hero directly above already makes the design-partner point. -->
+  <SocialProof />
+</Layout>

@@ -2,19 +2,27 @@
 
 ## Purpose
 
-Defines the homepage lens demo: an interactive section folded into the hero that renders one sample lending DNA document through three simple views (org chart, process flow, runbook), auto-cycling to make the "one model, many views" thesis visible, with a Playground CTA.
+Defines the lens demo: an interactive section that renders one sample DNA document through four views (org chart, process flow, runbook, job description), auto-cycling to make the "one model, many views" thesis visible.
+
+It ran on the homepage until that page's job became naming the two products. The thesis needs a spec on screen before it means anything, so the demo now runs on `/operations`, under the demo that produces one.
 
 ## Requirements
 
-### Requirement: Homepage renders an interactive lens demo below the hero
+### Requirement: The lens demo runs on the Operations page
 
-The homepage SHALL include an interactive lens-demo section positioned below the message-led hero and above the closing call-to-action. The hero SHALL remain unchanged. The demo SHALL render entirely client-side with no backend dependency.
+`/operations` SHALL include the interactive lens-demo section, positioned after the Operations demo that generates a spec and before the walkthrough that explains how one is built. The demo SHALL render entirely client-side with no backend dependency.
 
-#### Scenario: Visitor reaches the demo on the homepage
+#### Scenario: Visitor reaches the demo on the Operations page
 
-- **WHEN** a visitor loads the homepage and scrolls past the hero
-- **THEN** an interactive lens-demo section MUST be present
-- **AND** the hero above it MUST be unchanged (message, background, and Playground/Docs actions intact)
+- **WHEN** a visitor loads `/operations` and scrolls past the interactive demo
+- **THEN** the lens-demo section MUST be present
+- **AND** it MUST be introduced by a heading that frames it as one spec read several ways
+
+#### Scenario: The homepage does not carry the lens demo
+
+- **WHEN** the homepage is viewed
+- **THEN** the lens demo MUST NOT be present
+- **AND** the hero MUST be followed directly by the two-product section
 
 #### Scenario: Demo requires no network call to function
 
@@ -82,30 +90,46 @@ The demo SHALL auto-cycle through the three views while idle, dwelling roughly t
 - **THEN** the auto-cycle MUST NOT run
 - **AND** the demo MUST still be fully usable via the tabs
 
-### Requirement: Section CTA routes to the Playground
+### Requirement: Section CTA routes to the waitlist
 
-The demo section SHALL include a call-to-action that routes to `/playground`, framing the Playground as where a visitor builds their own DNA. The homepage's primary CTAs SHALL remain Playground and Docs; no waitlist CTA SHALL be introduced.
+The demo section SHALL include a call-to-action framing building your own DNA as the next step. Because the demo now sits on `/operations`, that call-to-action SHALL NOT link to the page it is on.
 
-#### Scenario: CTA links to the Playground
+#### Scenario: CTA does not link to its own page
 
 - **WHEN** the visitor activates the demo section's call-to-action
-- **THEN** it MUST navigate to `/playground`
+- **THEN** it MUST resolve to the waitlist
+- **AND** it MUST NOT navigate to the page the demo is already on
 
-#### Scenario: No waitlist CTA is added
+### Requirement: The primary homepage action is the waitlist
+
+While the products are pre-GA, the waitlist is the only conversion available, so the homepage's primary (filled) actions SHALL be the waitlist rather than a link a visitor can already reach from the Products menu and the product cards. Navigation to a product SHALL be carried by secondary actions and by the product cards.
+
+#### Scenario: Primary actions point at the waitlist
 
 - **WHEN** the homepage is viewed
-- **THEN** the primary actions MUST remain Playground and Docs
-- **AND** no "join the waitlist" call-to-action MUST be present
+- **THEN** the hero's primary action and the closing call-to-action's primary action MUST both read "Join the waitlist"
+- **AND** both MUST resolve to the waitlist form
 
-### Requirement: The Collect → Structure narrative is preserved
+#### Scenario: Products remain reachable without the primary button
 
-The change SHALL preserve the existing below-hero narrative spine (Collect → Structure). The demo SHALL serve as the payoff of that narrative rather than replacing the explanation of how DNA is built.
+- **WHEN** the homepage is viewed
+- **THEN** both products MUST be reachable from the page without using a primary action
+
+### Requirement: The Collect → Structure narrative lives with its product
+
+The Collect → Structure narrative SHALL be preserved, on `/operations` below that page's own demo rather than on the homepage. The homepage's job below the hero is to name the two products, not to explain either one; the walkthrough is read by somebody who has already chosen to care about Operations.
 
 #### Scenario: The build narrative still reads end-to-end
 
-- **WHEN** a visitor reads the below-hero section top to bottom
+- **WHEN** a visitor reads `/operations` top to bottom
 - **THEN** the Collect and Structure steps MUST still be present
-- **AND** the lens demo MUST read as the visible payoff of those steps
+- **AND** they MUST follow the Operations demo rather than precede it
+
+#### Scenario: The homepage does not duplicate the walkthrough
+
+- **WHEN** the homepage is viewed
+- **THEN** the Operations walkthrough MUST NOT be present
+- **AND** the section below the hero MUST instead present the two products side by side
 
 ### Requirement: Build and checks remain green
 
@@ -114,7 +138,7 @@ The change SHALL preserve the existing below-hero narrative spine (Collect → S
 #### Scenario: Site builds with the demo
 
 - **WHEN** `npm run build` runs
-- **THEN** it MUST complete successfully and emit the homepage with the demo
+- **THEN** it MUST complete successfully and emit `/operations` with the demo
 
 #### Scenario: Sample document is valid DNA
 

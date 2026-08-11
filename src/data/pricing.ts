@@ -1,3 +1,5 @@
+import { WAITLIST_HREF, WAITLIST_TEXT } from '~/navigation';
+
 // Single source of truth for the suite ladder.
 //
 // Two surfaces read this: the three-card strip on /overlay (answering "is this $200 or
@@ -190,4 +192,4 @@ export const ADD_ONS = [
 ];
 
 /** Where every pricing CTA goes while the product is pre-GA. */
-export const PRICING_CTA = { text: 'Get early access', href: '/overlay#early-access' };
+export const PRICING_CTA = { text: WAITLIST_TEXT, href: WAITLIST_HREF };

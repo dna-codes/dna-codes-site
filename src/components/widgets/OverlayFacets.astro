@@ -5,6 +5,18 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 // Four things most teams buy separately, shown as four readings of one control.
 // Each block reuses the hero demo's panel chrome deliberately: the argument is that
 // these are not four products, so they must not look like four products.
+//
+// "Replaces the basics of" is the honest verb, and the reason there is no comparison
+// table on this page. Against a mature incumbent, row-by-row is a fight we lose on
+// depth and win on the thing a table cannot show: that these are one product. Naming
+// the category each feature displaces gives a new visitor the anchor a table would,
+// without inviting the audit a table invites.
+const replaces: Record<string, string> = {
+  permissions: 'Permit.io, Cerbos, or the roles table you wrote yourself',
+  flags: 'LaunchDarkly, Statsig, Unleash',
+  analytics: 'Amplitude, Mixpanel, PostHog',
+  audit: 'WorkOS Audit Logs, or the events table nobody reads',
+};
 ---
 
 <WidgetWrapper id="facets" containerClass="max-w-5xl mx-auto">
@@ -14,8 +26,12 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
       Everything you already buy separately,<br class="hidden sm:block" /> answered in one place.
     </h2>
     <p class="mt-5 text-muted max-w-2xl mx-auto leading-relaxed">
-      Permissions, feature flags, usage and audit are four readings of the same act — so the Overlay puts them on the
-      control itself rather than in four consoles that have never rendered your product.
+      Permissions, feature flags, usage and audit are four readings of the same act. The Overlay puts them on the
+      control itself, rather than in four consoles that have never rendered your product.
+    </p>
+    <p class="mt-4 text-sm text-slate-500 max-w-2xl mx-auto leading-relaxed">
+      It replaces the basics of a tool in each of these categories. Not the deep end of any one of them, and that is the
+      trade: one answer per control, in the product, instead of four subscriptions and four tabs.
     </p>
   </div>
 
@@ -27,7 +43,10 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
           <Icon name="tabler:lock" class="w-5 h-5 text-primary" />
           <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">Permissions</span>
         </div>
-        <h3 class="text-2xl font-bold text-white mb-3">Who may press this?</h3>
+        <h3 class="text-2xl font-bold text-white mb-2">Who may press this?</h3>
+        <p class="text-xs text-slate-500 mb-3">
+          Replaces the basics of <span class="text-slate-400">{replaces.permissions}</span>.
+        </p>
         <p class="text-muted leading-relaxed mb-4">
           Ask it standing on the button, and get an answer for whoever is actually looking. Change it here too — name
           the seats that may perform the act, or detach the rule entirely.
@@ -83,7 +102,10 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
           <Icon name="tabler:toggle-left" class="w-5 h-5 text-primary" />
           <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">Feature flags</span>
         </div>
-        <h3 class="text-2xl font-bold text-white mb-3">Is this on, and for whom?</h3>
+        <h3 class="text-2xl font-bold text-white mb-2">Is this on, and for whom?</h3>
+        <p class="text-xs text-slate-500 mb-3">
+          Replaces the basics of <span class="text-slate-400">{replaces.flags}</span>.
+        </p>
         <p class="text-muted leading-relaxed mb-4">
           Flip a feature from inside the product, on the control it affects — no hunting for
           <code class="text-accent text-[0.9em]">refund_v2_enabled</code> in a list and hoping it still means this button.
@@ -143,7 +165,10 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
           <Icon name="tabler:chart-line" class="w-5 h-5 text-primary" />
           <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">User analytics</span>
         </div>
-        <h3 class="text-2xl font-bold text-white mb-3">Is anyone actually using it?</h3>
+        <h3 class="text-2xl font-bold text-white mb-2">Is anyone actually using it?</h3>
+        <p class="text-xs text-slate-500 mb-3">
+          Replaces the basics of <span class="text-slate-400">{replaces.analytics}</span>.
+        </p>
         <p class="text-muted leading-relaxed mb-4">
           How often this control has been used and by how many people, on a window the panel states rather than assumes.
           A control nothing has happened to has no Used row at all, rather than a row of zeroes.
@@ -193,7 +218,10 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
           <Icon name="tabler:history" class="w-5 h-5 text-primary" />
           <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">Audit logs</span>
         </div>
-        <h3 class="text-2xl font-bold text-white mb-3">Who did it, and who was stopped?</h3>
+        <h3 class="text-2xl font-bold text-white mb-2">Who did it, and who was stopped?</h3>
+        <p class="text-xs text-slate-500 mb-3">
+          Replaces the basics of <span class="text-slate-400">{replaces.audit}</span>.
+        </p>
         <p class="text-muted leading-relaxed mb-4">
           Everything that has happened to this control, newest first, with the refusals drawn as refusals. Not a
           separate export you reconcile later — the same reading, on the same button.

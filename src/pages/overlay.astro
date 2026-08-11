@@ -3,7 +3,8 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import DnaHelix from '~/components/DnaHelix.astro';
 import OverlayDemo from '~/components/widgets/OverlayDemo.astro';
-import EarlyAccessForm from '~/components/widgets/EarlyAccessForm.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import SocialProof from '~/components/widgets/SocialProof.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 
@@ -13,12 +14,8 @@ import OverlayInstall from '~/components/widgets/OverlayInstall.astro';
 const metadata = {
   title: 'DNA Overlay — Every control, under control',
   description:
-    'Permissions, feature flags, user analytics, audit logs — and prototyping. Running inside your product, on the control itself.',
+    'Permissions, feature flags, user analytics, audit logs and prototyping. Running inside your product, on the control itself.',
   ignoreTitleTemplate: true,
-  // Shipping quietly: live at its URL for anyone given the link, kept out of
-  // search until the launch goes public. Paired with a sitemap exclusion in
-  // astro.config.ts — drop both together.
-  robots: { index: false, follow: false },
 };
 ---
 
@@ -41,15 +38,18 @@ const metadata = {
 
     <Fragment slot="subtitle">
       Permissions, feature flags, user analytics, audit logs<br class="hidden sm:block" />
-      &mdash; and prototyping. Running inside your product.
+      and prototyping. Running inside your product.
+      <span class="mt-4 block text-base text-slate-400">
+        Anyone on your team can read it. An engineer installs it once.
+      </span>
     </Fragment>
 
     <Fragment slot="actions">
       <div class="flex w-full sm:w-auto">
-        <a href="#early-access" class="btn-primary w-full sm:mb-0">Get early access</a>
+        <a href="#waitlist" class="btn-primary w-full sm:mb-0">Join the waitlist</a>
       </div>
       <div class="flex w-full sm:w-auto">
-        <a href="#install" class="btn w-full sm:mb-0">How it installs</a>
+        <a href="#modes" class="btn w-full sm:mb-0">See how it works</a>
       </div>
     </Fragment>
 
@@ -63,6 +63,10 @@ const metadata = {
   <!-- ── 1. Inspect (permissions · flags · analytics · audit) and Prototype ─ -->
   <OverlayModes />
 
+  <!-- Social proof sits after the product argument rather than under the hero, where it
+       collided with the demo and asked for trust before giving a reason to want it. -->
+  <SocialProof note="We are choosing 20 design partners we can be genuinely useful to." />
+
   <!-- ── 2. Install + what it buys you + trust ────────────────────────── -->
   <OverlayInstall />
 
@@ -74,7 +78,7 @@ const metadata = {
       <div>
         <p class="text-lg font-bold text-white">Included in every paid plan.</p>
         <p class="mt-1.5 text-sm text-muted leading-relaxed">
-          The Overlay is a surface on your model, not a product beside it — so it is never sold separately. Reading the
+          The Overlay is a surface on your model, not a product beside it, so it is never sold separately. Reading the
           panel is free and unlimited on all plans; we charge for authority, not for looking.
         </p>
       </div>
@@ -95,22 +99,22 @@ const metadata = {
       {
         title: 'Do I have to replace my feature flags?',
         description:
-          'No. Start with the controls that have no governance at all — which is most of them — and leave what works alone. Teams that later consolidate do it because they wanted one answer per control, not because we required it.',
+          'No. Start with the controls that have no governance at all, which is most of them, and leave what works alone. Teams that later consolidate do it because they wanted one answer per control, not because we required it.',
       },
       {
         title: 'What does it do to my bundle?',
         description:
-          'Almost nothing. The overlay is fetched separately rather than bundled, and can be served only where you want it. What lands in your own output is attributes — your markup is byte-identical apart from those.',
+          'Almost nothing. The overlay is fetched separately rather than bundled, and can be served only where you want it. What lands in your own output is attributes, and your markup is byte-identical apart from those.',
       },
       {
         title: 'Can anyone who loads my page see our rules?',
         description:
-          'No. The publishable key carries no capabilities at all. Until somebody identifies, the panel can inspect and nothing more, and names of people are only ever returned to a caller who may govern — a roster served to anyone who views source would be a staff directory.',
+          'No. The publishable key carries no capabilities at all. Until somebody identifies, the panel can inspect and nothing more, and names of people are only ever returned to a caller who may govern. A roster served to anyone who views source would be a staff directory.',
       },
       {
         title: 'Does it work if my app is not React?',
         description:
-          'Vite and Next.js have a one-step install today. Beyond those, <code>npx dna publish</code> reads your source directly — nothing about it is bundler-specific — so you get addresses and governance without a framework integration at all. Tell us your stack on the form; which one we deepen next is decided by who is asking.',
+          'Vite and Next.js have a one-step install today. Beyond those, <code>npx dna publish</code> reads your source directly. Nothing about it is bundler-specific, so you get addresses and governance without a framework integration at all. Tell us your stack on the form; which one we deepen next is decided by who is asking.',
       },
       {
         title: 'What happens when I turn it off?',
@@ -125,7 +129,9 @@ const metadata = {
     ]}
   />
 
-  <!-- ── Early access ─────────────────────────────────────────────────── -->
+  <!-- ── Waitlist ─────────────────────────────────────────────────────── -->
+  <!-- The same form as /waitlist, with the Overlay already ticked: somebody who read this
+       far has answered that question by arriving at the bottom of this page. -->
   <WidgetWrapper containerClass="max-w-4xl mx-auto">
     <div
       class="rounded-2xl border border-primary/40 bg-slate-900/70 p-6 sm:p-10 shadow-[0_0_48px_rgba(13,148,136,0.18)]"
@@ -134,12 +140,12 @@ const metadata = {
         <h2 class="text-3xl font-bold tracking-tight">See it on your own controls.</h2>
         <p class="mt-4 text-muted max-w-xl mx-auto leading-relaxed">
           Install it, open the panel, and read what governs each button in your product. The answer is
-          <em>nothing</em> more often than most teams expect — and that is usually a more interesting conversation than the
+          <em>nothing</em> more often than most teams expect, and that is usually a more interesting conversation than the
           install was.
         </p>
       </div>
 
-      <EarlyAccessForm />
+      <WaitlistForm preselect="overlay" />
     </div>
   </WidgetWrapper>
 </Layout>

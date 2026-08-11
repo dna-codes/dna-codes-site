@@ -8,16 +8,13 @@ import FAQs from '~/components/widgets/FAQs.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import { TIERS, ADD_ONS } from '~/data/pricing';
+import { WAITLIST_HREF, WAITLIST_TEXT } from '~/navigation';
 
 const metadata = {
   title: 'Pricing — DNA Codes',
   description:
-    'One ladder for the DNA suite. The Overlay is included from the first paid plan up — a surface on your model, not a product beside it.',
+    'One ladder for the DNA suite. The Overlay is included from the first paid plan up: a surface on your model, not a product beside it.',
   ignoreTitleTemplate: true,
-  // Shipping quietly: live at its URL for anyone given the link, kept out of
-  // search until the launch goes public. Paired with a sitemap exclusion in
-  // astro.config.ts — drop both together.
-  robots: { index: false, follow: false },
 };
 
 const free = TIERS.find((t) => t.key === 'free')!;
@@ -35,8 +32,7 @@ const pillars = [
     name: 'Overlay',
     verb: 'Govern it',
     status: 'Early access',
-    description:
-      'Who may use each control, what is on, and everything that has happened — inside your running product.',
+    description: 'Who may use each control, what is on, and everything that has happened, inside your running product.',
     icon: 'tabler:layers-subtract',
     live: true,
   },
@@ -53,7 +49,7 @@ const pillars = [
 <Layout metadata={metadata}>
   <HeroText tagline="Pricing" title="One ladder for the whole suite.">
     <Fragment slot="subtitle">
-      The Overlay is a surface on your model, not a product beside it — so it is included from the first paid plan up,
+      The Overlay is a surface on your model, not a product beside it, so it is included from the first paid plan up and
       never sold separately.
     </Fragment>
   </HeroText>
@@ -64,8 +60,8 @@ const pillars = [
       <Icon name="tabler:flask" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
       <p class="text-sm text-slate-300 leading-relaxed">
         <strong class="text-white">Early access.</strong> These are the real prices, published so you can circulate them.
-        The first 20 design partners keep them for two years. Every plan below starts with a conversation rather than a checkout
-        — we hand you the package and half an hour of setup.
+        The first 20 design partners keep them for two years. Every plan below starts with a conversation rather than a checkout:
+        we hand you the package and half an hour of setup.
       </p>
     </div>
   </div>
@@ -100,7 +96,7 @@ const pillars = [
     </div>
 
     <p class="mt-5 text-center text-sm text-slate-500 max-w-2xl mx-auto leading-relaxed">
-      Free plans get development and staging keys, never a production key. That is not a limit we invented — the
+      Free plans get development and staging keys, never a production key. That is not a limit we invented. The
       environment is read off the key itself, so it is the same boundary the platform already enforces. Build against it
       for free; pay when it faces your users.
     </p>
@@ -141,7 +137,7 @@ const pillars = [
       <h2 class="text-3xl font-bold tracking-tight">Your seats and applications carry forward.</h2>
       <p class="mt-4 text-muted max-w-2xl mx-auto leading-relaxed">
         The suite is three surfaces on one model. As Design and Run land, they light up rows on the plan you already
-        have — you will not be asked to buy a second product to keep using the first.
+        have. You will not be asked to buy a second product to keep using the first.
       </p>
     </div>
 
@@ -182,17 +178,17 @@ const pillars = [
       {
         title: 'Can I buy the Overlay on its own?',
         description:
-          'No, and that is deliberate. The Overlay reads and writes the same model the rest of the suite uses — selling the in-app surface apart from the graph underneath it would ship you half a product. Every paid plan includes it.',
+          'No, and that is deliberate. The Overlay reads and writes the same model the rest of the suite uses, and selling the in-app surface apart from the graph underneath it would ship you half a product. Every paid plan includes it.',
       },
       {
         title: 'What counts as an application?',
         description:
-          'One deployed product with its own key — the thing a person opens. Staging and development environments of the same product do not count separately; a second product with its own users does.',
+          'One deployed product with its own key: the thing a person opens. Staging and development environments of the same product do not count separately; a second product with its own users does.',
       },
       {
         title: 'Who needs to be an editor?',
         description:
-          'Anyone who writes a rule. Reading the panel — asking who may use a control, and why — is free and unlimited on every plan, including Free. We charge for authority, not for looking.',
+          'Anyone who writes a rule. Reading the panel, which is asking who may use a control and why, is free and unlimited on every plan, including Free. We charge for authority, not for looking.',
       },
       {
         title: 'What is the difference between an editor and a ratifier?',
@@ -202,7 +198,7 @@ const pillars = [
       {
         title: 'Do you meter events, page views or monthly active users?',
         description:
-          'No. Your occurrence log grows with your own traffic, and metering it would price you for your success and give you a reason to instrument less. We meter applications and seats — figures you can predict when you sign.',
+          'No. Your occurrence log grows with your own traffic, and metering it would price you for your success and give you a reason to instrument less. We meter applications and seats, figures you can predict when you sign.',
       },
       {
         title: 'What happens to my price when Design and Run ship?',
@@ -212,21 +208,21 @@ const pillars = [
       {
         title: 'Is there a trial?',
         description:
-          'The Free plan is the trial, and it does not expire — one application on development and staging keys, one editor, unlimited inspectors. Asking for a production key is the moment it becomes a paid conversation.',
+          'The Free plan is the trial, and it does not expire: one application on development and staging keys, one editor, unlimited inspectors. Asking for a production key is the moment it becomes a paid conversation.',
       },
     ]}
   />
 
   <CallToAction
     actions={[
-      { variant: 'primary', text: 'Get early access', href: '/overlay#early-access' },
-      { text: 'See the Overlay', href: '/overlay' },
+      { variant: 'primary', text: WAITLIST_TEXT, href: WAITLIST_HREF },
+      { text: 'Explore the Overlay', href: '/overlay' },
     ]}
   >
     <Fragment slot="title">See it on your own controls.</Fragment>
     <Fragment slot="subtitle">
-      Install it, open the panel, and read what governs each button in your product. Permissions, flags, usage and audit
-      — in one reading.
+      Install it, open the panel, and read what governs each button in your product. Permissions, flags, usage and
+      audit, in one reading.
     </Fragment>
   </CallToAction>
 </Layout>
