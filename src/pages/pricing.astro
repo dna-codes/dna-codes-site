@@ -8,6 +8,7 @@ import FAQs from '~/components/widgets/FAQs.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import { TIERS, ADD_ONS } from '~/data/pricing';
+import { PRODUCT } from '~/data/products';
 import { WAITLIST_HREF, WAITLIST_TEXT } from '~/navigation';
 
 const metadata = {
@@ -33,7 +34,7 @@ const pillars = [
     verb: 'Govern it',
     status: 'Early access',
     description: 'Who may use each control, what is on, and everything that has happened, inside your running product.',
-    icon: 'tabler:layers-subtract',
+    icon: PRODUCT.overlay.icon,
     live: true,
   },
   {
@@ -53,18 +54,6 @@ const pillars = [
       never sold separately.
     </Fragment>
   </HeroText>
-
-  <!-- Early-access notice. The product is pre-GA; every CTA is a form, not a checkout. -->
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 -mt-4">
-    <div class="rounded-2xl border border-primary/40 bg-primary/8 px-5 py-4 flex items-start gap-3">
-      <Icon name="tabler:flask" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-      <p class="text-sm text-slate-300 leading-relaxed">
-        <strong class="text-white">Early access.</strong> These are the real prices, published so you can circulate them.
-        Design partners who join now keep them for two years. Every plan below starts with a conversation rather than a checkout:
-        we hand you the package and half an hour of setup.
-      </p>
-    </div>
-  </div>
 
   <WidgetWrapper containerClass="max-w-6xl mx-auto">
     <PricingCards />
@@ -203,7 +192,7 @@ const pillars = [
       {
         title: 'What happens to my price when Design and Run ship?',
         description:
-          'Nothing. They light up rows on your existing plan, using the same seats and applications you are already paying for. Design partners who join during early access keep their rate for two years.',
+          'Nothing. They light up rows on your existing plan, using the same seats and applications you are already paying for.',
       },
       {
         title: 'Is there a trial?',

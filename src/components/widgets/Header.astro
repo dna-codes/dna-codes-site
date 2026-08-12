@@ -4,6 +4,7 @@ import Logo from '~/components/Logo.astro';
 import ToggleTheme from '~/components/common/ToggleTheme.astro';
 import ToggleMenu from '~/components/common/ToggleMenu.astro';
 import Button from '~/components/ui/Button.astro';
+import ProductMark from '~/components/ui/ProductMark.astro';
 
 import { getHomePermalink } from '~/utils/permalinks';
 import { trimSlash, getAsset } from '~/utils/permalinks';
@@ -135,21 +136,26 @@ const section = PRODUCT_SECTIONS.find(({ path }) => isCurrent(path));
                     <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline" />
                   </button>
                   <ul class="dropdown-menu md:backdrop-blur-md dark:md:bg-dark rounded md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-white/90 md:min-w-[280px] drop-shadow-xl">
-                    {links.map(({ text: text2, href: href2, description }) => (
+                    {/* A child carrying an icon gets its product mark beside the label, so the
+                        menu is the first place the two logos are learned. */}
+                    {links.map(({ text: text2, href: href2, description, icon: icon2 }) => (
                       <li>
                         <a
                           class:list={[
-                            'first:rounded-t last:rounded-b md:hover:bg-gray-100 hover:text-link dark:hover:text-white dark:hover:bg-gray-700 py-2 px-5 block whitespace-no-wrap',
+                            'first:rounded-t last:rounded-b md:hover:bg-gray-100 hover:text-link dark:hover:text-white dark:hover:bg-gray-700 py-2 px-5 flex items-start gap-2.5 whitespace-no-wrap',
                             { 'aw-link-active': isCurrent(href2) },
                           ]}
                           href={href2}
                         >
-                          {text2}
-                          {description && (
-                            <span class="block text-xs md:text-[0.75rem] font-normal text-muted leading-snug mt-0.5 whitespace-normal">
-                              {description}
-                            </span>
-                          )}
+                          {icon2 && <ProductMark icon={icon2} size="sm" class="mt-0.5" />}
+                          <span class="min-w-0">
+                            {text2}
+                            {description && (
+                              <span class="block text-xs md:text-[0.75rem] font-normal text-muted leading-snug mt-0.5 whitespace-normal">
+                                {description}
+                              </span>
+                            )}
+                          </span>
                         </a>
                       </li>
                     ))}

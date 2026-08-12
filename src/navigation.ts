@@ -1,3 +1,4 @@
+import { PRODUCTS } from './data/products';
 import { getBlogPermalink, getPermalink } from './utils/permalinks';
 
 // Single source of truth for the waitlist. Product pages embed the same form inline with
@@ -7,23 +8,18 @@ export const WAITLIST_TEXT = 'Join the waitlist';
 
 export const headerData = {
   links: [
-    // Products groups the two surfaces you can actually operate. Header.astro marks the
+    // Products groups the two surfaces you can actually operate, in the order they are
+    // defined in ~/data/products and each carrying its own mark. Header.astro marks the
     // parent active whenever one of its children is the current page, so a visitor who
     // arrives deep in the site can see where they are without reading the URL.
     {
       text: 'Products',
-      links: [
-        {
-          text: 'Overlay',
-          href: getPermalink('/overlay'),
-          description: 'Operational controls inside your running app',
-        },
-        {
-          text: 'Operations',
-          href: getPermalink('/operations'),
-          description: 'Turn your knowledge into a living operating model',
-        },
-      ],
+      links: PRODUCTS.map(({ name, href, icon, description }) => ({
+        text: name,
+        href: getPermalink(href),
+        icon,
+        description,
+      })),
     },
     { text: 'Pricing', href: getPermalink('/pricing') },
     { text: 'Docs', href: getPermalink('/docs') },
@@ -41,8 +37,7 @@ export const footerData = {
     {
       title: 'Platform',
       links: [
-        { text: 'Overlay', href: getPermalink('/overlay') },
-        { text: 'Operations', href: getPermalink('/operations') },
+        ...PRODUCTS.map(({ name, href }) => ({ text: name, href: getPermalink(href) })),
         { text: 'Pricing', href: getPermalink('/pricing') },
       ],
     },
