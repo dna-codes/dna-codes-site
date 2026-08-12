@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+import { PRODUCT } from '~/data/products';
 
 // The one waitlist form on the site. Every primary button on every page resolves here,
 // so it has to work for somebody who came for Operations, somebody who came for the
@@ -59,15 +60,15 @@ const identityFields: Field[] = [
 const interests = [
   {
     value: 'operations',
-    label: 'Operations',
+    label: PRODUCT.operations.name,
     blurb: 'Turn how we work into a living operating model',
-    icon: 'tabler:vector-triangle',
+    icon: PRODUCT.operations.icon,
   },
   {
     value: 'overlay',
-    label: 'Overlay',
+    label: PRODUCT.overlay.name,
     blurb: 'Govern the controls inside our product',
-    icon: 'tabler:layers-subtract',
+    icon: PRODUCT.overlay.icon,
   },
   {
     value: 'undecided',
