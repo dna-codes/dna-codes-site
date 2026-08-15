@@ -8,7 +8,7 @@ import FAQs from '~/components/widgets/FAQs.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import { TIERS, ADD_ONS } from '~/data/pricing';
-import { PRODUCT } from '~/data/products';
+import { PRODUCTS } from '~/data/products';
 import { WAITLIST_HREF, WAITLIST_TEXT } from '~/navigation';
 
 const metadata = {
@@ -21,30 +21,25 @@ const metadata = {
 const free = TIERS.find((t) => t.key === 'free')!;
 const enterprise = TIERS.find((t) => t.key === 'enterprise')!;
 
-const pillars = [
-  {
-    name: 'Design',
-    verb: 'Model it',
-    status: 'In build',
-    description: 'Your semantic and ontological layers. Define your DNA, and what gets built on it.',
-    icon: 'tabler:vector-triangle',
-  },
-  {
-    name: 'Overlay',
-    verb: 'Govern it',
-    status: 'Early access',
-    description: 'Who may use each control, what is on, and everything that has happened, inside your running product.',
-    icon: PRODUCT.overlay.icon,
-    live: true,
-  },
-  {
-    name: 'Run',
-    verb: 'Run it',
-    status: 'In build',
-    description: 'Operate what you modelled. Live architecture, and operational agents under gates.',
-    icon: 'tabler:player-play',
-  },
-];
+// The pillars are the products, and the verbs stay the verbs. Until now this strip said
+// Design · Overlay · Run while the nav said Operations · Overlay — two names for one thing
+// and one name for a thing with no page. The tagline "Model it. Govern it. Run it." is
+// untouched, which was the point: the verbs were always the durable half, and each one now
+// has a product answering to it. Read from ~/data/products so a rename happens once.
+const descriptions: Record<string, string> = {
+  operations: 'Meeting notes, docs and tribal knowledge, compiled into a living operating model.',
+  overlay: 'Who may use each control, what is on, and everything that has happened, inside your running product.',
+  'agent-operations': 'Your agents holding the operations you granted them, under the policies you already wrote.',
+};
+
+const pillars = PRODUCTS.map((p) => ({
+  name: p.name,
+  verb: p.verb,
+  status: p.status,
+  description: descriptions[p.key],
+  icon: p.icon,
+  live: p.key === 'overlay',
+}));
 ---
 
 <Layout metadata={metadata}>
@@ -125,8 +120,9 @@ const pillars = [
       <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">Model it. Govern it. Run it.</p>
       <h2 class="text-3xl font-bold tracking-tight">Your seats and applications carry forward.</h2>
       <p class="mt-4 text-muted max-w-2xl mx-auto leading-relaxed">
-        The suite is three surfaces on one model. As Design and Run land, they light up rows on the plan you already
-        have. You will not be asked to buy a second product to keep using the first.
+        The suite is three surfaces on one model. As each one lands it lights up rows on the plan you already have —
+        Agent Operations adds no meter of its own, because an agent that may act is an editor seat and one that only
+        reads is an inspector. You will not be asked to buy a second product to keep using the first.
       </p>
     </div>
 

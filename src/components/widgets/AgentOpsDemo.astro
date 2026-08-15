@@ -1,0 +1,599 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// A scripted run of an agent working a queue, built stub-first: the shapes are the product's,
+// the data is staged, and a Demo mode badge sits where the live console names the signed-in
+// person.
+//
+// **Two beats, and both of them move.** The first draft had six. Three were static panels
+// saying overlapping things — a reader watching a still frame for seven seconds assumes the
+// demo is broken — so the agent card and the grants list went, and coverage became something
+// you watch being *computed* rather than something you are told.
+//
+// The sixth was a second run at a higher limit, making the point that changing a policy
+// changes the agent's behaviour with nothing touched on the agent. It was the same animation
+// with a different number, which is a rail step a reader has already learned to skip. The
+// claim survives as one line under the counters, where it costs a sentence instead of ten
+// seconds.
+//
+// The counts are small enough to verify by eye on purpose. Eight tools with all eight rows on
+// screen beats fourteen with six shown and a footnote about the rest — a reader who can count
+// the rows can check the number, and the number is the whole wedge.
+//
+// The invoices and the $10,000 limit are the platform's own invoice-approval seed. Five under
+// and three at or above, which is what that policy actually produces — not the seed
+// description's split, because the invoice at exactly $10,000 is on the wrong side of a strict
+// "less than". That boundary case is the best beat in the run rather than an embarrassment.
+
+interface Tool {
+  name: string;
+  rule: string | null;
+}
+
+// Three governed of eight. The ungoverned five are deliberately the alarming ones: nobody is
+// unsettled by an ungoverned `vendor.update`, and everybody is by an ungoverned `ledger.adjust`.
+const tools: Tool[] = [
+  { name: 'invoice.review', rule: 'Review Standard' },
+  { name: 'invoice.approve', rule: 'Approval Authority' },
+  { name: 'invoice.pay', rule: 'Payment Authority' },
+  { name: 'vendor.create', rule: null },
+  { name: 'vendor.update', rule: null },
+  { name: 'refund.issue', rule: null },
+  { name: 'payment.void', rule: null },
+  { name: 'ledger.adjust', rule: null },
+];
+
+interface Invoice {
+  ref: string;
+  vendor: string;
+  amount: number;
+}
+
+const invoices: Invoice[] = [
+  { ref: 'INV-0001', vendor: 'Northwind Supplies', amount: 4250 },
+  { ref: 'INV-0002', vendor: 'Contoso Logistics', amount: 880 },
+  { ref: 'INV-0003', vendor: 'Fabrikam Print', amount: 1500 },
+  { ref: 'INV-0004', vendor: 'Proseware Cloud', amount: 9800 },
+  { ref: 'INV-0005', vendor: 'Litware Security', amount: 2400 },
+  { ref: 'INV-0006', vendor: 'Woodgrove Facilities', amount: 10000 },
+  { ref: 'INV-0007', vendor: 'Adventure Works', amount: 18750 },
+  { ref: 'INV-0008', vendor: 'Fourth Coffee Group', amount: 42000 },
+];
+
+const steps = [
+  {
+    id: 'coverage',
+    label: 'Coverage',
+    caption:
+      'Before anything runs, read what governs the agent itself. Three of its eight tools reach an act something governs. The other five — including the one that can move money out — reach nothing at all.',
+  },
+  {
+    id: 'run',
+    label: 'The run',
+    caption:
+      'Now let it work the queue. Five invoices are below the delegated limit and it approves them. Three are not, and those go to the CFO with the reason attached — including the one for exactly $10,000, because the limit is a rule rather than a vibe.',
+  },
+];
+
+const money = (n: number) => `$${n.toLocaleString('en-US')}`;
+---
+
+<div
+  data-agentops-demo
+  data-captions={JSON.stringify(steps.map((s) => s.caption))}
+  class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-2xl"
+  role="group"
+  aria-label="A scripted demonstration of an agent working an invoice queue"
+>
+  <!-- ── Chrome ───────────────────────────────────────────────────── -->
+  <div class="px-3.5 py-2.5 border-b border-white/8 flex items-center gap-2.5">
+    <Icon name="tabler:robot" class="w-4 h-4 text-cyan-300 flex-shrink-0" />
+    <span class="text-xs font-semibold text-white truncate">Accounts Payable Agent</span>
+    <span class="hidden sm:inline text-[10px] font-mono text-slate-500 truncate">anthropic/claude-sonnet-5</span>
+    <span
+      data-agent-state
+      class="text-[9px] font-bold uppercase tracking-wider rounded px-1.5 py-0.5 border border-slate-600 bg-slate-800 text-slate-400 whitespace-nowrap"
+      >idle</span
+    >
+    <span class="ml-auto text-[9px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">Demo mode</span
+    >
+  </div>
+
+  <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/8">
+    <!-- ── Left: the agent's tools, scanned ──────────────────────── -->
+    <div data-col="tools" class="p-3.5 transition-opacity duration-500">
+      <div class="flex items-baseline gap-2 mb-2">
+        <p class="text-[9px] uppercase tracking-wider text-slate-500">Its tools</p>
+        <p data-tools-summary class="ml-auto text-[10px] font-semibold text-slate-400">checking…</p>
+      </div>
+
+      <!-- Eight segments, one per tool, filling as each is judged. -->
+      <div class="flex gap-1 mb-2.5" aria-hidden="true">
+        {tools.map((_, i) => <div data-seg={i} class="h-1.5 flex-1 rounded-full bg-slate-700 transition-colors" />)}
+      </div>
+
+      <div class="space-y-1">
+        {
+          tools.map((t, i) => (
+            <div data-tool={i} class="tool-row flex items-center gap-2 rounded px-2 py-1.5 border border-transparent">
+              <span data-tool-icon class="w-3.5 h-3.5 flex-shrink-0 text-slate-600">
+                <Icon name="tabler:point" class="w-3.5 h-3.5" />
+              </span>
+              <span class="text-[11px] font-mono text-slate-300 truncate">{t.name}</span>
+              <span data-tool-verdict class="ml-auto text-[10px] truncate text-right text-slate-600">
+                —
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- ── Right: the queue ──────────────────────────────────────── -->
+    <div data-col="queue" class="p-3.5 transition-opacity duration-500">
+      <div class="flex items-baseline gap-2 mb-2">
+        <p class="text-[9px] uppercase tracking-wider text-slate-500">Payables queue</p>
+        <p data-queue-summary class="ml-auto text-[10px] text-slate-500">8 waiting</p>
+      </div>
+
+      <!-- The rule in force. Static, and the note under the counts is what it is here for:
+           this number is the thing a reader should picture themselves changing. -->
+      <div class="mb-2.5 rounded-lg border border-white/10 bg-slate-800/60 px-2.5 py-2">
+        <div class="flex items-center gap-2">
+          <Icon name="tabler:gavel" class="w-3.5 h-3.5 text-primary flex-shrink-0" />
+          <span class="text-[10px] text-slate-400">Approval Authority</span>
+          <span data-limit class="ml-auto text-[11px] font-mono font-bold text-accent">under $10,000</span>
+        </div>
+      </div>
+
+      <div class="space-y-1">
+        {
+          invoices.map((inv, i) => (
+            <div
+              data-invoice={i}
+              class="invoice-row flex items-center gap-2 rounded px-2 py-1.5 bg-slate-800/50 border border-transparent"
+            >
+              <span class="text-[10px] font-mono text-slate-500 flex-shrink-0">{inv.ref}</span>
+              <span class="text-[11px] text-slate-300 truncate">{inv.vendor}</span>
+              <span class="ml-auto text-[11px] font-mono text-slate-300 whitespace-nowrap">{money(inv.amount)}</span>
+              <span
+                data-invoice-badge
+                class="text-[9px] font-bold uppercase tracking-wider rounded px-1.5 py-0.5 border border-transparent whitespace-nowrap w-[62px] text-center"
+              />
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="mt-2.5 pt-2.5 border-t border-white/8 flex items-baseline gap-5">
+        <div>
+          <p data-count-performed class="text-xl font-extrabold text-accent leading-none">0</p>
+          <p class="text-[10px] text-slate-500 mt-0.5">approved</p>
+        </div>
+        <div>
+          <p data-count-assigned class="text-xl font-extrabold text-amber-300 leading-none">0</p>
+          <p class="text-[10px] text-slate-500 mt-0.5">to the CFO</p>
+        </div>
+      </div>
+
+      <p class="mt-2.5 text-[10px] text-slate-500 leading-snug">
+        Change that one number and the split moves. No redeploy, no prompt edit, nothing touched on the agent.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Caption and rail ─────────────────────────────────────────── -->
+  <div class="border-t border-white/8 bg-slate-900/80 px-3.5 py-3">
+    <p data-caption class="text-[12px] text-slate-300 leading-relaxed min-h-[3.5rem]">{steps[0].caption}</p>
+
+    <div class="mt-2.5 flex items-center gap-2">
+      <button
+        data-play
+        type="button"
+        class="flex-shrink-0 rounded-full border border-white/15 bg-slate-800 p-1.5 text-slate-300 hover:text-white hover:border-white/30 transition-colors"
+        aria-label="Pause the demonstration"
+      >
+        <Icon name="tabler:player-pause" class="w-3.5 h-3.5" data-icon-pause />
+        <Icon name="tabler:player-play" class="w-3.5 h-3.5 hidden" data-icon-play />
+      </button>
+
+      {
+        /* Each dot is a track with a fill inside it, so the rail reports two things at once:
+          which step you are on, and how much of it is left. Without the second, a reader who
+          looks up mid-step cannot tell whether the frame is about to change or has stalled. */
+      }
+      <div class="flex-1 flex gap-1" role="tablist" aria-label="Demonstration steps">
+        {
+          steps.map((s, i) => (
+            <button
+              data-step={i}
+              type="button"
+              role="tab"
+              aria-selected={i === 0 ? 'true' : 'false'}
+              aria-label={s.label}
+              class="step-dot flex-1 rounded-full h-1.5 bg-slate-700 overflow-hidden"
+            >
+              {/* No transform utilities here, deliberately. Tailwind v4 compiles `scale-x-0`
+                  to the `scale` property rather than to `transform`, and the two multiply — so
+                  a `scale: 0%` from a class silently pins the bar at zero width however the
+                  `transform` animation behaves. Set inline so it depends on nothing. */}
+              <span
+                data-step-fill
+                class="block h-full w-full rounded-full bg-primary"
+                style="transform-origin:left center;transform:scaleX(0)"
+              />
+            </button>
+          ))
+        }
+      </div>
+
+      <span data-step-label class="flex-shrink-0 text-[10px] font-semibold text-slate-500 w-16 text-right"
+        >{steps[0].label}</span
+      >
+    </div>
+  </div>
+</div>
+
+<style>
+  .step-dot {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .step-dot:hover {
+    background-color: rgb(148 163 184);
+  }
+  /* The current step lightens its *track* rather than filling with the accent, because the
+     accent is now what the fill means. Without this, a step paused at zero progress would be
+     indistinguishable from one that has not run yet. */
+  .step-dot[aria-selected='true'] {
+    background-color: rgb(100 116 139);
+  }
+  .invoice-row,
+  .tool-row {
+    transition:
+      background-color 0.25s ease,
+      border-color 0.25s ease;
+  }
+  /* The column that is not the subject steps back rather than disappearing. Two lists both
+     at full contrast is a reader searching for what changed. */
+  [data-col].is-quiet {
+    opacity: 0.32;
+  }
+</style>
+
+<script>
+  interface Step {
+    label: string;
+    /** Dwell time, tuned per step rather than kept uniform. */
+    ms: number;
+    /** The agent's state badge. */
+    state: 'idle' | 'running';
+    /** Which column is the subject; the other one steps back. */
+    focus: 'tools' | 'queue';
+    /** Judge the agent's own tools. */
+    scan?: boolean;
+    /** The delegated limit in force, when this step runs the queue. */
+    limit?: number;
+  }
+
+  const AMOUNTS = [4250, 880, 1500, 9800, 2400, 10000, 18750, 42000];
+  const RULES: (string | null)[] = [
+    'Review Standard',
+    'Approval Authority',
+    'Payment Authority',
+    null,
+    null,
+    null,
+    null,
+    null,
+  ];
+
+  const STEPS: Step[] = [
+    { label: 'Coverage', focus: 'tools', state: 'idle', ms: 8000, scan: true },
+    { label: 'The run', focus: 'queue', state: 'running', ms: 9500, limit: 10000 },
+  ];
+
+  document.querySelectorAll<HTMLElement>('[data-agentops-demo]').forEach((root) => {
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-step]'));
+    const fills = dots.map((d) => d.querySelector<HTMLElement>('[data-step-fill]')!);
+    const captionEl = root.querySelector<HTMLElement>('[data-caption]')!;
+    const stepLabel = root.querySelector<HTMLElement>('[data-step-label]')!;
+    const stateBadge = root.querySelector<HTMLElement>('[data-agent-state]')!;
+    const cols = Array.from(root.querySelectorAll<HTMLElement>('[data-col]'));
+
+    const toolRows = Array.from(root.querySelectorAll<HTMLElement>('[data-tool]'));
+    const toolIcons = toolRows.map((r) => r.querySelector<HTMLElement>('[data-tool-icon]')!);
+    const toolVerdicts = toolRows.map((r) => r.querySelector<HTMLElement>('[data-tool-verdict]')!);
+    const segs = Array.from(root.querySelectorAll<HTMLElement>('[data-seg]'));
+    const toolsSummary = root.querySelector<HTMLElement>('[data-tools-summary]')!;
+
+    const invRows = Array.from(root.querySelectorAll<HTMLElement>('[data-invoice]'));
+    const invBadges = invRows.map((r) => r.querySelector<HTMLElement>('[data-invoice-badge]')!);
+    const queueSummary = root.querySelector<HTMLElement>('[data-queue-summary]')!;
+    const performedEl = root.querySelector<HTMLElement>('[data-count-performed]')!;
+    const assignedEl = root.querySelector<HTMLElement>('[data-count-assigned]')!;
+    const limitEl = root.querySelector<HTMLElement>('[data-limit]')!;
+    const playBtn = root.querySelector<HTMLButtonElement>('[data-play]')!;
+
+    // Captions are authored in the frontmatter and serialized onto the root, so the prose has
+    // one home and this script never carries a second copy of it to drift from.
+    const CAPTIONS: string[] = JSON.parse(root.dataset.captions ?? '[]');
+
+    // The shield glyphs, lifted from the same icon set the static panels use. Inlined because
+    // the rows start with neither and swapping innerHTML is cheaper than rendering all three
+    // states into the markup and toggling them.
+    const SHIELD_ON =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M11.46 20.846a12 12 0 0 1-7.96-14.554a12 12 0 0 0 8.5 -3.292a12 12 0 0 0 8.5 3.292a12 12 0 0 1 -.317 4.71"/><path d="M15 19l2 2l4-4"/></svg>';
+    const SHIELD_OFF =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M3 3l18 18"/><path d="M20.043 16.045a12 12 0 0 0 .457 -3.045v-6l-8-3l-3.5 1.3"/><path d="M6.4 6.414l-2.4 .586v6c0 6 8 9 8 9a12 12 0 0 0 3.13 -1.882"/></svg>';
+
+    let index = 0;
+    let playing = true;
+
+    /*
+     * One clock per step, and the progress fill *is* the clock.
+     *
+     * Everything timed within a step is an entry in `actions` at an offset in milliseconds.
+     * Arming reads the elapsed time off the fill's animation and schedules only what has not
+     * happened yet, so pausing and resuming needs no separate bookkeeping and the bar can
+     * never disagree with the frame it reports on.
+     */
+    interface Action {
+      at: number;
+      fn: () => void;
+    }
+
+    let actions: Action[] = [];
+    let timers: number[] = [];
+    let progress: Animation | null = null;
+
+    const clearTimers = () => {
+      timers.forEach((t) => window.clearTimeout(t));
+      timers = [];
+    };
+
+    /**
+     * Milliseconds into the current step, read off the fill rather than tracked separately.
+     *
+     * `currentTime` is typed `CSSNumberish`, so it is a plain number today and may arrive as a
+     * unit value. Both are unwrapped and anything else falls back to zero, because the failure
+     * this guards against is silent and total: a NaN becomes `setTimeout(fn, NaN)`, which
+     * fires immediately, and the whole run would deal itself out in one frame.
+     */
+    const elapsed = () => {
+      const raw = progress?.currentTime;
+      const ms = typeof raw === 'number' ? raw : ((raw as { value?: number } | null | undefined)?.value ?? 0);
+      return Number.isFinite(ms) ? ms : 0;
+    };
+
+    const arm = () => {
+      clearTimers();
+      if (!playing) return;
+      const now = elapsed();
+      actions.forEach((a) => {
+        if (a.at <= now) return;
+        timers.push(window.setTimeout(a.fn, a.at - now));
+      });
+    };
+
+    // ── Tools ──────────────────────────────────────────────────────
+    const resetTools = () => {
+      toolRows.forEach((row, i) => {
+        row.className = 'tool-row flex items-center gap-2 rounded px-2 py-1.5 border border-transparent';
+        toolIcons[i].className = 'w-3.5 h-3.5 flex-shrink-0 text-slate-600';
+        toolIcons[i].innerHTML = '';
+        toolVerdicts[i].className = 'ml-auto text-[10px] truncate text-right text-slate-600';
+        toolVerdicts[i].textContent = '—';
+        segs[i].className = 'h-1.5 flex-1 rounded-full bg-slate-700 transition-colors';
+      });
+      toolsSummary.textContent = 'checking…';
+      toolsSummary.className = 'ml-auto text-[10px] font-semibold text-slate-400';
+    };
+
+    // Judge one tool at a time, the same grammar the queue uses. Watching the number be
+    // computed is what makes it believable; being told it is what makes it a claim.
+    const scanActions = (total: number): Action[] => {
+      resetTools();
+      let governed = 0;
+      const gap = Math.floor((total * 0.62) / RULES.length);
+
+      return RULES.map((rule, i) => ({
+        at: 500 + gap * i,
+        fn: () => {
+          const ok = rule !== null;
+          if (ok) governed++;
+          toolRows[i].className = ok
+            ? 'tool-row flex items-center gap-2 rounded px-2 py-1.5 bg-slate-800/50 border border-transparent'
+            : 'tool-row flex items-center gap-2 rounded px-2 py-1.5 bg-rose-500/5 border border-rose-400/25';
+          toolIcons[i].className = `w-3.5 h-3.5 flex-shrink-0 ${ok ? 'text-primary' : 'text-rose-300'}`;
+          toolIcons[i].innerHTML = ok ? SHIELD_ON : SHIELD_OFF;
+          toolVerdicts[i].className =
+            `ml-auto text-[10px] truncate text-right ${ok ? 'text-slate-500' : 'text-rose-300/90'}`;
+          toolVerdicts[i].textContent = ok ? rule! : 'nothing governs this';
+          segs[i].className = `h-1.5 flex-1 rounded-full transition-colors ${ok ? 'bg-primary' : 'bg-rose-400/40'}`;
+          toolsSummary.textContent = `${governed} of ${i + 1} governed`;
+          if (i === RULES.length - 1) {
+            toolsSummary.className = 'ml-auto text-[10px] font-bold text-white';
+          }
+        },
+      }));
+    };
+
+    // ── Queue ──────────────────────────────────────────────────────
+    const setInvoice = (i: number, kind: 'none' | 'waiting' | 'performed' | 'assigned') => {
+      const badge = invBadges[i];
+      const row = invRows[i];
+      badge.className =
+        'text-[9px] font-bold uppercase tracking-wider rounded px-1.5 py-0.5 border whitespace-nowrap w-[62px] text-center';
+      row.className =
+        'invoice-row flex items-center gap-2 rounded px-2 py-1.5 bg-slate-800/50 border border-transparent';
+
+      if (kind === 'none') {
+        badge.textContent = '';
+        badge.classList.add('border-transparent');
+      } else if (kind === 'waiting') {
+        badge.textContent = 'waiting';
+        badge.classList.add('border-slate-600', 'bg-slate-800', 'text-slate-500');
+      } else if (kind === 'performed') {
+        badge.textContent = 'approved';
+        badge.classList.add('border-primary/30', 'bg-primary/15', 'text-accent');
+        row.classList.add('border-primary/20');
+      } else {
+        badge.textContent = 'CFO';
+        badge.classList.add('border-amber-400/30', 'bg-amber-400/10', 'text-amber-300');
+        row.classList.add('border-amber-400/20');
+      }
+    };
+
+    const resetQueue = () => {
+      invRows.forEach((_, i) => setInvoice(i, 'none'));
+      performedEl.textContent = '0';
+      assignedEl.textContent = '0';
+      queueSummary.textContent = '8 waiting';
+    };
+
+    // Deal the queue out one invoice at a time rather than all at once. The pause between each
+    // is the whole point of watching a run: a viewer sees the rule applied per item, not a
+    // total appearing. Returned as actions on the step clock, so a pause freezes the queue
+    // exactly where the bar froze.
+    const queueActions = (limit: number, total: number): Action[] => {
+      let performed = 0;
+      let assigned = 0;
+      performedEl.textContent = '0';
+      assignedEl.textContent = '0';
+      limitEl.textContent = `under ${limit.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}`;
+      invRows.forEach((_, i) => setInvoice(i, 'waiting'));
+      queueSummary.textContent = '8 waiting';
+
+      const gap = Math.floor((total * 0.66) / AMOUNTS.length);
+      return AMOUNTS.map((amount, i) => ({
+        at: 500 + gap * i,
+        fn: () => {
+          const ok = amount < limit;
+          setInvoice(i, ok ? 'performed' : 'assigned');
+          if (ok) performedEl.textContent = String(++performed);
+          else assignedEl.textContent = String(++assigned);
+          queueSummary.textContent = `${performed + assigned} of 8 decided`;
+        },
+      }));
+    };
+
+    // ── Steps ──────────────────────────────────────────────────────
+    const render = (i: number, restart = true) => {
+      const step = STEPS[i];
+      index = i;
+
+      captionEl.textContent = CAPTIONS[i] ?? '';
+      stepLabel.textContent = step.label;
+      dots.forEach((d, n) => d.setAttribute('aria-selected', String(n === i)));
+      cols.forEach((c) => c.classList.toggle('is-quiet', c.dataset.col !== step.focus));
+
+      // Steps behind the cursor read as done, steps ahead as untouched, and the current one
+      // gets a fresh animation. Stepping backwards empties the ones you left, so the rail
+      // always describes where you are rather than the furthest you have been.
+      progress?.cancel();
+      fills.forEach((f, n) => {
+        f.style.transform = n < i ? 'scaleX(1)' : 'scaleX(0)';
+      });
+      progress = fills[i].animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], {
+        duration: step.ms,
+        easing: 'linear',
+        fill: 'forwards',
+      });
+      if (!playing) progress.pause();
+
+      stateBadge.textContent = step.state;
+      stateBadge.className =
+        'text-[9px] font-bold uppercase tracking-wider rounded px-1.5 py-0.5 border whitespace-nowrap ' +
+        (step.state === 'running'
+          ? 'border-primary/40 bg-primary/15 text-accent'
+          : 'border-slate-600 bg-slate-800 text-slate-400');
+
+      if (restart) {
+        if (step.scan) {
+          actions = scanActions(step.ms);
+          resetQueue();
+        } else if (step.limit) {
+          actions = queueActions(step.limit, step.ms);
+        } else {
+          actions = [];
+        }
+      } else {
+        actions = [];
+        resetTools();
+        resetQueue();
+      }
+
+      // Advancing is the last action on the step's own clock rather than a separate timer,
+      // which is what keeps the bar and the frame from ever disagreeing.
+      actions.push({ at: step.ms, fn: () => render((index + 1) % STEPS.length) });
+      arm();
+    };
+
+    dots.forEach((d, i) => d.addEventListener('click', () => render(i)));
+
+    const iconPause = playBtn.querySelector<SVGElement>('[data-icon-pause]');
+    const iconPlay = playBtn.querySelector<SVGElement>('[data-icon-play]');
+
+    // The button has to show what pressing it will DO, and the label has to match. A paused
+    // player still showing a pause glyph is the control lying about its own state.
+    const syncPlayButton = () => {
+      playBtn.setAttribute('aria-label', playing ? 'Pause the demonstration' : 'Play the demonstration');
+      iconPause?.classList.toggle('hidden', !playing);
+      iconPlay?.classList.toggle('hidden', playing);
+    };
+
+    // Pausing freezes the bar where it is and resuming picks the step up from there, rather
+    // than restarting it. Anyone who paused did it to look at something, and being sent back
+    // to the top of the step is the one response that guarantees they cannot.
+    playBtn.addEventListener('click', () => {
+      playing = !playing;
+      syncPlayButton();
+      if (playing) {
+        progress?.play();
+        arm();
+      } else {
+        progress?.pause();
+        clearTimers();
+      }
+    });
+
+    // Somebody who cannot see motion should get the frame, not a slideshow they did not ask
+    // for. The rail still works, so the story is reachable a click at a time.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      playing = false;
+    }
+    syncPlayButton();
+
+    // Nothing runs until it is on screen. An animation playing to an empty room is a battery
+    // cost with no reader, and a visitor who arrives mid-story has missed the opening beat the
+    // whole thing is built on.
+    let started = false;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting || started || !playing) return;
+          started = true;
+          render(0);
+        });
+      },
+      // 0.2 rather than a third. This sits in the hero, and on a short laptop viewport the
+      // headline and actions above it can leave under a third of the frame showing at load —
+      // which held the whole run at its first beat until somebody scrolled.
+      { threshold: 0.2 }
+    );
+    observer.observe(root);
+
+    // The opening frame, with its clock held at zero: `arm` is a no-op while `playing` is
+    // false, and the observer starts it properly the moment anyone can actually see it.
+    const wasPlaying = playing;
+    playing = false;
+    render(0, false);
+    playing = wasPlaying;
+
+    // Somebody who will never see it play should not be left looking at an empty frame. Under
+    // reduced motion the scan is applied at once, so the panel shows the finished reading —
+    // the same thing the animation arrives at, minus the arriving.
+    if (!playing) scanActions(0).forEach((a) => a.fn());
+  });
+</script>

@@ -3,6 +3,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import OperationsDemo from '~/components/widgets/OperationsDemo.astro';
 import LensDemo from '~/components/widgets/LensDemo.astro';
 import OperationsLayerC from '~/components/widgets/OperationsLayerC.astro';
+import AgentOpsTeaser from '~/components/widgets/AgentOpsTeaser.astro';
 import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
@@ -38,6 +39,11 @@ const metadata = {
   </section>
 
   <OperationsLayerC />
+
+  <!-- One paragraph and one link, not a section. Agent Operations is an extension of this
+       product and this is the reader for it, but its argument needs a demo and a full
+       viewport — so it earns a page and this earns a pointer. -->
+  <AgentOpsTeaser />
 
   <!-- Same form as /waitlist, Operations already ticked. A product page ends with its own
        conversion rather than a button that sends you somewhere to find one. -->

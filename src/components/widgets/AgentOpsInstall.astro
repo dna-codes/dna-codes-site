@@ -1,0 +1,115 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+// Visual left, prose right — the fourth beat, closing the alternation.
+//
+// **`Operation` is the operative term across every surface; the props are what differ.**
+// `<Operation operation="order.place" subject={order}>` gates a control in the design system,
+// `dna({ address, operation })` stamps one on an element in a host application, and this is
+// the same concept bound to a tool call. An earlier draft called this `governed()`, which
+// named what we do to the thing rather than the thing — and the platform names things
+// (Action, Anchor, Key, Lens, Operation), because the whole argument is that an operation is
+// the unit and the surfaces are just where you meet it. Prose still says "act" where that
+// reads better, which is what the Overlay's own walkthrough does.
+//
+// The code IS the visual here, and it is the most intuitive one available: what a reader is
+// really asking — how much of my agent do I have to change — is answered by the line count
+// before they have read a word of it. The tool body stays as a comment, because the comment
+// is the claim.
+//
+// One block, and it used to be two. The second showed `guard.decide` for a call site the
+// wrapper does not fit — a leftover from when this section framed the install as "declare,
+// then enforce". Once `Operation` takes `perform` the wrapper *is* the enforcement, so a
+// second snippet taught a second API on a panel whose whole claim is that there is one. It
+// also leaned on a `subjects` value from nowhere, and explaining where that comes from means
+// opening actor resolution, which this section deliberately does not. The escape hatch is
+// real and it is in design.md; it is documentation, not a reason to make the answer longer.
+//
+// The trust properties are a list rather than eight cards. Each is a property @dna/guard
+// asserts about itself; the four kept are the ones a buyer raises unprompted, and the rest
+// are FAQ answers.
+
+const declare = `import { Operation } from "@dna/agent-ops";
+
+export const approveInvoice = Operation("invoice.approve", {
+  target: (args) => args.invoiceId,
+  perform: async (args) => { /* your code, untouched */ },
+});`;
+
+const trust = [
+  {
+    icon: 'tabler:bolt',
+    lead: 'No network call at the moment of decision.',
+    body: 'The rules are a local snapshot, not a fetcher — it could not call out even in principle. Your latency is unchanged, and your agent does not stop when we do.',
+  },
+  {
+    icon: 'tabler:clock-exclamation',
+    lead: 'Staleness never permits.',
+    body: 'Reported on every verdict and bounded by a limit you set. Refusing on it would make a slow refresh your outage; permitting on it would make the bound an attack.',
+  },
+  {
+    icon: 'tabler:arrows-split',
+    lead: 'Drawing fails open, binding fails closed.',
+    body: 'What may be offered leaves your agent as it was. What may happen refuses. A thing that permits when it cannot decide authorizes nothing.',
+  },
+];
+---
+
+<WidgetWrapper id="install" containerClass="max-w-5xl mx-auto">
+  <div class="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+    <!-- ── The picture: the whole installation, at a glance ─────────── -->
+    <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+      <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+        <Icon name="tabler:file-code" class="w-3.5 h-3.5 text-primary flex-shrink-0" />
+        <span class="text-[11px] text-slate-300">The whole installation</span>
+        <span class="ml-auto text-[10px] font-mono text-accent">5 lines</span>
+      </div>
+
+      <pre class="p-4 text-[11px] leading-relaxed overflow-x-auto text-slate-300"><code set:text={declare} /></pre>
+
+      <div class="px-4 py-3 border-t border-white/8 bg-slate-900/60">
+        <p class="text-[10px] text-slate-500 leading-snug">
+          That is everything. The wrapper resolves the target and refuses before <code class="text-accent">perform</code
+          > runs, the tool body is not touched, no framework is replaced, and a tool that names no operation is left alone
+          rather than reported as broken.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── The prose ────────────────────────────────────────────────── -->
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Install and trust</p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-5">
+        One wrapper,<br class="hidden sm:block" /> and nothing else changes.
+      </h2>
+      <p class="text-muted leading-relaxed mb-6">
+        Two questions, and they are really one: what does this cost me to try, and what does it do to the thing I am
+        already running in production. Each answer below is a property the enforcement package asserts about itself, not
+        a promise we are making on its behalf.
+      </p>
+
+      <ul class="space-y-3.5 mb-7">
+        {
+          trust.map((t) => (
+            <li class="flex gap-3">
+              <Icon name={t.icon} class="w-4 h-4 text-primary flex-shrink-0 mt-1" />
+              <p class="text-sm leading-relaxed">
+                <strong class="text-white">{t.lead}</strong> <span class="text-muted">{t.body}</span>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="rounded-xl border border-primary/30 bg-primary/5 p-5">
+        <h3 class="text-sm font-bold text-white mb-2">Or install nothing at all.</h3>
+        <p class="text-sm text-muted leading-relaxed">
+          Claude, Cursor, your own loop — any MCP client reaches the same model through the same tools, with no
+          integration to build. And <strong class="text-white">asking is free</strong>: an agent that can only read is
+          an inspector, and inspectors are unlimited on every plan, forever.
+        </p>
+      </div>
+    </div>
+  </div>
+</WidgetWrapper>

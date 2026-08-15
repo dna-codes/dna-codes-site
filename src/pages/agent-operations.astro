@@ -1,0 +1,177 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import DnaHelix from '~/components/DnaHelix.astro';
+import AgentOpsDemo from '~/components/widgets/AgentOpsDemo.astro';
+import AgentOpsActor from '~/components/widgets/AgentOpsActor.astro';
+import AgentOpsGate from '~/components/widgets/AgentOpsGate.astro';
+import AgentOpsInstall from '~/components/widgets/AgentOpsInstall.astro';
+import AgentCoveragePanel from '~/components/widgets/AgentCoveragePanel.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+
+// Four content sections between the hero and the close, and they alternate side to side so
+// the eye has somewhere new to land each time:
+//
+//   Hero + demo                                the argument, in motion
+//   1. The wedge          prose ◀ │ ▶ visual   most of your agent is ungoverned
+//   2. The model          visual ◀ │ ▶ prose   an agent is an actor
+//   3. The gate           prose ◀ │ ▶ visual   the decision, made outside the model
+//   4. Install and trust  visual ◀ │ ▶ prose   what it costs to put in front of one
+//   Close                                      FAQ, then the waitlist
+//
+// Every visual is a *specific* thing rather than an illustration of a category: a real
+// coverage reading being computed, one act with one edge forking to two kinds of actor, two calls through
+// one rule landing on different outcomes, and the entire install at nine lines. A reader who
+// only looks at the right-hand column should still come away with the argument.
+//
+// What was cut, and why, because the cuts are the design:
+//
+// - **Rehearse and the modes toggle.** A second mode describing something still being built,
+//   placed a click away from an argument that is not. It is in the design doc and it is last
+//   in the build order; it belongs on the page when it belongs in the product.
+// - **"An agent nobody hired."** A prose restatement of the wedge, and the only block on the
+//   page with no artifact beside it. Its one load-bearing sentence moved into §2, which is
+//   where the number already is.
+// - **The escalation section.** The demo shows a rule delegating six invoices and reserving
+//   four. Arguing that again in prose, two screens later, taught a reader that this page
+//   repeats itself.
+// - **The standalone pricing strip and SocialProof.** Both fold into the close — pricing
+//   becomes an FAQ answer with a link, and the design-partner line sits above the form.
+// - **Twenty-odd cards.** The gate's five, the install's eight and the four outcomes were
+//   three card grids in a row. They are lists inside prose columns now, which is what a
+//   short claim beside a picture wants to be.
+const metadata = {
+  title: 'Agent Operations — Give your agents a job, not an API key',
+  description:
+    'An agent in your model is an actor like any other. It holds the operations you grant it, under the policies you already wrote, and every action it takes is recorded with whose authority it used.',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- ── Hero + demo ──────────────────────────────────────────────────── -->
+  <Hero tagline="Agent Operations · In build">
+    <DnaHelix
+      slot="bg"
+      orientation="horizontal"
+      helixWidth={120}
+      nodeSize={12}
+      filled
+      style="height:58%;margin-top:5%"
+    />
+
+    <Fragment slot="title">
+      Give your agents a job,<br />
+      not an <span class="text-accent">API key</span>.
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      An agent in your model is an actor like any other.<br class="hidden sm:block" />
+      It holds the operations you grant it, under the policies you already wrote.
+      <span class="mt-4 block text-base text-slate-400">
+        And every action it takes is recorded with whose authority it used.
+      </span>
+    </Fragment>
+
+    <Fragment slot="actions">
+      <div class="flex w-full sm:w-auto">
+        <a href="#waitlist" class="btn-primary w-full sm:mb-0">Join the waitlist</a>
+      </div>
+      <div class="flex w-full sm:w-auto">
+        <a href="#how" class="btn w-full sm:mb-0">See how it works</a>
+      </div>
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <AgentOpsDemo />
+      </div>
+    </Fragment>
+  </Hero>
+
+  <!-- ── 1. The wedge, and it is a number ─────────────────────────────── -->
+  <WidgetWrapper containerClass="max-w-5xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">The finding</p>
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-5">Most of your agent is ungoverned.</h2>
+        <p class="text-muted leading-relaxed mb-4">
+          Not badly governed — <strong class="text-white">ungoverned</strong>. No rule about whether it may, no flag, no
+          record that it ever did. Most teams have never seen that figure for an agent they are already running, because
+          nothing they own is in a position to compute it. A framework does not know what an approval limit is.
+        </p>
+        <p class="text-muted leading-relaxed">
+          The gap is not that agents are dangerous. It is that your organization already has answers to all of this for
+          people — positions, delegated limits, escalation, approval, a record — and none of it reaches the agent,
+          because the agent was never in the model.
+        </p>
+      </div>
+
+      <AgentCoveragePanel />
+    </div>
+  </WidgetWrapper>
+
+  <!-- ── 2. An agent is an actor ──────────────────────────────────────── -->
+  <AgentOpsActor />
+
+  <!-- ── 3. The gate ──────────────────────────────────────────────────── -->
+  <AgentOpsGate />
+
+  <!-- ── 4. Install and trust ─────────────────────────────────────────── -->
+  <AgentOpsInstall />
+
+  <!-- ── Close ────────────────────────────────────────────────────────── -->
+  <FAQs
+    title="FAQ"
+    columns={2}
+    classes={{ container: 'max-w-5xl' }}
+    items={[
+      {
+        title: 'Do I have to rewrite my agents to use this?',
+        description:
+          'No. Wrap the tools you already have — each one names the operation it performs and what it acts on, the same word the Overlay stamps on a control, and the body is untouched. Or wrap nothing at all and point an MCP client at your model, which is free and unlimited for reading.',
+      },
+      {
+        title: 'Does the model decide whether it is allowed?',
+        description:
+          'No, and that is the whole design. Tools are derived from the operations an agent owns, so one it was not granted does not exist on it. The governing rules are re-checked when a tool is called, judged against what the graph says the target is rather than what the caller claimed, and there is deliberately no parameter naming who is asking — a caller that could describe its own actor could route its own work to itself.',
+      },
+      {
+        title: 'Can an agent change the rules that govern it?',
+        description:
+          'No. An agent credential may read and it may act; it may never put a rule in force and it may never change one. An agent that can ratify its own grants has no grants. A machine may observe; a person decides.',
+      },
+      {
+        title: 'How do you price an agent?',
+        description:
+          'There is no new meter. An agent that may act is an editor seat, at the same price as a person — if the two are interchangeable, charging differently for them would contradict the argument on this page. An agent that only reads is an inspector, and inspectors are never metered. Bring your own model key. <a class="text-primary hover:underline" href="/pricing">See the full ladder →</a>',
+      },
+      {
+        title: 'Is this ready for production?',
+        description:
+          'It is <strong>in build</strong>, which is a weaker claim than the Overlay’s early access and deliberately so. The enforcement underneath it ships today and the runtime executes a real queue under real policy. There is no console yet, and identity for external agents arriving over MCP is not finished — so we set design partners up by hand and tell them exactly which half they are getting.',
+      },
+    ]}
+  />
+
+  <WidgetWrapper containerClass="max-w-4xl mx-auto !pt-0">
+    <div
+      class="rounded-2xl border border-primary/40 bg-slate-900/70 p-6 sm:p-10 shadow-[0_0_48px_rgba(13,148,136,0.18)]"
+    >
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold tracking-tight">Run it on an agent you already have.</h2>
+        <p class="mt-4 text-muted max-w-xl mx-auto leading-relaxed">
+          Bring the one you are least comfortable explaining to your auditor. The interesting part is usually how few of
+          its tools anything governs, and how quickly that stops being a surprise once somebody has seen the number.
+        </p>
+        <p class="mt-3 text-sm text-slate-500">
+          We are looking for design partners running agents they cannot fully answer for yet.
+        </p>
+      </div>
+
+      <WaitlistForm preselect="agent-operations" />
+    </div>
+  </WidgetWrapper>
+</Layout>

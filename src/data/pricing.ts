@@ -165,6 +165,31 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
     ],
   },
   {
+    label: 'Agents',
+    rows: [
+      row(
+        'Acting agents',
+        '1, non-production',
+        true,
+        true,
+        true,
+        true,
+        'An agent that may act is an editor seat, at the same price as a person. If a human and an agent holding the same grant are interchangeable — which is the whole argument — charging differently for them would contradict it.'
+      ),
+      row(
+        'Read-only agents · MCP',
+        'Unlimited',
+        'Unlimited',
+        'Unlimited',
+        'Unlimited',
+        'Unlimited',
+        'An agent that can only ask questions is an inspector, and inspectors are never metered. Point Claude, Cursor or your own loop at your model and it costs nothing.'
+      ),
+      row('Policy-gated execution, human escalation', true, true, true, true, true),
+      row('Bring your own model key', true, true, true, true, true),
+    ],
+  },
+  {
     label: 'Authoring',
     rows: [
       row('Prototype mode', false, false, true, true, true),
