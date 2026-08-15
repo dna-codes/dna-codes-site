@@ -139,15 +139,22 @@ console; `/docs/agents` (see [Impact](#impact) — the published schema package 
 
 ## The page: `/agent-operations`
 
-**Five sections, and each one has to earn a scroll.**
+**Four content sections between the hero and the close, alternating side to side** so the eye has
+somewhere new to land each time:
 
 ```
-§1  Hero + AgentOpsDemo      the argument, in motion
-§2  The wedge                most of your agent is ungoverned — with the number
-§3  AgentOpsActor            an agent is an actor, and what you keep afterwards
-§4  AgentOpsGate             why it is enforcement, and what installing it costs
-§5  The close                FAQ, then the waitlist
+Hero + AgentOpsDemo                            the argument, in motion
+ 1. The wedge          prose ◀ │ ▶ visual      most of your agent is ungoverned
+ 2. AgentOpsActor      visual ◀ │ ▶ prose      an agent is an actor
+ 3. AgentOpsGate       prose ◀ │ ▶ visual      the decision, made outside the model
+ 4. AgentOpsInstall    visual ◀ │ ▶ prose      what it costs to put in front of one
+Close                                          FAQ, then the waitlist
 ```
+
+Every visual is a **specific thing** rather than an illustration of a category: a coverage reading
+being computed, one act with one edge forking to two kinds of actor, three calls through one rule
+landing on different outcomes, and the whole install at five lines. A reader who only looks at the
+right-hand column should still come away with the argument.
 
 ### Cut to five
 
@@ -380,27 +387,26 @@ as an inspector does. The claim we cannot yet make is per-caller identity at the
 Stub-first, per the pattern that has now shipped twice: the real component signature and staged data
 in the browser, a `Demo mode` badge, no network.
 
-Six beats, and the last earns the page:
+**Two beats, and both of them move.**
 
-0. **The coverage line.** Before anything runs: the agent, its tool list, and _"6 of 14 of this
-   agent's tools are governed by something."_ The eight ungoverned ones are greyed and nameable. This
-   beat is the wedge in §1, made concrete before the reader has been asked to believe anything, and
-   it is the beat `/overlay` opens on for the same reason.
-1. **The queue.** Ten invoices, an agent card showing its name, its model, and `idle`.
-2. **The grant.** The agent's tools appear — one per action it owns. Hover one and its governing
-   policy shows, in plain English, next to the rule.
-3. **The run.** Invoices resolve one at a time: approved by the agent, or assigned to the CFO with
-   the reason. Counters climb on both sides.
-4. **The record.** Open one approved invoice: the occurrence row, with the performer, the authority,
-   the action, the target and the resulting state.
-5. **The change.** Edit the delegated limit — one number, in the policy, not in the agent — and
-   re-run. The split moves. **Nothing about the agent was touched.**
+1. **Coverage.** The agent's eight tools are judged one at a time, the counter climbing to _"3 of 8
+   governed"_ as the segments fill. The five ungoverned ones are named rather than counted, and two
+   of them move money out. This is the wedge in §1, watched being computed rather than asserted.
+2. **The run.** Eight invoices resolve one at a time against a $10,000 delegated limit: five
+   approved by the agent, three assigned to the CFO — including the one for exactly $10,000.
 
-Beat 5 is the demo. Everything before it is setup.
+It had six. The four that went were a static agent card, a static grants list, a static occurrence
+reading, and a second run at a raised limit. **The first three were stills**, and a reader watching
+an unchanging frame for seven seconds concludes the thing is broken; three in a row taught them to
+look away before the run started. The fourth was the same animation with a different number, which
+is a rail step a reader has already learned to skip — its claim (_change the policy and the split
+moves, with nothing touched on the agent_) survives as one line under the counters, where it costs a
+sentence instead of ten seconds.
 
-**Beat 0 and beat 5 are the two that must not be cut for time.** Together they are the whole
-argument: here is how much of this agent nothing governs, and here is the governance changing
-without the agent changing.
+**Counts are small enough to check by eye, deliberately.** Eight tools with all eight rows on screen
+beats fourteen with six shown and a footnote about the rest: the number is the whole wedge, and it
+should not require trusting an ellipsis. The static `AgentCoveragePanel` on the homepage card, the
+`/operations` teaser and this page's §1 must agree with it exactly.
 
 **Blocking detail: the seed's own numbers do not agree with its policy, and the copy must not
 inherit the error.** `invoice-approval.json` describes a run that _"auto-approves seven and suspends
@@ -408,11 +414,19 @@ three."_ Its policy condition is `amount < 10000`, and the ten seeded invoices a
 320, 9800, **10000**, 2400, 18750, 42000, 12300 — so a real run approves **six** and assigns
 **four**. The invoice at exactly $10,000 is on the wrong side of a strict `lt`.
 
-Two things follow. First, no number goes on the page until the platform decides whether the limit is
-`lt` or `lte` and the seed description is corrected to match — a marketing page that publishes 7/3
-gets caught by the first person who runs it. Second, **the boundary invoice is the best beat in the
-demo and should be made deliberate**: the one at exactly the limit escalating is what proves the
-limit is a rule rather than a vibe. Call it out in the demo copy rather than hiding it.
+**Resolved on the site's side; still open on the platform's.** Rather than wait, the page publishes
+what the policy _actually does_ and never what the seed's prose claims. The demo narrates eight of
+the ten — dropping the $320 and the $12,300, which add a row each and no argument — and its split is
+**five approved, three assigned**, which is that subset judged by `amount < 10000`.
+
+The boundary invoice was kept and **made the point rather than hidden**: the one at exactly $10,000
+escalating is what proves the limit is a rule rather than a vibe, and it is the row left open in the
+enforcement panel because it is the one where a reader's intuition is wrong and the rule is not.
+
+What remains for `dna-codes-platform` is unchanged: decide whether the limit is `lt` or `lte` and
+correct the seed's description to match. Nothing on the site depends on that decision, but the seed
+currently ships prose that its own policy contradicts, and the next person to read it will believe
+the prose.
 
 **Second discrepancy, same file.** The seed's description says payment _"escalates to the
 Controller,"_ but `pol-payment-authority` allows every amount (`amount >= 0`) and its escalation
