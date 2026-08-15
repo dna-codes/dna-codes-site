@@ -1,0 +1,59 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import ProductMark from '~/components/ui/ProductMark.astro';
+import AgentCoveragePanel from '~/components/widgets/AgentCoveragePanel.astro';
+import { PRODUCT } from '~/data/products';
+
+// One paragraph and one link at the foot of /operations, in the shape OverlayTeaser was
+// specified for. Agent Operations is an extension of this product, so a reader who has
+// just watched knowledge become a model is exactly the reader for it — but it is a page,
+// not a section, because bolting an execution story onto the end would change this page's
+// buyer mid-scroll.
+//
+// The sentence is the one held back from the product page's hero for being too
+// argumentative to carry a headline, which is exactly right where a single line has to
+// make the whole case.
+const product = PRODUCT['agent-operations'];
+---
+
+<WidgetWrapper containerClass="max-w-5xl mx-auto">
+  <div class="rounded-2xl border border-white/10 bg-slate-900/50 p-6 sm:p-8">
+    <div class="grid md:grid-cols-2 gap-8 items-center">
+      <div>
+        <div class="flex items-center gap-2.5 mb-4">
+          <ProductMark icon={product.icon} size="sm" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">{product.name}</span>
+          <span
+            class="text-[10px] font-bold uppercase tracking-wider bg-amber-400/10 text-amber-300 border border-amber-400/30 rounded px-2 py-0.5"
+          >
+            {product.status}
+          </span>
+        </div>
+
+        <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-white mb-4">
+          The org chart has a new kind of box in it.
+        </h2>
+
+        <p class="text-muted leading-relaxed mb-5">
+          The same model that tells a person what to do can tell an agent — and refuse it. Your agents hold the
+          operations you granted them, under the policies you already wrote, and what they may not do they hand to a
+          person instead of failing.
+        </p>
+
+        <a
+          href={product.href}
+          class="group inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-5 py-2.5 text-sm font-semibold text-primary transition-colors duration-200 hover:bg-primary hover:border-primary hover:text-white"
+        >
+          See it run
+          <Icon
+            name="tabler:arrow-right"
+            class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+          />
+        </a>
+      </div>
+
+      <AgentCoveragePanel variant="card" />
+    </div>
+  </div>
+</WidgetWrapper>

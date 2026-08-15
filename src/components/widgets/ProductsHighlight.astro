@@ -2,6 +2,7 @@
 import { Icon } from 'astro-icon/components';
 import { Image } from 'astro:assets';
 import ProductMark from '~/components/ui/ProductMark.astro';
+import AgentCoveragePanel from '~/components/widgets/AgentCoveragePanel.astro';
 import { PRODUCT } from '~/data/products';
 // Captured from the live miniature on /overlay rather than from the product screenshots in
 // this folder: every one of those has a light host application, which next to the dark
@@ -9,8 +10,8 @@ import { PRODUCT } from '~/data/products';
 import overlayShot from '~/assets/images/overlay/panel-on-dark-app.png';
 import operationsShot from '~/assets/images/operations/process-flow-output.png';
 
-// Two products, two sentences each, side by side. This is the first thing below the hero,
-// so its job is to make a visitor understand in one glance that there are exactly two
+// Three products, two sentences each, side by side. This is the first thing below the hero,
+// so its job is to make a visitor understand in one glance that there are exactly three
 // things and which of them is theirs. Everything else is on the product page.
 //
 // Each card leads with a real shot of the thing rather than an icon: the Overlay's panel
@@ -19,32 +20,51 @@ import operationsShot from '~/assets/images/operations/process-flow-output.png';
 // They are screenshots of our own UI, which means they go stale silently — retake them in
 // any change that alters the panel chrome on either page.
 //
+// Agent Operations carries a live render of `AgentCoveragePanel` rather than a screenshot,
+// because there is nothing to photograph yet and a stock image would be the one dishonest
+// thing on the page. It is the same component the product page opens on, so the card still
+// promises exactly what the click gives. Replace it with a capture of the demo's first beat
+// once that exists — the frame is already the right aspect.
+//
 // Deliberately parallel in shape: same card, same number of lines, same verb ending in a
-// link. Asymmetry here would read as one product mattering more than the other.
+// link. Asymmetry here would read as one product mattering more than the others. The order
+// is the suite order, Model → Govern → Run, which is also what /pricing publishes.
 const products = [
   {
     name: PRODUCT.operations.name,
-    verb: 'Model it',
+    verb: PRODUCT.operations.verb,
     icon: PRODUCT.operations.icon,
     headline: 'Knowledge in. Operating model out.',
     body: 'Meeting notes, docs and tribal knowledge compile into a living spec, and the runbooks, SOPs and agents your team actually runs on.',
-    href: '/operations',
+    href: PRODUCT.operations.href,
     cta: 'Try the demo',
-    status: 'Live demo',
+    status: PRODUCT.operations.status,
     image: operationsShot,
     alt: 'The Operations output panel showing a generated process flow: welcome email sent, intro call booked, product walkthrough and a 30-day check-in, each with its owning team and timing.',
   },
   {
     name: PRODUCT.overlay.name,
-    verb: 'Govern it',
+    verb: PRODUCT.overlay.verb,
     icon: PRODUCT.overlay.icon,
     headline: 'Operational controls, in your app.',
     body: 'The same model, reaching into your product. Every button carries the operation it performs, so who may press it, whether it is on, and everything it has done are answered on the control itself.',
-    href: '/overlay',
+    href: PRODUCT.overlay.href,
     cta: 'Explore the Overlay',
-    status: 'Early access',
+    status: PRODUCT.overlay.status,
     image: overlayShot,
     alt: 'The Overlay panel docked beside a running application, answering for a refund button with its address, the operation it performs, who may press it, and a note that every refund is now recorded.',
+  },
+  {
+    name: PRODUCT['agent-operations'].name,
+    verb: PRODUCT['agent-operations'].verb,
+    icon: PRODUCT['agent-operations'].icon,
+    headline: 'An agent is an actor. Govern it like one.',
+    body: 'The same model, handed to your agents. Each holds the operations you granted it, under the policies you already wrote — and what it may not do, it hands to a person instead.',
+    href: PRODUCT['agent-operations'].href,
+    cta: 'See it run',
+    status: PRODUCT['agent-operations'].status,
+    image: null,
+    alt: '',
   },
 ];
 ---
@@ -62,10 +82,15 @@ const products = [
       >
         Products
       </p>
-      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Two products, one model.</h2>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Three products, one model.</h2>
     </div>
 
-    <div class="grid gap-5 md:grid-cols-2">
+    {
+      /* Two up at md, three at lg. Three across a 13" laptop makes each 4:3 frame small
+        enough that the screenshots stop being readable, and a card whose picture cannot be
+        read is a card with a decoration on it. */
+    }
+    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
       {
         products.map(({ name, verb, icon, headline, body, href, cta, status, image, alt }) => (
           <a
@@ -77,14 +102,20 @@ const products = [
                 is captured with room to spare; the Overlay shot takes its crop out of the
                 host app's left side so the whole docked panel survives. */}
             <div class="border-b border-white/10 bg-page">
-              <Image
-                src={image}
-                alt={alt}
-                widths={[520, 1040]}
-                sizes="(min-width: 768px) 480px, 100vw"
-                loading="lazy"
-                class="aspect-[4/3] w-full object-cover"
-              />
+              {image ? (
+                <Image
+                  src={image}
+                  alt={alt}
+                  widths={[520, 1040]}
+                  sizes="(min-width: 1024px) 380px, (min-width: 768px) 480px, 100vw"
+                  loading="lazy"
+                  class="aspect-[4/3] w-full object-cover"
+                />
+              ) : (
+                <div class="aspect-[4/3] w-full p-3 flex">
+                  <AgentCoveragePanel variant="card" class="w-full" />
+                </div>
+              )}
             </div>
 
             <div class="flex flex-col flex-1 p-6 sm:p-7">

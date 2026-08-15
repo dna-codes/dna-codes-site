@@ -29,7 +29,7 @@ const ACTION_URL = 'https://formspree.io/f/moeadkla';
 
 export interface Props {
   /** Tick an interest up front when the form sits inside a product's own page. */
-  preselect?: 'operations' | 'overlay';
+  preselect?: 'operations' | 'overlay' | 'agent-operations';
   /** Overridden only where two instances could collide on one page. */
   id?: string;
 }
@@ -53,8 +53,8 @@ const identityFields: Field[] = [
   { name: 'company', label: 'Company', type: 'text', autocomplete: 'organization', required: true, half: false },
 ];
 
-// Multi-select rather than a toggle: the two products are surfaces on one model, so
-// wanting both is the common answer rather than a fence-sit. "Not sure yet" is a real
+// Multi-select rather than a toggle: the products are surfaces on one model, so wanting
+// more than one is the common answer rather than a fence-sit. "Not sure yet" is a real
 // answer too, and cheaper to give than a wrong one — it routes to a conversation
 // instead of a demo of the wrong half.
 const interests = [
@@ -71,10 +71,41 @@ const interests = [
     icon: PRODUCT.overlay.icon,
   },
   {
+    value: 'agent-operations',
+    label: PRODUCT['agent-operations'].name,
+    blurb: 'Put agents to work under our own rules',
+    icon: PRODUCT['agent-operations'].icon,
+  },
+  {
     value: 'undecided',
     label: 'Not sure yet',
     blurb: 'Show me which one fits what we are doing',
     icon: 'tabler:help-circle',
+  },
+];
+
+// The qualification question, one per product that has one. It was hard-coded to the
+// Overlay's stack question, which stopped working the moment a third product arrived with
+// a different — and better — thing to ask. Each is optional and each is the field that
+// decides who replies and about what, so a blank one still submits and a filled one is a
+// priced conversation in a line.
+//
+// `name` differs per question rather than sharing one field: two answers to two different
+// questions arriving under one key is a mailbox nobody can read, and Formspree passes
+// unknown fields through, so there is no schema to keep in step.
+const questions = [
+  {
+    interest: 'overlay',
+    name: 'stack',
+    label: 'What is your application built with?',
+    placeholder: 'React, Vue, Rails + Hotwire…',
+  },
+  {
+    interest: 'agent-operations',
+    name: 'agents',
+    label: 'What are your agents doing today, and what stops them?',
+    placeholder:
+      'Two Claude agents in a Python service. Nothing stops them, honestly — they use a service account with the same permissions as our admin.',
   },
 ];
 ---
@@ -116,7 +147,7 @@ const interests = [
         Which parts are you interested in? <span class="font-normal text-slate-500">Pick as many as apply.</span>
       </legend>
 
-      <div class="grid gap-2.5 sm:grid-cols-3">
+      <div class="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
         {
           interests.map(({ value, label, blurb, icon }) => (
             <label
@@ -142,21 +173,25 @@ const interests = [
       </div>
     </fieldset>
 
-    <!-- Only meaningful for the Overlay, which installs into a running application.
-         Hidden until it is, so an Operations visitor is never asked to describe a
-         codebase to get on a list. Optional either way. -->
-    <div class="mt-4" data-waitlist-stack hidden>
-      <label for={`${id}-stack`} class="block text-xs font-semibold text-slate-300 mb-1.5">
-        What is your application built with? <span class="font-normal text-slate-500">Optional.</span>
-      </label>
-      <input
-        id={`${id}-stack`}
-        name="stack"
-        type="text"
-        placeholder="React, Vue, Rails + Hotwire…"
-        class="w-full px-3.5 py-2.5 rounded-lg bg-slate-800/80 border border-slate-600 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-      />
-    </div>
+    <!-- One question per product that has one, each hidden until its product is ticked, so
+         an Operations visitor is never asked to describe a codebase and an Overlay visitor
+         is never asked what their agents do. Optional either way. -->
+    {
+      questions.map((q) => (
+        <div class="mt-4" data-waitlist-question={q.interest} hidden>
+          <label for={`${id}-${q.name}`} class="block text-xs font-semibold text-slate-300 mb-1.5">
+            {q.label} <span class="font-normal text-slate-500">Optional.</span>
+          </label>
+          <input
+            id={`${id}-${q.name}`}
+            name={q.name}
+            type="text"
+            placeholder={q.placeholder}
+            class="w-full px-3.5 py-2.5 rounded-lg bg-slate-800/80 border border-slate-600 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+        </div>
+      ))
+    }
 
     <div class="mt-4">
       <label for={`${id}-context`} class="block text-xs font-semibold text-slate-300 mb-1.5">
@@ -215,7 +250,7 @@ const interests = [
     const error = form.querySelector<HTMLElement>('[data-waitlist-error]');
     const submit = form.querySelector<HTMLButtonElement>('[data-waitlist-submit]');
     const success = form.parentElement?.querySelector<HTMLElement>('[data-waitlist-success]');
-    const stackBlock = form.querySelector<HTMLElement>('[data-waitlist-stack]');
+    const questionBlocks = Array.from(form.querySelectorAll<HTMLElement>('[data-waitlist-question]'));
     const boxes = Array.from(form.querySelectorAll<HTMLInputElement>('input[name="interest"]'));
 
     const fail = (message: string) => {
@@ -224,26 +259,27 @@ const interests = [
       error.hidden = false;
     };
 
-    // The stack question only applies to the Overlay, so it appears when the Overlay
-    // does. Its value is cleared on the way out — a field nobody can see must not
-    // still be submitting an answer somebody typed before changing their mind.
-    const syncStack = () => {
-      if (!stackBlock) return;
-      const wantsOverlay = boxes.some((b) => b.value === 'overlay' && b.checked);
-      stackBlock.hidden = !wantsOverlay;
-      if (!wantsOverlay) {
-        const input = stackBlock.querySelector<HTMLInputElement>('input');
-        if (input) input.value = '';
-      }
+    // Each product's question appears when its product does. Values are cleared on the way
+    // out — a field nobody can see must not still be submitting an answer somebody typed
+    // before changing their mind.
+    const syncQuestions = () => {
+      questionBlocks.forEach((block) => {
+        const wanted = boxes.some((b) => b.value === block.dataset.waitlistQuestion && b.checked);
+        block.hidden = !wanted;
+        if (!wanted) {
+          const input = block.querySelector<HTMLInputElement>('input');
+          if (input) input.value = '';
+        }
+      });
     };
 
     boxes.forEach((b) =>
       b.addEventListener('change', () => {
-        syncStack();
+        syncQuestions();
         if (error && boxes.some((x) => x.checked)) error.hidden = true;
       })
     );
-    syncStack();
+    syncQuestions();
 
     form.addEventListener('submit', async (event) => {
       // A checkbox group cannot express "at least one" natively, and this is the field
