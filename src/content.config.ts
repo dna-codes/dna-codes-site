@@ -62,6 +62,16 @@ const postCollection = defineCollection({
     tags: z.array(z.string()).optional(),
     author: z.string().optional(),
 
+    // Renders as a kicker above the headline: "The Future of Programming · Layer 02:
+    // Semantics". It carries series identity and the layer's position in the stack so
+    // the title itself doesn't have to — the title stays an argument, not a label.
+    series: z
+      .object({
+        name: z.string(),
+        layer: z.string().optional(),
+      })
+      .optional(),
+
     metadata: metadataDefinition(),
   }),
 });
