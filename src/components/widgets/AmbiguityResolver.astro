@@ -1,0 +1,239 @@
+---
+import { twMerge } from 'tailwind-merge';
+
+// The figure for "Semantics: Software Runs on Words Nobody Defined".
+//
+// The article's hard part is that its bug has no villain: two services read one field,
+// both behave correctly, and the system is still wrong. Prose can assert that. It takes
+// a control to make someone *feel* it, because the reader has to watch the same two
+// implementations stay put while the verdict on them changes.
+//
+// So the toggle does not change the code. It changes the definition — the one thing that
+// was never written down — and the reader watches correctness get reassigned underneath
+// two services that never moved. The default state is `undefined`, because that is the
+// status quo and it is the state with the sharpest finding: nobody is wrong, and the
+// report is still short.
+//
+// An earlier cut had the toggle flip which service was "the bug". That read as a quiz
+// with a right answer, which is exactly backwards — the point is that the answer was
+// never recorded, not that it is hard to guess.
+
+type Reading = 'undefined' | 'contact' | 'account';
+
+const readings: { id: Reading; label: string; definition: string }[] = [
+  {
+    id: 'undefined',
+    label: 'Undefined',
+    definition: 'No binding definition exists. Each service inferred one from whatever was nearby.',
+  },
+  {
+    id: 'contact',
+    label: 'Billing contact',
+    definition: 'Customer — the person an invoice is addressed to, whose card is on file.',
+  },
+  {
+    id: 'account',
+    label: 'Parent account',
+    definition: 'Customer — the legal entity a contract is signed with and an invoice is reconciled against.',
+  },
+];
+
+const services = [
+  {
+    name: 'Billing service',
+    does: 'Credits the party the invoice was addressed to.',
+    resolves: 'Dana Reyes',
+    kind: 'person · 1 of 40 under Northwind',
+    agreesWith: 'contact' as Reading,
+  },
+  {
+    name: 'Reporting service',
+    does: 'Rolls the payment up to the party the contract was signed with.',
+    resolves: 'Northwind Group',
+    kind: 'account · holds the contract',
+    agreesWith: 'account' as Reading,
+  },
+];
+
+const verdicts: Record<Reading, { tone: string; text: string }> = {
+  undefined: { tone: 'neutral', text: 'Correct, by its own reading' },
+  contact: { tone: '', text: '' },
+  account: { tone: '', text: '' },
+};
+
+const outcomes: Record<Reading, string> = {
+  undefined:
+    'Neither service is wrong. There is no definition for either one to contradict — so types pass, tests pass, review passes, and the reconciliation report is short $40,000.',
+  contact:
+    'The code has not changed. One service is now demonstrably wrong, which is a ticket you can file — and the reporting rollup is the thing to fix.',
+  account:
+    'The code has not changed. One service is now demonstrably wrong, which is a ticket you can file — and the billing credit is the thing to fix.',
+};
+
+export interface Props {
+  class?: string;
+  /** Lock the figure to one reading. Omit for the interactive version. */
+  reading?: Reading;
+}
+
+const { class: className, reading } = Astro.props;
+const locked = reading !== undefined;
+const initial = reading ?? 'undefined';
+
+const verdictFor = (agreesWith: Reading, r: Reading) =>
+  r === 'undefined'
+    ? verdicts.undefined
+    : r === agreesWith
+      ? { tone: 'ok', text: 'Matches the definition' }
+      : { tone: 'bad', text: 'Contradicts the definition' };
+---
+
+<figure data-ambiguity-resolver data-reading={initial} class={twMerge('not-prose my-10', className)}>
+  <div
+    class="overflow-hidden rounded-2xl border-2 border-primary bg-slate-900/90 shadow-[0_0_48px_rgba(13,148,136,0.25)]"
+  >
+    <!-- Header + reading toggle -->
+    <div class="flex flex-wrap items-center gap-3 gap-y-2 border-b border-white/8 p-3 sm:px-4">
+      <span class="text-xs font-bold uppercase tracking-widest text-primary">One word, two readings</span>
+      {
+        locked ? (
+          <span class="ml-auto text-xs text-slate-400">{readings.find((x) => x.id === initial)?.label}</span>
+        ) : (
+          <div class="ml-auto flex flex-wrap gap-1" role="group" aria-label="What does customer mean?">
+            {readings.map((r) => (
+              <button data-reading-btn={r.id} aria-pressed={r.id === initial} class="reading-btn">
+                {r.label}
+              </button>
+            ))}
+          </div>
+        )
+      }
+    </div>
+
+    <!-- The shared artifact: the only thing actually written down -->
+    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-white/8 px-4 py-3 sm:px-5">
+      <code class="font-mono text-sm text-slate-200">invoice_4471.customer_id</code>
+      <code class="font-mono text-sm text-slate-500">= 8f2a91c4…</code>
+      <span class="ml-auto text-[11px] uppercase tracking-wider text-slate-500">The only thing written down</span>
+    </div>
+
+    <!-- The definition, swapped by reading -->
+    <div class="border-b border-white/8 bg-black/20 px-4 py-3 sm:px-5">
+      {
+        readings.map((r) => (
+          <p data-definition={r.id} hidden={r.id !== initial} class="text-sm leading-relaxed text-slate-300">
+            {r.id === 'undefined' ? <span class="text-slate-400 italic">{r.definition}</span> : r.definition}
+          </p>
+        ))
+      }
+    </div>
+
+    <!-- Two services, unchanged across every reading -->
+    <div class="grid gap-px bg-white/8 sm:grid-cols-2">
+      {
+        services.map((s) => (
+          <div class="bg-slate-900/90 p-4 sm:p-5">
+            <p class="text-sm font-semibold text-slate-200">{s.name}</p>
+            <p class="mt-1 text-xs leading-relaxed text-slate-400">{s.does}</p>
+            <p class="mt-3 font-mono text-sm text-primary">→ {s.resolves}</p>
+            <p class="mt-0.5 text-[11px] text-slate-500">{s.kind}</p>
+            <div class="mt-3">
+              {readings.map((r) => {
+                const v = verdictFor(s.agreesWith, r.id);
+                return (
+                  <span data-verdict={r.id} hidden={r.id !== initial} class={`verdict ${v.tone}`}>
+                    {v.text}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- What the system does, regardless -->
+    <div class="border-t border-white/8 bg-black/30 px-4 py-3 sm:px-5">
+      {
+        readings.map((r) => (
+          <p data-outcome={r.id} hidden={r.id !== initial} class="text-xs leading-relaxed text-slate-400">
+            {outcomes[r.id]}
+          </p>
+        ))
+      }
+    </div>
+  </div>
+
+  <figcaption class="mt-3 text-sm leading-relaxed text-muted dark:text-slate-400">
+    Neither service changes between these three views. Only the definition does — and it decides whether there is a bug
+    here at all.
+  </figcaption>
+</figure>
+
+<style>
+  /* Plain CSS, not @apply — Tailwind v4 needs an @reference in scoped component styles,
+     and the rest of the widgets here already write these out longhand. */
+  .reading-btn {
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: 0.375rem;
+    color: rgb(148 163 184);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.625rem;
+    transition:
+      color 0.15s,
+      background-color 0.15s,
+      border-color 0.15s;
+  }
+  .reading-btn:hover {
+    border-color: rgb(255 255 255 / 0.2);
+    color: rgb(226 232 240);
+  }
+  .reading-btn[aria-pressed='true'] {
+    background-color: rgb(20 184 166 / 0.18);
+    border-color: rgb(20 184 166 / 0.5);
+    color: rgb(45 212 191);
+  }
+
+  .verdict {
+    border-radius: 0.25rem;
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    padding: 0.125rem 0.5rem;
+    text-transform: uppercase;
+  }
+  .verdict.neutral {
+    background-color: rgb(255 255 255 / 0.08);
+    color: rgb(148 163 184);
+  }
+  .verdict.ok {
+    background-color: rgb(16 185 129 / 0.15);
+    color: rgb(110 231 183);
+  }
+  .verdict.bad {
+    background-color: rgb(244 63 94 / 0.15);
+    color: rgb(253 164 175);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ambiguity-resolver]').forEach((root) => {
+    const btns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-reading-btn]'));
+    if (!btns.length) return; // locked to a single reading
+
+    const groups = ['definition', 'verdict', 'outcome'].map((key) =>
+      Array.from(root.querySelectorAll<HTMLElement>(`[data-${key}]`)).map((el) => [el, el.dataset[key]] as const)
+    );
+
+    const setReading = (reading: string) => {
+      root.dataset.reading = reading;
+      btns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.readingBtn === reading)));
+      groups.forEach((group) => group.forEach(([el, value]) => (el.hidden = value !== reading)));
+    };
+
+    btns.forEach((btn) => btn.addEventListener('click', () => setReading(btn.dataset.readingBtn!)));
+  });
+</script>

@@ -53,6 +53,7 @@ const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> =
     tags: rawTags = [],
     category: rawCategory,
     author,
+    series,
     draft = false,
     metadata = {},
   } = data;
@@ -88,6 +89,7 @@ const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> =
     category: category,
     tags: tags,
     author: author,
+    series: series,
 
     draft: draft,
 
@@ -106,7 +108,10 @@ const load = async function (): Promise<Array<Post>> {
 
   const results = (await Promise.all(normalizedPosts))
     .sort((a, b) => b.publishDate.valueOf() - a.publishDate.valueOf())
-    .filter((post) => !post.draft);
+    // Drafts show up under `astro dev` so scheduled posts can be previewed at their real
+    // URL, and never in a production build — `import.meta.env.DEV` is false during
+    // `astro build`, so no route, sitemap entry or RSS item is emitted for them.
+    .filter((post) => import.meta.env.DEV || !post.draft);
 
   return results;
 };

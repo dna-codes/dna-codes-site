@@ -1,0 +1,141 @@
+---
+publishDate: 2026-08-23T00:00:00Z
+series:
+  name: The Future of Programming
+  layer: 'Layer 02: Semantics'
+author: Tim Kleier
+title: 'Semantics: Software Runs on Words Nobody Defined'
+excerpt: "Every layer of your system is written down except one. The code, the schema, the API contract — all recorded, all checkable. The meanings of the words they are built on live in somebody's head, and that is where the expensive bugs start."
+image: '~/assets/images/abstraction-layers.png' # PLACEHOLDER — replace before publish
+draft: true
+category: Engineering
+tags:
+  - semantics
+  - domain-driven design
+  - ai agents
+  - abstraction
+---
+
+import AmbiguityResolver from '~/components/widgets/AmbiguityResolver.astro';
+
+A payment posts against invoice 4471, and two services record it correctly.
+
+The billing service credits the billing contact — the person the invoice was addressed to, whose card is on file. The reporting service credits the parent account — the legal entity the contract was signed with, which has forty billing contacts under it. Both services did exactly what they were built to do. Both read a field called `customer_id`. Neither is wrong.
+
+Six weeks later a reconciliation report is short by an amount nobody can source, and the investigation ends where these always end: two engineers, two readings of one word, and a system that has been disagreeing with itself since March.
+
+Nobody wrote the bug. That is what makes it expensive.
+
+<AmbiguityResolver />
+
+## What semantics means here
+
+The word does a lot of unrelated work in this industry, which is most of why it lands as vague. Semantic HTML is about picking the right tag. Semantic versioning is about what a number promises. The semantic web was a specific research program with a specific set of standards. Semantic search means embeddings now. Ask ten engineers what "semantics" refers to and you will get five of those answers and a shrug.
+
+Here it means one thing: **the layer where words get their referents.** Which terms in this business carry a specific meaning, and exactly what each one points at. `Customer`, `Invoice`, `Pay` — not how they are stored, not what they do, just what they _are_.
+
+That sounds like philosophy until you notice what makes it different from every other layer of your system. Your code is written down; it has to be, or it does not run. Your schema is written down. Your API contract is written down, and something validates against it. Every layer in the stack has an artifact that the machine reads, which means every layer has somewhere for a correction to land.
+
+The meanings underneath all of them do not. They live in the heads of whoever was in the room, in a wiki page nothing reads, or in an inference some model made at two in the morning. Meaning is the one input every layer depends on and the one input no layer stores.
+
+That is why this is a layer and not a hygiene problem. And it is why the bug above cost six weeks: there was no artifact to be wrong. There was nothing to check, nothing to review, nothing to correct — just two reasonable people who never discovered they disagreed.
+
+## The defect nothing is looking for
+
+Every mechanism we have for catching defects assumes the defect is in the code.
+
+**Types don't see it.** `customer_id: UUID` is true under both readings. The type checker is satisfied, and it should be — it is checking a shape, and the disagreement is about a referent. There is no type system in production use that distinguishes "the UUID of the person who pays" from "the UUID of the entity that owes."
+
+**Tests don't see it.** Each service's tests were written by the same person who held that service's definition, so each suite encodes its own reading and then confirms it. Both suites are green. Both are measuring the wrong thing in the same direction.
+
+**Review doesn't see it.** A reviewer reads a diff against their own understanding of what the words mean. If they share the author's reading, it looks right. If they hold the other one, catching it requires noticing that a word means something different three services away — which is not a thing a diff can show you.
+
+**Integration tests nearly see it.** They catch it only if a fixture happens to contain a customer whose billing contact differs from its parent account. That is precisely the case a fixture author, holding one definition, has no reason to construct.
+
+The defect is not in any file. It is in the space between two files, and the entire toolchain is file-shaped.
+
+## The glossary problem
+
+The standard remedy is a glossary — a page in the wiki, a Confluence space, a `TERMINOLOGY.md`. It is not that people are too lazy to read it. It is that nothing depends on it.
+
+A definition with no consumer is a comment, and comments rot for a well-understood reason: nothing checks them. The glossary and the running system can disagree indefinitely, and only one of them is load-bearing. Six months in, the glossary is a record of what a team believed when it wrote the glossary.
+
+Naming conventions do better and still fall short. `parent_account_id` is a genuine improvement over `customer_id` — it encodes which reading this column took. But it encodes the decision without stating it. It doesn't tell you what a parent account is, when one comes into existence, or whether the parent account in the CRM is the same kind of thing as the parent account in billing.
+
+Semantic layers in the warehouse are the closest most teams get, and they sit downstream of the problem. dbt can tell you what `revenue` means in a dashboard, and that is real value, but it is describing a decision the application made months earlier. By the time a term reaches the warehouse, the fork has already happened. You are documenting the divergence, not preventing it.
+
+## Drift is a rate, not an event
+
+Here is the part that makes this structural rather than unlucky: the second definition is never authored. It is inferred.
+
+Someone joins, needs to know what `customer` means, and works it out from the evidence at hand — a column name, what the nearest code did, a sentence from onboarding, the shape of an existing query. An inference drawn from local evidence is usually locally correct. That is exactly why it survives review, and exactly why it can be globally wrong.
+
+That process runs every time anything touches the system. Every new service. Every integration. Every contractor. Every agent session. Nobody is being careless; each person is doing reasonable work with the information in front of them.
+
+So vocabulary drift is not an incident that happens to a codebase. It is a rate. The only variables are how many core nouns your business has and how many parties touch them, and both of those numbers only go up.
+
+## A definition with somewhere to live
+
+What would it take to actually fix this? Not better prose. The content is the easy part — any competent team could write these in an afternoon:
+
+> **Invoice** — a demand for payment issued against a completed order. Not a Receipt, which acknowledges one. Not a Statement, which summarizes several.
+>
+> **Customer** — the parent account a contract is signed with and an invoice is reconciled against. A Billing Contact is a Person attached to a Customer, not a kind of Customer.
+
+The hard part is the word _binding_. The definition has to be an input to the layers underneath it, not a description sitting beside them.
+
+When the ontology is derived from that definition, `Customer` has one referent, because there is only one place the referent came from. When operations are written against the ontology, `Pay Invoice` inherits it. When the REST endpoint and the MCP tool are projected from the operation, they inherit it too. The definition stops being documentation and becomes the thing everything downstream is generated from — at which point correcting it is a change with consequences rather than an edit to a page nobody reads.
+
+None of this is a new idea, and it would be dishonest to pretend otherwise. Domain-Driven Design named the problem in 2003 and named it well: a ubiquitous language, and the observation that where the language forks, the model has already forked. Data catalogs, schema registries, controlled vocabularies, SKOS, dbt docs — there are decades of infrastructure for recording what words mean.
+
+All of it is advisory. A catalog describes what a column means; it cannot stop the column from meaning something else. A ubiquitous language is enforced by team discipline, which holds right up until someone new joins or two bounded contexts have to talk to each other. That is the distinction this whole series turns on: a practice describes the layers below it, an abstraction layer is what those layers are derived from. Semantics has been a practice for twenty years. It has never been a layer.
+
+## What comes in, and what goes out
+
+A layer is only real if you can say what it receives and what it produces. Here is both, using the sentence this series started with.
+
+**Coming in, from Intent.** Someone says: _"A customer should be able to pay an invoice."_ That is the layer above — a goal, in somebody's own words, with no structure and no system boundaries. The only work this layer does with it is ask which words in that sentence carry a specific meaning here, and then say what each one refers to.
+
+Three do. `customer`, `invoice`, `pay`. The rest is ordinary English and needs no help. So the handoff in is small: a sentence becomes a short list of load-bearing terms, each with a referent. Nothing has been designed. No tables, no endpoints, no decisions about behavior — just _these three words are doing work, and here is what each one points at._
+
+**Going out, to Ontology.** This is where a definition stops being a nicety. Read the Invoice definition again:
+
+> **Invoice** — a demand for payment issued against a completed order.
+
+That sentence contains an entity (`Invoice`), a second entity it references (`Order`), and the relationship between them (`issued_against`). It is already a structure; it is just written in prose. The Customer definition does the same work and settles the bug at the top of this article on the way — a Billing Contact is a `Person` _attached to_ a Customer, which is a relationship, not a subtype.
+
+Nobody designs that. You read it out of the definitions, because the definitions were written precisely enough to be read out of. That is the handoff: the next layer up from the bottom takes bound terms and returns entities and relationships.
+
+And notice what makes it work. The transformation is boring — mechanical, checkable, arguable in a review. It gets interesting only when the input was vague, and the input is vague exactly when nobody did this layer. That is the pattern every handoff in this stack follows, and the reason the bottom of the ladder is dull and dependable while the top is guesswork.
+
+## Why this stopped being a documentation problem
+
+You could read everything above as a familiar complaint about hygiene. Teams have lived with terminology drift for as long as there have been teams, and mostly they have muddled through, because the drift was slow enough to catch.
+
+Agents change the rate.
+
+A language model is, among other things, a machine for resolving ambiguity confidently. Hand it `customer` with no definition and it will pick a reading — whichever one the surrounding tokens best support — and build clean, working, plausible code on top of it.
+
+What it will not do is the thing a new engineer does on day three, which is ask _wait, which customer?_ That question is the entire value of a new hire. It is the moment ambiguity gets caught, and it happens because a human notices they are unsure. The model does not hesitate, and the reading it settled on is not recorded anywhere, so nobody gets the chance to disagree with it.
+
+Then it re-picks. A human who holds the wrong definition at least holds it consistently — they will be wrong the same way for years, which is a pattern you can eventually spot. A model starts fresh each session and may take the other reading next Tuesday, in the same repository, in a file forty lines from the first one. Human drift is slow enough to catch. Agent drift is per-session.
+
+It runs the other direction too, and more sharply. An agent that operates your business — one that actually emails people about overdue invoices — will decide which customer to email. It has no choice; the instruction requires a referent. A system prompt is a fine place to put instructions and a poor place for a definition to live, because the next agent, on the next surface, is reading a different prompt.
+
+## What we're building
+
+DNA is a format for writing these layers down, and semantics is where it starts: terms defined once, in the place the layers below are read from. The [operational layer](/docs/operational) is where those terms become the vocabulary that structures, activities, and operations are written in — so a definition is not a note attached to the model, it is what the model is made of.
+
+The claim is narrow and worth stating precisely. Not that you should define your terms; DDD said that, correctly, two decades ago. The claim is that the definition belongs upstream of the schema, the operations, and the surfaces — so that fixing it fixes them, and contradicting it is something the system can notice.
+
+## The resolution needs somewhere to go
+
+`customer` is going to keep meaning two things, and it should. Businesses really do have parent accounts and billing contacts, and both of them deserve names. Ambiguity in natural language is not a defect to be engineered away, and any approach that starts by demanding one word per concept will lose to how people actually talk within a week.
+
+The failure is having nowhere to put the resolution. Two engineers can notice the ambiguity, talk it through, agree completely, and still ship the same reconciliation bug — because an agreement that lives in a conversation is not available to the next service, the next hire, or the next session. The understanding was correct. It just had no address.
+
+Knowing what your words mean is not the same as knowing what exists. A vocabulary can tell you that a Customer and an Invoice are different things; it cannot tell you that an Invoice belongs to exactly one Customer, or that a Payment is what settles it. That is the next layer up from the bottom of the gap — and it is the one most teams are confident they have already built, because they have a database. Next: Ontology.
+
+---
+
+This is the second piece in [The Future of Programming](/blog/future-of-programming-abstraction-layers), a series on the abstraction layers between intent and execution. We're building DNA Codes to make the middle of that ladder real — if this is how you're thinking about the problem too, [join the waitlist](/waitlist).

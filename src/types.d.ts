@@ -21,6 +21,9 @@ export interface Post {
   tags?: Taxonomy[];
   author?: string;
 
+  /** Series membership, rendered as a kicker above the headline. */
+  series?: Series;
+
   metadata?: MetaData;
 
   draft?: boolean;
@@ -35,6 +38,13 @@ export interface Post {
 export interface Taxonomy {
   slug: string;
   title: string;
+}
+
+export interface Series {
+  /** Series title, e.g. "The Future of Programming". */
+  name: string;
+  /** This piece's position in the series, e.g. "Layer 02: Semantics". */
+  layer?: string;
 }
 
 export interface MetaData {
