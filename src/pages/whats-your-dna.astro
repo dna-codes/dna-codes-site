@@ -1,0 +1,652 @@
+---
+// /whats-your-dna — the campaign landing page.
+//
+// Campaign-only by decision: nothing on the site links here. That means the page has to stand
+// completely alone — a visitor arrives cold, with no prior exposure to DNA and no surrounding
+// context, so each act carries its own framing rather than assuming the homepage was read first.
+//
+// The site header is replaced by GenomeBar via PageLayout's named `header` slot. The footer
+// stays: somebody who scrolls past the call to action without converting should still find the
+// docs.
+import Layout from '~/layouts/PageLayout.astro';
+import GenomeBar from '~/components/widgets/GenomeBar.astro';
+import IndustryHelix from '~/components/widgets/IndustryHelix.astro';
+import LensPicker from '~/components/widgets/LensPicker.astro';
+import GenomeGenerator from '~/components/widgets/GenomeGenerator.astro';
+
+const metadata = {
+  title: "What's your DNA? — DNA Codes",
+  description:
+    'Pick your industry and watch a whole operating model fall out of one file — process, roles, screens, API, architecture.',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <GenomeBar slot="header" />
+
+  <IndustryHelix />
+  <LensPicker />
+  <GenomeGenerator />
+</Layout>
+
+<script>
+  import { INDUSTRIES, INDUSTRY_BY_KEY, OUTPUTS, OUTPUT_BY_ID, isIndustryKey, isOutputId } from '~/data/industries';
+  import type { IndustryKey, OutputId } from '~/data/industries';
+  import { mountDnaHelixCanvas, renderDnaHelixSvg } from '~/utils/dnaHelix';
+  import { generate, loadGenome, GenerateError } from '~/utils/generate';
+  import { renderArtifact, esc } from '~/utils/genome-render';
+  import type { CompiledGenome } from '~/utils/genome-types';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const $ = <T extends Element = HTMLElement>(sel: string) => document.querySelector<T>(sel);
+  const $$ = <T extends Element = HTMLElement>(sel: string) => Array.from(document.querySelectorAll<T>(sel));
+
+  // --- State ---------------------------------------------------------------
+  //
+  // Three fields, and the URL is the only other copy. Everything on screen is a function of
+  // these, so there is nowhere for the bar, the picker, and the artifacts to disagree.
+
+  let industry: IndustryKey | null = null;
+  let selected = new Set<OutputId>();
+  let genome: CompiledGenome | null = null;
+  let generating = false;
+
+  // --- URL -----------------------------------------------------------------
+
+  function writeUrl() {
+    const url = new URL(window.location.href);
+    if (industry) url.searchParams.set('industry', industry);
+    else url.searchParams.delete('industry');
+    if (selected.size) url.searchParams.set('lenses', [...selected].join(','));
+    else url.searchParams.delete('lenses');
+    // replaceState, not pushState: a visitor toggling checkboxes should not have to press back
+    // eleven times to leave.
+    window.history.replaceState(null, '', url);
+  }
+
+  function readUrl(): { industry: IndustryKey | null; lenses: OutputId[] } {
+    const p = new URLSearchParams(window.location.search);
+    const ind = p.get('industry');
+    // Unrecognised values are ignored, never fatal — a mangled campaign link still shows a
+    // working page.
+    const lenses = (p.get('lenses') ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s): s is OutputId => isOutputId(s));
+    return { industry: isIndustryKey(ind) ? ind : null, lenses };
+  }
+
+  // --- Sticky bar ----------------------------------------------------------
+
+  function paintBar() {
+    const question = $('#genome-bar-question');
+    const answer = $('#genome-bar-answer');
+    if (!question || !answer) return;
+
+    if (!industry) {
+      question.hidden = false;
+      answer.hidden = true;
+      return;
+    }
+    const ind = INDUSTRY_BY_KEY[industry];
+    const name = $('#genome-bar-industry');
+    const vp = $('#genome-bar-valueprop');
+    if (name) name.textContent = ind.name;
+    if (vp) vp.textContent = ind.valueProp;
+
+    if (question.hidden) {
+      // Already answered — just update the text, no second animation.
+      answer.hidden = false;
+      return;
+    }
+    if (reduceMotion) {
+      question.hidden = true;
+      answer.hidden = false;
+      return;
+    }
+    question.classList.add('genome-fading');
+    window.setTimeout(() => {
+      question.hidden = true;
+      question.classList.remove('genome-fading');
+      answer.hidden = false;
+      answer.classList.add('genome-fading');
+      requestAnimationFrame(() => answer.classList.remove('genome-fading'));
+    }, 220);
+  }
+
+  function markAct(n: number) {
+    const dot = $(`[data-act-dot="${n}"]`);
+    if (dot) dot.setAttribute('data-done', '');
+  }
+
+  function appHref(): string {
+    const base = $<HTMLAnchorElement>('#create-dna-cta')?.getAttribute('href') ?? '';
+    if (!base || !industry) return base;
+    const sep = base.includes('?') ? '&' : '?';
+    return `${base.split('?')[0]}${sep}industry=${industry}&lenses=${[...selected].join(',')}`;
+  }
+
+  function paintCtas() {
+    // Both buttons read the same constant server-side; here they get the same parameters, so a
+    // visitor arrives at the app with what they already told us.
+    const href = appHref();
+    if (!href) return;
+    for (const sel of ['#genome-bar-cta', '#create-dna-cta']) {
+      const el = $<HTMLAnchorElement>(sel);
+      if (el) el.href = href;
+    }
+  }
+
+  // --- Act I: the helix ----------------------------------------------------
+
+  /**
+   * The strand behind Act I — background only, the way the homepage hero uses it. Nothing on the
+   * page reads its geometry, which is why `~/utils/dnaHelix` needed no changes to support this.
+   */
+  function mountHelix() {
+    const host = $('#helix-bg');
+    if (!host) return;
+
+    if (reduceMotion) {
+      // One static frame as SVG: no canvas, no requestAnimationFrame loop at all. A speed of
+      // zero would still spin the loop forever redrawing an identical picture.
+      const r = host.getBoundingClientRect();
+      host.innerHTML = renderDnaHelixSvg({
+        orientation: 'horizontal',
+        width: Math.round(r.width) || 1152,
+        height: Math.round(r.height) || 320,
+        helixWidth: 90,
+        nodeSize: 10,
+      });
+      return;
+    }
+
+    mountDnaHelixCanvas(host, {
+      orientation: 'horizontal',
+      helixWidth: 90,
+      nodeSize: 10,
+      speed: 0.03,
+    });
+  }
+
+  /** The line under the control. Carries the chosen model's proposition, or the standing pitch. */
+  function paintPreview() {
+    const el = $('#industry-preview');
+    if (!el) return;
+    el.textContent = industry ? INDUSTRY_BY_KEY[industry].valueProp : 'Six industries, one grammar underneath.';
+    // `data-empty` holds the muted styling; dropping it is what lights the proposition up.
+    if (industry) el.removeAttribute('data-empty');
+    else el.setAttribute('data-empty', '');
+  }
+
+  // --- Act I: the model listbox --------------------------------------------
+  //
+  // A native <select> would have given all of this away for free, and it was the first
+  // implementation. macOS draws native option popups with system chrome and ignores page styles,
+  // which made a white dropdown in the middle of a dark page — so this is hand-rolled, and owes
+  // the behaviour the native control was providing.
+  //
+  // Focus stays on the listbox while open and `aria-activedescendant` points at the current
+  // option; that is the pattern screen readers expect, and it keeps Escape and Tab simple.
+
+  let listOpen = false;
+  /** The keyboard cursor. Not the selection — nothing is chosen until Enter or a click. */
+  let activeKey: IndustryKey | null = null;
+
+  const modelButton = () => $<HTMLButtonElement>('#model-select-button');
+  const modelList = () => $<HTMLUListElement>('#model-select-list');
+
+  function paintActiveOption() {
+    const list = modelList();
+    if (!list) return;
+    for (const opt of $$('.model-option')) {
+      opt.classList.toggle('is-active', opt.getAttribute('data-industry') === activeKey);
+    }
+    if (activeKey) {
+      list.setAttribute('aria-activedescendant', `model-opt-${activeKey}`);
+      $(`#model-opt-${activeKey}`)?.scrollIntoView({ block: 'nearest' });
+    } else {
+      list.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  /** Reflects committed state onto the control: the button's label and the selected option. */
+  function paintModelSelect() {
+    const value = $('#model-select-value');
+    if (value) {
+      value.textContent = industry ? INDUSTRY_BY_KEY[industry].name : 'Select Model';
+      if (industry) value.removeAttribute('data-placeholder');
+      else value.setAttribute('data-placeholder', '');
+    }
+    if (industry) modelButton()?.setAttribute('data-chosen', '');
+    else modelButton()?.removeAttribute('data-chosen');
+    for (const opt of $$('.model-option')) {
+      opt.setAttribute('aria-selected', String(opt.getAttribute('data-industry') === industry));
+    }
+  }
+
+  function openList() {
+    const list = modelList();
+    if (!list || listOpen) return;
+    listOpen = true;
+    list.hidden = false;
+    modelButton()?.setAttribute('aria-expanded', 'true');
+    // Start the cursor on the current choice, or the first option when there is none.
+    activeKey = industry ?? INDUSTRIES[0]?.key ?? null;
+    paintActiveOption();
+    list.focus();
+  }
+
+  function closeList(opts: { focusButton?: boolean } = {}) {
+    const list = modelList();
+    if (!list || !listOpen) return;
+    listOpen = false;
+    list.hidden = true;
+    modelButton()?.setAttribute('aria-expanded', 'false');
+    activeKey = null;
+    paintActiveOption();
+    // Returning focus to the button is what makes Escape feel like a native control.
+    if (opts.focusButton) modelButton()?.focus();
+  }
+
+  function moveActive(delta: number) {
+    const keys = INDUSTRIES.map((i) => i.key);
+    if (!keys.length) return;
+    const at = activeKey ? keys.indexOf(activeKey) : -1;
+    activeKey = keys[(at + delta + keys.length) % keys.length];
+    paintActiveOption();
+  }
+
+  function wireModelSelect() {
+    const button = modelButton();
+    const list = modelList();
+    if (!button || !list) return;
+
+    button.addEventListener('click', () => (listOpen ? closeList() : openList()));
+    button.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openList();
+      }
+    });
+
+    list.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          moveActive(1);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          moveActive(-1);
+          break;
+        case 'Home':
+          e.preventDefault();
+          activeKey = INDUSTRIES[0]?.key ?? null;
+          paintActiveOption();
+          break;
+        case 'End':
+          e.preventDefault();
+          activeKey = INDUSTRIES[INDUSTRIES.length - 1]?.key ?? null;
+          paintActiveOption();
+          break;
+        case 'Enter':
+        case ' ': {
+          e.preventDefault();
+          const key = activeKey;
+          closeList({ focusButton: true });
+          if (key) chooseIndustry(key);
+          break;
+        }
+        case 'Escape':
+          e.preventDefault();
+          closeList({ focusButton: true });
+          break;
+        case 'Tab':
+          closeList();
+          break;
+      }
+    });
+
+    for (const opt of $$('.model-option')) {
+      opt.addEventListener('click', () => {
+        const key = opt.getAttribute('data-industry');
+        closeList({ focusButton: true });
+        if (isIndustryKey(key)) chooseIndustry(key);
+      });
+      opt.addEventListener('pointerenter', () => {
+        const key = opt.getAttribute('data-industry');
+        if (isIndustryKey(key)) {
+          activeKey = key;
+          paintActiveOption();
+        }
+      });
+    }
+
+    // Clicking away closes it, the way every dropdown a visitor has ever used behaves.
+    document.addEventListener('pointerdown', (e) => {
+      if (!listOpen) return;
+      if (!(e.target instanceof Node)) return;
+      if (!$('[data-model-select]')?.contains(e.target)) closeList();
+    });
+  }
+
+  // --- Act II: the picker --------------------------------------------------
+
+  function paintPicker() {
+    for (const btn of $$<HTMLButtonElement>('.lens-option')) {
+      const id = btn.dataset.output as OutputId;
+      const on = selected.has(id);
+      btn.setAttribute('aria-pressed', String(on));
+      // The last one standing refuses to switch off, and the attribute is what says so.
+      if (on && selected.size === 1) btn.setAttribute('data-locked', '');
+      else btn.removeAttribute('data-locked');
+    }
+
+    const go = $<HTMLButtonElement>('#generate-go');
+    if (go) go.disabled = !industry || selected.size === 0;
+
+    const count = $('#lens-count');
+    if (count) {
+      count.textContent = industry
+        ? `${selected.size} of ${OUTPUTS.length} selected`
+        : 'Pick an industry above to continue.';
+    }
+  }
+
+  function toggleLens(id: OutputId) {
+    if (selected.has(id)) {
+      if (selected.size === 1) {
+        // Refuse, and say why rather than silently ignoring the click.
+        const count = $('#lens-count');
+        if (count) count.textContent = 'Keep at least one — there has to be something to generate.';
+        return;
+      }
+      selected.delete(id);
+    } else {
+      selected.add(id);
+    }
+    paintPicker();
+    paintCtas();
+    writeUrl();
+  }
+
+  // --- Act III: generation -------------------------------------------------
+  //
+  // One pane, tabs arriving one at a time. The strip is both the result and the progress bar:
+  // every selected lens gets its tab up front in a pending state, and each fills in as its
+  // derivation lands. A visitor watches the strip populate rather than watching a spinner.
+
+  /** Stops the pane auto-following new tabs once the visitor has driven it themselves. */
+  let tabsPinned = false;
+
+  function activateTab(output: OutputId, opts: { focus?: boolean } = {}) {
+    for (const tab of $$<HTMLButtonElement>('.gx-tab')) {
+      const on = tab.dataset.tab === output;
+      tab.setAttribute('aria-selected', String(on));
+      // Roving tabindex: one stop for the whole strip, arrows move within it.
+      tab.tabIndex = on ? 0 : -1;
+      if (on && opts.focus) tab.focus();
+    }
+    for (const panel of $$('.gx-panel')) {
+      (panel as HTMLElement).hidden = panel.getAttribute('data-panel') !== output;
+    }
+  }
+
+  /** Left/Right/Home/End across the strip, skipping tabs whose lens has not landed yet. */
+  function onTabKeydown(e: KeyboardEvent) {
+    const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (!keys.includes(e.key)) return;
+    const ready = $$<HTMLButtonElement>('.gx-tab:not([data-pending])');
+    if (ready.length < 2) return;
+    e.preventDefault();
+    const current = ready.findIndex((t) => t.getAttribute('aria-selected') === 'true');
+    const next =
+      e.key === 'Home'
+        ? 0
+        : e.key === 'End'
+          ? ready.length - 1
+          : (current + (e.key === 'ArrowRight' ? 1 : -1) + ready.length) % ready.length;
+    const key = ready[next]?.dataset.tab;
+    if (isOutputId(key ?? '')) {
+      tabsPinned = true;
+      activateTab(key as OutputId, { focus: true });
+    }
+  }
+
+  function buildPane(order: OutputId[]) {
+    const tabs = $('#artifact-tabs');
+    const panels = $('#artifact-panels');
+    if (!tabs || !panels) return;
+
+    tabs.innerHTML = order
+      .map((id) => {
+        const def = OUTPUT_BY_ID[id];
+        return `<button type="button" role="tab" class="gx-tab" data-tab="${esc(id)}" data-pending
+                  id="tab-${esc(id)}" aria-controls="panel-${esc(id)}" aria-selected="false" tabindex="-1">
+                  <span class="gx-tab-dot" data-layer="${esc(def.layer)}"></span>${esc(def.label)}
+                </button>`;
+      })
+      .join('');
+
+    panels.innerHTML = order
+      .map((id) => {
+        const def = OUTPUT_BY_ID[id];
+        return `<div class="gx-panel" role="tabpanel" data-panel="${esc(id)}" id="panel-${esc(id)}"
+                  aria-labelledby="tab-${esc(id)}" hidden>
+                  <div class="gx-panel-head">
+                    <span class="gx-panel-title">${esc(def.label)}</span>
+                    <span class="gx-panel-desc">${esc(def.description)}</span>
+                    <span class="gx-panel-layer">${esc(def.layer)}</span>
+                  </div>
+                  <div class="gx-panel-body" data-panel-body><div class="gx-working">Waiting on the genome…</div></div>
+                </div>`;
+      })
+      .join('');
+
+    for (const tab of $$<HTMLButtonElement>('.gx-tab')) {
+      tab.addEventListener('click', () => {
+        if (tab.hasAttribute('data-pending')) return;
+        const key = tab.dataset.tab;
+        if (!isOutputId(key ?? '')) return;
+        // The visitor has taken the wheel; stop moving the pane under them.
+        tabsPinned = true;
+        activateTab(key as OutputId);
+      });
+      tab.addEventListener('keydown', onTabKeydown);
+    }
+  }
+
+  async function runGeneration() {
+    if (!industry || generating || !selected.size) return;
+    generating = true;
+    tabsPinned = false;
+
+    const go = $<HTMLButtonElement>('#generate-go');
+    const goLabel = $('#generate-go-label');
+    if (go) go.disabled = true;
+    if (goLabel) goLabel.textContent = 'Generating…';
+
+    const idle = $('#generate-idle');
+    const skeleton = $('#generate-skeleton');
+    const status = $('#generate-status');
+    const pane = $('#generate-pane');
+    const meta = $('#generate-meta');
+    const summary = $('#generate-summary');
+    if (!status || !pane) return;
+
+    const order = OUTPUTS.filter((o) => selected.has(o.id)).map((o) => o.id);
+
+    if (idle) idle.hidden = true;
+    // The skeleton has done its job the moment the real strip exists.
+    if (skeleton) skeleton.hidden = true;
+    if (summary) summary.hidden = true;
+    status.hidden = false;
+    status.textContent = 'Reading the genome…';
+    pane.hidden = false;
+    buildPane(order);
+
+    document
+      .getElementById('act-generate')
+      ?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+
+    try {
+      if (!genome) genome = await loadGenome(industry);
+    } catch (e) {
+      pane.hidden = true;
+      status.innerHTML = `<span class="gx-error">${esc(
+        e instanceof GenerateError ? e.message : 'That genome could not be loaded.'
+      )}</span> <button type="button" id="retry-generate" class="underline">Try again</button>`;
+      $('#retry-generate')?.addEventListener('click', () => {
+        generating = false;
+        runGeneration();
+      });
+      if (go) go.disabled = false;
+      if (goLabel) goLabel.textContent = 'Go';
+      generating = false;
+      return;
+    }
+
+    const nameEl = $('#generate-genome-name');
+    if (nameEl) nameEl.textContent = genome.orgName;
+    const ontEl = $('#generate-ontologies');
+    if (ontEl) {
+      ontEl.textContent = genome.ontologies?.length
+        ? `Modelled on ${genome.ontologies.map((o) => o.name).join(' · ')}`
+        : '';
+      ontEl.title = (genome.ontologies ?? []).map((o) => `${o.name}: ${o.note}`).join('\n');
+    }
+    if (meta) meta.hidden = false;
+    status.textContent = 'Generating…';
+
+    let landed = 0;
+    await generate({
+      genome,
+      lenses: order,
+      instant: reduceMotion,
+      onProgress: ({ output, artifact, total }) => {
+        const panelBody = $(`[data-panel="${output}"] [data-panel-body]`);
+        // One failed derivation shows its own error inside its own tab; the rest still land.
+        if (panelBody) {
+          panelBody.innerHTML = artifact.error
+            ? `<p class="gx-error">${esc(artifact.error)}</p>`
+            : renderArtifact(output, artifact.data);
+        }
+        const tab = $(`.gx-tab[data-tab="${output}"]`);
+        tab?.removeAttribute('data-pending');
+
+        landed += 1;
+        status.textContent = `${landed} of ${total} generated…`;
+
+        // Follow the newest artifact so the pane is never showing a stale panel while another
+        // is arriving — unless the visitor has already chosen a tab for themselves.
+        if (!tabsPinned || landed === 1) activateTab(output);
+      },
+    });
+
+    // Nothing left to say that the meta line and the summary do not already say.
+    status.hidden = true;
+    if (summary) summary.hidden = false;
+    markAct(3);
+    paintCtas();
+
+    if (go) go.disabled = false;
+    if (goLabel) goLabel.textContent = 'Generate again';
+    generating = false;
+  }
+
+  // --- Selection -----------------------------------------------------------
+
+  async function chooseIndustry(key: IndustryKey, opts: { scroll?: boolean; lenses?: OutputId[] } = {}) {
+    const changed = industry !== key;
+    industry = key;
+    if (changed) genome = null;
+
+    // Keep the control in step with the state, not the other way round — a restored link and a
+    // click have to leave the page looking identical.
+    paintModelSelect();
+    paintPreview();
+
+    // A new industry re-seeds the picker from that industry's spotlight — the previous
+    // industry's selection is not a sensible default for this one.
+    if (changed || !selected.size) {
+      selected = new Set(opts.lenses?.length ? opts.lenses : INDUSTRY_BY_KEY[key].spotlight);
+    }
+
+    paintBar();
+    markAct(1);
+    paintPicker();
+    paintCtas();
+    writeUrl();
+
+    // Warm the genome while the visitor is reading Act II, so Go feels instant.
+    loadGenome(key)
+      .then((g) => {
+        if (industry === key) genome = g;
+      })
+      .catch(() => {
+        /* Surfaced properly when Go is pressed; no need to shout during Act I. */
+      });
+
+    if (opts.scroll !== false) {
+      document
+        .getElementById('act-lenses')
+        ?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    }
+  }
+
+  // --- Wiring --------------------------------------------------------------
+
+  function init() {
+    if (!document.getElementById('act-industry')) return;
+
+    mountHelix();
+
+    wireModelSelect();
+
+    for (const btn of $$<HTMLButtonElement>('.lens-option')) {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.output;
+        if (isOutputId(id ?? '')) toggleLens(id as OutputId);
+      });
+    }
+
+    $('#generate-go')?.addEventListener('click', () => {
+      markAct(2);
+      runGeneration();
+    });
+
+    // Restore a shared configuration without yanking the visitor down the page — they asked for
+    // this state, not for a scroll. With nothing in the URL the page stays unanswered, which is
+    // the point: the sticky bar keeps asking until the visitor picks a strand.
+    const restored = readUrl();
+    if (restored.industry) {
+      chooseIndustry(restored.industry, { scroll: false, lenses: restored.lenses });
+    } else {
+      paintPicker();
+    }
+  }
+
+  init();
+  // The site uses view transitions, so re-run on navigation into the page.
+  document.addEventListener('astro:after-swap', init);
+</script>
+
+<style>
+  html {
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  /* Act sections clear the sticky bar when scrolled to. */
+  #act-industry,
+  #act-lenses,
+  #act-generate {
+    scroll-margin-top: 3.5rem;
+  }
+</style>

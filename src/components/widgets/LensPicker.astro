@@ -1,0 +1,139 @@
+---
+// Act II — pick what you want generated.
+//
+// Three columns, one per DNA layer, which is the first time on the page a visitor sees that DNA
+// has layers. They learn the model by shopping in it.
+//
+// Everything arrives pre-selected from the chosen industry's spotlight set. An empty grid asks
+// somebody to do work before they know what any option means; a fully-checked one produces an
+// unreadable wall in Act III. Four or five, chosen to make that industry's value proposition
+// self-evident, with the rest one click away.
+//
+// The pre-selection is deliberately unexplained. A line saying why each set was chosen was tried
+// and cut — the grid shows what is ticked, and a sentence justifying it was more copy than the
+// point could carry.
+import { Icon } from 'astro-icon/components';
+import { LAYERS, outputsForLayer } from '~/data/industries';
+---
+
+<section id="act-lenses" class="relative bg-slate-900 py-14 sm:py-20" aria-labelledby="act-lenses-h">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="mb-2 text-center text-xs font-bold uppercase tracking-widest text-primary">Step two</div>
+    <h2 id="act-lenses-h" class="text-center text-2xl font-bold tracking-tight text-white sm:text-4xl">
+      Now choose your lenses.
+    </h2>
+    <p class="mx-auto mt-4 max-w-2xl text-center text-base text-slate-400">Different views over one model.</p>
+
+    <div class="mt-8 grid gap-4 sm:mt-10 md:grid-cols-3">
+      {
+        LAYERS.map((layer) => (
+          <div class="rounded-2xl border border-white/10 bg-slate-950/60 p-4 sm:p-5">
+            <div class="mb-1 flex items-center gap-2">
+              <Icon name={layer.icon} class="h-4 w-4 text-primary" />
+              <h3 class="text-sm font-bold uppercase tracking-widest text-primary">{layer.label}</h3>
+            </div>
+            <p class="mb-4 text-xs leading-relaxed text-slate-500">{layer.blurb}</p>
+
+            <ul class="flex flex-col gap-2" role="list">
+              {outputsForLayer(layer.key).map((out) => (
+                <li>
+                  <button type="button" class="lens-option" data-output={out.id} aria-pressed="false">
+                    <span class="lens-check" aria-hidden="true">
+                      <Icon name="tabler:check" class="h-3 w-3" />
+                    </span>
+                    <span class="min-w-0">
+                      <span class="lens-label">{out.label}</span>
+                      <span class="lens-desc">{out.description}</span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-8 flex flex-col items-center gap-3">
+      <button
+        id="generate-go"
+        type="button"
+        class="group inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-bold text-white shadow-[0_0_36px_rgba(13,148,136,0.45)] transition hover:bg-primary/85 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+        disabled
+      >
+        <span id="generate-go-label">Go</span>
+        <Icon name="tabler:arrow-down" class="h-4 w-4 transition group-hover:translate-y-0.5" />
+      </button>
+      <p id="lens-count" class="text-xs text-slate-500" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lens-option {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    gap: 0.6rem;
+    border-radius: 0.7rem;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(15, 23, 42, 0.5);
+    padding: 0.55rem 0.7rem;
+    text-align: left;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+    cursor: pointer;
+  }
+  .lens-option:hover,
+  .lens-option:focus-visible {
+    border-color: rgba(45, 212, 191, 0.5);
+  }
+  .lens-option[aria-pressed='true'] {
+    border-color: rgba(13, 148, 136, 0.75);
+    background: rgba(13, 148, 136, 0.12);
+  }
+  .lens-check {
+    display: flex;
+    height: 1.05rem;
+    width: 1.05rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.35rem;
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    color: transparent;
+    margin-top: 0.1rem;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .lens-option[aria-pressed='true'] .lens-check {
+    background: var(--aw-color-primary, #0d9488);
+    border-color: var(--aw-color-primary, #0d9488);
+    color: white;
+  }
+  /* The last selected option refuses to turn off, and says so rather than just ignoring you. */
+  .lens-option[data-locked]:hover .lens-check {
+    border-color: rgba(248, 113, 113, 0.7);
+  }
+  .lens-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgb(226 232 240);
+  }
+  .lens-desc {
+    display: block;
+    font-size: 0.7rem;
+    line-height: 1.35;
+    color: rgb(100 116 139);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lens-option,
+    .lens-check {
+      transition: none;
+    }
+  }
+</style>

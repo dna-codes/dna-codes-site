@@ -1,0 +1,138 @@
+---
+// The sticky bar for /whats-your-dna. Replaces the site header rather than sitting under it —
+// two sticky bars is a bug, and the standard nav is a set of exits from a page whose whole job
+// is to hold you. The DNA mark links home; that is the one exit, and it should be.
+//
+// The headline region is the point of the whole component. It asks "What's your DNA?" until the
+// visitor answers, then carries their industry and its value proposition for the rest of the
+// visit. Nobody has to remember why they are looking at an org chart.
+import { Icon } from 'astro-icon/components';
+import { APP_HREF } from '~/navigation';
+---
+
+<header
+  id="genome-bar"
+  class="sticky top-0 z-50 w-full border-b border-white/10 bg-slate-950/85 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/70"
+>
+  <div class="mx-auto flex max-w-7xl items-center gap-3 px-3 py-2.5 sm:gap-4 sm:px-6">
+    <a href="/" class="flex flex-shrink-0 items-center gap-2" aria-label="DNA Codes home">
+      <span
+        class="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/40 bg-primary/20 shadow-[0_0_18px_rgba(13,148,136,0.35)]"
+      >
+        <Icon name="tabler:dna-2" class="h-5 w-5 text-primary" />
+      </span>
+    </a>
+
+    <div class="min-w-0 flex-1">
+      <!-- Before a choice: the question. After: the answer, which is the same slot so the
+           crossfade reads as the question being answered rather than replaced. -->
+      <div id="genome-bar-headline" class="genome-headline min-w-0">
+        <span id="genome-bar-question" class="genome-question">What's your DNA?</span>
+        <span id="genome-bar-answer" class="genome-answer" hidden>
+          <span id="genome-bar-industry" class="genome-industry"></span>
+          <span class="genome-sep" aria-hidden="true">·</span>
+          <span id="genome-bar-valueprop" class="genome-valueprop"></span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Three dots, one per act. Progress without a progress bar's implied contract. -->
+    <ol id="genome-bar-acts" class="hidden items-center gap-1.5 md:flex" aria-label="Progress">
+      {
+        ['Industry', 'Lenses', 'Generate'].map((label, i) => (
+          <li>
+            <span class="genome-dot" data-act-dot={i + 1} aria-hidden="true" />
+            <span class="sr-only">{label}</span>
+          </li>
+        ))
+      }
+    </ol>
+
+    <a
+      id="genome-bar-cta"
+      href={APP_HREF}
+      class="flex-shrink-0 rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition hover:bg-primary/85 sm:px-4 sm:text-sm"
+    >
+      Get Started
+    </a>
+  </div>
+</header>
+
+<style>
+  .genome-headline {
+    display: block;
+    min-height: 1.5rem;
+  }
+  .genome-question,
+  .genome-answer {
+    display: block;
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease;
+  }
+  .genome-question {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: rgb(226 232 240);
+    letter-spacing: -0.01em;
+  }
+  .genome-answer {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .genome-answer[hidden],
+  .genome-question[hidden] {
+    display: none;
+  }
+  .genome-fading {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  .genome-industry {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--aw-color-primary, #0d9488);
+    letter-spacing: -0.01em;
+  }
+  .genome-sep {
+    margin: 0 0.5rem;
+    color: rgb(100 116 139);
+  }
+  .genome-valueprop {
+    font-weight: 500;
+    font-size: 0.82rem;
+    color: rgb(226 232 240);
+  }
+  /* Narrow viewports keep the industry and drop the proposition — the spec's rule. */
+  @media (max-width: 640px) {
+    .genome-sep,
+    .genome-valueprop {
+      display: none;
+    }
+  }
+  .genome-dot {
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  .genome-dot[data-done] {
+    background: var(--aw-color-primary, #0d9488);
+    border-color: var(--aw-color-primary, #0d9488);
+    box-shadow: 0 0 10px rgba(13, 148, 136, 0.6);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .genome-question,
+    .genome-answer,
+    .genome-dot {
+      transition: none;
+    }
+  }
+</style>

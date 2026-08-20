@@ -1,0 +1,255 @@
+---
+// Act I — pick your industry.
+//
+// One prominent control, with the helix running behind the section as background the way the
+// homepage hero uses it. This act has been through three shapes — a tall vertical strand with
+// chips wired to individual rungs, then a horizontal row of six cards, now a single dropdown —
+// and every cut was for the same reason: the *choice* was not obvious enough. Six equal cards
+// show breadth but read as decoration; one large control saying "Select Model" reads as the
+// thing to do. The breadth that the row communicated is picked up by the line underneath.
+//
+// It was a native <select> first, for the keyboard and screen-reader behaviour that comes free.
+// That is now a listbox, because macOS draws native option popups with system chrome and ignores
+// page styles on them — the house pattern in LensDemo (`.example-select option { background }`)
+// hits the same wall. A white system dropdown in the middle of this page was not survivable.
+//
+// What the swap buys, beyond styling: each option carries its industry's value proposition
+// inline, so the visitor reads what they are choosing before they choose it rather than after.
+// What it costs is the ARIA and keyboard behaviour a native control gave away, implemented in
+// whats-your-dna.astro — button with aria-expanded, listbox with aria-activedescendant, arrows,
+// Home/End, Enter, Escape, click-outside, and focus returned to the button on close.
+import { Icon } from 'astro-icon/components';
+import { INDUSTRIES } from '~/data/industries';
+---
+
+<section id="act-industry" class="relative bg-slate-950 py-14 sm:py-20" aria-labelledby="act-industry-h">
+  <div id="helix-bg" class="pointer-events-none" style="position:absolute;inset:0" aria-hidden="true"></div>
+
+  <div class="relative z-10 mx-auto max-w-3xl px-4 sm:px-6">
+    <div class="mb-2 text-center text-xs font-bold uppercase tracking-widest text-primary">Step one</div>
+    <h1 id="act-industry-h" class="text-center text-3xl font-bold tracking-tight text-white sm:text-5xl">
+      Every business already has <span class="text-primary">dna</span>. What's yours?
+    </h1>
+    <p class="mx-auto mt-3 max-w-2xl text-center text-base text-slate-400">
+      Pick an industry and see a living operating model.
+    </p>
+
+    <!-- Narrow enough to read as a control rather than a banner. The popup inherits this width,
+         so it is also the floor for the option descriptions — much below this and they run to
+         three lines. -->
+    <div class="mx-auto mt-8 max-w-sm">
+      <span id="model-select-label" class="sr-only">Select your industry model</span>
+      <div class="model-select" data-model-select>
+        <button
+          type="button"
+          id="model-select-button"
+          class="model-select-button"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-labelledby="model-select-label model-select-button"
+        >
+          <span id="model-select-value" class="model-select-value" data-placeholder>Select Model</span>
+          <Icon name="tabler:chevron-down" class="model-select-chevron" aria-hidden="true" />
+        </button>
+
+        <ul
+          id="model-select-list"
+          class="model-select-list"
+          role="listbox"
+          tabindex="-1"
+          aria-labelledby="model-select-label"
+          hidden
+        >
+          {
+            INDUSTRIES.map((ind) => (
+              <li
+                id={`model-opt-${ind.key}`}
+                class="model-option"
+                role="option"
+                aria-selected="false"
+                data-industry={ind.key}
+              >
+                <span class="model-option-name">{ind.name}</span>
+                <span class="model-option-desc">{ind.valueProp}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <!-- Carries the chosen model's proposition, so the value is on screen before the visitor
+         scrolls anywhere. Height is reserved, so choosing does not shift the page. Wider than the
+         control on purpose — at the control's width every proposition wrapped, and the longest
+         two still sat on the line limit at 28rem. 32rem clears all six with room to spare. -->
+    <p id="industry-preview" class="mx-auto mt-4 min-h-[1.5rem] max-w-lg text-center" data-empty aria-hidden="true">
+      Six industries, one grammar underneath.
+    </p>
+  </div>
+</section>
+
+<style>
+  /* The strand sits behind the content, and has to stay behind it. Two things keep it there:
+     a low opacity, and a radial scrim darkest at the centre — which is exactly where the
+     heading and the control are. At full strength the nodes ran straight through the text. */
+  #helix-bg {
+    opacity: 0.3;
+    /* The strand is clipped here rather than by `overflow-hidden` on the section — the section
+       has to stay unclipped so the model dropdown can overlay Act II instead of being cut off
+       at the section boundary. */
+    overflow: hidden;
+  }
+  #helix-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgb(2 6 23 / 0.9) 0%, rgb(2 6 23 / 0.5) 55%, transparent 100%);
+  }
+
+  /* Model select — a listbox, not a <select>. See the note at the top of this file. */
+  .model-select {
+    position: relative;
+    /* Above Act II, which is `position: relative` with an auto z-index, and below the sticky
+       bar at z-50 — a dropdown that covers the header would be worse than one that is clipped. */
+    z-index: 30;
+  }
+  .model-select-button {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.9rem;
+    border: 2px solid rgb(13 148 136 / 0.6);
+    background: rgb(15 23 42 / 0.92);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 34px rgb(13 148 136 / 0.28);
+    color: rgb(241 245 249);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+  }
+  .model-select-button:hover,
+  .model-select-button:focus-visible {
+    border-color: var(--aw-color-accent, #2dd4bf);
+    box-shadow: 0 0 44px rgb(13 148 136 / 0.45);
+    outline: none;
+  }
+  /* Once a model is chosen the control is a statement rather than a prompt. */
+  .model-select-button[data-chosen] {
+    border-color: var(--aw-color-primary, #0d9488);
+    background: rgb(13 148 136 / 0.14);
+  }
+  .model-select-value[data-placeholder] {
+    color: rgb(148 163 184);
+  }
+  .model-select-chevron {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex-shrink: 0;
+    color: var(--aw-color-accent, #2dd4bf);
+    transition: transform 0.2s ease;
+  }
+  .model-select-button[aria-expanded='true'] .model-select-chevron {
+    transform: rotate(180deg);
+  }
+
+  .model-select-list {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 0.4rem);
+    left: 0;
+    right: 0;
+    max-height: 21rem;
+    overflow-y: auto;
+    padding: 0.35rem;
+    border-radius: 0.9rem;
+    border: 1px solid rgb(13 148 136 / 0.45);
+    background: rgb(15 23 42 / 0.98);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 48px rgb(2 6 23 / 0.75);
+    scrollbar-width: thin;
+  }
+  .model-select-list[hidden] {
+    display: none;
+  }
+  .model-option {
+    display: block;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease;
+  }
+  /* `.is-active` is the keyboard cursor — the listbox keeps focus and points at it with
+     aria-activedescendant, so this has to be as visible as a hover. */
+  .model-option:hover,
+  .model-option.is-active {
+    background: rgb(13 148 136 / 0.16);
+    border-color: rgb(45 212 191 / 0.45);
+  }
+  .model-option[aria-selected='true'] {
+    background: rgb(13 148 136 / 0.22);
+    border-color: var(--aw-color-primary, #0d9488);
+  }
+  .model-option-name {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: rgb(241 245 249);
+  }
+  .model-option-desc {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    color: rgb(203 213 225);
+    transition: color 0.15s ease;
+  }
+  .model-option:hover .model-option-desc,
+  .model-option.is-active .model-option-desc,
+  .model-option[aria-selected='true'] .model-option-desc {
+    color: var(--aw-color-accent, #2dd4bf);
+  }
+
+  /* The value proposition, and the reason a visitor should care. It gets the accent and weight
+     once a model is chosen — before that it is only a standing line, so it stays muted and the
+     lift on selection reads as the page answering. */
+  #act-industry h1,
+  #act-industry > div > p,
+  .model-option-desc,
+  #industry-preview {
+    text-wrap: balance;
+  }
+  #industry-preview {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--aw-color-accent, #2dd4bf);
+    letter-spacing: -0.01em;
+    transition:
+      color 0.25s ease,
+      opacity 0.2s ease;
+  }
+  #industry-preview[data-empty] {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: rgb(148 163 184);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .model-select-button,
+    .model-select-chevron,
+    .model-option,
+    #industry-preview {
+      transition: none;
+    }
+  }
+</style>

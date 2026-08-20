@@ -6,6 +6,14 @@ import { getBlogPermalink, getPermalink } from './utils/permalinks';
 export const WAITLIST_HREF = '/waitlist';
 export const WAITLIST_TEXT = 'Join the waitlist';
 
+// Where "Create your DNA" and the campaign page's "Get Started" both land. One constant, so the
+// two never disagree and repointing them is a one-line change: if the app is not open when a
+// campaign runs, set this to `/waitlist` and both buttons follow.
+//
+// Only /whats-your-dna reads this. That page is campaign-only by decision — it is deliberately
+// not linked from the header, the footer, or the homepage.
+export const APP_HREF = 'https://app.dna.codes';
+
 export const headerData = {
   links: [
     // Products groups the two surfaces you can actually operate, in the order they are
