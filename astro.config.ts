@@ -2,6 +2,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
@@ -101,9 +102,14 @@ export default defineConfig({
     domains: ['cdn.pixabay.com'],
   },
 
+  // Astro 7 defaults to Sätteri, its native Markdown pipeline, which has its own
+  // mdast/hast plugin ecosystem and does not run remark/rehype plugins. Both of
+  // ours are remark/rehype, so keep rendering through unified.
   markdown: {
-    remarkPlugins: [readingTimeRemarkPlugin],
-    rehypePlugins: [responsiveTablesRehypePlugin],
+    processor: unified({
+      remarkPlugins: [readingTimeRemarkPlugin],
+      rehypePlugins: [responsiveTablesRehypePlugin],
+    }),
   },
 
   vite: {

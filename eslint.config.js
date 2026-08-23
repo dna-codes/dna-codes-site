@@ -1,4 +1,5 @@
-import astroEslintParser from 'astro-eslint-parser';
+// astro-eslint-parser v3 dropped its default export; the namespace is the parser object.
+import * as astroEslintParser from 'astro-eslint-parser';
 import eslintPluginAstro from 'eslint-plugin-astro';
 import globals from 'globals';
 import js from '@eslint/js';

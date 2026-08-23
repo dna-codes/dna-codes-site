@@ -110,13 +110,7 @@ export interface AppResult {
 }
 
 export type ConvertResult =
-  | DnaResult
-  | ProcessFlowResult
-  | RaciResult
-  | SopResult
-  | RunbookResult
-  | AgentsResult
-  | AppResult;
+  DnaResult | ProcessFlowResult | RaciResult | SopResult | RunbookResult | AgentsResult | AppResult;
 
 export class ConvertError extends Error {
   constructor(
