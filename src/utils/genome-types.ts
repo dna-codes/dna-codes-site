@@ -123,17 +123,7 @@ export interface AuthoredField {
   name: string;
   label?: string;
   type:
-    | 'string'
-    | 'text'
-    | 'number'
-    | 'boolean'
-    | 'date'
-    | 'datetime'
-    | 'email'
-    | 'phone'
-    | 'url'
-    | 'enum'
-    | 'reference';
+    'string' | 'text' | 'number' | 'boolean' | 'date' | 'datetime' | 'email' | 'phone' | 'url' | 'enum' | 'reference';
   description?: string;
   required?: boolean;
   readonly?: boolean;
