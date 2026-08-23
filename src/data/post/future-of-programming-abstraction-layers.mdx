@@ -37,40 +37,34 @@ The four layers in the middle don't disappear. They get decided — silently, on
 
 None of this is a model-intelligence problem, and here's the test: a very good human engineer, handed that one sentence and no other context, would also produce something plausible and possibly wrong. Not from lack of intelligence. From lack of input.
 
-## The Future
+### The Missing Layers
 
-Programming has always advanced the same way — add a layer, then engineer the handoff beneath it until the handoff gets boring. Assembly to machine code. C to assembly. Bytecode, JIT, linkers, query planners. Nobody debugs register allocation anymore, not because it stopped mattering, but because that handoff got engineered so thoroughly it went invisible.
-
-Above `Code / Program`, almost none of that exists yet. Here's what fills it.
-
-<AbstractionStack mode="ladder" />
-
-The bottom three layers you already have. The four in the middle are the ones that get inferred today instead of stated:
+So what input is missing? The bottom three layers you already have. The four in the middle are the ones that get inferred today instead of stated:
 
 **Semantics** is the vocabulary — not a glossary in a wiki nobody reads, but the binding definition of which terms carry a specific meaning here and what each one refers to. An integration bug is usually two systems that never agreed on a concept.
 
-**Ontology** is what exists and how it connects. Some of this leaks into your database schema, but a schema answers "how do we store this," not "what is this."
+**Ontology** is what exists and how it connects. Some of it leaks into your database schema, but a schema answers "how do we store this," not "what is this." The rest leaks into a GraphQL SDL, a protobuf file, an ORM class — each a real model of your entities, each bent toward the job it was built for. Four partial ontologies, no source, and when they disagree the winner is whichever one the running code happens to read.
 
-**The Operational Model** answers: what can happen, and by whom? `Pay Invoice` is performed by a `Customer`, against an `Invoice` in status `Issued`, and moves it to `Paid` when the amount matches what's due. Without somewhere to say that once, operations dissolve into the code: a precondition here, a status transition there, a permission check three files away, a rule that survives only because someone remembered it in review.
+**The Operational Model** answers: how does the system behave? What can happen, and by whom? `Pay Invoice` is performed by a `Customer`, against an `Invoice` in status `Issued`, and moves it to `Paid` when the amount matches what's due. Without somewhere to say that once, operations dissolve into the code: a precondition here, a status transition there, a permission check three files away, a rule that survives only because someone remembered it in review.
 
-**The Execution Model** is how an operation becomes reachable. The same `Pay Invoice` surfaces as a REST endpoint, an MCP tool, a workflow step, and a button. Written four times by four people, they drift apart immediately. Projected from one operation, they can't: same preconditions, same effects, same errors, by construction.
+**The Execution Model** is how an operation becomes reachable. The same `Pay Invoice` surfaces as a REST endpoint, an MCP tool, a workflow step, and a button. Written four times by four people, they drift apart immediately — and an agent will call whichever one it was told about, not the one that happens to be right.
 
 None of this is hypothetical. Semantics is Domain-Driven Design's ubiquitous language and the premise of every data catalog. Ontology has OWL, knowledge graphs running production search, and Palantir's entire business behind it. The operational model shows up as BPMN, as statecharts, as Temporal and Camunda, as DDD aggregates and commands. Execution has OpenAPI and now MCP. The problem was never that the industry failed to figure these out — it's that each lives in its own pocket, optional and disconnected, and nothing carries a definition from one layer into the next. That's the difference between a practice and an abstraction layer.
 
-The middle is also having a moment: [Why Agentic Systems Need Ontologies](https://www.youtube.com/watch?v=Sir59K8ZDPU) was the most-watched talk at this year's AI Engineer World's Fair. The people closest to agents in production are arriving at the same gap from a different direction.
+## The Future
 
-Layering also changes where agents fit. Today we point them at the widest gap on the ladder, which is also the one where their output is hardest to verify. The layered version is many short hops, each ending in something readable: an agent proposes the vocabulary and you confirm it, proposes an ontology and you read the diff, derives operations and you correct the two it got wrong. After that, generation is mostly mechanical — and the closer the input gets to a precise model, the less of the remaining work needs a language model at all.
+Programming has always advanced the same way — add a layer, then engineer the handoff beneath it until the handoff gets boring. Assembly to machine code. C to assembly. Bytecode, JIT, linkers, query planners. Nobody debugs register allocation anymore, not because it stopped mattering, but because that handoff got engineered so thoroughly it went invisible. If you have no idea what bytecode or register allocation is, that's precisely the point — those are the names of problems that got solved so completely you never had to learn them.
 
-It runs the other direction as well. An agent that operates your business — not one that writes code, but one that actually pays invoices and escalates tickets — needs the operational model to know what it's permitted to do and what its actions mean. Prose in a system prompt is a bad substitute for a definition. The same layer that makes generation reliable makes delegation safe.
+Above `Code / Program`, that work has barely started. Not because the layers are unknown — we just named all four — but because nothing carries a definition from one of them into the next. Here is the same ladder with that part built.
 
-## What we're building
+<AbstractionStack mode="ladder" />
 
-DNA is a format for writing these layers down. Its three layers — [operational](/docs/operational), [product](/docs/product), and [technical](/docs/technical) — span the middle of the stack, from what your business does through the surfaces that expose it to the substrate it runs on. The operational layer is the center of gravity: people, structures, and activities, with operations that name an actor, a target, the rules that govern them, and the state they produce. Everything below is generated from it. Everything above is a conversation that lands in it. You can [poke at the model directly in the Operations demo](/operations) — define resources and actions, and watch the API surface fall out of them.
+Nothing is ghosted now. Every layer is an artifact you can read and correct, which turns each step between them into something a tool can check rather than something a model improvises. The four surfaces of `Pay Invoice` stop being four hand-written contracts and become four projections of one operation: same preconditions, same effects, same errors, by construction.
 
-One separation worth making: the stack needing these layers doesn't depend on DNA being the thing that supplies them. If someone else's format wins, every argument above still holds. The interesting fight is over whether the layers belong on the ladder at all.
+Layering changes where agents fit, too. Today we aim them at the widest gap on the ladder, which is also where their output is hardest to check; layered, the same work becomes short hops that each end in something readable — an agent proposes the vocabulary and you confirm it, derives the operations and you correct the two it got wrong. It runs the other direction as well: an agent that pays invoices and escalates tickets needs those same definitions to know what it's permitted to do, and the layer that makes generation reliable is the one that makes delegation safe.
 
-None of this makes the leap go away, and for a throwaway script the leap is exactly the right tool. But for the systems a business actually runs on, "impressive most of the time" isn't the bar. The future of programming isn't a model that leaps further — it's a stack that makes the leap unnecessary, one layer at a time, until the top half is as dull and dependable as the bottom.
+The future of programming isn't an LLM that jumps further across abstraction layers; it's a stack that makes the leap unnecessary, with new abstraction layers that are as dependable as the ones we've relied upon for decades.
 
 ---
 
-We're building DNA Codes to make the middle of this ladder real. If this is how you're thinking about the problem too, [join the waitlist](/waitlist) — we'd like to have you involved.
+We're building [DNA Codes](/) for the parts of software nobody writes down — the vocabulary, entities, and operations a business runs on, modeled once and run everywhere. If that's how you're thinking about the problem too, [join the waitlist](/waitlist) — we'd like to have you involved.

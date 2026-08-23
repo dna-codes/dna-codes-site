@@ -2,17 +2,17 @@
 import { twMerge } from 'tailwind-merge';
 
 // The abstraction ladder: Intent → Machine, rendered as a DNA-style rail with
-// the layers as rungs and the handoffs between them as labelled chips.
+// the layers as rungs.
 //
 // Two modes — toggled by the reader, or locked to one via the `mode` prop:
 //   leap   — how it works today: one jump from Intent straight to Code, with
 //            everything between it ghosted ("decided, never written down").
-//   ladder — how it could work: every layer named, every handoff named.
+//   ladder — how it could work: every layer named and stated.
 //
 // The rail column and the card column are two columns of one grid. Layer i sits
-// on grid row 2i+1, the handoff below it on row 2i+2, so the leap chute can be
-// placed as a normal grid item spanning rows 1–11 (Intent through Code) instead
-// of being measured and positioned at runtime.
+// on grid row i+1, so the leap chute can be placed as a normal grid item
+// spanning rows 1–7 (Intent through Code) instead of being measured and
+// positioned at runtime.
 
 type Layer = {
   n: string;
@@ -20,22 +20,21 @@ type Layer = {
   question: string;
   example: string;
   what: string;
-  explicit: string;
-  implicit: string;
+  /** What goes wrong without this layer. Shared by both modes — the problem doesn't change. */
+  problem: string;
   /**
-   * The fix, appended to the implicit note in ladder mode only. Leap mode is the
-   * status quo and has to read as a cost; ladder mode is where it gets resolved.
-   * Absent on the two layers that are never implicit to begin with.
+   * Leap mode's answer: the layer *is* practiced today, just never as a layer.
+   * `gap` is what that practice stops short of — without it the leap view reads
+   * like the problem is already solved. Omitted only on Machine / Runtime, the
+   * one handoff that has no gap left.
    */
-  remedy?: string;
-  /** Where this layer is already practiced today — it's optional, not absent. */
-  practice: string;
-};
-
-type Handoff = {
-  name: string;
-  note: string;
-  status: 'missing' | 'emerging' | 'solved';
+  today: { practice: string; gap?: string };
+  /**
+   * Ladder mode's answer, in the same shape as `today` so the two modes read as
+   * one construct: what you write down, then — in green, mirroring today's amber
+   * `gap` — the clause that closes the problem stated above it.
+   */
+  future: { solution: string; resolves: string };
 };
 
 const layers: Layer[] = [
@@ -45,11 +44,18 @@ const layers: Layer[] = [
     question: 'What do I want to accomplish?',
     example: 'A customer should be able to pay an invoice.',
     what: 'The outcome someone wants, in their own words. No structure, no types, no system boundaries — just a goal.',
-    explicit: 'A sentence. A ticket. A hallway conversation that someone remembered to write down.',
-    implicit: 'Acceptance criteria stay in one person’s head, so "done" gets decided after the fact.',
-    remedy: 'Instead, write the outcome and what counts as done in one place, up front.',
-    practice:
-      'User stories, PRDs, tickets, acceptance criteria — universal, and almost never precise enough to hand off.',
+    problem:
+      'The outcome lives in one person’s head. What counts as done gets settled after the code exists — which is also when it gets argued about.',
+    today: {
+      practice:
+        'User stories, PRDs, tickets, acceptance criteria. Universal — the one layer above code everybody writes.',
+      gap: 'But it stops at prose, so the handoff is a person retelling it. Nothing below can read a ticket.',
+    },
+    future: {
+      solution: 'Write the outcome down: what should become possible, and what counts as done.',
+      resolves:
+        'Now "done" is agreed before the work starts rather than after it — and every term the sentence leans on becomes the next layer’s input.',
+    },
   },
   {
     n: '02',
@@ -57,13 +63,18 @@ const layers: Layer[] = [
     question: 'What does everything mean?',
     example: 'customer, invoice, pay',
     what: 'The vocabulary. Which words carry a specific meaning here, and exactly what each one refers to in this business.',
-    explicit:
-      'A glossary with teeth: <em>Invoice</em> — a demand for payment issued against a completed order. Not a Receipt. Not a Statement.',
-    implicit:
+    problem:
       '<code>customer</code> quietly means the billing contact in one module and the parent account in another. Two correct implementations, one wrong system.',
-    remedy: 'Instead, define the term once, where every layer below reads it.',
-    practice:
-      'Domain-Driven Design’s ubiquitous language, data catalogs, dbt docs, schema registries, controlled vocabularies.',
+    today: {
+      practice:
+        'Domain-Driven Design’s ubiquitous language, data catalogs, dbt docs, schema registries, controlled vocabularies.',
+      gap: 'But the glossary and the code are two artifacts kept in step by hand. Renaming a term in the wiki changes nothing downstream.',
+    },
+    future: {
+      solution: 'A glossary of binding terms: what each one refers to here, and what it explicitly is not.',
+      resolves:
+        'One definition of <code>customer</code>, read by both modules — so they can no longer mean different things without the diff showing it.',
+    },
   },
   {
     n: '03',
@@ -71,13 +82,18 @@ const layers: Layer[] = [
     question: 'What exists, and how is it related?',
     example: 'Customer → owns → Invoice',
     what: 'The entities and the relationships between them — what can exist, what each thing holds, and what it points at.',
-    explicit:
-      'An <code>Invoice</code> carries <code>amount_due</code> and <code>status</code>, and points at the <code>Customer</code> it was issued to. A <code>Payment</code> settles it.',
-    implicit:
+    problem:
       'Relationships get rediscovered feature by feature. The schema ends up as an archaeology of past tickets rather than a model of the business.',
-    remedy: 'Instead, declare the entities and relationships as a model, and let the schema follow.',
-    practice:
-      'OWL, RDF and SPARQL go back decades; knowledge graphs run production search; Palantir built a company on programming against “the ontology.”',
+    today: {
+      practice:
+        'OWL, RDF and SPARQL go back decades; knowledge graphs run production search; Palantir built a company on programming against “the ontology.”',
+      gap: 'But it reads as a modeling specialty rather than a step in the build, so most teams jump straight to a database schema — which answers how to store this, never what this is.',
+    },
+    future: {
+      solution: 'An entity model, declared up front: what exists, what each thing holds, and how they connect.',
+      resolves:
+        'The schema becomes a projection of that model instead of the only record of it — so relationships get read rather than rediscovered.',
+    },
   },
   {
     n: '04',
@@ -85,13 +101,19 @@ const layers: Layer[] = [
     question: 'What can happen, and by whom?',
     example: 'Pay Invoice: Customer → Invoice → status becomes Paid',
     what: 'Operations — the behavior the system allows. Each one names an actor, a target, its preconditions, and the state it leaves behind.',
-    explicit:
-      '<strong>Pay Invoice</strong> — actor <code>Customer</code> · target <code>Invoice</code> where <code>status: Issued</code> · changes <code>Invoice.status → Paid</code> · rule: the payment must equal the amount due',
-    implicit:
+    problem:
       'Every consumer re-derives the rules for itself. The API permits a payment the UI forbids — and an agent will find that gap before your QA does.',
-    remedy: 'Instead, name the operation once — actor, target, preconditions, resulting state.',
-    practice:
-      'BPMN, statecharts and XState, workflow engines like Temporal and Camunda, DDD aggregates and commands, policy rules in an authorization service — each modeling one slice, none of them the layer itself.',
+    today: {
+      practice:
+        'BPMN, statecharts and XState, workflow engines like Temporal and Camunda, DDD aggregates and commands, policy rules in an authorization service.',
+      gap: 'But each models one slice — a process, a state machine, a permission — and none of them holds the operation itself, so the rules stay scattered across all of them.',
+    },
+    future: {
+      solution:
+        'One operation definition: actor, target, preconditions, resulting state, and the rules that must hold.',
+      resolves:
+        'Every consumer reads that definition instead of re-deriving it, so the API and the UI cannot disagree about what a payment is allowed to do.',
+    },
   },
   {
     n: '05',
@@ -99,12 +121,17 @@ const layers: Layer[] = [
     question: 'How can that operation be exposed and executed?',
     example: 'POST /invoices/:id/pay · MCP tool · workflow step · UI command',
     what: 'The surfaces an operation is reachable through, and the contract each surface honors.',
-    explicit:
-      'One operation, four projections: a REST endpoint, an MCP tool, a queue consumer, a button. Same preconditions, same effects, same errors.',
-    implicit:
+    problem:
       'The tool description and the endpoint drift apart. An agent calls what it was told exists, not what actually does.',
-    remedy: 'Instead, project every surface from the one operation.',
-    practice: 'OpenAPI, protobuf, GraphQL SDL, AsyncAPI, JSON Schema — and now MCP tool definitions.',
+    today: {
+      practice: 'OpenAPI, protobuf, GraphQL SDL, AsyncAPI, JSON Schema — and now MCP tool definitions.',
+      gap: 'But each describes a surface, not the operation behind it. Four specs for one behavior, hand-kept, each free to disagree.',
+    },
+    future: {
+      solution: 'Every surface projected from the one operation — REST endpoint, MCP tool, queue consumer, button.',
+      resolves:
+        'Same preconditions, same effects, same errors by construction — the tool description can no longer promise something the endpoint does not do.',
+    },
   },
   {
     n: '06',
@@ -112,10 +139,17 @@ const layers: Layer[] = [
     question: 'How do I implement it?',
     example: 'Python, TypeScript, SQL — classes, functions, migrations',
     what: 'The actual instructions: control flow, persistence, validation, error handling.',
-    explicit: 'A <code>pay_invoice</code> function, a migration, a test for the underpayment case, an error path.',
-    implicit:
-      'Not possible — this is the one layer we have always been forced to write down. Which is exactly why it absorbs every decision from the layers above it.',
-    practice: 'Universal. Nobody ships without it, which is why it quietly absorbs every decision from above.',
+    problem:
+      'Not a missing layer — the opposite. It is the one thing we have always been forced to write down, which is exactly why it absorbs every decision made above it.',
+    today: {
+      practice: 'Universal. Nobody ships without it.',
+      gap: 'But when it is the only written artifact, reading it cannot tell you which lines are implementation and which are a definition nobody stated.',
+    },
+    future: {
+      solution: 'Implementation and nothing else: control flow, persistence, validation, error handling.',
+      resolves:
+        'With the definitions living above it, the code stops being the only place they exist — a diff now shows what changed, not what was assumed.',
+    },
   },
   {
     n: '07',
@@ -123,12 +157,18 @@ const layers: Layer[] = [
     question: 'What frameworks and runtimes do I use?',
     example: 'Django, React, Next.js, PostgreSQL',
     what: 'The chosen substrate — framework conventions, libraries, data store, deployment target.',
-    explicit: 'A Django app, Postgres for state, a background worker for the receipt email, deployed on a container.',
-    implicit:
-      'Rarely implicit — but a stack picked before the operations are known will quietly bend the operations to fit it.',
-    remedy: 'Instead, choose the substrate after the operations are settled.',
-    practice:
-      'Framework conventions, dependency manifests, infrastructure-as-code — well-documented and loudly argued about.',
+    problem:
+      'Rarely inferred, often premature. A stack picked before the operations are known will quietly bend the operations to fit it.',
+    today: {
+      practice:
+        'Framework conventions, dependency manifests, infrastructure-as-code — well documented and loudly argued about.',
+      gap: 'But it tends to be the first decision instead of a late one, so the substrate shapes the model rather than serving it.',
+    },
+    future: {
+      solution: 'The substrate picked once the operations are settled: framework, data store, deployment target.',
+      resolves:
+        'The stack now serves the model rather than bending it — and replacing it later changes how the system runs, not what it means.',
+    },
   },
   {
     n: '08',
@@ -136,35 +176,25 @@ const layers: Layer[] = [
     question: 'How does the machine execute it?',
     example: 'JS engine, Python interpreter, CPU instructions',
     what: 'Bytecode, JIT, syscalls, silicon. The layer nobody opens.',
-    explicit: 'You almost never look — and that is the point.',
-    implicit:
-      'Never implicit. Decades of compiler work made this handoff so dependable it became invisible. That is the bar for every layer above it.',
-    practice: 'Compilers, interpreters, JITs. Fully standardized, fully mechanical, entirely invisible.',
+    problem:
+      'None left. Decades of compiler work made this handoff so dependable it went invisible — and that is the bar every layer above it is still failing.',
+    today: {
+      practice:
+        'Compilers, interpreters, JITs. Fully standardized, fully mechanical, entirely invisible — the one handoff software has actually finished.',
+    },
+    future: {
+      solution:
+        'Nothing to build. Instruction selection, register allocation, inlining and vectorization already work this way.',
+      resolves:
+        'Billions of these decisions get made a day and reviewed by nobody — which is what every layer above is trying to earn.',
+    },
   },
 ];
 
-const handoffs: Handoff[] = [
-  { name: 'Elicitation', note: 'ad hoc, per team', status: 'missing' },
-  { name: 'Structuring', note: 'niche: OWL, ER models', status: 'missing' },
-  { name: 'Derivation', note: 'BPMN, statecharts — siloed', status: 'missing' },
-  { name: 'Projection', note: 'generated from the model', status: 'emerging' },
-  { name: 'Generation', note: 'contract-first codegen', status: 'emerging' },
-  { name: 'Binding', note: 'frameworks, packages', status: 'solved' },
-  { name: 'Compilation', note: 'compilers, interpreters', status: 'solved' },
-];
-
-// The three notes inside an expanded card. Same markup, same shape — the key
-// picks the field off the layer, and doubles as the tone modifier class.
-const noteKinds = [
-  { key: 'explicit', label: 'Explicit' },
-  { key: 'implicit', label: 'Implicit' },
-  { key: 'practice', label: 'Where it already exists' },
-] as const;
-
-// Layers 1–6 (Intent → Code) and the five handoffs between them are what the
-// single leap skips. `leaped` marks the rail/chip cells hidden in leap mode.
+// Layers 1–6 (Intent → Code) are what the single leap skips. `leaped` marks the
+// rail cells hidden in leap mode, where the chute covers them instead.
 const LEAP_LAST_LAYER = 5; // zero-based index of Code / Program
-const leapRowEnd = 2 * LEAP_LAST_LAYER + 2; // exclusive grid-row end for the chute
+const leapRowEnd = LEAP_LAST_LAYER + 2; // exclusive grid-row end for the chute
 
 // The default classes break the figure out of a `prose` column, which is what a
 // blog post needs. On a normal page pass `class="lg:mx-0 xl:mx-0"` (or any other
@@ -190,7 +220,7 @@ const modeLabels = {
 
 const figcaptions = {
   leap: 'One jump from a prompt to code — and the four layers it decides along the way without writing any of them down.',
-  ladder: 'The eight abstraction layers between intent and execution, and the handoff beneath each one.',
+  ladder: 'The eight abstraction layers between intent and execution, each one stated instead of inferred.',
   both: 'The eight abstraction layers between intent and execution — and the single jump we ask a model to make across them today.',
 } as const;
 
@@ -198,12 +228,9 @@ const figcaptions = {
 // Astro compiler reads a `<` inside a template expression as the start of a tag.
 const rows = layers.map((layer, i) => ({
   layer,
-  handoff: handoffs[i],
-  row: 2 * i + 1,
+  row: i + 1,
   /** Rail hidden in leap mode — the chute covers Intent through Code. */
   leaped: i <= LEAP_LAST_LAYER,
-  /** Handoff chip hidden in leap mode. */
-  handoffLeaped: i < LEAP_LAST_LAYER,
   /** Ghosted card: the four layers the leap silently decides. */
   ghost: i > 0 && i < 5,
 }));
@@ -229,7 +256,7 @@ const rows = layers.map((layer, i) => ({
               d="M4 3c0 6 16 12 16 18M20 3c0 6-16 12-16 18M6.5 6h11M5 10h14M5 14h14M6.5 18h11"></path>
           </svg>
         </div>
-        <span class="text-xs font-bold uppercase tracking-widest text-primary">Intent → Execution</span>
+        <span class="text-base font-bold uppercase tracking-widest text-primary">Intent → Execution</span>
       </div>
       {
         locked ? (
@@ -248,7 +275,7 @@ const rows = layers.map((layer, i) => ({
     </div>
 
     <!-- Caption, swapped by mode -->
-    <p class="border-b border-white/8 px-4 py-2.5 text-xs leading-relaxed text-slate-400 sm:px-5">
+    <p class="border-b border-white/8 px-4 py-3.5 text-base leading-relaxed text-slate-400 sm:px-5">
       {
         (!locked || mode === 'leap') && (
           <span data-caption="leap">
@@ -261,9 +288,8 @@ const rows = layers.map((layer, i) => ({
       {
         (!locked || mode === 'ladder') && (
           <span data-caption="ladder" hidden={!locked}>
-            Every layer named, every handoff named. Short hops an agent can take one at a time, each with an artifact
-            you can read and check.{' '}
-            <span class="text-slate-500">Colors mark how standardized each handoff is today.</span>
+            Every layer named and stated. Short hops an agent can take one at a time, each ending in an artifact you can
+            read and check.
           </span>
         )
       }
@@ -282,7 +308,7 @@ const rows = layers.map((layer, i) => ({
       </div>
 
       {
-        rows.map(({ layer, handoff, row, leaped, handoffLeaped, ghost }) => {
+        rows.map(({ layer, row, leaped, ghost }) => {
           return (
             <>
               <div class="rail" style={`grid-row: ${row}`} data-leaped={leaped ? '' : undefined}>
@@ -309,50 +335,41 @@ const rows = layers.map((layer, i) => ({
 
                 <div class="detail" hidden>
                   <p class="dwhat">{layer.what}</p>
-                  {noteKinds.map((kind) => (
-                    <p class={`dnote dnote-${kind.key}`}>
-                      <span class="dlabel">{kind.label}</span>
-                      <span set:html={layer[kind.key]} />
-                      {kind.key === 'implicit' && layer.remedy && (
-                        <span class="dremedy" set:html={` ${layer.remedy}`} />
-                      )}
+
+                  <p class="dnote dnote-problem">
+                    <span class="dlabel">Problem</span>
+                    <span set:html={layer.problem} />
+                  </p>
+
+                  {(!locked || mode === 'leap') && (
+                    <p class="dnote dnote-today" data-note="leap">
+                      <span class="dlabel">Solution</span>
+                      <span set:html={layer.today.practice} />
+                      {layer.today.gap && <span class="dgap" set:html={` ${layer.today.gap}`} />}
                     </p>
-                  ))}
+                  )}
+
+                  {(!locked || mode === 'ladder') && (
+                    <p class="dnote dnote-future" data-note="ladder">
+                      <span class="dlabel">Solution</span>
+                      <span set:html={layer.future.solution} />
+                      <span class="dfix" set:html={` ${layer.future.resolves}`} />
+                    </p>
+                  )}
                 </div>
               </div>
-
-              {handoff && (
-                <>
-                  <div class="rail" style={`grid-row: ${row + 1}`} data-leaped={handoffLeaped ? '' : undefined} />
-                  <div class="hand" style={`grid-row: ${row + 1}`} data-leaped={handoffLeaped ? '' : undefined}>
-                    <span class={`chip chip-${handoff.status}`}>
-                      <span class="dot" />
-                      {handoff.name}
-                      <span class="chip-note">{handoff.note}</span>
-                    </span>
-                  </div>
-                </>
-              )}
             </>
           );
         })
       }
     </div>
 
-    <!-- Legend (ladder mode only) + footer -->
     <div class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/8 px-4 py-3 sm:px-5">
-      <div data-legend hidden={initialMode !== 'ladder'} class="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-        <span class="leg"><span class="dot dot-solved"></span>standard and mechanical</span>
-        <span class="leg"><span class="dot dot-emerging"></span>emerging</span>
-        <span class="leg"><span class="dot dot-missing"></span>practiced in pockets, not standard</span>
-      </div>
-      <span data-footnote class:list={['text-xs text-slate-500', initialMode === 'ladder' && 'ml-auto']}>
-        Tap a layer to open it.
-      </span>
+      <span class="text-base text-slate-500">Tap a layer to open it.</span>
     </div>
   </div>
 
-  <figcaption class="mt-3 px-4 text-center text-xs text-slate-500">
+  <figcaption class="mt-3 px-4 text-center text-base text-slate-500">
     {locked ? figcaptions[initialMode] : figcaptions.both}
   </figcaption>
 </figure>
@@ -363,9 +380,9 @@ const rows = layers.map((layer, i) => ({
     border-radius: 0.5rem;
     color: rgb(100 116 139);
     cursor: pointer;
-    font-size: 0.75rem;
+    font-size: 0.9375rem;
     font-weight: 600;
-    padding: 0.375rem 0.75rem;
+    padding: 0.4375rem 0.875rem;
     transition:
       color 0.15s,
       background-color 0.15s,
@@ -388,9 +405,9 @@ const rows = layers.map((layer, i) => ({
     border-radius: 0.5rem;
     background: rgb(13 148 136 / 0.2);
     color: rgb(45 212 191);
-    font-size: 0.75rem;
+    font-size: 0.9375rem;
     font-weight: 600;
-    padding: 0.375rem 0.75rem;
+    padding: 0.4375rem 0.875rem;
   }
 
   .stack-grid {
@@ -495,7 +512,7 @@ const rows = layers.map((layer, i) => ({
   .leap-label {
     writing-mode: vertical-rl;
     text-orientation: mixed;
-    font-size: 0.625rem;
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -535,7 +552,7 @@ const rows = layers.map((layer, i) => ({
     border: 1px solid rgb(255 255 255 / 0.1);
     border-radius: 0.75rem;
     background: rgb(30 41 59 / 0.55);
-    padding: 0.625rem 0.75rem;
+    padding: 0.875rem 1rem;
     transition:
       border-color 0.15s,
       background-color 0.15s,
@@ -558,7 +575,7 @@ const rows = layers.map((layer, i) => ({
   }
   .idx {
     grid-area: idx;
-    font-size: 0.625rem;
+    font-size: 0.875rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     color: rgb(100 116 139);
@@ -576,15 +593,15 @@ const rows = layers.map((layer, i) => ({
     align-items: center;
     flex-wrap: wrap;
     gap: 0.375rem;
-    font-size: 0.9375rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: rgb(241 245 249);
-    line-height: 1.2;
+    line-height: 1.25;
   }
   .lq {
-    font-size: 0.75rem;
+    font-size: 1rem;
     color: rgb(148 163 184);
-    line-height: 1.35;
+    line-height: 1.45;
   }
   .ex {
     grid-area: ex;
@@ -593,24 +610,24 @@ const rows = layers.map((layer, i) => ({
   .ex code {
     display: inline-block;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.6875rem;
-    line-height: 1.35;
+    font-size: 0.9375rem;
+    line-height: 1.45;
     color: rgb(148 163 184);
     background: rgb(15 23 42 / 0.7);
     border: 1px solid rgb(255 255 255 / 0.07);
     border-radius: 0.375rem;
-    padding: 0.1875rem 0.4375rem;
+    padding: 0.25rem 0.5rem;
   }
   @media (min-width: 768px) {
     .ex {
-      max-width: 17rem;
+      max-width: 22rem;
       text-align: right;
     }
   }
   .chev {
     grid-area: chev;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     color: rgb(100 116 139);
     flex-shrink: 0;
     transition: transform 0.2s ease;
@@ -637,7 +654,7 @@ const rows = layers.map((layer, i) => ({
     border: 1px solid rgb(245 158 11 / 0.4);
     background: rgb(245 158 11 / 0.12);
     color: rgb(252 211 77);
-    font-size: 0.5625rem;
+    font-size: 0.6875rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -658,64 +675,70 @@ const rows = layers.map((layer, i) => ({
 
   /* ── Expandable detail ───────────────────────────────────────────── */
   .detail {
-    padding: 0.75rem 0.75rem 0.25rem 0.75rem;
+    padding: 1rem 1rem 0.5rem 1rem;
   }
   @media (min-width: 768px) {
     .detail {
-      padding-left: 2.75rem;
+      padding-left: 3rem;
     }
   }
   .dwhat {
-    font-size: 0.8125rem;
-    line-height: 1.6;
+    font-size: 1.125rem;
+    line-height: 1.7;
     color: rgb(203 213 225);
-    margin: 0 0 0.625rem;
+    margin: 0 0 0.875rem;
   }
   .dnote {
-    font-size: 0.75rem;
-    line-height: 1.6;
+    font-size: 1.0625rem;
+    line-height: 1.7;
     color: rgb(148 163 184);
     border-left: 2px solid;
-    padding-left: 0.75rem;
-    margin: 0 0 0.5rem;
+    padding-left: 1rem;
+    margin: 0 0 0.75rem;
   }
-  .dnote-explicit {
-    border-color: rgb(13 148 136 / 0.6);
-  }
-  .dnote-implicit {
+  .dnote-problem {
     border-color: rgb(245 158 11 / 0.5);
   }
-  .dnote-practice {
+  .dnote-today {
     border-color: rgb(148 163 184 / 0.45);
+  }
+  .dnote-future {
+    border-color: rgb(13 148 136 / 0.6);
+  }
+  /* One Solution note per mode. Both are rendered only in the interactive
+     version; a locked figure emits just its own. */
+  [data-mode='leap'] [data-note='ladder'],
+  [data-mode='ladder'] [data-note='leap'] {
+    display: none;
   }
   .dlabel {
     display: block;
-    font-size: 0.5625rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     margin-bottom: 0.125rem;
   }
-  .dnote-explicit .dlabel {
-    color: rgb(45 212 191);
-  }
-  .dnote-implicit .dlabel {
+  .dnote-problem .dlabel {
     color: rgb(252 211 77);
   }
-  .dnote-practice .dlabel {
+  .dnote-today .dlabel {
     color: rgb(148 163 184);
   }
-  /* The fix belongs to ladder mode only — in leap mode the note has to sting. */
-  .dremedy {
-    display: none;
-    color: rgb(94 234 212);
+  .dnote-future .dlabel {
+    color: rgb(45 212 191);
   }
-  [data-mode='ladder'] .dremedy {
-    display: inline;
+  /* The two halves of a Solution, in mirrored positions: amber for what today's
+     practice stops short of, green for how the stated layer closes the Problem. */
+  .dgap {
+    color: rgb(252 211 77 / 0.85);
+  }
+  .dfix {
+    color: rgb(94 234 212);
   }
   .detail :global(code) {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.6875rem;
+    font-size: 0.9375rem;
     color: rgb(203 213 225);
     background: rgb(15 23 42 / 0.7);
     border-radius: 0.25rem;
@@ -730,85 +753,9 @@ const rows = layers.map((layer, i) => ({
     font-style: italic;
   }
 
-  /* ── Handoff chips ───────────────────────────────────────────────── */
-  .hand {
-    grid-column: 2;
-    display: flex;
-    align-items: center;
-    padding: 0.3125rem 0;
-    transition: opacity 0.25s ease;
-  }
-  [data-mode='leap'] .hand[data-leaped] {
-    opacity: 0;
-    pointer-events: none;
-  }
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    flex-wrap: wrap;
-    border-radius: 9999px;
-    border: 1px solid rgb(255 255 255 / 0.09);
-    background: rgb(15 23 42 / 0.6);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    color: rgb(148 163 184);
-    padding: 0.1875rem 0.625rem;
-    margin-left: 0.25rem;
-  }
-  .chip-note {
-    font-weight: 400;
-    font-size: 0.625rem;
-    color: rgb(100 116 139);
-  }
-  .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 9999px;
-    flex-shrink: 0;
-  }
-  .chip-solved,
-  .dot-solved {
-    --dot: rgb(45 212 191);
-  }
-  .chip-emerging,
-  .dot-emerging {
-    --dot: rgb(13 148 136);
-  }
-  .chip-missing,
-  .dot-missing {
-    --dot: rgb(245 158 11);
-  }
-  .chip .dot,
-  .leg .dot {
-    background: var(--dot);
-  }
-  .chip-solved {
-    border-color: rgb(45 212 191 / 0.35);
-    color: rgb(203 213 225);
-  }
-  .chip-emerging {
-    border-color: rgb(13 148 136 / 0.3);
-  }
-  .chip-missing {
-    border-color: rgb(245 158 11 / 0.3);
-  }
-  .chip-emerging .dot {
-    box-shadow: 0 0 0 2px rgb(13 148 136 / 0.2);
-  }
-
-  .leg {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.6875rem;
-    color: rgb(100 116 139);
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .rail,
     .leap,
-    .hand,
     .card,
     .chev {
       transition: none;
@@ -820,15 +767,11 @@ const rows = layers.map((layer, i) => ({
   document.querySelectorAll<HTMLElement>('[data-abstraction-stack]').forEach((root) => {
     const modeBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-mode-btn]'));
     const captions = Array.from(root.querySelectorAll<HTMLElement>('[data-caption]'));
-    const legend = root.querySelector<HTMLElement>('[data-legend]');
-    const footnote = root.querySelector<HTMLElement>('[data-footnote]');
 
     const setMode = (mode: string) => {
       root.dataset.mode = mode;
       modeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modeBtn === mode)));
       captions.forEach((c) => (c.hidden = c.dataset.caption !== mode));
-      if (legend) legend.hidden = mode !== 'ladder';
-      if (footnote) footnote.classList.toggle('ml-auto', mode === 'ladder');
     };
 
     modeBtns.forEach((btn) => btn.addEventListener('click', () => setMode(btn.dataset.modeBtn!)));
