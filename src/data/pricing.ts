@@ -165,6 +165,32 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
     ],
   },
   {
+    label: 'API',
+    rows: [
+      row(
+        'Read your OpenAPI document',
+        'Unlimited',
+        'Unlimited',
+        'Unlimited',
+        'Unlimited',
+        'Unlimited',
+        'Free and unmetered, with or without an account — the reading runs in your browser and the document never leaves it. We charge for authority, not for looking.'
+      ),
+      row('Endpoints bound to operations', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited'),
+      row('x-dna in your specification', true, true, true, true, true),
+      row(
+        'Enforcement at your API edge',
+        'Non-production',
+        true,
+        true,
+        true,
+        true,
+        'A middleware asks your model for a decision at your own edge. Nothing proxies your traffic, so there is no per-request meter to buy.'
+      ),
+      row('API operations in the audit record', true, true, true, true, true),
+    ],
+  },
+  {
     label: 'Agents',
     rows: [
       row(

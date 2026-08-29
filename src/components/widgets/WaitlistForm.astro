@@ -29,7 +29,7 @@ const ACTION_URL = 'https://formspree.io/f/moeadkla';
 
 export interface Props {
   /** Tick an interest up front when the form sits inside a product's own page. */
-  preselect?: 'operations' | 'overlay' | 'agent-operations';
+  preselect?: 'operations' | 'overlay' | 'api-operations' | 'agent-operations';
   /** Overridden only where two instances could collide on one page. */
   id?: string;
 }
@@ -71,6 +71,12 @@ const interests = [
     icon: PRODUCT.overlay.icon,
   },
   {
+    value: 'api-operations',
+    label: PRODUCT['api-operations'].name,
+    blurb: 'Govern the endpoints other software calls',
+    icon: PRODUCT['api-operations'].icon,
+  },
+  {
     value: 'agent-operations',
     label: PRODUCT['agent-operations'].name,
     blurb: 'Put agents to work under our own rules',
@@ -99,6 +105,12 @@ const questions = [
     name: 'stack',
     label: 'What is your application built with?',
     placeholder: 'React, Vue, Rails + Hotwire…',
+  },
+  {
+    interest: 'api-operations',
+    name: 'api',
+    label: 'Where does your OpenAPI document live, and what enforces it today?',
+    placeholder: 'A 400-endpoint spec generated from FastAPI. Auth is a decorator each team wrote themselves.',
   },
   {
     interest: 'agent-operations',

@@ -1,0 +1,101 @@
+---
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import { Icon } from 'astro-icon/components';
+import { rowStyle, pillStyle } from '~/utils/openapi-ui';
+
+// §4 — the explorer, and the objection the reader has held since the headline.
+//
+// The visual is Swagger's Try it out panel, unchanged, with the DNA block sitting between the
+// parameters and the Execute button — which is the only place it can sit and mean anything, because
+// the whole claim is that the evaluation happens *before* you press.
+//
+// It concedes Swagger in the first line, and that is the argument rather than politeness: the moment
+// this page implies we ship a better documentation tool, it is in a fight over taste against
+// something developers already like, and it loses.
+
+const checks = [
+  { label: 'Authorization', value: 'Payment.Refund' },
+  { label: 'Scope', value: 'Northwind Ltd' },
+  { label: 'Feature', value: 'refunds_v2' },
+  { label: 'Limit', value: '$240.00 of $5,000' },
+];
+---
+
+<WidgetWrapper containerClass="max-w-6xl mx-auto">
+  <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+    <div class="rounded-lg overflow-hidden shadow-xl" style={rowStyle()}>
+      <div class="flex items-center gap-3 px-3 py-2.5">
+        <span
+          class="rounded px-2 py-1 text-[12px] font-bold text-white w-16 text-center flex-shrink-0"
+          style={pillStyle()}
+        >
+          POST
+        </span>
+        <span class="font-mono text-[14px] text-white truncate">/v1/payments/{'{id}'}/refund</span>
+        <span class="ml-auto text-[12px] rounded border border-slate-500 px-2 py-0.5 text-slate-300 flex-shrink-0">
+          Try it out
+        </span>
+      </div>
+
+      <div class="bg-slate-950/60 px-3 py-3">
+        <p class="text-[13px] font-semibold text-slate-400 mb-1.5">Parameters</p>
+        <div class="flex gap-3 mb-3">
+          <span class="text-[13px] font-mono text-slate-300 w-20">id</span>
+          <span class="text-[13px] font-mono text-slate-200">pay_4c81</span>
+        </div>
+
+        <!-- The DNA block, and it sits above Execute because that is the claim. -->
+        <div class="rounded border border-primary/40 bg-primary/5 p-2.5 mb-3">
+          <div class="flex items-center gap-2 mb-2">
+            <p class="text-[13px] font-semibold text-primary">DNA</p>
+            <span class="ml-auto text-[12px] text-slate-300">
+              acting as <span class="text-white">Dana Ruiz</span> · Finance.Admin
+            </span>
+          </div>
+          <div class="space-y-1">
+            {
+              checks.map((c) => (
+                <div class="flex items-center gap-2">
+                  <Icon name="tabler:check" class="w-3 h-3 text-primary flex-shrink-0" />
+                  <span class="text-[13px] text-slate-400 w-24 flex-shrink-0">{c.label}</span>
+                  <span class="text-[13px] font-mono text-slate-200 truncate">{c.value}</span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <button
+          type="button"
+          disabled
+          class="w-full rounded bg-primary/90 px-4 py-2 text-[14px] font-semibold text-white cursor-default"
+        >
+          Execute
+        </button>
+
+        <p class="mt-2.5 text-[12px] text-slate-400 leading-snug">
+          Switch the actor to <span class="text-slate-200">Support.Agent</span> and there is no button to press.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">The explorer</p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-5">
+        Swagger documents.<br />DNA <span class="text-accent">operates</span>.
+      </h2>
+      <p class="text-muted leading-relaxed mb-4">
+        <strong class="text-white">Keep Swagger UI.</strong> We do not render into it and we do not replace it — we read the
+        same document it reads.
+      </p>
+      <p class="text-muted leading-relaxed mb-4">
+        Documentation asks <em>what does this endpoint take</em>. An operational console asks
+        <em>may I, as me, right now</em> — and answers before you press, not with a status code afterwards.
+      </p>
+      <p class="text-muted leading-relaxed">
+        The smallest version is one link in the Swagger page you already have:
+        <code class="text-white">View in DNA →</code>. It costs a day, and it tells us whether anyone wants the panel.
+      </p>
+    </div>
+  </div>
+</WidgetWrapper>

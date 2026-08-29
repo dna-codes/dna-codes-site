@@ -1,0 +1,310 @@
+---
+import { resolveSpec } from '~/utils/openapi-resolve';
+import { read, headlineHtml, rowsHtml, sourceHtml } from '~/utils/openapi-demo';
+import { GOVERNANCE } from '~/data/openapi-samples/governance';
+import payments from '~/data/openapi-samples/payments.json';
+
+// The hero artifact, and the reason this page can ship before the middleware does.
+//
+// Every other demo on this site is staged: real shapes, invented data, a Demo mode badge. This one
+// is staged only until the visitor pastes something, and then it is real — their document, their
+// endpoints, their number, computed in their browser. Nothing is sent anywhere. That is rung zero
+// out of design.md §2, and it exists at all because an OpenAPI document is an adapter the customer
+// already wrote.
+//
+// Three deliberate constraints, each one a defect this demo could otherwise ship:
+//
+// - **Paste, and three samples. No URL field, deliberately.** Fetching an arbitrary openapi.json
+//   from a browser is refused cross-origin far more often than it succeeds, and a field that fails
+//   for most people who try it is worse than one that is not there. If it is ever added it needs a
+//   failure message that says the remote host refused us, not that the document is bad.
+// - **Two readings, never conflated.** The samples ship with a model behind them, so they open on a
+//   gap report — most endpoints governed, a handful not, and the handful named. A pasted document
+//   has no model behind it, so it reports naming and says governance is *unknown* rather than
+//   *zero*: we have not checked, and claiming none would be a statement about the reader's estate
+//   that we cannot support.
+// - **Failure is loud.** A paste that is not an OpenAPI document must not render "0 of 0" — that is
+//   a false statement about the reader's API rather than an empty result.
+
+const initialSpec = resolveSpec(payments);
+const initialGov = GOVERNANCE.payments;
+const initial = read(initialSpec, initialGov);
+
+// The document itself, shown verbatim under "View spec". For a sample that is the bundled JSON
+// pretty-printed; for a paste it is the visitor's own bytes, unmodified — re-serialising somebody's
+// document before showing it back to them would quietly answer a different question than the one
+// they asked.
+const initialSource = JSON.stringify(payments, null, 2);
+
+const SAMPLES = [
+  { key: 'payments', label: 'Payments', note: 'clean REST' },
+  { key: 'clinic', label: 'Clinic', note: 'mixed' },
+  { key: 'internal-ops', label: 'Internal ops', note: 'RPC-shaped' },
+];
+---
+
+<div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+  <div class="px-3.5 py-2.5 border-b border-white/8 flex items-baseline gap-2">
+    <span id="apiops-title" class="text-[15px] font-semibold text-white truncate">Northwind Payments API</span>
+    <span class="text-[12px] font-mono text-slate-400">OAS 3.0</span>
+    <span
+      id="apiops-badge"
+      class="ml-auto text-[11px] font-bold uppercase tracking-wider text-slate-400 whitespace-nowrap">Demo model</span
+    >
+  </div>
+
+  <div class="px-3.5 py-3 border-b border-white/8 flex flex-wrap items-center gap-2">
+    {
+      SAMPLES.map((s) => (
+        <button
+          type="button"
+          data-sample={s.key}
+          class="apiops-sample text-[13px] rounded-full border border-white/15 px-3 py-1 text-slate-200 hover:border-primary/60 hover:text-white transition-colors"
+        >
+          {s.label} <span class="text-slate-400">· {s.note}</span>
+        </button>
+      ))
+    }
+    <button
+      type="button"
+      id="apiops-spec-toggle"
+      aria-expanded="false"
+      aria-controls="apiops-spec"
+      class="ml-auto text-[13px] rounded-full border border-white/15 px-3 py-1 text-slate-200 hover:border-white/40 hover:text-white transition-colors"
+    >
+      View spec
+    </button>
+    <button
+      type="button"
+      id="apiops-paste-toggle"
+      aria-expanded="false"
+      aria-controls="apiops-paste"
+      class="text-[13px] rounded-full border border-primary/50 px-3 py-1 text-primary hover:bg-primary/10 transition-colors"
+    >
+      Paste your own
+    </button>
+  </div>
+
+  <div id="apiops-paste" class="hidden px-3.5 py-3 border-b border-white/8">
+    <label for="apiops-input" class="text-[13px] text-slate-300 block mb-1.5">
+      Paste an OpenAPI 3.x document — JSON or YAML. It is read in this browser, never uploaded, and cleared when you
+      leave the page.
+    </label>
+    {
+      /* No `name`, and no enclosing form, so this can never be serialised into the waitlist
+        submission at the foot of the page. `spellcheck` is off because Chrome's enhanced spellcheck
+        uploads the contents of form fields to Google — on a page inviting people to paste an
+        internal API description, that is the one leak worth designing against. `autocomplete` off
+        keeps it out of form restoration, and `data-private` / `data-dd-privacy` are the attributes
+        session-replay tools honour: none are installed today, and the point is that adding one
+        later must not silently start recording customers' specs. */
+    }
+    <textarea
+      id="apiops-input"
+      rows="4"
+      spellcheck="false"
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      data-private
+      data-dd-privacy="mask"
+      placeholder={'{ "openapi": "3.0.3", "paths": { … } }'}
+      class="w-full rounded-lg bg-slate-950 border border-white/10 px-3 py-2 text-[13px] font-mono text-slate-200 placeholder:text-slate-600 focus:border-primary/60 focus:outline-none"
+    ></textarea>
+    <div class="mt-2 flex items-center gap-2">
+      <button
+        type="button"
+        id="apiops-read"
+        class="text-[13px] rounded-full bg-primary px-3.5 py-1.5 font-semibold text-white hover:opacity-90 transition-opacity"
+      >
+        Read it
+      </button>
+      <p class="text-[12px] text-slate-400">Up to 8 MB. Nothing leaves the page.</p>
+    </div>
+    <p id="apiops-error" class="hidden mt-2 text-[13px] text-rose-300"></p>
+  </div>
+
+  <div id="apiops-spec" class="hidden border-b border-white/8">
+    <div class="px-3.5 py-2 flex items-baseline gap-2 border-b border-white/8">
+      <span class="text-[12px] font-bold uppercase tracking-wider text-slate-400">The document being read</span>
+      <span id="apiops-spec-meta" class="ml-auto text-[12px] font-mono text-slate-400">
+        {initialSpec.total} operations · {Math.round(initialSource.length / 1024)} KB
+      </span>
+    </div>
+    <pre
+      id="apiops-spec-text"
+      data-private
+      data-dd-privacy="mask"
+      class="max-h-96 overflow-auto px-3.5 py-3 text-[12px] leading-relaxed font-mono text-slate-300 bg-slate-950/60"
+      set:html={sourceHtml(initialSource)}
+    />
+  </div>
+
+  <div class="p-3.5">
+    <div id="apiops-headline" set:html={headlineHtml(initial)} />
+
+    <div
+      id="apiops-rows"
+      class="mt-3 space-y-1.5 max-h-96 overflow-y-auto pr-1"
+      set:html={rowsHtml(initialSpec, initialGov, false)}
+    />
+  </div>
+</div>
+
+<script>
+  import type { ResolveReading } from '~/utils/openapi-resolve';
+  import { resolveSpec, OpenApiParseError } from '~/utils/openapi-resolve';
+  import { read, headlineHtml, rowsHtml, sourceHtml } from '~/utils/openapi-demo';
+  import { GOVERNANCE } from '~/data/openapi-samples/governance';
+  import { load } from 'js-yaml';
+
+  const SAMPLES = import.meta.glob('../../data/openapi-samples/*.json', { eager: true, import: 'default' });
+
+  const byKey = Object.fromEntries(
+    Object.entries(SAMPLES).map(([path, doc]) => [path.split('/').pop()!.replace('.json', ''), doc])
+  );
+
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T | null;
+
+  const headline = $('apiops-headline');
+  const rows = $('apiops-rows');
+  const title = $('apiops-title');
+  const badge = $('apiops-badge');
+  const error = $('apiops-error');
+  const specText = $('apiops-spec-text');
+  const specMeta = $('apiops-spec-meta');
+
+  if (headline && rows) {
+    const fail = (message: string) => {
+      if (!error) return;
+      error.textContent = message;
+      error.classList.remove('hidden');
+    };
+
+    const clearError = () => error?.classList.add('hidden');
+
+    // The panel is only ever repainted with a reading that parsed. A document that could not be
+    // read leaves the previous one on screen and says why, rather than replacing a real number
+    // with a zero that would read as a fact about the reader's API.
+    // `gov` is null for anything the visitor supplied, and that is the whole honesty rule: we hold
+    // governance for the samples and for nothing else, so a pasted document reports naming and
+    // leaves the second line as a question.
+    // What the visitor has governed on their own document, this visit. Client-side only: nothing is
+    // saved and nothing is sent, which is what the label under the picker says.
+    let assigned: Record<string, string> = {};
+    let current: {
+      spec: ResolveReading;
+      label: string;
+      source: string;
+      sampleGov: Record<string, string> | null;
+    } | null = null;
+
+    const render = () => {
+      if (!current) return;
+      const { spec, label, source, sampleGov } = current;
+      // A sample carries its own model and is not editable. The visitor's own document is editable,
+      // and becomes a gap report the moment they govern anything on it — everything they have not
+      // reached yet is, correctly, a gap.
+      const editable = sampleGov === null;
+      const gov = sampleGov ?? (Object.keys(assigned).length ? assigned : null);
+
+      let headlineOut: string, rowsOut: string, sourceOut: string;
+      try {
+        headlineOut = headlineHtml(read(spec, gov, editable));
+        rowsOut = rowsHtml(spec, gov, editable);
+        sourceOut = sourceHtml(source);
+      } catch {
+        fail('That document was read, but something went wrong rendering it. Nothing was changed.');
+        return;
+      }
+
+      // innerHTML closes every <details>. Reopening the same rows keeps a visitor who just governed
+      // one endpoint looking at the endpoint they governed, rather than at the top of the list.
+      const open = new Set(
+        [...rows.querySelectorAll<HTMLDetailsElement>('details[open]')].map((d) => d.dataset.op ?? '')
+      );
+
+      clearError();
+      headline.innerHTML = headlineOut;
+      rows.innerHTML = rowsOut;
+      for (const d of rows.querySelectorAll<HTMLDetailsElement>('details')) {
+        if (open.has(d.dataset.op ?? '')) d.open = true;
+      }
+      if (specText) specText.innerHTML = sourceOut;
+      if (specMeta) specMeta.textContent = `${spec.total} operations · ${Math.round(source.length / 1024)} KB`;
+      if (title) title.textContent = label;
+      if (badge) badge.textContent = sampleGov ? 'Demo model' : editable && gov ? 'Your model' : 'No model';
+    };
+
+    const paint = (doc: unknown, label: string, gov: Record<string, string> | null, source: string) => {
+      let spec: ResolveReading;
+      try {
+        spec = resolveSpec(doc);
+      } catch (err) {
+        fail(err instanceof OpenApiParseError ? err.message : 'That document could not be read.');
+        return;
+      }
+      // A new document is a new estate: whatever was governed on the last one does not carry over.
+      assigned = {};
+      current = { spec, label, source, sampleGov: gov };
+      render();
+    };
+
+    // Delegated, because the rows are replaced wholesale on every render and a listener bound to a
+    // row would not survive the first assignment.
+    rows.addEventListener('change', (event) => {
+      const select = (event.target as HTMLElement)?.closest<HTMLSelectElement>('[data-govern]');
+      if (!select) return;
+      const operation = select.dataset.govern!;
+      if (select.value) assigned[operation] = select.value;
+      else delete assigned[operation];
+      render();
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('.apiops-sample').forEach((button) => {
+      button.addEventListener('click', () => {
+        const key = button.dataset.sample!;
+        const doc = byKey[key] as { info?: { title?: string } };
+        if (doc) paint(doc, doc.info?.title ?? key, GOVERNANCE[key] ?? null, JSON.stringify(doc, null, 2));
+      });
+    });
+
+    const toggle = (buttonId: string, panelId: string) => {
+      const button = $(buttonId);
+      const panel = $(panelId);
+      button?.addEventListener('click', () => {
+        const open = panel?.classList.toggle('hidden') === false;
+        button.setAttribute('aria-expanded', String(open));
+      });
+    };
+    toggle('apiops-paste-toggle', 'apiops-paste');
+    toggle('apiops-spec-toggle', 'apiops-spec');
+
+    // A pasted document is somebody's internal API description. Browsers restore textarea values on
+    // reload and on back-forward navigation, so without this it would still be sitting there on a
+    // shared screen after the visitor thought they had left.
+    window.addEventListener('pagehide', () => {
+      const input = $<HTMLTextAreaElement>('apiops-input');
+      if (input) input.value = '';
+    });
+
+    $('apiops-read')?.addEventListener('click', () => {
+      const input = $<HTMLTextAreaElement>('apiops-input');
+      const text = input?.value.trim() ?? '';
+      if (!text) return fail('Nothing to read — paste an OpenAPI document above.');
+      if (text.length > 8_000_000) return fail('That document is over the 8 MB cap this page reads in the browser.');
+      let doc: unknown;
+      try {
+        doc = JSON.parse(text);
+      } catch {
+        try {
+          doc = load(text);
+        } catch {
+          return fail('That is neither valid JSON nor valid YAML.');
+        }
+      }
+      // The visitor's own bytes go into the spec view, not a re-serialisation of them.
+      paint(doc, (doc as { info?: { title?: string } })?.info?.title ?? 'Your API', null, text);
+    });
+  }
+</script>

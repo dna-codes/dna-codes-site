@@ -1,0 +1,169 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import DnaHelix from '~/components/DnaHelix.astro';
+import ApiOpsDemo from '~/components/widgets/ApiOpsDemo.astro';
+import ApiCoveragePanel from '~/components/widgets/ApiCoveragePanel.astro';
+import ApiOpsBind from '~/components/widgets/ApiOpsBind.astro';
+import ApiOpsEdge from '~/components/widgets/ApiOpsEdge.astro';
+import ApiOpsExplorer from '~/components/widgets/ApiOpsExplorer.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+
+// Four content sections between the hero and the close, alternating side to side:
+//
+//   Hero + ApiOpsDemo                       paste a spec, watch it resolve
+//   1. The wedge      prose ◀ │ ▶ visual    most of it is governed; which parts aren't?
+//   2. ApiOpsBind     visual ◀ │ ▶ prose    POST /payments is Payment.Create
+//   3. ApiOpsEdge     prose ◀ │ ▶ visual    one middleware, the same decision, a record
+//   4. ApiOpsExplorer visual ◀ │ ▶ prose    execute as an actor — and no, we are not Swagger
+//   Close                                   FAQ, then the waitlist
+//
+// The page is shipped at "In design", ahead of the middleware, on one argument: rung zero is real.
+// The demo genuinely resolves the visitor's own document in their own browser, so the main artifact
+// on the page is a working thing rather than a promise. Everything below it describes what is
+// designed and not yet built, and the FAQ says so in those words.
+//
+// §1 is a gap report rather than a blank slate, and that came out of measurement rather than
+// copywriting. The resolver was run over nine real public specs before this page was written: 3,496
+// operations, 88% resolvable, spread 45%–100%. Naming is easy and nobody's API is wholly ungoverned
+// — so the wedge is not "you have no controls", it is "you cannot say which endpoints have none".
+// See openspec/changes/add-api-operations/findings.md.
+
+const metadata = {
+  title: 'API Operations — Operational controls for your API',
+  description:
+    'Who may call each endpoint, under what conditions, and what gets recorded. Read from the OpenAPI document you already publish. Paste a spec and the reading runs in your browser.',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- ── Hero + demo ──────────────────────────────────────────────────── -->
+  <Hero tagline="API Operations · In design">
+    <DnaHelix
+      slot="bg"
+      orientation="horizontal"
+      helixWidth={120}
+      nodeSize={12}
+      filled
+      style="height:58%;margin-top:5%"
+    />
+
+    <Fragment slot="title">
+      Operational controls<br />
+      for your <span class="text-accent">API</span>.
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      OpenAPI says what your endpoints do.<br class="hidden sm:block" />
+      DNA says who may call them, and what gets recorded.
+      <span class="mt-4 block text-base text-slate-400"> Paste your spec. The reading runs in your browser. </span>
+    </Fragment>
+
+    <Fragment slot="actions">
+      <div class="flex w-full sm:w-auto">
+        <a href="#waitlist" class="btn-primary w-full sm:mb-0">Join the waitlist</a>
+      </div>
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <ApiOpsDemo />
+      </div>
+    </Fragment>
+  </Hero>
+
+  <!-- ── 1. The wedge, and it is two numbers ──────────────────────────── -->
+  <WidgetWrapper containerClass="max-w-5xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">The finding</p>
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-5">
+          Most of it is <span class="text-accent">governed</span>.<br />Which parts aren’t?
+        </h2>
+        <p class="text-muted leading-relaxed mb-4">
+          Your document says exactly what <code class="text-white">POST /payments</code> takes. It doesn’t say who may call
+          it, or whether anyone will know they did.
+        </p>
+        <p class="text-muted leading-relaxed mb-4">
+          Those answers exist — in a middleware, a decorator, someone’s head, four places that disagree. None are in the
+          file your company treats as the API’s definition, so nothing you own can name the endpoints nothing covers.
+        </p>
+        <p class="text-muted leading-relaxed">
+          <em>OpenAPI describes your API. DNA describes your organization.</em>
+        </p>
+      </div>
+
+      <ApiCoveragePanel />
+    </div>
+  </WidgetWrapper>
+
+  <!-- ── 2. The bind ──────────────────────────────────────────────────── -->
+  <ApiOpsBind />
+
+  <!-- ── 3. The edge ──────────────────────────────────────────────────── -->
+  <ApiOpsEdge />
+
+  <!-- ── 4. The explorer ──────────────────────────────────────────────── -->
+  <ApiOpsExplorer />
+
+  <!-- ── Close ────────────────────────────────────────────────────────── -->
+  <FAQs
+    title="FAQ"
+    columns={2}
+    classes={{ container: 'max-w-5xl' }}
+    items={[
+      {
+        title: 'Do I have to change my OpenAPI document?',
+        description:
+          'Usually barely. Run the reader over nine large public APIs and 88% of operations resolve to a resource and an act from the path alone — Asana and Adyen resolve completely, Stripe at 97%, GitHub at 86%. The exception is an RPC-shaped API: Slack’s Web API resolves at 45%, because <code>/chat.postEphemeral</code> is a call rather than a resource. Those are exactly the endpoints <code>x-dna</code> exists for, and it is two lines each.',
+      },
+      {
+        title: 'Is this a gateway? Do you sit in my request path?',
+        description:
+          'No. Nothing proxies your traffic, terminates your TLS, or adds a box between your customers and your API. A middleware at <em>your</em> edge asks for a decision and acts on it, which is the same thing <code>@dna/guard</code> does behind a React control today. Whether an unanswered question fails open or fails closed is your call, made explicitly rather than defaulted quietly.',
+      },
+      {
+        title: 'Are you replacing Swagger UI?',
+        description:
+          'No, and we do not render anything into it either. Swagger UI documents your API and does it well. DNA reads the same document and answers a different question — <em>may this actor call this, right now</em> — which no documentation tool has ever been asked. The smallest useful integration is one <code>View in DNA →</code> link in the Swagger page you already have.',
+      },
+      {
+        title: 'What does the number on this page actually measure?',
+        description:
+          'Three things, deliberately kept apart. <strong>Naming</strong> comes from your OpenAPI document. <strong>Authentication</strong> comes from its <code>security</code> blocks — real, and worth reporting, but a token proves who you are, not that you may. <strong>Governance</strong> comes from your model, so a pasted spec gets no governance number from us; put a control on an endpoint yourself and the panel becomes a gap report on your own API. A page that blurred those three would be caught by the first person who looked.',
+      },
+      {
+        title: 'How is it priced?',
+        description:
+          'There is no new meter and no new tier. The API surface is included in every paid plan for the same reason the Overlay is — it is a surface on your model, not a product beside it, and we charge for authority rather than for looking. <a class="text-primary hover:underline" href="/pricing">See the ladder →</a>',
+      },
+      {
+        title: 'Is this ready for production?',
+        description:
+          'It is <strong>in design</strong>, which is a weaker claim than Agent Operations’ in build, and deliberately so. What works today is what is on this page: the reader is real and runs in your browser on your own document. The publish step, the middleware and the explorer are designed and not yet built, in that order. We are setting up a small number of design partners by hand and telling each of them exactly which half they are getting.',
+      },
+    ]}
+  />
+
+  <WidgetWrapper containerClass="max-w-4xl mx-auto !pt-0">
+    <div
+      class="rounded-2xl border border-primary/40 bg-slate-900/70 p-6 sm:p-10 shadow-[0_0_48px_rgba(13,148,136,0.18)]"
+    >
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold tracking-tight">Run it on the spec you already publish.</h2>
+        <p class="mt-4 text-muted max-w-xl mx-auto leading-relaxed">
+          Bring the API you would least like to explain to an auditor. The interesting part is never the endpoints we
+          cannot name — it is the ones we can.
+        </p>
+        <p class="mt-3 text-sm text-slate-500">
+          We are looking for design partners with an API older than the rules that govern it.
+        </p>
+      </div>
+
+      <WaitlistForm preselect="api-operations" />
+    </div>
+  </WidgetWrapper>
+</Layout>
