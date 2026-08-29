@@ -1,0 +1,112 @@
+---
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import { rowStyle, pillStyle } from '~/utils/openapi-ui';
+
+// §3 — enforcement. Prose left, visual right.
+//
+// The visual is Swagger's server-response block: status code, then the body. Three actors through
+// one rule landing on 200, 403 and 202. A status code is a more convincing claim than a tick — it is
+// the thing their client actually receives.
+//
+// Colour follows the same rule as the endpoint list: primary for allowed, rose for refused, and
+// neutral for escalated, which is neither. Swagger's own status palette was here and went, for the
+// reason in openapi-ui.ts — a page where a colour means two things is a page where it means none.
+//
+// The framing that must not slip: we are not in the request path. Kong, Apigee and Zuplo win a
+// feature list against us and we do not want to be on it.
+
+const responses = [
+  {
+    code: '200',
+    tone: 'text-primary',
+    actor: 'Dana Ruiz · Finance.Admin',
+    body: '{ "refund": "re_8f2c", "amount": 240.00 }',
+    note: 'within her delegated limit',
+  },
+  {
+    code: '403',
+    tone: 'text-rose-400',
+    actor: 'Sam Okafor · Support.Agent',
+    body: '{ "error": "no grant for Payment.Refund" }',
+    note: 'refused before the handler ran',
+  },
+  {
+    code: '202',
+    tone: 'text-slate-200',
+    actor: 'Dana Ruiz · Finance.Admin',
+    body: '{ "status": "escalated", "to": "CFO" }',
+    note: '$18,400 — over limit',
+  },
+];
+---
+
+<WidgetWrapper containerClass="max-w-6xl mx-auto">
+  <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">The edge</p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-5">
+        One rule. Three <span class="text-accent">answers</span>.
+      </h2>
+      <p class="text-muted leading-relaxed mb-4">
+        One middleware resolves the endpoint to its operation, resolves the target from the request, and asks the same
+        evaluator a button in your app asks. Refusal happens before your handler.
+      </p>
+      <pre
+        class="rounded-lg border border-white/10 bg-slate-950 p-3 text-[14px] font-mono text-slate-200 overflow-x-auto mb-4"><code>app.use(dnaGuard({'{'} openapi: './openapi.json' {'}'}));</code></pre>
+      <p class="text-muted leading-relaxed mb-4">
+        No parameter names who is asking — a caller that could describe its own actor could authorize itself. The actor
+        comes from the credential you already authenticated.
+      </p>
+      <p class="text-muted leading-relaxed">
+        <strong class="text-white">We are not a gateway.</strong> Nothing proxies your traffic or terminates your TLS. Your
+        edge asks a question; fail-open or fail-closed is your call.
+      </p>
+    </div>
+
+    <div class="rounded-xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+      <div class="flex items-center gap-3 px-3 py-2.5" style={rowStyle()}>
+        <span
+          class="rounded px-2 py-0.5 text-[12px] font-bold text-white w-16 text-center flex-shrink-0"
+          style={pillStyle()}
+        >
+          POST
+        </span>
+        <span class="font-mono text-[14px] text-white truncate">/v1/payments/{'{id}'}/refund</span>
+      </div>
+
+      <div class="px-3 py-2 border-b border-white/8">
+        <span class="text-[12px] text-slate-400">Rule</span>
+        <span class="ml-2 text-[13px] font-mono text-slate-200">Refund Authority — Finance, up to $5,000</span>
+      </div>
+
+      <div class="p-3 space-y-2.5">
+        <p class="text-[13px] font-semibold text-slate-300">Server response</p>
+        {
+          responses.map((r) => (
+            <div class="rounded border border-white/10 overflow-hidden">
+              <div class="flex items-center gap-2.5 px-2.5 py-1.5 bg-slate-800/60">
+                <span class:list={['font-mono text-[15px] font-bold', r.tone]}>{r.code}</span>
+                <span class="text-[13px] text-slate-200 truncate">{r.actor}</span>
+                <span class="ml-auto text-[12px] text-slate-400 truncate text-right">{r.note}</span>
+              </div>
+              {/* A div rather than a pre: the bodies are single-line, and a pre here is one
+                  prettier reflow away from rendering its own indentation as leading whitespace. */}
+              <div class="px-2.5 py-1.5 text-[12px] font-mono text-slate-300 overflow-x-auto bg-slate-950/60">
+                {r.body}
+              </div>
+            </div>
+          ))
+        }
+
+        <div class="pt-2.5 border-t border-white/8">
+          <p class="text-[12px] text-slate-400 mb-1">And the record</p>
+          <p class="text-[13px] font-mono text-slate-300 leading-relaxed">
+            Payment.Refund · <span class="text-white">Dana Ruiz</span> · Finance.Admin<br />
+            under <span class="text-white">Refund Authority</span> · audit 83f91c4e
+          </p>
+          <p class="mt-1.5 text-[12px] text-slate-400">A person and the authority they used — not an API key.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</WidgetWrapper>

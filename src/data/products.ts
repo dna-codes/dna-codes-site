@@ -6,10 +6,12 @@
 // reticle is literally what the product does, so the logo and the UI agree. Operations
 // gets a hierarchy of nodes — an operating model, drawn. Agent Operations gets a robot,
 // which is the one glyph a stranger parses without a caption; the more honest mark is a
-// node joined to other nodes, and if the robot ever reads as toy that is where to go.
+// node joined to other nodes, and if the robot ever reads as toy that is where to go. API
+// Operations gets the plug — the mark for a thing other software connects to, which is exactly what
+// the product governs, and it reads at 20px without a caption.
 
 export interface Product {
-  key: 'operations' | 'overlay' | 'agent-operations';
+  key: 'operations' | 'overlay' | 'api-operations' | 'agent-operations';
   name: string;
   href: string;
   /** The product's mark. Render it through ProductMark rather than bare. */
@@ -25,6 +27,11 @@ export interface Product {
 // Order matters, and it is the suite order — Model, Govern, Run — because /pricing
 // publishes those three as a ladder and two orderings of one set is a defect. Operations
 // still leads, which is the other rule: it is the surface a visitor can try today.
+//
+// Four products, three verbs. API Operations shares "Govern it" with the Overlay because a verb is
+// something you do to your business and a product is a place you meet it — there were always going
+// to be more places than verbs, and pinning the count of one to the count of the other would mean
+// mis-naming a product to protect a slogan. /pricing still publishes three rungs.
 export const PRODUCTS: Product[] = [
   {
     key: 'operations',
@@ -43,6 +50,15 @@ export const PRODUCTS: Product[] = [
     description: 'Operational controls inside your running app',
     verb: 'Govern it',
     status: 'Early access',
+  },
+  {
+    key: 'api-operations',
+    name: 'API Operations',
+    href: '/api-operations',
+    icon: 'tabler:plug-connected',
+    description: 'Who may call your endpoints, and what it records',
+    verb: 'Govern it',
+    status: 'In design',
   },
   {
     key: 'agent-operations',

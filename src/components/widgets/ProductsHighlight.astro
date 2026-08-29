@@ -3,6 +3,7 @@ import { Icon } from 'astro-icon/components';
 import { Image } from 'astro:assets';
 import ProductMark from '~/components/ui/ProductMark.astro';
 import AgentCoveragePanel from '~/components/widgets/AgentCoveragePanel.astro';
+import ApiCoveragePanel from '~/components/widgets/ApiCoveragePanel.astro';
 import { PRODUCT } from '~/data/products';
 // Captured from the live miniature on /overlay rather than from the product screenshots in
 // this folder: every one of those has a light host application, which next to the dark
@@ -10,8 +11,8 @@ import { PRODUCT } from '~/data/products';
 import overlayShot from '~/assets/images/overlay/panel-on-dark-app.png';
 import operationsShot from '~/assets/images/operations/process-flow-output.png';
 
-// Three products, two sentences each, side by side. This is the first thing below the hero,
-// so its job is to make a visitor understand in one glance that there are exactly three
+// Four products, two sentences each, side by side. This is the first thing below the hero,
+// so its job is to make a visitor understand in one glance that there are exactly four
 // things and which of them is theirs. Everything else is on the product page.
 //
 // Each card leads with a real shot of the thing rather than an icon: the Overlay's panel
@@ -20,7 +21,8 @@ import operationsShot from '~/assets/images/operations/process-flow-output.png';
 // They are screenshots of our own UI, which means they go stale silently — retake them in
 // any change that alters the panel chrome on either page.
 //
-// Agent Operations carries a live render of `AgentCoveragePanel` rather than a screenshot,
+// Agent Operations and API Operations each carry a live render of their coverage panel rather
+// than a screenshot,
 // because there is nothing to photograph yet and a stock image would be the one dishonest
 // thing on the page. It is the same component the product page opens on, so the card still
 // promises exactly what the click gives. Replace it with a capture of the demo's first beat
@@ -55,6 +57,19 @@ const products = [
     alt: 'The Overlay panel docked beside a running application, answering for a refund button with its address, the operation it performs, who may press it, and a note that every refund is now recorded.',
   },
   {
+    name: PRODUCT['api-operations'].name,
+    verb: PRODUCT['api-operations'].verb,
+    icon: PRODUCT['api-operations'].icon,
+    headline: 'Add operational controls to your API.',
+    body: 'The same model, at your API edge. Every endpoint carries the operation it performs, so who may call it, whether it is on, and what it recorded are answered from your own OpenAPI document.',
+    href: PRODUCT['api-operations'].href,
+    cta: 'Read your own spec',
+    status: PRODUCT['api-operations'].status,
+    image: null,
+    panel: 'api',
+    alt: '',
+  },
+  {
     name: PRODUCT['agent-operations'].name,
     verb: PRODUCT['agent-operations'].verb,
     icon: PRODUCT['agent-operations'].icon,
@@ -64,6 +79,7 @@ const products = [
     cta: 'See it run',
     status: PRODUCT['agent-operations'].status,
     image: null,
+    panel: 'agent',
     alt: '',
   },
 ];
@@ -82,17 +98,19 @@ const products = [
       >
         Products
       </p>
-      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Three products, one model.</h2>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Four products, one model.</h2>
     </div>
 
     {
-      /* Two up at md, three at lg. Three across a 13" laptop makes each 4:3 frame small
-        enough that the screenshots stop being readable, and a card whose picture cannot be
-        read is a card with a decoration on it. */
+      /* Two up from md, and it stays two up. Three across a 13" laptop already made each 4:3
+        frame small enough that the screenshots stopped being readable; four would be worse,
+        and a card whose picture cannot be read is a card with a decoration on it. A 2x2 also
+        pairs the products the way the suite does — the two you can look at today on the top
+        row, the two under Govern it and Run it below. */
     }
-    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+    <div class="grid gap-5 md:grid-cols-2">
       {
-        products.map(({ name, verb, icon, headline, body, href, cta, status, image, alt }) => (
+        products.map(({ name, verb, icon, headline, body, href, cta, status, image, panel, alt }) => (
           <a
             href={href}
             class="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 transition-colors duration-200 hover:border-primary/50 hover:bg-slate-900/80"
@@ -113,7 +131,11 @@ const products = [
                 />
               ) : (
                 <div class="aspect-[4/3] w-full p-3 flex">
-                  <AgentCoveragePanel variant="card" class="w-full" />
+                  {panel === 'api' ? (
+                    <ApiCoveragePanel variant="card" class="w-full" />
+                  ) : (
+                    <AgentCoveragePanel variant="card" class="w-full" />
+                  )}
                 </div>
               )}
             </div>

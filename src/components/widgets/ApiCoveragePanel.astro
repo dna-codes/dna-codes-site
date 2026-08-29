@@ -1,0 +1,106 @@
+---
+import { rowStyle, pillStyle } from '~/utils/openapi-ui';
+
+// The API reading, as a panel. Sibling of AgentCoveragePanel and deliberately the same chrome, so
+// the suite reads as one system.
+//
+// It is a **gap report**, not a blank slate, and that is the decision that shapes it. An
+// organisation with nothing governed is a strawman a reader dismisses; an organisation with 22 of 26
+// governed is one they recognise, and then they start looking for their own four. This is the panel
+// a security or compliance reader is trying to get to — most of the estate is fine, and the question
+// is which parts nothing covers.
+//
+// The gaps are chosen rather than sampled: all three ungoverned operations here move money out of
+// the business. That is what a real estate looks like — teams govern the endpoints they thought of,
+// and the dangerous ones are dangerous precisely because nobody thought of them.
+//
+// The figures are the bundled payments sample read against `GOVERNANCE.payments`, which is what the
+// demo opens on, and the two must agree — if that map changes, these numbers change with it.
+// 22 governed + 3 ungoverned + 1 that cannot be named = 26. All three groups are said out loud,
+// because 26 − 22 = 4 and a reader who subtracts must not find a number missing.
+//
+// This one does not expand. It is a still of the demo for the homepage card and §1, and rows that
+// looked clickable here and were not would be worse than rows that do not look clickable at all.
+
+export interface Props {
+  /** `card` drops the chrome to fit a tile; `full` is the standalone panel. */
+  variant?: 'card' | 'full';
+  class?: string;
+}
+
+const { variant = 'full', class: className = '' } = Astro.props;
+
+const total = 26;
+const governed = 22;
+const gaps = total - governed;
+
+// Gaps first, exactly as the demo orders them: an auditor should not have to scroll for the
+// findings.
+const endpoints = [
+  { method: 'POST', path: '/v1/payments/{id}/refund', operation: 'Payment.Refund', rule: null },
+  { method: 'POST', path: '/v1/payments/{id}/void', operation: 'Payment.Void', rule: null },
+  { method: 'POST', path: '/v1/payouts', operation: 'Payout.Create', rule: null },
+  { method: 'GET', path: '/v1/reports/latest', operation: null, rule: null },
+  { method: 'POST', path: '/v1/payments', operation: 'Payment.Create', rule: 'Payment Authority' },
+  { method: 'GET', path: '/v1/payments', operation: 'Payment.List', rule: 'Payment Access' },
+  { method: 'POST', path: '/v1/invoices/{id}/pay', operation: 'Invoice.Pay', rule: 'Payment Authority' },
+];
+---
+
+<div
+  class:list={['rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl flex flex-col', className]}
+>
+  <div class="px-3.5 py-2.5 border-b border-white/8 flex items-baseline gap-2 flex-shrink-0">
+    <span class="text-[15px] font-semibold text-white truncate">Northwind Payments API</span>
+    <span class="text-[12px] font-mono text-slate-400">OAS 3.0</span>
+    <span class="ml-auto text-[11px] font-bold uppercase tracking-wider text-slate-400 whitespace-nowrap"
+      >Demo model</span
+    >
+  </div>
+
+  <div class="p-3.5 flex-1 min-h-0 flex flex-col">
+    <p class="text-base font-bold leading-snug">
+      <span class="text-white">{governed} of {total} endpoints are governed.</span>{' '}
+      <span class="text-rose-300">{gaps} gaps.</span>
+    </p>
+
+    <div class="mt-3 space-y-1 flex-1 min-h-0 overflow-hidden">
+      {
+        endpoints.slice(0, variant === 'card' ? 4 : endpoints.length).map((e) => (
+          <div class="flex items-center gap-2 rounded px-2 py-1.5" style={rowStyle(e.rule ? 'ok' : 'gap')}>
+            <span
+              class="rounded px-1.5 py-0.5 text-[11px] font-bold text-white w-14 text-center flex-shrink-0"
+              style={pillStyle(e.rule ? 'ok' : 'gap')}
+            >
+              {e.method}
+            </span>
+            <span class:list={['text-[13px] font-mono truncate', e.rule ? 'text-slate-200' : 'text-white']}>
+              {e.path}
+            </span>
+            <span class="ml-auto flex flex-col items-end leading-tight flex-shrink-0 pl-2">
+              {e.operation ? (
+                <span class:list={['text-[12px] font-mono', e.rule ? 'text-slate-200' : 'text-white']}>
+                  {e.operation}
+                </span>
+              ) : (
+                <span class="text-[12px] text-slate-400">—</span>
+              )}
+              <span class:list={['text-[12px]', e.rule ? 'text-primary' : 'font-semibold text-rose-300']}>
+                {e.rule ?? (e.operation ? 'nothing governs this' : 'cannot be named')}
+              </span>
+            </span>
+          </div>
+        ))
+      }
+    </div>
+
+    {
+      variant === 'full' && (
+        <p class="mt-3 pt-3 border-t border-white/8 text-[12px] text-slate-400 leading-snug">
+          Nobody wrote a rule for these three. They were not judged too risky to govern — they were never considered,
+          and nothing in the stack was in a position to notice.
+        </p>
+      )
+    }
+  </div>
+</div>

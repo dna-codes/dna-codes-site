@@ -1,0 +1,120 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Acme Internal Operations API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/inventory.adjust": {
+      "post": {
+        "operationId": "inventoryAdjust",
+        "summary": "Adjust stock on hand"
+      }
+    },
+    "/inventory.count": {
+      "get": {
+        "operationId": "inventoryCount",
+        "summary": "Count stock on hand"
+      }
+    },
+    "/orders.fulfill": {
+      "post": {
+        "operationId": "ordersFulfill",
+        "summary": "Fulfil an order",
+        "x-dna": {
+          "operation": "order.fulfill",
+          "target": "$.body.orderId"
+        }
+      }
+    },
+    "/orders.cancel": {
+      "post": {
+        "operationId": "ordersCancel",
+        "summary": "Cancel an order",
+        "x-dna": {
+          "operation": "order.cancel",
+          "target": "$.body.orderId"
+        }
+      }
+    },
+    "/shipments.dispatch": {
+      "post": {
+        "operationId": "shipmentsDispatch",
+        "summary": "Dispatch a shipment"
+      }
+    },
+    "/shipments.track": {
+      "get": {
+        "operationId": "shipmentsTrack",
+        "summary": "Track a shipment"
+      }
+    },
+    "/pricing.override": {
+      "post": {
+        "summary": "Override a line price"
+      }
+    },
+    "/credits.issue": {
+      "post": {
+        "summary": "Issue account credit"
+      }
+    },
+    "/orders": {
+      "get": {
+        "operationId": "listOrders",
+        "summary": "List orders"
+      },
+      "post": {
+        "operationId": "createOrder",
+        "summary": "Create an order"
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "operationId": "getOrder",
+        "summary": "Retrieve an order"
+      }
+    },
+    "/warehouses": {
+      "get": {
+        "operationId": "listWarehouses",
+        "summary": "List warehouses"
+      }
+    },
+    "/warehouses/{id}": {
+      "get": {
+        "operationId": "getWarehouse",
+        "summary": "Retrieve a warehouse"
+      }
+    },
+    "/rpc/runReport": {
+      "post": {
+        "operationId": "runReport",
+        "summary": "Run an operational report"
+      }
+    },
+    "/rpc/rebuildIndex": {
+      "post": {
+        "operationId": "rebuildIndex",
+        "summary": "Rebuild the search index"
+      }
+    },
+    "/suppliers": {
+      "get": {
+        "operationId": "listSuppliers",
+        "summary": "List suppliers"
+      }
+    },
+    "/suppliers/{id}/approve": {
+      "post": {
+        "operationId": "approveSupplier",
+        "summary": "Approve a supplier"
+      }
+    },
+    "/metrics/fill_rate": {
+      "get": {
+        "summary": "Fill rate"
+      }
+    }
+  }
+}

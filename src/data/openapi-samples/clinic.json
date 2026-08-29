@@ -1,0 +1,133 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Meridian Clinic API",
+    "version": "3.2.0"
+  },
+  "paths": {
+    "/patients": {
+      "get": {
+        "operationId": "listPatients",
+        "summary": "List patients"
+      },
+      "post": {
+        "operationId": "createPatient",
+        "summary": "Register a patient"
+      }
+    },
+    "/patients/{id}": {
+      "get": {
+        "operationId": "getPatient",
+        "summary": "Retrieve a patient"
+      },
+      "patch": {
+        "operationId": "updatePatient",
+        "summary": "Update a patient record"
+      }
+    },
+    "/patients/{id}/appointments": {
+      "get": {
+        "operationId": "listPatientAppointments",
+        "summary": "A patient’s appointments"
+      }
+    },
+    "/patients/{id}/chart": {
+      "get": {
+        "summary": "The patient chart"
+      }
+    },
+    "/appointments": {
+      "get": {
+        "operationId": "listAppointments",
+        "summary": "List appointments"
+      },
+      "post": {
+        "operationId": "bookAppointment",
+        "summary": "Book an appointment"
+      }
+    },
+    "/appointments/{id}": {
+      "get": {
+        "operationId": "getAppointment",
+        "summary": "Retrieve an appointment"
+      },
+      "patch": {
+        "operationId": "rescheduleAppointment",
+        "summary": "Reschedule an appointment"
+      },
+      "delete": {
+        "operationId": "deleteAppointment",
+        "summary": "Remove an appointment"
+      }
+    },
+    "/appointments/{id}/confirm": {
+      "post": {
+        "operationId": "confirmAppointment",
+        "summary": "Confirm an appointment"
+      }
+    },
+    "/appointments/{id}/cancel": {
+      "post": {
+        "operationId": "cancelAppointment",
+        "summary": "Cancel an appointment"
+      }
+    },
+    "/encounters": {
+      "get": {
+        "operationId": "listEncounters",
+        "summary": "List encounters"
+      },
+      "post": {
+        "operationId": "createEncounter",
+        "summary": "Open an encounter"
+      }
+    },
+    "/encounters/{id}": {
+      "get": {
+        "operationId": "getEncounter",
+        "summary": "Retrieve an encounter"
+      }
+    },
+    "/encounters/{id}/notes": {
+      "get": {
+        "operationId": "listNotes",
+        "summary": "Clinical notes on an encounter"
+      },
+      "post": {
+        "operationId": "addNote",
+        "summary": "Add a clinical note"
+      }
+    },
+    "/prescriptions": {
+      "get": {
+        "operationId": "listPrescriptions",
+        "summary": "List prescriptions"
+      },
+      "post": {
+        "operationId": "createPrescription",
+        "summary": "Issue a prescription"
+      }
+    },
+    "/prescriptions/{id}/refill": {
+      "post": {
+        "operationId": "refillPrescription",
+        "summary": "Refill a prescription"
+      }
+    },
+    "/billing/statement": {
+      "get": {
+        "summary": "The billing statement"
+      }
+    },
+    "/schedule/today": {
+      "get": {
+        "summary": "Today’s schedule"
+      }
+    },
+    "/reports/no-show-rate": {
+      "get": {
+        "summary": "No-show rate"
+      }
+    }
+  }
+}
