@@ -57,7 +57,7 @@ header in their place.
 #### Scenario: The question is asked by the page, not by a bar
 
 - **WHEN** the page is first loaded with no industry selected
-- **THEN** Act I's heading MUST ask the question — "Every business already has dna. What's yours?"
+- **THEN** Act I's heading MUST ask the question — "What's your dna?"
 
 ### Requirement: Act I selects an industry from one prominent control
 
