@@ -5,7 +5,7 @@
 // against inventory, packed, dispatched, and confirmed — and the product layer exposes the same
 // nouns the operations layer names.
 //
-// Everything the /whats-your-dna page shows for E-commerce comes out of this file.
+// Everything the /playground page shows for E-commerce comes out of this file.
 
 import type { AuthoredGenome } from '~/utils/genome-types';
 

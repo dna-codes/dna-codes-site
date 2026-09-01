@@ -1,4 +1,4 @@
-// Genome validation — the gate that makes the /whats-your-dna page's claim checkable.
+// Genome validation — the gate that makes the /playground page's claim checkable.
 //
 // Four passes, in the order a failure is most useful to read:
 //

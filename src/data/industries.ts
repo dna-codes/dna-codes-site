@@ -1,4 +1,4 @@
-// The six industries offered on /whats-your-dna, and the twelve outputs any of them can
+// The six industries offered on /playground, and the twelve outputs any of them can
 // generate.
 //
 // This module is the landing page's initial payload — keys, names, value propositions and

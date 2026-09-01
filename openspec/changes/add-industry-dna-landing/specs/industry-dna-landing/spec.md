@@ -1,15 +1,14 @@
 ## ADDED Requirements
 
-### Requirement: Public landing page at `/whats-your-dna`
+### Requirement: Public Playground page at `/playground`
 
-The site SHALL serve a statically rendered Astro page at `/whats-your-dna` that requires no
+The site SHALL serve a statically rendered Astro page at `/playground` that requires no
 authentication and renders successfully with no external runtime dependency. The page SHALL be
-composed of three sequential acts — industry selection, lens selection, and generation — with a
-sticky page header present across all three.
+composed of three sequential acts — industry selection, lens selection, and generation.
 
 #### Scenario: Anonymous visitor opens the page
 
-- **WHEN** an unauthenticated visitor navigates to `https://dna.codes/whats-your-dna`
+- **WHEN** an unauthenticated visitor navigates to `https://dna.codes/playground`
 - **THEN** the page MUST render with HTTP 200
 - **AND** it MUST display, in order, the industry selector, the lens picker, and the generation
   section
@@ -20,41 +19,45 @@ sticky page header present across all three.
 - **THEN** no request to an external service MUST be required to display any artifact
 - **AND** every artifact MUST be derived in the browser or at build time from bundled data
 
-### Requirement: A sticky header carries the question, then the answer
+#### Scenario: The campaign URL keeps working
 
-The page SHALL render its own sticky header in place of the standard site header, present from
-the top of the page to the bottom. The header SHALL contain the DNA mark, a headline region, an
-act indicator, and a persistent primary action.
+- **WHEN** a visitor opens `https://dna.codes/whats-your-dna`, the URL the page shipped under
+- **THEN** they MUST be sent to `/playground`
 
-Before an industry is selected, the headline region SHALL read **"What's your DNA?"**. After an
-industry is selected, it SHALL display that industry's name together with its value proposition.
-The primary action SHALL be labelled **Get Started** and SHALL be present regardless of act.
+### Requirement: The page is reachable from the site
 
-#### Scenario: Header before any selection
+The Playground SHALL be linked from the site rather than reachable only by URL: from the primary
+navigation on desktop and mobile, from the footer, and as the homepage hero's secondary action.
 
-- **WHEN** the page is first loaded with no industry selected
-- **THEN** the sticky header MUST read "What's your DNA?"
-- **AND** it MUST show the DNA mark and a "Get Started" action
+#### Scenario: Reachable from primary navigation
 
-#### Scenario: Header after an industry is selected
+- **WHEN** a visitor opens the site header on desktop or the mobile menu
+- **THEN** a "Playground" link MUST be visible
+- **AND** clicking it MUST navigate to `/playground`
 
-- **WHEN** the visitor selects an industry
-- **THEN** the sticky header MUST display that industry's name and its value proposition
-- **AND** the value proposition MUST remain visible while the visitor scrolls through Acts II
-  and III
+#### Scenario: Reachable from the homepage hero
 
-#### Scenario: Only one sticky bar is present
+- **WHEN** the homepage renders
+- **THEN** the hero's secondary action MUST read "Playground" and MUST navigate to `/playground`
+- **AND** the hero's primary action MUST remain the waitlist
+
+### Requirement: The page uses the standard site header
+
+The page SHALL render the standard site header and footer, the same ones every other page renders,
+with the Playground nav entry marked as the current section. It SHALL NOT render a page-specific
+header in their place.
+
+#### Scenario: The site nav is present and marked
 
 - **WHEN** the page is viewed at any scroll position
-- **THEN** the standard site header MUST NOT be rendered
+- **THEN** the standard site header MUST be rendered and sticky, exactly as on every other page
+- **AND** the "Playground" nav entry MUST be marked as current
 - **AND** exactly one sticky bar MUST be fixed to the top of the viewport
 
-#### Scenario: Header adapts to narrow viewports
+#### Scenario: The question is asked by the page, not by a bar
 
-- **WHEN** the page is viewed at a width where the industry name and value proposition cannot
-  both fit
-- **THEN** the industry name MUST remain visible
-- **AND** the "Get Started" action MUST remain reachable without horizontal scrolling
+- **WHEN** the page is first loaded with no industry selected
+- **THEN** Act I's heading MUST ask the question — "Every business already has dna. What's yours?"
 
 ### Requirement: Act I selects an industry from one prominent control
 
@@ -84,19 +87,17 @@ No industry SHALL be selected when the page is first loaded without state in the
 
 - **WHEN** the page is loaded with no industry in the URL
 - **THEN** the control MUST show its unselected prompt
-- **AND** the sticky header MUST still be asking its question
 
 #### Scenario: Selection advances the page
 
 - **WHEN** the visitor selects an industry
 - **THEN** the control MUST display that industry
-- **AND** the sticky header MUST update to that industry and its value proposition
 - **AND** the page MUST scroll to Act II
 
 #### Scenario: Changing the industry re-seeds later acts
 
 - **WHEN** the visitor returns to Act I and selects a different industry
-- **THEN** the sticky header MUST update to the new industry
+- **THEN** the control MUST display the new industry
 - **AND** the lens picker MUST reset to the new industry's spotlight selection
 
 #### Scenario: The control is operable by keyboard
@@ -247,26 +248,6 @@ screen.
 - **THEN** that output's own tab MUST show an error state
 - **AND** the remaining outputs MUST still render
 
-### Requirement: The page's terminal action is Create your DNA
-
-Act III SHALL close with a primary call to action labelled **Create your DNA** that resolves to
-the application entry point. The application entry point SHALL be defined by a single shared
-constant, and the sticky header's **Get Started** action SHALL resolve to the same destination.
-The selected industry and outputs SHALL be forwarded to that destination as query parameters.
-
-#### Scenario: Terminal CTA routes to the app
-
-- **WHEN** the visitor activates "Create your DNA"
-- **THEN** it MUST navigate to the destination defined by the shared application-entry constant
-- **AND** the selected industry and selected outputs MUST be present as query parameters
-
-#### Scenario: Header and terminal actions agree
-
-- **WHEN** the page is viewed
-- **THEN** the sticky header's "Get Started" action and the terminal "Create your DNA" action
-  MUST resolve to the same destination
-- **AND** neither MUST hard-code that destination independently of the shared constant
-
 ### Requirement: Page state is deep-linkable
 
 The selected industry and selected outputs SHALL be reflected in the URL query string as choices
@@ -282,7 +263,7 @@ rather than producing an error state.
 #### Scenario: A shared link restores the configuration
 
 - **WHEN** a visitor opens a URL carrying an industry and a set of outputs
-- **THEN** that industry MUST be selected on the helix and reflected in the sticky header
+- **THEN** that industry MUST be selected on the helix
 - **AND** exactly those outputs MUST be selected in the lens picker
 
 #### Scenario: Unknown parameters degrade gracefully
@@ -314,7 +295,7 @@ SHALL be readable and operable on mobile viewports.
 #### Scenario: Site builds with the page
 
 - **WHEN** `npm run build` runs
-- **THEN** it MUST complete successfully and emit `/whats-your-dna`
+- **THEN** it MUST complete successfully and emit `/playground`
 
 #### Scenario: Checks pass
 

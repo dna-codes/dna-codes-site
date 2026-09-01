@@ -1,21 +1,24 @@
 ---
-// /whats-your-dna — the campaign landing page.
+// /playground — the site's interactive surface: pick an industry, watch an operating model
+// generate. It began life as a campaign-only page at /whats-your-dna and is now in the fold —
+// the hero's second action, a header nav entry, and a footer link all land here.
 //
-// Campaign-only by decision: nothing on the site links here. That means the page has to stand
-// completely alone — a visitor arrives cold, with no prior exposure to DNA and no surrounding
-// context, so each act carries its own framing rather than assuming the homepage was read first.
+// Being linked from everywhere does not change how the page is written. It still assumes a
+// visitor who arrived cold, with no prior exposure to DNA, so each act carries its own framing
+// rather than leaning on the homepage having been read first.
 //
-// The site header is replaced by GenomeBar via PageLayout's named `header` slot. The footer
-// stays: somebody who scrolls past the call to action without converting should still find the
-// docs.
+// The page uses PageLayout's standard header and footer — no `header` slot override. There was a
+// GenomeBar here that replaced the nav entirely (campaign framing) and then briefly sat under it
+// as a context strip carrying "What's your DNA?", act dots and a Get Started button. All three
+// were redundant once the real nav returned: Act I's own H1 asks the question, the three acts are
+// numbered on screen, and the header's waitlist button is the site's one primary action.
 import Layout from '~/layouts/PageLayout.astro';
-import GenomeBar from '~/components/widgets/GenomeBar.astro';
 import IndustryHelix from '~/components/widgets/IndustryHelix.astro';
 import LensPicker from '~/components/widgets/LensPicker.astro';
 import GenomeGenerator from '~/components/widgets/GenomeGenerator.astro';
 
 const metadata = {
-  title: "What's your DNA? — DNA Codes",
+  title: "Playground — What's your DNA? — DNA Codes",
   description:
     'Pick your industry and watch a whole operating model fall out of one file — process, roles, screens, API, architecture.',
   ignoreTitleTemplate: true,
@@ -23,8 +26,6 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <GenomeBar slot="header" />
-
   <IndustryHelix />
   <LensPicker />
   <GenomeGenerator />
@@ -76,67 +77,6 @@ const metadata = {
       .map((s) => s.trim())
       .filter((s): s is OutputId => isOutputId(s));
     return { industry: isIndustryKey(ind) ? ind : null, lenses };
-  }
-
-  // --- Sticky bar ----------------------------------------------------------
-
-  function paintBar() {
-    const question = $('#genome-bar-question');
-    const answer = $('#genome-bar-answer');
-    if (!question || !answer) return;
-
-    if (!industry) {
-      question.hidden = false;
-      answer.hidden = true;
-      return;
-    }
-    const ind = INDUSTRY_BY_KEY[industry];
-    const name = $('#genome-bar-industry');
-    const vp = $('#genome-bar-valueprop');
-    if (name) name.textContent = ind.name;
-    if (vp) vp.textContent = ind.valueProp;
-
-    if (question.hidden) {
-      // Already answered — just update the text, no second animation.
-      answer.hidden = false;
-      return;
-    }
-    if (reduceMotion) {
-      question.hidden = true;
-      answer.hidden = false;
-      return;
-    }
-    question.classList.add('genome-fading');
-    window.setTimeout(() => {
-      question.hidden = true;
-      question.classList.remove('genome-fading');
-      answer.hidden = false;
-      answer.classList.add('genome-fading');
-      requestAnimationFrame(() => answer.classList.remove('genome-fading'));
-    }, 220);
-  }
-
-  function markAct(n: number) {
-    const dot = $(`[data-act-dot="${n}"]`);
-    if (dot) dot.setAttribute('data-done', '');
-  }
-
-  function appHref(): string {
-    const base = $<HTMLAnchorElement>('#create-dna-cta')?.getAttribute('href') ?? '';
-    if (!base || !industry) return base;
-    const sep = base.includes('?') ? '&' : '?';
-    return `${base.split('?')[0]}${sep}industry=${industry}&lenses=${[...selected].join(',')}`;
-  }
-
-  function paintCtas() {
-    // Both buttons read the same constant server-side; here they get the same parameters, so a
-    // visitor arrives at the app with what they already told us.
-    const href = appHref();
-    if (!href) return;
-    for (const sel of ['#genome-bar-cta', '#create-dna-cta']) {
-      const el = $<HTMLAnchorElement>(sel);
-      if (el) el.href = href;
-    }
   }
 
   // --- Act I: the helix ----------------------------------------------------
@@ -369,7 +309,6 @@ const metadata = {
       selected.add(id);
     }
     paintPicker();
-    paintCtas();
     writeUrl();
   }
 
@@ -474,7 +413,6 @@ const metadata = {
     const status = $('#generate-status');
     const pane = $('#generate-pane');
     const meta = $('#generate-meta');
-    const summary = $('#generate-summary');
     if (!status || !pane) return;
 
     const order = OUTPUTS.filter((o) => selected.has(o.id)).map((o) => o.id);
@@ -482,7 +420,6 @@ const metadata = {
     if (idle) idle.hidden = true;
     // The skeleton has done its job the moment the real strip exists.
     if (skeleton) skeleton.hidden = true;
-    if (summary) summary.hidden = true;
     status.hidden = false;
     status.textContent = 'Reading the genome…';
     pane.hidden = false;
@@ -546,11 +483,8 @@ const metadata = {
       },
     });
 
-    // Nothing left to say that the meta line and the summary do not already say.
+    // Nothing left to say that the meta line and the tab strip do not already say.
     status.hidden = true;
-    if (summary) summary.hidden = false;
-    markAct(3);
-    paintCtas();
 
     if (go) go.disabled = false;
     if (goLabel) goLabel.textContent = 'Generate again';
@@ -575,10 +509,7 @@ const metadata = {
       selected = new Set(opts.lenses?.length ? opts.lenses : INDUSTRY_BY_KEY[key].spotlight);
     }
 
-    paintBar();
-    markAct(1);
     paintPicker();
-    paintCtas();
     writeUrl();
 
     // Warm the genome while the visitor is reading Act II, so Go feels instant.
@@ -613,10 +544,7 @@ const metadata = {
       });
     }
 
-    $('#generate-go')?.addEventListener('click', () => {
-      markAct(2);
-      runGeneration();
-    });
+    $('#generate-go')?.addEventListener('click', () => runGeneration());
 
     // Restore a shared configuration without yanking the visitor down the page — they asked for
     // this state, not for a scroll. With nothing in the URL the page stays unanswered, which is
@@ -643,10 +571,10 @@ const metadata = {
       scroll-behavior: auto;
     }
   }
-  /* Act sections clear the sticky bar when scrolled to. */
+  /* Act sections clear the sticky site header when scrolled to. */
   #act-industry,
   #act-lenses,
   #act-generate {
-    scroll-margin-top: 3.5rem;
+    scroll-margin-top: 5rem;
   }
 </style>

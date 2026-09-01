@@ -5,7 +5,7 @@
 // things a diligence read actually wants — the target's operating model and the valuation built
 // on top of it.
 //
-// Everything the /whats-your-dna page shows for M&A comes out of this file.
+// Everything the /playground page shows for M&A comes out of this file.
 
 import type { AuthoredGenome } from '~/utils/genome-types';
 

@@ -69,7 +69,7 @@ genomes (§2–§6), then author the remaining four against a contract that is a
 - [x] 4.3 Per-output error isolation — one failing derivation renders an error card and the rest
       still render.
 - [x] 4.4 Demo-mode marker exposed from this module (not hardcoded in components), matching the
-      `/playground` posture.
+      `/operations` posture.
 
 ## 5. Industry selector
 
@@ -88,13 +88,15 @@ genomes (§2–§6), then author the remaining four against a contract that is a
 - [x] 5.5 The strand is held back to 0.3 opacity under a centre-weighted radial scrim — at full
       strength its nodes ran through the heading. **Contrast still needs a real eye — see §8.**
 
-## 6. Page, acts, and the sticky bar
+## 6. Page and acts
 
-- [x] 6.1 `src/components/widgets/GenomeBar.astro` — DNA mark linking home, headline region
-      ("What's your DNA?" → `<Industry> · <value prop>` with a crossfade), three-dot act
-      indicator, persistent **Get Started**. Truncates to the industry name at small widths.
-- [x] 6.2 `src/pages/whats-your-dna.astro` — `PageLayout` with `GenomeBar` passed into the named
-      `header` slot (site header suppressed, footer retained), three full-height act sections.
+- [x] 6.1 ~~`src/components/widgets/GenomeBar.astro`~~ — built (DNA mark, "What's your DNA?" →
+      `<Industry> · <value prop>` crossfade, three-dot act indicator, persistent **Get
+      Started**) and since deleted. See the D10 reversal: the page joined the nav, the standard
+      site header came back, and the bar had nothing left to carry that Act I's H1, the
+      "Step one/two/three" labels and the header's waitlist button do not.
+- [x] 6.2 `src/pages/playground.astro` — `PageLayout` with the standard header and footer,
+      three full-height act sections.
 - [x] 6.3 `src/components/widgets/LensPicker.astro` — three columns by layer, spotlight
       pre-selection from `industries.ts`, refusal to drop to zero selected, **Go** enabled once an
       industry exists. The spotlight-reason line was built and cut (design D6 as revised).
@@ -113,12 +115,12 @@ genomes (§2–§6), then author the remaining four against a contract that is a
 - [x] 6.6 Act transitions: industry selection scrolls to Act II, **Go** scrolls to Act III; free
       scrolling never blocked, no scroll-jacking, browser back preserved.
 - [x] 6.7 Changing the industry after the fact re-seeds the lens picker to the new spotlight set
-      and updates the bar.
-- [x] 6.8 Add `APP_HREF` to `src/navigation.ts` as the single source for **Get Started** and
-      **Create your DNA**, set to `https://app.dna.codes` (open question 1, resolved). The page is
-      campaign-only per D10 — do **not** link it from the header, footer, or homepage.
+      and updates the control.
+- [x] 6.8 ~~Add `APP_HREF` to `src/navigation.ts`~~ — added, pointed at `https://app.dna.codes`,
+      and since removed along with both buttons that read it. Reversed with D10: the page is in
+      the nav, and the header's waitlist button is the site's one primary action.
 - [x] 6.9 URL state: `?industry=&lenses=` written with `history.replaceState`, restored on load,
-      unknown values ignored; the same parameters forwarded to `APP_HREF`.
+      unknown values ignored.
 - [x] 6.10 Lazy-load genomes on industry selection so the initial payload is metadata only.
 
 ## 7. Remaining four genomes
@@ -159,22 +161,21 @@ genomes (§2–§6), then author the remaining four against a contract that is a
 > `aria-activedescendant` are exactly the things that look fine and are not. Drive both with the
 > mouse unplugged before this ships.
 
-- [x] 8.1 `npm run build` succeeds and emits `/whats-your-dna`; genome validation runs in the
+- [x] 8.1 `npm run build` succeeds and emits `/playground`; genome validation runs in the
       build.
 - [x] 8.2 `npm run check` passes (astro check + ESLint + Prettier).
-- [ ] 8.3 Walk all three acts for at least three industries: selection, header update, spotlight
-      pre-selection, Go, paced generation, artifact correctness, terminal CTA with query
-      parameters.
+- [ ] 8.3 Walk all three acts for at least three industries: selection, spotlight
+      pre-selection, Go, paced generation, artifact correctness.
 - [ ] 8.4 Accessibility pass: keyboard-only completion of all three acts, focus visible and
       sensibly ordered across act transitions, selected states announced, reduced-motion honoured
       in both the helix and the generation sequence.
-- [ ] 8.5 Mobile pass at 375px: three acts usable, sticky bar readable, every artifact readable or
+- [ ] 8.5 Mobile pass at 375px: three acts usable, every artifact readable or
       scrollable in its own container.
 - [x] 8.6 Regression: homepage, `/operations`, `/overlay`, `/agent-operations`, and
       `/pricing` verified byte-identical to a pre-change build once content-hashed asset
       filenames are normalised. The shared `Layout` CSS grows ~3.5KB (+2.3%) on every page from
       Tailwind picking up the new components' utility classes; the artifact CSS (14KB) is
-      page-scoped to `/whats-your-dna` and does not touch the shared bundle.
+      page-scoped to `/playground` and does not touch the shared bundle.
 - [ ] 8.7 Deep-link pass: share a configured URL, open it cold, confirm the state restores; open
       one with a garbage industry key and confirm it degrades quietly.
 - [x] 8.8 Confirm the demo-mode marker and the named genome are visible wherever artifacts are.

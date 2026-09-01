@@ -13,9 +13,6 @@
 // real derivation over the compiled genome the browser fetched, and the demo-mode badge plus the
 // named genome stay on screen throughout, so nobody leaves thinking we ran this against their
 // own company.
-import { Icon } from 'astro-icon/components';
-import { APP_HREF } from '~/navigation';
-import { WAITLIST_HREF } from '~/navigation';
 ---
 
 <section id="act-generate" class="relative bg-slate-950 py-14 sm:py-20" aria-labelledby="act-generate-h">
@@ -74,26 +71,11 @@ import { WAITLIST_HREF } from '~/navigation';
       <div id="artifact-panels" class="gx-pane-body"></div>
     </div>
 
-    <!-- The artifacts have already made the argument; a paragraph restating it after they land
-         is the page explaining a joke it just told. Straight to the action. -->
-    <div id="generate-summary" class="mt-9 text-center" hidden>
-      <div class="flex flex-col items-center justify-center gap-3 sm:flex-row">
-        <a
-          id="create-dna-cta"
-          href={APP_HREF}
-          class="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-bold text-white shadow-[0_0_36px_rgba(13,148,136,0.45)] transition hover:bg-primary/85"
-        >
-          <Icon name="tabler:dna-2" class="h-4 w-4" />
-          Create your DNA
-        </a>
-        <a
-          href={WAITLIST_HREF}
-          class="text-sm font-medium text-slate-400 underline-offset-4 hover:text-slate-200 hover:underline"
-        >
-          Or join the waitlist
-        </a>
-      </div>
-    </div>
+    <!-- Act III used to close on a green "Create your DNA". It went with the campaign framing:
+         it pointed at an app that is not open, so it resolved to the waitlist — which the site
+         header now offers on every row of every page, this one included. A second button to the
+         same place, sitting under artifacts that have just made the argument on their own, was
+         asking twice. The page ends on the artifacts. -->
   </div>
 </section>
 
