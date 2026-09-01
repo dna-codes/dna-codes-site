@@ -5,7 +5,8 @@
 Operations is one of the two products in the suite. This page is where a visitor sees it
 work: a transcript goes in, a living operating model and its artifacts come out. The page
 was called "Playground" while it looked like a sandbox; it is the product's demo, so it
-lives at `/operations` and is named for the product everywhere.
+lives at `/operations` and is named for the product everywhere. The Playground name now
+belongs to the industry genome generator at `/playground`.
 
 ## Requirements
 
@@ -25,11 +26,12 @@ The site SHALL serve an Astro-rendered page at `/operations` that requires no au
 - **THEN** an "Operations" link MUST be visible within the "Products" menu
 - **AND** clicking it MUST navigate to `/operations`
 
-#### Scenario: The former `/playground` URL keeps working
+#### Scenario: `/playground` is not this page
 
 - **WHEN** a visitor opens `https://dna.codes/playground`
-- **THEN** they MUST be sent to `/operations`
-- **AND** no internal link, sitemap entry, or piece of site copy MAY still point at `/playground`
+- **THEN** they MUST reach the industry genome generator (see `industry-dna-landing`), not this page
+- **AND** no internal link, sitemap entry, or piece of site copy MAY point at `/playground` as a
+  way of reaching Operations
 
 ### Requirement: Page composition
 

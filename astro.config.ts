@@ -33,10 +33,11 @@ export default defineConfig({
   redirects: {
     '/operational-dna-processes-like-source-code': '/blog/operational-dna-processes-like-source-code',
     '/why-sops-go-out-of-date': '/blog/why-sops-go-out-of-date',
-    // The page was called Playground while it looked like a sandbox. It is the
-    // Operations product's demo, so it lives at /operations; this keeps every link
-    // that was circulated under the old name working.
-    '/playground': '/operations',
+    // /playground is a real page again — the industry genome generator, which shipped
+    // first as a campaign-only page at /whats-your-dna. Campaign links to the old URL
+    // keep working. (The name previously pointed at /operations, back when the
+    // Operations demo was called the Playground; that redirect is retired with it.)
+    '/whats-your-dna': '/playground',
   },
 
   integrations: [

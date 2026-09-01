@@ -116,7 +116,7 @@ console; `/docs/agents` (see [Impact](#impact) — the published schema package 
 - **NEW** `src/pages/agent-operations.astro` — a product page in **five sections**. See
   [Cut to five](#cut-to-five) for what the first draft had and why it does not.
 - **NEW** `AgentOpsDemo` component — the scripted invoice run, following the stub-first pattern
-  established on `/playground` and `/overlay`: real shapes, staged data, a `Demo mode` badge where
+  established on `/operations` and `/overlay`: real shapes, staged data, a `Demo mode` badge where
   the real console shows the signed-in person. Lives in the hero's `image` slot.
 - **NEW** `AgentCoveragePanel` — the coverage reading, rendered in three places (the homepage card,
   the wedge, the demo's first beat) so the number cannot disagree with itself.

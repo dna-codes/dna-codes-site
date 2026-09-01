@@ -35,7 +35,7 @@ who has just watched fourteen artifacts appear from one genome is the person who
 
 ## What Changes
 
-- **New route** `src/pages/whats-your-dna.astro` at `/whats-your-dna`, using `PageLayout`'s
+- **New route** `src/pages/playground.astro` at `/playground`, using `PageLayout`'s
   named `header` slot to replace the site header with a page-specific sticky bar. Three acts,
   each a full-height section, advanced by the visitor's own choices.
 
@@ -75,13 +75,13 @@ who has just watched fourteen artifacts appear from one genome is the person who
 
 - **No live API.** Generation is derivation from the bundled genome, executed behind the same
   client signature a live `generate({ genome, lenses })` call will have, with a demo-mode marker
-  the way `/playground` does it. The theater is in the pacing, never in the content.
+  the way `/operations` does it. The theater is in the pacing, never in the content.
 
 ## Capabilities
 
 ### New Capabilities
 
-- `industry-dna-landing`: A public, self-guided page at `/whats-your-dna` that lets a visitor
+- `industry-dna-landing`: A public, self-guided page at `/playground` that lets a visitor
   select their industry from an interactive DNA helix, choose which artifacts to generate across
   the Operations, Product, and Technology layers, and watch all of them derive from one
   industry genome — with a sticky header that carries the industry's value proposition
@@ -100,7 +100,7 @@ who has just watched fourteen artifacts appear from one genome is the person who
 
 ## Impact
 
-- **New files**: `src/pages/whats-your-dna.astro`; widgets `GenomeBar.astro`,
+- **New files**: `src/pages/playground.astro`; widgets `GenomeBar.astro`,
   `IndustryHelix.astro`, `LensPicker.astro`, `GenomeGenerator.astro`; a renderer per output type
   under `src/components/genome/`; `src/data/genome/*.json` (six genomes) and
   `src/data/industries.ts` (keys, labels, value propositions, spotlight sets);
@@ -120,6 +120,6 @@ who has just watched fourteen artifacts appear from one genome is the person who
   `/waitlist?industry=<key>` until then. **Flagging rather than deciding.**
 - **Risk — the page over-promises.** A visitor could read the generated artifacts as "the product
   did this live for my company." Mitigated by the demo-mode marker and by naming the genome on
-  screen ("BrightBox Commerce — a worked e-commerce genome"), the same posture `/playground` took.
+  screen ("BrightBox Commerce — a worked e-commerce genome"), the same posture `/operations` took.
 - **Out of scope**: authoring or editing a genome on the page, uploading your own data, saving a
   run server-side, auth, more than six industries, and any live generation call.

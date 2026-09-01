@@ -124,7 +124,7 @@ UI as a documentation tool; MCP (that is Agent Operations' adapter and already s
 - **NEW** `ApiOpsDemo` — the hero artifact and the reason to ship the page early. **The visitor
   pastes their own OpenAPI document** (or picks one of three bundled samples) and watches endpoints
   resolve to resources and actions with the coverage reading computing live. Entirely client-side —
-  no backend, no account, no key. This is the stub-first pattern from `/playground` and `/overlay`,
+  no backend, no account, no key. This is the stub-first pattern from `/operations` and `/overlay`,
   except that here the data is real because the visitor brought it.
 - **NEW** `ApiCoveragePanel` — the reading, rendered wherever the number appears (homepage card,
   §1, demo) so it cannot disagree with itself. Same discipline as `AgentCoveragePanel`.

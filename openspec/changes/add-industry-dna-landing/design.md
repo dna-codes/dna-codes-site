@@ -349,7 +349,7 @@ worth more in a sales thread than any screenshot.
 ### D10 — Route and entry points
 
 The route is `/whats-your-dna`, matching the question in the bar — it survives being read aloud in
-a meeting, which a route like `/build` does not.
+a meeting, which a route like `/build` does not. (Superseded: see the reversal below.)
 
 **Entry points: campaign-only. Decided.** The page is a standalone campaign destination and is
 linked from nowhere on the site — not the header nav, not the footer, not the homepage hero. A
@@ -359,6 +359,24 @@ the homepage is for. It stays reachable by URL, which is all a campaign needs.
 This has a consequence worth stating: the page must stand alone completely. A visitor arrives cold
 with no prior exposure to DNA and no surrounding site context, so every act has to carry its own
 framing rather than assume the homepage was read first.
+
+**Reversed after ship.** The page is now the site's Playground, at `/playground`, linked from the
+header nav, the footer, and the homepage hero's second action — which it took from Docs. Two
+things changed the calculus: the site had no place a visitor could operate anything (the name
+`/playground` was sitting on a redirect to `/operations`, left over from when the Operations demo
+carried it), and the page turned out to be the strongest argument on the site for what DNA is.
+`/whats-your-dna` redirects to `/playground` so circulated campaign links keep working.
+
+The GenomeBar went with it. A page in the nav that hides the nav is a dead end, so the standard
+site header came back — and once it was there the bar had nothing left to carry. Its question is
+Act I's H1 ("Every business already has dna. What's yours?", untouched). Its act dots duplicate
+the "Step one / two / three" labels already on each section. Its **Get Started** and Act III's
+terminal **Create your DNA** both resolved to `APP_HREF`, which resolved to the waitlist, which
+the header now offers on every page — three buttons, one destination. `APP_HREF` is gone with
+them; reintroduce it when `app.dna.codes` opens and there is a second destination worth having.
+
+The standing-alone consequence survives the reversal: the page is still written for a cold
+arrival, with each act carrying its own framing.
 
 ## Risks / Trade-offs
 
