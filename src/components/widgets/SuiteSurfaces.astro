@@ -1,0 +1,117 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import ProductMark from '~/components/ui/ProductMark.astro';
+import { SURFACES } from '~/data/products';
+
+// The foot of /operations, which is both the core's page and the hub for the suite. A reader
+// who has just watched knowledge become a model has understood the core; this is the answer
+// to the question that follows it — "and then what runs on it?"
+//
+// It replaced a teaser that pointed at Agent Operations alone. One surface getting a section
+// and the other three getting nothing was a fair reading of the suite when there were two
+// products; it stopped being one at four, and it left the page implying the model reaches
+// agents and nowhere else.
+//
+// Text cards, no screenshots: the product pages carry the pictures, and four image frames
+// here would compete with the demo above them for the same attention. What this section owes
+// a reader is the shape of the suite — one core, one product per place your software meets
+// somebody — in a single glance. It is the same 2x2 as the homepage grid on purpose, minus
+// the images, so a visitor who arrives from there recognises it rather than re-reads it.
+//
+// The headline is per-surface and lives here rather than in ~/data/products, which carries
+// the one-line nav description. Agent Operations keeps the sentence the old teaser led with:
+// it was held back from that product page's hero for being too argumentative to carry a
+// headline, which is exactly right where a single line has to make the whole case.
+const headlines: Record<string, string> = {
+  'ui-operations': 'Every button carries the operation it performs.',
+  'api-operations': 'Most of what calls your API is not a person at a screen.',
+  'agent-operations': 'The org chart has a new kind of box in it.',
+  'cli-operations': 'A terminal is a way into your business too.',
+};
+
+const bodies: Record<string, string> = {
+  'ui-operations':
+    'Who may press it, whether it is on, and everything it has done, answered on the control itself — in the Overlay, inside your own staging or production app.',
+  'api-operations':
+    'The same operation a control carries is the one an endpoint performs. Read your own OpenAPI document and see what governs each route today, before you install anything.',
+  'agent-operations':
+    'The same model that tells a person what to do can tell an agent — and refuse it. What an agent may not do, it hands to a person instead of failing.',
+  'cli-operations':
+    'The scripts and commands your team runs are operations like any other, and today they are the ones nothing records.',
+};
+---
+
+<WidgetWrapper containerClass="max-w-5xl mx-auto">
+  <div class="text-center mb-10">
+    <p
+      class="inline-flex items-center px-5 py-2 rounded-full border-2 border-primary bg-primary/10 text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-5"
+    >
+      Operations
+    </p>
+    <h2 class="text-3xl md:text-4xl font-bold tracking-tight">One core. A surface for every way in.</h2>
+    <p class="mt-4 text-muted max-w-2xl mx-auto leading-relaxed">
+      The model above is not a document you go and read somewhere else. It reaches into the places your software already
+      meets somebody — a screen, an endpoint, an agent, a terminal — and each of those is a product you can take on its
+      own.
+    </p>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-2">
+    {
+      SURFACES.map((s) => {
+        // A planned surface renders as a div rather than an anchor. Making it look clickable
+        // and then not linking anywhere is the one thing worse than leaving it off the page.
+        const Tag = s.planned ? 'div' : 'a';
+        return (
+          <Tag
+            {...(s.planned ? {} : { href: s.href })}
+            class:list={[
+              'group flex flex-col rounded-2xl border p-6',
+              s.planned
+                ? 'border-white/5 bg-slate-900/25'
+                : 'border-white/10 bg-slate-900/50 transition-colors duration-200 hover:border-primary/50 hover:bg-slate-900/80',
+            ]}
+          >
+            <div class="flex items-center gap-2.5 mb-4">
+              <ProductMark icon={s.icon} size="sm" />
+              <span class:list={['text-sm font-bold', s.planned ? 'text-slate-400' : 'text-white']}>{s.name}</span>
+              <span
+                class:list={[
+                  'ml-auto rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap',
+                  s.planned ? 'bg-white/5 text-slate-500' : 'bg-primary/15 text-primary',
+                ]}
+              >
+                {s.status}
+              </span>
+            </div>
+
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">{s.verb}</p>
+            <h3 class:list={['text-lg font-bold mb-2 leading-snug', s.planned ? 'text-slate-400' : 'text-white']}>
+              {headlines[s.key]}
+            </h3>
+            <p class="text-sm text-muted leading-relaxed">{bodies[s.key]}</p>
+
+            {!s.planned && (
+              <span class="mt-auto pt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                Open {s.name}
+                <Icon
+                  name="tabler:arrow-right"
+                  class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                />
+              </span>
+            )}
+          </Tag>
+        );
+      })
+    }
+  </div>
+
+  <p class="mt-6 text-center text-sm text-slate-500 max-w-2xl mx-auto leading-relaxed">
+    Every surface ships with an Overlay — the viewer that runs inside the thing itself rather than in a tab somewhere
+    else. And every surface is included in every paid plan, because a surface on your model is not a product beside it.{
+      ' '
+    }
+    <a href="/pricing" class="text-primary hover:underline font-semibold">See the ladder →</a>
+  </p>
+</WidgetWrapper>

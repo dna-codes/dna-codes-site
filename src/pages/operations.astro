@@ -3,20 +3,24 @@ import Layout from '~/layouts/PageLayout.astro';
 import OperationsDemo from '~/components/widgets/OperationsDemo.astro';
 import LensDemo from '~/components/widgets/LensDemo.astro';
 import OperationsLayerC from '~/components/widgets/OperationsLayerC.astro';
-import AgentOpsTeaser from '~/components/widgets/AgentOpsTeaser.astro';
+import SuiteSurfaces from '~/components/widgets/SuiteSurfaces.astro';
 import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
+// This page does two jobs, and in this order: it is the core's product page, and it is the
+// hub for Operations — the umbrella every other product is sold under. The core earns the
+// top of the page because it is the one thing a visitor can operate today; the surfaces earn
+// the foot of it, where "and then what runs on it?" is the question a reader actually has.
 const metadata = {
-  title: 'Operations — DNA Codes',
+  title: 'Operational DNA — DNA Codes',
   description:
-    'Feed DNA Codes your knowledge and watch it compile into a living operating model, plus Process Flow, SOP, Agent Workflow, and App artifacts.',
+    'Feed DNA Codes your knowledge and watch it compile into a living operating model — the core every Operations surface runs on, plus Process Flow, SOP, Agent Workflow, and App artifacts.',
   ignoreTitleTemplate: true,
 };
 ---
 
 <Layout metadata={metadata}>
-  <!-- Demo first: the fastest way to understand Operations is to watch a transcript
+  <!-- Demo first: the fastest way to understand the core is to watch a transcript
        become a spec. The "how it works" walkthrough below is what the demo just did,
        slowed down — which is why it lives here now rather than on the homepage. -->
   <OperationsDemo />
@@ -40,12 +44,13 @@ const metadata = {
 
   <OperationsLayerC />
 
-  <!-- One paragraph and one link, not a section. Agent Operations is an extension of this
-       product and this is the reader for it, but its argument needs a demo and a full
-       viewport — so it earns a page and this earns a pointer. -->
-  <AgentOpsTeaser />
+  <!-- The hub half of the page: the model above, and every surface it reaches. A reader who
+       has just watched knowledge become a spec is exactly the reader for these, and each one
+       needs a demo and a full viewport of its own — so each earns a page and this earns the
+       row that points at it. -->
+  <SuiteSurfaces />
 
-  <!-- Same form as /waitlist, Operations already ticked. A product page ends with its own
+  <!-- Same form as /waitlist, the core already ticked. A product page ends with its own
        conversion rather than a button that sends you somewhere to find one. -->
   <WidgetWrapper containerClass="max-w-4xl mx-auto">
     <div

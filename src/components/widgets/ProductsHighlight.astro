@@ -5,18 +5,19 @@ import ProductMark from '~/components/ui/ProductMark.astro';
 import AgentCoveragePanel from '~/components/widgets/AgentCoveragePanel.astro';
 import ApiCoveragePanel from '~/components/widgets/ApiCoveragePanel.astro';
 import { PRODUCT } from '~/data/products';
-// Captured from the live miniature on /overlay rather than from the product screenshots in
-// this folder: every one of those has a light host application, which next to the dark
-// Operations panel made the pair look like two unrelated sites.
+// Captured from the live miniature on /ui-operations rather than from the product
+// screenshots in this folder: every one of those has a light host application, which next to
+// the dark core panel made the pair look like two unrelated sites.
 import overlayShot from '~/assets/images/overlay/panel-on-dark-app.png';
 import operationsShot from '~/assets/images/operations/process-flow-output.png';
 
-// Four products, two sentences each, side by side. This is the first thing below the hero,
-// so its job is to make a visitor understand in one glance that there are exactly four
-// things and which of them is theirs. Everything else is on the product page.
+// The core and the three surfaces you can read about today, two sentences each, side by
+// side. This is the first thing below the hero, so its job is to make a visitor understand
+// in one glance that there is one core and a surface per place their software meets
+// somebody, and which of them is theirs. Everything else is on the product page.
 //
-// Each card leads with a real shot of the thing rather than an icon: the Overlay's panel
-// docked into a running host app, and the Operations output panel mid-run. Both are taken
+// Each card leads with a real shot of the thing rather than an icon: the Overlay panel
+// docked into a running host app, and the core's output panel mid-run. Both are taken
 // from the product pages they link to, so what the card promises is what the click gives.
 // They are screenshots of our own UI, which means they go stale silently — retake them in
 // any change that alters the panel chrome on either page.
@@ -30,29 +31,31 @@ import operationsShot from '~/assets/images/operations/process-flow-output.png';
 //
 // Deliberately parallel in shape: same card, same number of lines, same verb ending in a
 // link. Asymmetry here would read as one product mattering more than the others. The order
-// is the suite order, Model → Govern → Run, which is also what /pricing publishes.
+// is the suite order, Model → Govern → Run, which is also what /pricing publishes. CLI
+// Operations is named in the line under the grid rather than given a fifth card: a card is a
+// promise you can click, and there is nothing there yet.
 const products = [
   {
     name: PRODUCT.operations.name,
     verb: PRODUCT.operations.verb,
     icon: PRODUCT.operations.icon,
     headline: 'Knowledge in. Operating model out.',
-    body: 'Meeting notes, docs and tribal knowledge compile into a living spec, and the runbooks, SOPs and agents your team actually runs on.',
+    body: 'Meeting notes, docs and tribal knowledge compile into a living spec, and the runbooks, SOPs and agents your team actually runs on. Every surface below runs on it.',
     href: PRODUCT.operations.href,
     cta: 'Try the demo',
     status: PRODUCT.operations.status,
     image: operationsShot,
-    alt: 'The Operations output panel showing a generated process flow: welcome email sent, intro call booked, product walkthrough and a 30-day check-in, each with its owning team and timing.',
+    alt: 'The Operational DNA output panel showing a generated process flow: welcome email sent, intro call booked, product walkthrough and a 30-day check-in, each with its owning team and timing.',
   },
   {
-    name: PRODUCT.overlay.name,
-    verb: PRODUCT.overlay.verb,
-    icon: PRODUCT.overlay.icon,
+    name: PRODUCT['ui-operations'].name,
+    verb: PRODUCT['ui-operations'].verb,
+    icon: PRODUCT['ui-operations'].icon,
     headline: 'Operational controls, in your app.',
     body: 'The same model, reaching into your product. Every button carries the operation it performs, so who may press it, whether it is on, and everything it has done are answered on the control itself.',
-    href: PRODUCT.overlay.href,
-    cta: 'Explore the Overlay',
-    status: PRODUCT.overlay.status,
+    href: PRODUCT['ui-operations'].href,
+    cta: 'Open the Overlay',
+    status: PRODUCT['ui-operations'].status,
     image: overlayShot,
     alt: 'The Overlay panel docked beside a running application, answering for a refund button with its address, the operation it performs, who may press it, and a note that every refund is now recorded.',
   },
@@ -96,9 +99,9 @@ const products = [
       <p
         class="inline-flex items-center px-5 py-2 rounded-full border-2 border-primary bg-primary/10 text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-5"
       >
-        Products
+        Operations
       </p>
-      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Four products, one model.</h2>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">One core. Every surface it reaches.</h2>
     </div>
 
     {
@@ -115,11 +118,35 @@ const products = [
             href={href}
             class="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 transition-colors duration-200 hover:border-primary/50 hover:bg-slate-900/80"
           >
+            {/* Name and claim first, picture second. A shot of a panel is only legible once
+                you know which product it belongs to — led with, it asks a visitor to decode
+                a screenshot before they have been told what they are looking at. Reading
+                order is now the order the card is understood: whose it is, what it claims,
+                then the proof. */}
+            <div class="p-6 sm:p-7 pb-5">
+              <div class="flex items-center gap-2.5 mb-4">
+                <ProductMark icon={icon} />
+                <span class="text-base font-bold text-white">{name}</span>
+                <span class="ml-auto rounded-full bg-primary/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary whitespace-nowrap">
+                  {status}
+                </span>
+              </div>
+
+              <p class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">{verb}</p>
+              <h3 class="text-xl font-bold text-white mb-2.5 leading-snug">{headline}</h3>
+              <p class="text-sm text-muted leading-relaxed">{body}</p>
+            </div>
+
             {/* Both sources are captured at 4:3, so they fill this frame edge to edge with
-                nothing letterboxed and nothing cropped at render time. The Operations panel
-                is captured with room to spare; the Overlay shot takes its crop out of the
-                host app's left side so the whole docked panel survives. */}
-            <div class="border-b border-white/10 bg-page">
+                nothing letterboxed and nothing cropped at render time. The core's panel is
+                captured with room to spare; the Overlay shot takes its crop out of the host
+                app's left side so the whole docked panel survives.
+
+                mt-auto pushes the frame down to sit on the CTA, so the two cards in a row
+                line their pictures up even when one has a line more copy than the other.
+                Top-aligned images did that for free; with the text above them it has to be
+                asked for. */}
+            <div class="mt-auto border-y border-white/10 bg-page">
               {image ? (
                 <Image
                   src={image}
@@ -140,37 +167,31 @@ const products = [
               )}
             </div>
 
-            <div class="flex flex-col flex-1 p-6 sm:p-7">
-              <div class="flex items-center gap-2.5 mb-4">
-                <ProductMark icon={icon} />
-                <span class="text-base font-bold text-white">{name}</span>
-                <span class="ml-auto rounded-full bg-primary/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary whitespace-nowrap">
-                  {status}
-                </span>
-              </div>
-
-              <p class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-2">{verb}</p>
-              <h3 class="text-xl font-bold text-white mb-2.5 leading-snug">{headline}</h3>
-              <p class="text-sm text-muted leading-relaxed">{body}</p>
-
-              {/* A button rather than a text link, and pinned to the foot of the card with
-                  mt-auto so both read at the same height whatever the copy above does.
-                  Outlined rather than filled: the filled green is the waitlist everywhere
-                  else on the site, and two greens competing in one viewport would make
-                  neither mean anything. It fills on hover, so the affordance is obvious. */}
-              <span class="mt-auto pt-6">
-                <span class="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-5 py-2.5 text-sm font-semibold text-primary transition-colors duration-200 group-hover:bg-primary group-hover:border-primary group-hover:text-white">
-                  {cta}
-                  <Icon
-                    name="tabler:arrow-right"
-                    class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
-                  />
-                </span>
+            {/* A button rather than a text link. Outlined rather than filled: the filled
+                green is the waitlist everywhere else on the site, and two greens competing in
+                one viewport would make neither mean anything. It fills on hover, so the
+                affordance is obvious. */}
+            <div class="p-6 sm:p-7 pt-5">
+              <span class="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-5 py-2.5 text-sm font-semibold text-primary transition-colors duration-200 group-hover:bg-primary group-hover:border-primary group-hover:text-white">
+                {cta}
+                <Icon
+                  name="tabler:arrow-right"
+                  class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                />
               </span>
             </div>
           </a>
         ))
       }
     </div>
+
+    {
+      /* The fourth surface, stated rather than sold. Naming it here is the cheapest way to
+        show the shape of the suite — one product per place your software meets somebody —
+        without a card that promises a page we have not built. */
+    }
+    <p class="mt-6 text-center text-sm text-slate-500">
+      CLI Operations — the same controls around the commands your team runs — is planned.
+    </p>
   </div>
 </section>

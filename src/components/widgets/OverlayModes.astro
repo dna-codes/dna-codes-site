@@ -2,11 +2,15 @@
 import { Icon } from 'astro-icon/components';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import OverlayFacets from '~/components/widgets/OverlayFacets.astro';
-import OverlayPrototype from '~/components/widgets/OverlayPrototype.astro';
+import OverlayGovern from '~/components/widgets/OverlayGovern.astro';
 
 // The hero plays both modes as one story; this is where a reader stops and reads whichever
-// half they came for. A toggle rather than two stacked sections because they are two
-// readings of one panel — stacking them would say "and here is the other product".
+// half they came for. A toggle rather than two stacked sections because they are two halves
+// of one panel — stacking them would say "and here is the other product".
+//
+// Inspect reads; Govern writes. That is the split, and it is why the second tab is not a
+// second feature: every question Inspect answers is one Govern can change the answer to,
+// from the same panel and without a deploy.
 //
 // Both halves are rendered, and switching only flips `hidden`: the page is static, the
 // second mode is a few kilobytes of markup, and the tab that is not selected is still in
@@ -19,10 +23,10 @@ const modes = [
     blurb: 'What governs the controls you already shipped',
   },
   {
-    id: 'prototype',
-    icon: 'tabler:wand',
-    label: 'Prototype',
-    blurb: 'Ask for one that does not exist yet',
+    id: 'govern',
+    icon: 'tabler:stack-2',
+    label: 'Govern',
+    blurb: 'Change the answer, from where you found it',
   },
 ];
 ---
@@ -31,7 +35,7 @@ const modes = [
   <WidgetWrapper id="modes" containerClass="max-w-3xl mx-auto pb-0 md:pb-0 lg:pb-0">
     <div class="text-center">
       <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Two modes, one panel</p>
-      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Read what is there. Ask for what is not.</h2>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Read the answer. Then change it.</h2>
       <p class="mt-5 text-muted leading-relaxed">
         Same install, same addresses, same panel. The second mode only works because the first one gave every control a
         name.
@@ -69,14 +73,8 @@ const modes = [
     <OverlayFacets />
   </div>
 
-  <div
-    id="mode-panel-prototype"
-    role="tabpanel"
-    aria-labelledby="mode-tab-prototype"
-    data-mode-panel="prototype"
-    hidden
-  >
-    <OverlayPrototype />
+  <div id="mode-panel-govern" role="tabpanel" aria-labelledby="mode-tab-govern" data-mode-panel="govern" hidden>
+    <OverlayGovern />
   </div>
 </div>
 
@@ -143,17 +141,19 @@ const modes = [
       select(ids[(i + (key === 'ArrowRight' ? 1 : ids.length - 1)) % ids.length], true);
     });
 
-    // `#prototype` is a real link anyone may hold — from the install section, from us in an
+    // `#govern` is a real link anyone may hold — from the install section, from us in an
     // email — so it has to select the mode as well as land on the section. There is no
-    // element carrying that id, so the scroll is ours to do.
+    // element carrying that id, so the scroll is ours to do. `#prototype` was that link
+    // until the second mode changed; it still resolves, to the tab that replaced it.
     const fromHash = (smooth: boolean) => {
-      const id = location.hash.slice(1);
+      const raw = location.hash.slice(1);
+      const id = raw === 'prototype' ? 'govern' : raw;
       if (!ids.includes(id)) return;
       select(id);
       group.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
     };
 
-    document.querySelectorAll<HTMLAnchorElement>('a[href="#inspect"], a[href="#prototype"]').forEach((a) =>
+    document.querySelectorAll<HTMLAnchorElement>('a[href="#inspect"], a[href="#govern"]').forEach((a) =>
       a.addEventListener('click', (e) => {
         e.preventDefault();
         history.replaceState(null, '', a.getAttribute('href'));

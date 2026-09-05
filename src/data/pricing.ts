@@ -2,7 +2,7 @@ import { WAITLIST_HREF, WAITLIST_TEXT } from '~/navigation';
 
 // Single source of truth for the suite ladder.
 //
-// Two surfaces read this: the three-card strip on /overlay (answering "is this $200 or
+// Two surfaces read this: the three-card strip on /ui-operations (answering "is this $200 or
 // $20,000") and the full comparison matrix on /pricing. They must never disagree, so
 // neither hard-codes a number.
 
@@ -63,7 +63,7 @@ export const TIERS: Tier[] = [
       '3 applications',
       '5 editors, 3 ratifiers',
       'SSO / SAML',
-      'Prototype mode and your own component library',
+      'Proposal and ratification workflow',
       '90 days of history',
     ],
     featured: true,
@@ -149,6 +149,15 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
   {
     label: 'Governance',
     rows: [
+      row(
+        'Composable controls',
+        'Flags, access',
+        'All five',
+        'All five',
+        'All five',
+        'All five',
+        'Feature flags, access controls, audit logs, error logs and user analytics. Add one to one control, or all five to all of them.'
+      ),
       row('Access rules and release policies', true, true, true, true, true),
       row('Conflict detection', true, true, true, true, true),
       row('Coverage reporting', true, true, true, true, true),
@@ -218,8 +227,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
   {
     label: 'Authoring',
     rows: [
-      row('Prototype mode', false, false, true, true, true),
-      row('Your own component library', false, false, true, true, true),
+      row('Propose and ratify separately', false, false, true, true, true),
       row('MCP tool surface', true, true, true, true, true),
       row('Marketplace packs', 'Read', 'Read', 'Read', 'Read and publish', 'Read and publish'),
     ],

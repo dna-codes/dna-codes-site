@@ -59,8 +59,8 @@ const isCurrent = (href?: string): boolean =>
 // logo, so it is obvious you have stepped out of the pitch and into something you can
 // operate. Landing pages (home, pricing, blog) deliberately get neither.
 const PRODUCT_SECTIONS = [
-  { path: '/overlay', label: 'Overlay' },
-  { path: '/operations', label: 'Operations' },
+  { path: '/ui-operations', label: 'UI Operations' },
+  { path: '/operations', label: 'Operational DNA' },
 ];
 const section = PRODUCT_SECTIONS.find(({ path }) => isCurrent(path));
 ---
@@ -89,7 +89,13 @@ const section = PRODUCT_SECTIONS.find(({ path }) => isCurrent(path));
         'md:flex md:justify-between': position !== 'center',
       },
       {
-        'md:grid md:grid-cols-3 md:items-center': position === 'center',
+        // `1fr auto 1fr` rather than three equal columns. The nav sits in a track sized to
+        // its own content, so it stays optically centred while the logo-plus-chip on the
+        // left and the waitlist button on the right split whatever is left. Equal thirds
+        // put the nav in a 1/3 track it had outgrown, and the overflow ran back under the
+        // section chip — which the longer product names made visible as an overlap at
+        // ~1024px. Auto-sized tracks push instead of overlapping.
+        'md:grid md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-x-4': position === 'center',
       },
       {
         'max-w-7xl': !isFullWidth,

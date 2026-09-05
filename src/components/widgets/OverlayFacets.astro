@@ -2,9 +2,9 @@
 import { Icon } from 'astro-icon/components';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
-// Four things most teams buy separately, shown as four readings of one control.
+// Five things most teams buy separately, shown as five readings of one control.
 // Each block reuses the hero demo's panel chrome deliberately: the argument is that
-// these are not four products, so they must not look like four products.
+// these are not five products, so they must not look like five products.
 //
 // "Replaces the basics of" is the honest verb, and the reason there is no comparison
 // table on this page. Against a mature incumbent, row-by-row is a fight we lose on
@@ -16,32 +16,33 @@ const replaces: Record<string, string> = {
   flags: 'LaunchDarkly, Statsig, Unleash',
   analytics: 'Amplitude, Mixpanel, PostHog',
   audit: 'WorkOS Audit Logs, or the events table nobody reads',
+  errors: 'the Sentry breadcrumb that says a button was clicked',
 };
 ---
 
 <WidgetWrapper id="facets" containerClass="max-w-5xl mx-auto">
   <div class="text-center mb-14">
-    <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Four features, one control</p>
+    <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Five features, one control</p>
     <h2 class="text-3xl md:text-4xl font-bold tracking-tight">
       Everything you already buy separately,<br class="hidden sm:block" /> answered in one place.
     </h2>
     <p class="mt-5 text-muted max-w-2xl mx-auto leading-relaxed">
-      Permissions, feature flags, usage and audit are four readings of the same act. The Overlay puts them on the
-      control itself, rather than in four consoles that have never rendered your product.
+      Access, feature flags, usage, audit and errors are five readings of the same act. The Overlay puts them on the
+      control itself, rather than in five consoles that have never rendered your product.
     </p>
     <p class="mt-4 text-sm text-slate-500 max-w-2xl mx-auto leading-relaxed">
       It replaces the basics of a tool in each of these categories. Not the deep end of any one of them, and that is the
-      trade: one answer per control, in the product, instead of four subscriptions and four tabs.
+      trade: one answer per control, in the product, instead of five subscriptions and five tabs.
     </p>
   </div>
 
   <div class="space-y-16 sm:space-y-20">
-    <!-- ── Permissions ──────────────────────────────────────────────── -->
+    <!-- ── Access controls ──────────────────────────────────────────── -->
     <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
       <div>
         <div class="flex items-center gap-2.5 mb-3">
           <Icon name="tabler:lock" class="w-5 h-5 text-primary" />
-          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">Permissions</span>
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">Access controls</span>
         </div>
         <h3 class="text-2xl font-bold text-white mb-2">Who may press this?</h3>
         <p class="text-xs text-slate-500 mb-3">
@@ -264,6 +265,52 @@ const replaces: Record<string, string> = {
               ))
             }
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Error logs ───────────────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div>
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:alert-triangle" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">Error logs</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-2">And when it breaks, which control was it?</h3>
+        <p class="text-xs text-slate-500 mb-3">
+          Replaces the basics of <span class="text-slate-400">{replaces.errors}</span>.
+        </p>
+        <p class="text-muted leading-relaxed mb-4">
+          A stack trace names a function. This names the act somebody was trying to perform, on the control they were
+          standing on — which is the fact a support conversation actually starts from.
+        </p>
+        <p class="text-muted leading-relaxed">
+          It is the outermost of the five, so it catches a failure in the checks themselves. A control whose access rule
+          throws is a control that is <em>broken</em>, not a control that said no, and those two must never look alike.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5">Inspect</span>
+          <span class="ml-auto text-[10px] font-mono text-slate-500">order.refund</span>
+        </div>
+        <div class="p-3.5">
+          <div class="flex items-baseline justify-between mb-2">
+            <span class="text-[9px] uppercase tracking-wider text-slate-500">Failures · last 7 days</span>
+            <span class="text-[11px] text-slate-300">1 of 128</span>
+          </div>
+          <div class="rounded-lg border border-rose-400/25 bg-rose-500/8 px-2.5 py-2">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] text-slate-200 font-medium">Gateway timeout</span>
+              <span class="ml-auto text-[10px] text-slate-500 whitespace-nowrap">Tuesday</span>
+            </div>
+            <p class="mt-1 text-[10px] font-mono text-slate-500 break-all">order.refund · #4412 · Priya Raman</p>
+          </div>
+          <p class="mt-3 text-[10px] text-slate-500 leading-relaxed border-t border-white/8 pt-2.5">
+            Refused is not failed. A refusal is in the audit log; this is the other list, and keeping them apart is the
+            difference between a permissions bug and a working rule.
+          </p>
         </div>
       </div>
     </div>
