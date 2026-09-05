@@ -10,6 +10,17 @@ import { Icon } from 'astro-icon/components';
 // demo is broken — so the agent card and the grants list went, and coverage became something
 // you watch being *computed* rather than something you are told.
 //
+// **Tabs rather than two columns.** Both beats used to be on screen at once, side by side,
+// with the one that was not the subject dimmed to a third. It was unreadable in the way a
+// split screen usually is: two lists of eight rows animating in turn, and a reader who looked
+// up mid-run had to work out which half had just moved and whether the faded one was disabled,
+// finished, or broken. One panel is on screen now, full width, and the tab bar says which.
+//
+// The tabs carry the progress fill and the running count, which is what earns them over a
+// separate rail: the Tools tab still reads "3 of 8 governed" while you are watching the
+// Executions tab, so the finding stays on screen after its beat is over. That was the one
+// thing the dimmed column did well, and it is the only thing worth keeping from it.
+//
 // The sixth was a second run at a higher limit, making the point that changing a policy
 // changes the agent's behaviour with nothing touched on the agent. It was the same animation
 // with a different number, which is a rail step a reader has already learned to skip. The
@@ -62,14 +73,14 @@ const invoices: Invoice[] = [
 
 const steps = [
   {
-    id: 'coverage',
-    label: 'Coverage',
+    id: 'tools',
+    label: 'Tools',
     caption:
       'Before anything runs, read what governs the agent itself. Three of its eight tools reach an act something governs. The other five — including the one that can move money out — reach nothing at all.',
   },
   {
-    id: 'run',
-    label: 'The run',
+    id: 'executions',
+    label: 'Executions',
     caption:
       'Now let it work the queue. Five invoices are below the delegated limit and it approves them. Three are not, and those go to the CFO with the reason attached — including the one for exactly $10,000, because the limit is a rule rather than a vibe.',
   },
@@ -99,19 +110,52 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
     >
   </div>
 
-  <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/8">
-    <!-- ── Left: the agent's tools, scanned ──────────────────────── -->
-    <div data-col="tools" class="p-3.5 transition-opacity duration-500">
-      <div class="flex items-baseline gap-2 mb-2">
-        <p class="text-[9px] uppercase tracking-wider text-slate-500">Its tools</p>
-        <p data-tools-summary class="ml-auto text-[10px] font-semibold text-slate-400">checking…</p>
-      </div>
+  <!-- ── Tabs ─────────────────────────────────────────────────────
+       One per beat, and each is three things at once: where you are, the count that beat
+       produced, and how much of it is left. The fill sits along the bottom edge of the tab
+       rather than in a rail of its own, so there is one navigation affordance on the frame
+       instead of two describing the same two steps. -->
+  <div role="tablist" aria-label="Demonstration steps" class="flex border-b border-white/8">
+    <button data-step={0} type="button" role="tab" aria-selected="true" class="demo-tab">
+      <span class="flex items-baseline gap-2">
+        <span class="text-[11px] font-bold">Tools</span>
+        <span data-tools-summary class="ml-auto text-[10px] font-semibold text-slate-500 truncate">checking…</span>
+      </span>
+      {
+        /* Inline transform, for the reason the old rail carried: Tailwind v4 compiles
+          `scale-x-0` to the `scale` property, which multiplies with `transform` and would pin
+          the bar at zero width whatever the animation does. */
+      }
+      <span
+        data-step-fill
+        class="absolute inset-x-0 bottom-0 block h-[2px] bg-primary"
+        style="transform-origin:left center;transform:scaleX(0)"></span>
+    </button>
 
+    <button data-step={1} type="button" role="tab" aria-selected="false" class="demo-tab">
+      <span class="flex items-baseline gap-2">
+        <span class="text-[11px] font-bold">Executions</span>
+        <span data-queue-summary class="ml-auto text-[10px] font-semibold text-slate-500 truncate">8 waiting</span>
+      </span>
+      <span
+        data-step-fill
+        class="absolute inset-x-0 bottom-0 block h-[2px] bg-primary"
+        style="transform-origin:left center;transform:scaleX(0)"></span>
+    </button>
+  </div>
+
+  {
+    /* One height for both panels, so switching tabs does not resize the hero under the
+      headline. Set on the wrapper rather than on each panel: the taller of the two decides
+      it, and a panel that later grows a row does not need this number found again. */
+  }
+  <div class="p-3.5 min-h-[24.5rem]">
+    <!-- ── Its tools, judged one at a time ───────────────────────── -->
+    <div data-panel="tools">
       <!-- Eight segments, one per tool, filling as each is judged. -->
-      <div class="flex gap-1 mb-2.5" aria-hidden="true">
+      <div class="flex gap-1 mb-2" aria-hidden="true">
         {tools.map((_, i) => <div data-seg={i} class="h-1.5 flex-1 rounded-full bg-slate-700 transition-colors" />)}
       </div>
-
       <div class="space-y-1">
         {
           tools.map((t, i) => (
@@ -127,15 +171,46 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
           ))
         }
       </div>
-    </div>
 
-    <!-- ── Right: the queue ──────────────────────────────────────── -->
-    <div data-col="queue" class="p-3.5 transition-opacity duration-500">
-      <div class="flex items-baseline gap-2 mb-2">
-        <p class="text-[9px] uppercase tracking-wider text-slate-500">Payables queue</p>
-        <p data-queue-summary class="ml-auto text-[10px] text-slate-500">8 waiting</p>
+      {
+        /* The same block, word for word, that the Executions panel leads with — and that is the
+          whole point of it being here. "Approval Authority" is a name; on its own it says nothing
+          about why five invoices get approved and three do not, so by the time the run is
+          deciding, a reader is watching an outcome whose rule they never read. It is revealed as
+          `invoice.approve` is judged rather than sitting there from the start, so it reads as the
+          thing the scan found rather than as a caption. Under the rows, so revealing it moves
+          only the line beneath it. */
+      }
+      <div data-approval-rule hidden>
+        <div class="mt-2.5 rounded-lg border border-white/10 bg-slate-800/60 px-2.5 py-2">
+          <div class="flex items-center gap-2">
+            <Icon name="tabler:gavel" class="w-3.5 h-3.5 text-primary flex-shrink-0" />
+            <span class="text-[10px] text-slate-400">Approval Authority</span>
+            <span class="ml-auto text-[11px] font-mono font-bold text-accent">under $10,000</span>
+          </div>
+        </div>
+        {
+          /* Inside the reveal, not in the standing note below it: a sentence pointing at a
+            block that has not appeared yet is a sentence about nothing for the second and a
+            half before the scan reaches that row. */
+        }
+        <p class="mt-1.5 text-[10px] text-slate-500 leading-snug">That is the rule about to decide the queue.</p>
       </div>
 
+      {
+        /* The closing line the Executions panel has, and for the same reason: a list of eight
+          rows ends better on the sentence a reader should leave with than on white space. It
+          also names the worst row, which a reader scanning the column may not have picked out
+          of five identical red verdicts. */
+      }
+      <p class="mt-2.5 text-[10px] text-slate-500 leading-snug">
+        <code class="text-rose-300/90">ledger.adjust</code> reaches no rule at all — nothing decides whether it may move money
+        out, and nothing records that it did.
+      </p>
+    </div>
+
+    <!-- ── The queue it is working ───────────────────────────────── -->
+    <div data-panel="executions" hidden>
       <!-- The rule in force. Static, and the note under the counts is what it is here for:
            this number is the thing a reader should picture themselves changing. -->
       <div class="mb-2.5 rounded-lg border border-white/10 bg-slate-800/60 px-2.5 py-2">
@@ -182,82 +257,56 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
     </div>
   </div>
 
-  <!-- ── Caption and rail ─────────────────────────────────────────── -->
-  <div class="border-t border-white/8 bg-slate-900/80 px-3.5 py-3">
-    <p data-caption class="text-[12px] text-slate-300 leading-relaxed min-h-[3.5rem]">{steps[0].caption}</p>
+  <!-- ── Caption ──────────────────────────────────────────────────
+       Below the frame rather than over it, and it no longer carries a rail of its own: the
+       tabs above are where the steps live now. What is left is the sentence and the one
+       control a reader who wants to stop and look actually needs. -->
+  <div class="border-t border-white/8 bg-slate-900/80 px-3.5 py-3 flex items-start gap-3">
+    <button
+      data-play
+      type="button"
+      class="mt-0.5 flex-shrink-0 rounded-full border border-white/15 bg-slate-800 p-1.5 text-slate-300 hover:text-white hover:border-white/30 transition-colors"
+      aria-label="Pause the demonstration"
+    >
+      <Icon name="tabler:player-pause" class="w-3.5 h-3.5" data-icon-pause />
+      <Icon name="tabler:player-play" class="w-3.5 h-3.5 hidden" data-icon-play />
+    </button>
 
-    <div class="mt-2.5 flex items-center gap-2">
-      <button
-        data-play
-        type="button"
-        class="flex-shrink-0 rounded-full border border-white/15 bg-slate-800 p-1.5 text-slate-300 hover:text-white hover:border-white/30 transition-colors"
-        aria-label="Pause the demonstration"
-      >
-        <Icon name="tabler:player-pause" class="w-3.5 h-3.5" data-icon-pause />
-        <Icon name="tabler:player-play" class="w-3.5 h-3.5 hidden" data-icon-play />
-      </button>
-
-      {
-        /* Each dot is a track with a fill inside it, so the rail reports two things at once:
-          which step you are on, and how much of it is left. Without the second, a reader who
-          looks up mid-step cannot tell whether the frame is about to change or has stalled. */
-      }
-      <div class="flex-1 flex gap-1" role="tablist" aria-label="Demonstration steps">
-        {
-          steps.map((s, i) => (
-            <button
-              data-step={i}
-              type="button"
-              role="tab"
-              aria-selected={i === 0 ? 'true' : 'false'}
-              aria-label={s.label}
-              class="step-dot flex-1 rounded-full h-1.5 bg-slate-700 overflow-hidden"
-            >
-              {/* No transform utilities here, deliberately. Tailwind v4 compiles `scale-x-0`
-                  to the `scale` property rather than to `transform`, and the two multiply — so
-                  a `scale: 0%` from a class silently pins the bar at zero width however the
-                  `transform` animation behaves. Set inline so it depends on nothing. */}
-              <span
-                data-step-fill
-                class="block h-full w-full rounded-full bg-primary"
-                style="transform-origin:left center;transform:scaleX(0)"
-              />
-            </button>
-          ))
-        }
-      </div>
-
-      <span data-step-label class="flex-shrink-0 text-[10px] font-semibold text-slate-500 w-16 text-right"
-        >{steps[0].label}</span
-      >
-    </div>
+    <p data-caption class="text-[12px] text-slate-300 leading-relaxed min-h-[4.25rem]">{steps[0].caption}</p>
   </div>
 </div>
 
 <style>
-  .step-dot {
+  .demo-tab {
+    position: relative;
+    flex: 1;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    padding: 0.5rem 0.875rem;
+    text-align: left;
+    color: rgb(100 116 139);
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
   }
-  .step-dot:hover {
-    background-color: rgb(148 163 184);
+  .demo-tab + .demo-tab {
+    border-left: 1px solid rgb(255 255 255 / 8%);
   }
-  /* The current step lightens its *track* rather than filling with the accent, because the
-     accent is now what the fill means. Without this, a step paused at zero progress would be
-     indistinguishable from one that has not run yet. */
-  .step-dot[aria-selected='true'] {
-    background-color: rgb(100 116 139);
+  .demo-tab:hover {
+    color: rgb(203 213 225);
+    background-color: rgb(255 255 255 / 3%);
   }
+  /* The selected tab is white text on a lit ground; the unselected one keeps its count in
+     slate. The count is the point of leaving both on screen, so it never dims to nothing. */
+  .demo-tab[aria-selected='true'] {
+    color: white;
+    background-color: rgb(255 255 255 / 5%);
+  }
+
   .invoice-row,
   .tool-row {
     transition:
       background-color 0.25s ease,
       border-color 0.25s ease;
-  }
-  /* The column that is not the subject steps back rather than disappearing. Two lists both
-     at full contrast is a reader searching for what changed. */
-  [data-col].is-quiet {
-    opacity: 0.32;
   }
 </style>
 
@@ -268,8 +317,8 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
     ms: number;
     /** The agent's state badge. */
     state: 'idle' | 'running';
-    /** Which column is the subject; the other one steps back. */
-    focus: 'tools' | 'queue';
+    /** Which panel this beat is shown in; the other is hidden outright. */
+    panel: 'tools' | 'executions';
     /** Judge the agent's own tools. */
     scan?: boolean;
     /** The delegated limit in force, when this step runs the queue. */
@@ -277,6 +326,9 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
   }
 
   const AMOUNTS = [4250, 880, 1500, 9800, 2400, 10000, 18750, 42000];
+  /** Index of `invoice.approve` in RULES — the row whose rule the run below actually uses. */
+  const APPROVAL = 1;
+
   const RULES: (string | null)[] = [
     'Review Standard',
     'Approval Authority',
@@ -289,23 +341,23 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
   ];
 
   const STEPS: Step[] = [
-    { label: 'Coverage', focus: 'tools', state: 'idle', ms: 8000, scan: true },
-    { label: 'The run', focus: 'queue', state: 'running', ms: 9500, limit: 10000 },
+    { label: 'Tools', panel: 'tools', state: 'idle', ms: 8000, scan: true },
+    { label: 'Executions', panel: 'executions', state: 'running', ms: 9500, limit: 10000 },
   ];
 
   document.querySelectorAll<HTMLElement>('[data-agentops-demo]').forEach((root) => {
-    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-step]'));
-    const fills = dots.map((d) => d.querySelector<HTMLElement>('[data-step-fill]')!);
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-step]'));
+    const fills = tabs.map((d) => d.querySelector<HTMLElement>('[data-step-fill]')!);
     const captionEl = root.querySelector<HTMLElement>('[data-caption]')!;
-    const stepLabel = root.querySelector<HTMLElement>('[data-step-label]')!;
     const stateBadge = root.querySelector<HTMLElement>('[data-agent-state]')!;
-    const cols = Array.from(root.querySelectorAll<HTMLElement>('[data-col]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-panel]'));
 
     const toolRows = Array.from(root.querySelectorAll<HTMLElement>('[data-tool]'));
     const toolIcons = toolRows.map((r) => r.querySelector<HTMLElement>('[data-tool-icon]')!);
     const toolVerdicts = toolRows.map((r) => r.querySelector<HTMLElement>('[data-tool-verdict]')!);
     const segs = Array.from(root.querySelectorAll<HTMLElement>('[data-seg]'));
     const toolsSummary = root.querySelector<HTMLElement>('[data-tools-summary]')!;
+    const approvalRule = root.querySelector<HTMLElement>('[data-approval-rule]')!;
 
     const invRows = Array.from(root.querySelectorAll<HTMLElement>('[data-invoice]'));
     const invBadges = invRows.map((r) => r.querySelector<HTMLElement>('[data-invoice-badge]')!);
@@ -387,7 +439,8 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
         segs[i].className = 'h-1.5 flex-1 rounded-full bg-slate-700 transition-colors';
       });
       toolsSummary.textContent = 'checking…';
-      toolsSummary.className = 'ml-auto text-[10px] font-semibold text-slate-400';
+      toolsSummary.className = 'ml-auto text-[10px] font-semibold text-slate-500 truncate';
+      approvalRule.hidden = true;
     };
 
     // Judge one tool at a time, the same grammar the queue uses. Watching the number be
@@ -412,8 +465,9 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
           toolVerdicts[i].textContent = ok ? rule! : 'nothing governs this';
           segs[i].className = `h-1.5 flex-1 rounded-full transition-colors ${ok ? 'bg-primary' : 'bg-rose-400/40'}`;
           toolsSummary.textContent = `${governed} of ${i + 1} governed`;
+          if (i === APPROVAL) approvalRule.hidden = false;
           if (i === RULES.length - 1) {
-            toolsSummary.className = 'ml-auto text-[10px] font-bold text-white';
+            toolsSummary.className = 'ml-auto text-[10px] font-bold text-rose-300 truncate';
           }
         },
       }));
@@ -484,9 +538,8 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
       index = i;
 
       captionEl.textContent = CAPTIONS[i] ?? '';
-      stepLabel.textContent = step.label;
-      dots.forEach((d, n) => d.setAttribute('aria-selected', String(n === i)));
-      cols.forEach((c) => c.classList.toggle('is-quiet', c.dataset.col !== step.focus));
+      tabs.forEach((t, n) => t.setAttribute('aria-selected', String(n === i)));
+      panels.forEach((c) => (c.hidden = c.dataset.panel !== step.panel));
 
       // Steps behind the cursor read as done, steps ahead as untouched, and the current one
       // gets a fresh animation. Stepping backwards empties the ones you left, so the rail
@@ -530,7 +583,7 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
       arm();
     };
 
-    dots.forEach((d, i) => d.addEventListener('click', () => render(i)));
+    tabs.forEach((t, i) => t.addEventListener('click', () => render(i)));
 
     const iconPause = playBtn.querySelector<SVGElement>('[data-icon-pause]');
     const iconPlay = playBtn.querySelector<SVGElement>('[data-icon-play]');
