@@ -84,7 +84,13 @@ const metadata = {
     </Fragment>
 
     <Fragment slot="image">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+      {
+        /* Narrower than the Overlay's demo, which is genuinely two columns and needs the room.
+          This one became a single tabbed panel, and eight rows of `ref · vendor · amount ·
+          badge` stretched to 4xl leave a lane of empty space in the middle of every row that
+          the eye has to jump. */
+      }
+      <div class="max-w-2xl mx-auto px-4 sm:px-6">
         <AgentOpsDemo />
       </div>
     </Fragment>
