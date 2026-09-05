@@ -13,10 +13,14 @@ export const WAITLIST_TEXT = 'Join the waitlist';
 
 export const headerData = {
   links: [
-    // Products groups the two surfaces you can actually operate, in the order they are
+    // Products, not Operations: the umbrella is Operations, but a nav menu is answering
+    // "what do you sell", and a visitor who has not learned the umbrella yet reads a menu
+    // called Operations as one product rather than the list of them. The menu holds the core
+    // first, then a surface per place your software meets somebody, in the order they are
     // defined in ~/data/products and each carrying its own mark. Header.astro marks the
     // parent active whenever one of its children is the current page, so a visitor who
-    // arrives deep in the site can see where they are without reading the URL.
+    // arrives deep in the site can see where they are without reading the URL. Planned
+    // surfaces are filtered out of PRODUCTS upstream — a menu item is a promise you can click.
     {
       text: 'Products',
       links: PRODUCTS.map(({ name, href, icon, description }) => ({
@@ -43,7 +47,7 @@ export const headerData = {
 export const footerData = {
   links: [
     {
-      title: 'Platform',
+      title: 'Operations',
       links: [
         ...PRODUCTS.map(({ name, href }) => ({ text: name, href: getPermalink(href) })),
         { text: 'Playground', href: getPermalink('/playground') },

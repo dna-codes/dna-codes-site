@@ -1,0 +1,301 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+// The second mode, in the same shape as OverlayFacets — four blocks, alternating, each with
+// one artefact beside it. Deliberate: Inspect and Govern are one panel, so the two sections
+// must not look like two products.
+//
+// This replaced a Prototype section: pick a component off your Storybook, place a control
+// that does not exist yet, hand a developer an address instead of a ticket. It demoed well
+// and it was the wrong thing to spend the second half of a product page on — that is a
+// crowded space with better-funded entrants, and it argued for a feature rather than for
+// what this product is.
+//
+// What is here instead is the composition, which is the actual claim: five controls, one
+// order, and the choice of how much of it you take. Inspect answers questions about a
+// control; Govern is where you change the answers, from the same panel, without a deploy.
+//
+// The control under discussion is the same Refund button the hero governs, so a reader
+// arrives already knowing the screen, the address and whose seat it is.
+
+// The chain, outermost first. This is the one list on the site that has to stay in this
+// order — it is the order the controls run, and the argument for the order is in the copy
+// beside it. Rendered top to bottom with the handler at the foot, which is how a middleware
+// stack and a provider tree both read.
+const chain = [
+  {
+    name: 'Error logs',
+    icon: 'tabler:alert-triangle',
+    role: 'Wraps everything, including the controls themselves',
+    reader: 'Engineering',
+  },
+  {
+    name: 'User analytics',
+    icon: 'tabler:chart-line',
+    role: 'Opens on the attempt, closes on the outcome',
+    reader: 'Product',
+  },
+  {
+    name: 'Audit logs',
+    icon: 'tabler:history',
+    role: 'Records the intent, sealed with what happened',
+    reader: 'Compliance',
+  },
+  { name: 'Feature flags', icon: 'tabler:toggle-right', role: 'Does this exist for you at all?', reader: 'Release' },
+  { name: 'Access controls', icon: 'tabler:lock', role: 'May you?', reader: 'Security' },
+];
+---
+
+<WidgetWrapper containerClass="max-w-5xl mx-auto">
+  <div class="text-center mb-14">
+    <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Five controls, one order</p>
+    <h2 class="text-3xl md:text-4xl font-bold tracking-tight">
+      Take one control, or all five.<br class="hidden sm:block" /> On one button, or on all of them.
+    </h2>
+    <p class="mt-5 text-muted max-w-2xl mx-auto leading-relaxed">
+      The panel that reads your controls is also where you change them. Add a flag to a single button, or wrap every
+      control in your product in all five at once — and either way you write it from inside the running product rather
+      than from a console that has never rendered it.
+    </p>
+  </div>
+
+  <div class="space-y-16 sm:space-y-20">
+    <!-- ── 1. Composition ───────────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div>
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:stack-2" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">01 · Compose it</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Nothing is all-or-nothing.</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          A provider at the root takes the controls you want everywhere. A wrapper on one control takes the ones you
+          want just there. A team that only wants feature flags on one button installs feature flags on one button, and
+          nothing else changes.
+        </p>
+        <p class="text-muted leading-relaxed">
+          Which means the first install is never a migration. It is one control, one flag, and a coverage number that
+          was zero and is now one.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Your app</span>
+          <span class="ml-auto text-[10px] font-mono text-slate-500">App.tsx</span>
+        </div>
+        <pre
+          class="p-3.5 text-[11px] leading-relaxed font-mono text-slate-300 overflow-x-auto"><code><span class="text-slate-600">{'// everywhere'}</span>
+{'<'}<span class="text-accent">DnaProvider</span> <span class="text-slate-400">controls</span>={'{['}<span class="text-emerald-300">'flags'</span>, <span class="text-emerald-300">'access'</span>, <span class="text-emerald-300">'audit'</span>{']}'}{'>'}
+
+  <span class="text-slate-600">{'// ...or just here'}</span>
+  {'<'}<span class="text-accent">Dna.Control</span> <span class="text-slate-400">op</span>=<span class="text-emerald-300">"order.refund"</span> <span class="text-slate-400">flag</span>=<span class="text-emerald-300">"instant-refunds"</span>{'>'}
+    {'<'}<span class="text-sky-300">RefundButton</span> {'/>'}
+  {'</'}<span class="text-accent">Dna.Control</span>{'>'}
+
+{'</'}<span class="text-accent">DnaProvider</span>{'>'}</code></pre>
+        <p class="px-3.5 pb-3 text-[10px] text-slate-500 leading-relaxed">
+          The same five names on the API and the agent, so a team moves between surfaces without relearning anything.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── 2. The order ─────────────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div class="md:order-last">
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:arrow-down" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">02 · The order is the design</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Ask the flag before you ask the rule.</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          A control that is off for you is <em>absent</em>, not refused — so the flag runs first, and nothing under it
+          runs at all. That is a security property before it is a performance one: a 403 tells somebody the feature
+          exists and is not theirs, and off tells them nothing, because there is nothing to tell.
+        </p>
+        <p class="text-muted leading-relaxed">
+          The three recording controls wrap the two deciding ones, which is the only arrangement where a refusal is
+          itself auditable and a failure <em>inside</em> the checks still gets caught.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5">Govern</span>
+          <span class="ml-auto text-[10px] font-mono text-slate-500">order.refund</span>
+        </div>
+        <div class="p-3.5">
+          {
+            chain.map((c, i) => (
+              <div
+                class="rounded-lg border border-white/10 bg-slate-800/40 px-2.5 py-2"
+                style={`margin-left:${i * 10}px`}
+              >
+                <div class="flex items-center gap-2">
+                  <Icon name={c.icon} class="w-3.5 h-3.5 flex-shrink-0 text-primary" />
+                  <span class="text-[11px] text-slate-200 font-medium">{c.name}</span>
+                  <span class="ml-auto text-[9px] uppercase tracking-wider text-slate-500 whitespace-nowrap">
+                    {c.reader}
+                  </span>
+                </div>
+                <p class="mt-0.5 text-[10px] text-slate-500 leading-snug">{c.role}</p>
+              </div>
+            ))
+          }
+          <div
+            class="mt-1.5 rounded-lg border border-primary/40 bg-primary/10 px-2.5 py-2 flex items-center gap-2"
+            style="margin-left:50px"
+          >
+            <Icon name="tabler:pointer" class="w-3.5 h-3.5 flex-shrink-0 text-accent" />
+            <span class="text-[11px] text-slate-100 font-medium">Your control</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3. Writing it, from inside ───────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div>
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:pencil" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">03 · Change it where you are</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">No deploy, and no second tab.</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          Restrict an act to a seat, flip a flag, detach a rule — standing on the control it affects, in staging or in
+          production. Nobody has to find <code class="text-accent text-[0.9em]">refund_v2_enabled</code> in a list and hope
+          it still means this button.
+        </p>
+        <p class="text-muted leading-relaxed">
+          The subject is the <em>act</em>, not the button. Write the rule once and every control that refunds an order
+          is holding it, including the ones you have not found yet.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5">Govern</span>
+          <span class="ml-auto text-[10px] font-mono text-slate-500">order.refund</span>
+        </div>
+        <div class="p-3.5">
+          <p class="text-[9px] uppercase tracking-wider text-slate-500 mb-1.5">Restrict to</p>
+          <div class="space-y-1">
+            {
+              [
+                { seat: 'Fulfillment desk', on: true },
+                { seat: 'Store manager', on: true },
+                { seat: 'Support', on: false },
+              ].map((r) => (
+                <div class="flex items-center gap-2 rounded bg-slate-800/50 px-2 py-1.5">
+                  <span class="text-[11px] text-slate-300">{r.seat}</span>
+                  <span class="ml-auto inline-flex items-center gap-1">
+                    <span
+                      class:list={[
+                        'text-[9px] uppercase tracking-wider font-bold',
+                        r.on ? 'text-accent' : 'text-slate-600',
+                      ]}
+                    >
+                      {r.on ? 'On' : 'Off'}
+                    </span>
+                    <span class:list={['w-6 h-3.5 rounded-full relative', r.on ? 'bg-primary/70' : 'bg-slate-700']}>
+                      <span
+                        class:list={[
+                          'absolute top-0.5 w-2.5 h-2.5 rounded-full',
+                          r.on ? 'right-0.5 bg-white' : 'left-0.5 bg-slate-400',
+                        ]}
+                      />
+                    </span>
+                  </span>
+                </div>
+              ))
+            }
+          </div>
+
+          <div class="mt-3 rounded-lg border border-primary/30 bg-primary/8 px-3 py-2.5">
+            <p class="text-[11px] text-slate-200 leading-relaxed">
+              Written from here. No deploy, and every refusal from here on is recorded with it.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 4. Authority ─────────────────────────────────────────────── -->
+    <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div class="md:order-last">
+        <div class="flex items-center gap-2.5 mb-3">
+          <Icon name="tabler:gavel" class="w-5 h-5 text-primary" />
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-primary">04 · Who may change it</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-3">Writing a rule and making it decide are two grants.</h3>
+        <p class="text-muted leading-relaxed mb-4">
+          Anything written here arrives <strong class="text-white">proposed</strong> and governs nothing until somebody holding
+          <code class="text-accent text-[0.9em]">ratify</code> puts it in force. So a panel that anyone on the team can open
+          is not a panel anyone on the team can change your product with.
+        </p>
+        <p class="text-muted leading-relaxed">
+          Which is also the answer to the obvious objection about a governance tool that lives in production: reading is
+          free and unlimited, and authority is the thing we charge for and the thing we gate.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+        <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-white border border-primary/60 rounded px-2 py-0.5">Govern</span>
+          <span class="ml-auto text-[10px] text-slate-500">Pending · 1</span>
+        </div>
+        <div class="p-3.5">
+          <div class="rounded-lg border border-amber-400/25 bg-amber-400/5 px-2.5 py-2">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] text-slate-200 font-medium">Restrict order.refund</span>
+              <span
+                class="ml-auto text-[8px] font-bold uppercase tracking-wider bg-amber-400/15 text-amber-300 rounded px-1 py-0.5"
+                >proposed</span
+              >
+            </div>
+            <p class="mt-1.5 text-[10px] text-slate-500">June Alcott · 2 minutes ago · governs nothing yet</p>
+          </div>
+
+          <ol class="mt-3 space-y-2.5">
+            {
+              [
+                { state: 'Proposed', by: 'anybody who may read the panel', done: true },
+                { state: 'In force', by: 'somebody holding ratify', done: false },
+              ].map((row) => (
+                <li class="flex items-start gap-2">
+                  <Icon
+                    name={row.done ? 'tabler:circle-check-filled' : 'tabler:circle-dashed'}
+                    class:list={['w-4 h-4 flex-shrink-0 mt-[1px]', row.done ? 'text-primary' : 'text-slate-600']}
+                  />
+                  <span class="text-[11px] leading-relaxed">
+                    <strong class:list={[row.done ? 'text-slate-100' : 'text-slate-400']}>{row.state}</strong>
+                    <span class="text-slate-500"> · {row.by}</span>
+                  </span>
+                </li>
+              ))
+            }
+          </ol>
+
+          <p class="mt-3 pt-3 border-t border-white/8 text-[10px] text-slate-500 leading-relaxed">
+            Every proposal, and every ratification, is itself an audited act.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What it is not — said before anybody has to ask. -->
+  <div class="mt-16 max-w-3xl mx-auto rounded-2xl border border-white/10 bg-slate-900/50 px-6 py-6 sm:px-8">
+    <p class="text-lg font-bold text-white">You do not have to replace what already works.</p>
+    <p class="mt-2 text-sm text-muted leading-relaxed">
+      Start with the controls that have no governance at all, which is most of them, and leave your flag vendor and your
+      roles table alone. Teams that later consolidate do it because they wanted one answer per control, not because we
+      required it.
+    </p>
+    <p class="mt-4 text-sm text-slate-500 leading-relaxed">
+      Reading is free and unlimited on every plan. Writing needs a seat — see the
+      <a href="/pricing" class="text-primary hover:text-accent font-semibold">ladder</a>.
+    </p>
+  </div>
+</WidgetWrapper>

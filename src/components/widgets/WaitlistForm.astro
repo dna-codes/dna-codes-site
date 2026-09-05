@@ -1,11 +1,11 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { PRODUCT } from '~/data/products';
+import { PRODUCT, type ProductKey } from '~/data/products';
 
 // The one waitlist form on the site. Every primary button on every page resolves here,
-// so it has to work for somebody who came for Operations, somebody who came for the
-// Overlay, and somebody who has not decided — which is why nothing above the interest
-// question mentions either product.
+// so it has to work for somebody who came for the core model, somebody who came for one
+// surface, and somebody who has not decided — which is why nothing above the interest
+// question mentions a particular product.
 //
 // The site is `output: 'static'` on GitHub Pages, so there is no server to POST to:
 // it has to be a third-party endpoint. Formspree it is; Basin and Web3Forms take the
@@ -29,7 +29,7 @@ const ACTION_URL = 'https://formspree.io/f/moeadkla';
 
 export interface Props {
   /** Tick an interest up front when the form sits inside a product's own page. */
-  preselect?: 'operations' | 'overlay' | 'api-operations' | 'agent-operations';
+  preselect?: ProductKey;
   /** Overridden only where two instances could collide on one page. */
   id?: string;
 }
@@ -53,7 +53,7 @@ const identityFields: Field[] = [
   { name: 'company', label: 'Company', type: 'text', autocomplete: 'organization', required: true, half: false },
 ];
 
-// Multi-select rather than a toggle: the products are surfaces on one model, so wanting
+// Multi-select rather than a toggle: the products are surfaces on one core, so wanting
 // more than one is the common answer rather than a fence-sit. "Not sure yet" is a real
 // answer too, and cheaper to give than a wrong one — it routes to a conversation
 // instead of a demo of the wrong half.
@@ -65,10 +65,10 @@ const interests = [
     icon: PRODUCT.operations.icon,
   },
   {
-    value: 'overlay',
-    label: PRODUCT.overlay.name,
+    value: 'ui-operations',
+    label: PRODUCT['ui-operations'].name,
     blurb: 'Govern the controls inside our product',
-    icon: PRODUCT.overlay.icon,
+    icon: PRODUCT['ui-operations'].icon,
   },
   {
     value: 'api-operations',
@@ -90,8 +90,8 @@ const interests = [
   },
 ];
 
-// The qualification question, one per product that has one. It was hard-coded to the
-// Overlay's stack question, which stopped working the moment a third product arrived with
+// The qualification question, one per product that has one. It was hard-coded to the UI
+// surface's stack question, which stopped working the moment a third product arrived with
 // a different — and better — thing to ask. Each is optional and each is the field that
 // decides who replies and about what, so a blank one still submits and a filled one is a
 // priced conversation in a line.
@@ -101,7 +101,7 @@ const interests = [
 // unknown fields through, so there is no schema to keep in step.
 const questions = [
   {
-    interest: 'overlay',
+    interest: 'ui-operations',
     name: 'stack',
     label: 'What is your application built with?',
     placeholder: 'React, Vue, Rails + Hotwire…',
@@ -186,8 +186,8 @@ const questions = [
     </fieldset>
 
     <!-- One question per product that has one, each hidden until its product is ticked, so
-         an Operations visitor is never asked to describe a codebase and an Overlay visitor
-         is never asked what their agents do. Optional either way. -->
+         a core-model visitor is never asked to describe a codebase and a UI Operations
+         visitor is never asked what their agents do. Optional either way. -->
     {
       questions.map((q) => (
         <div class="mt-4" data-waitlist-question={q.interest} hidden>

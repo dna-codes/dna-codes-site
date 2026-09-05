@@ -38,6 +38,11 @@ export default defineConfig({
     // keep working. (The name previously pointed at /operations, back when the
     // Operations demo was called the Playground; that redirect is retired with it.)
     '/whats-your-dna': '/playground',
+    // The Overlay stopped being a product and became the viewer every surface ships, so the
+    // product that owns the React panel is now UI Operations — named for its surface, like
+    // its three siblings. The old URL is public (the announcement bar, the homepage teaser
+    // and anything anyone has bookmarked), so it keeps resolving.
+    '/overlay': '/ui-operations',
   },
 
   integrations: [

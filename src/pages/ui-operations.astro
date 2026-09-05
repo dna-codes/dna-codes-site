@@ -12,16 +12,16 @@ import OverlayModes from '~/components/widgets/OverlayModes.astro';
 import OverlayInstall from '~/components/widgets/OverlayInstall.astro';
 
 const metadata = {
-  title: 'DNA Overlay — Every control, under control',
+  title: 'UI Operations — Every control, under control',
   description:
-    'Permissions, feature flags, user analytics, audit logs and prototyping. Running inside your product, on the control itself.',
+    'Feature flags, access controls, audit logs, error logs and user analytics — composable, in the order they run, on the control itself inside your running product.',
   ignoreTitleTemplate: true,
 };
 ---
 
 <Layout metadata={metadata}>
   <!-- ── Hero ─────────────────────────────────────────────────────────── -->
-  <Hero tagline="DNA Overlay · Early access">
+  <Hero tagline="UI Operations · Early access">
     <DnaHelix
       slot="bg"
       orientation="horizontal"
@@ -37,8 +37,8 @@ const metadata = {
     </Fragment>
 
     <Fragment slot="subtitle">
-      Permissions, feature flags, user analytics, audit logs<br class="hidden sm:block" />
-      and prototyping. Running inside your product.
+      Feature flags, access controls, audit logs, error logs<br class="hidden sm:block" />
+      and user analytics. Composable, and inside your running product.
       <span class="mt-4 block text-base text-slate-400">
         Anyone on your team can read it. An engineer installs it once.
       </span>
@@ -60,7 +60,7 @@ const metadata = {
     </Fragment>
   </Hero>
 
-  <!-- ── 1. Inspect (permissions · flags · analytics · audit) and Prototype ─ -->
+  <!-- ── 1. Inspect (read the five controls) and Govern (change them) ─── -->
   <OverlayModes />
 
   <!-- Social proof sits after the product argument rather than under the hero, where it
@@ -71,7 +71,7 @@ const metadata = {
   <OverlayInstall />
 
   <!-- ── 2b. The same argument, one layer down ────────────────────────── -->
-  <!-- One paragraph and one link, in the shape AgentOpsTeaser uses. It sits here rather than in
+  <!-- One paragraph and one link, in the shape SuiteSurfaces uses on the hub. It sits here rather than in
        the scroll path above because a reader who has understood the panel has already understood
        this — the only new fact is that a button is not the only way in. -->
   <WidgetWrapper containerClass="max-w-3xl mx-auto !pb-0">
@@ -101,8 +101,8 @@ const metadata = {
       <div>
         <p class="text-lg font-bold text-white">Included in every paid plan.</p>
         <p class="mt-1.5 text-sm text-muted leading-relaxed">
-          The Overlay is a surface on your model, not a product beside it, so it is never sold separately. Reading the
-          panel is free and unlimited on all plans; we charge for authority, not for looking.
+          UI Operations is a surface on your model, not a product beside it, so it is never sold separately. Reading the
+          Overlay is free and unlimited on all plans; we charge for authority, not for looking.
         </p>
       </div>
       <a
@@ -119,6 +119,11 @@ const metadata = {
     columns={2}
     classes={{ container: 'max-w-5xl' }}
     items={[
+      {
+        title: 'Do I have to take all five controls?',
+        description:
+          'No — that is the point of them being composable. A provider at the root takes whichever controls you want everywhere; a wrapper takes the ones you want on a single control. Feature flags on one button is a complete, useful install.',
+      },
       {
         title: 'Do I have to replace my feature flags?',
         description:
@@ -153,7 +158,7 @@ const metadata = {
   />
 
   <!-- ── Waitlist ─────────────────────────────────────────────────────── -->
-  <!-- The same form as /waitlist, with the Overlay already ticked: somebody who read this
+  <!-- The same form as /waitlist, with UI Operations already ticked: somebody who read this
        far has answered that question by arriving at the bottom of this page. -->
   <WidgetWrapper containerClass="max-w-4xl mx-auto">
     <div
@@ -168,7 +173,7 @@ const metadata = {
         </p>
       </div>
 
-      <WaitlistForm preselect="overlay" />
+      <WaitlistForm preselect="ui-operations" />
     </div>
   </WidgetWrapper>
 </Layout>
