@@ -1,12 +1,12 @@
 ---
-publishDate: 2026-09-06T00:00:00Z
+publishDate: 2026-09-20T00:00:00Z
 series:
   name: The Future of Programming
   layer: 'Layer 04: Operational Model'
 author: Tim Kleier
 title: 'The Operational Model: The Missing Abstraction for What a Business Can Do'
 excerpt: 'Software has abstractions for what things are and abstractions for how they are exposed. It has never had a standard abstraction for what a business is actually allowed to do. That layer exists in every system — dissolved across a precondition here, a status transition there, a permission check three files away.'
-image: '~/assets/images/abstraction-layers.png' # PLACEHOLDER — replace before publish
+image: '~/assets/images/series/operational-model-the-missing-abstraction.png'
 draft: true
 category: Engineering
 tags:

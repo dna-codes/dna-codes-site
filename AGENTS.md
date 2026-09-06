@@ -97,6 +97,24 @@ Post frontmatter: `title` (required), `publishDate`, `updateDate`, `draft`, `exc
 
 Hero images use `loading="eager"` and `fetchpriority="high"`.
 
+## Prose Style
+
+**Use em dashes minimally.** They are the default reach for any aside, and left unchecked
+every paragraph acquires the same rhythm. Applies to everything a reader sees: blog posts,
+page copy, component strings, captions.
+
+Reach for the punctuation that names the relationship instead:
+
+| Instead of an em dash               | Use                      |
+| ----------------------------------- | ------------------------ |
+| Introducing a list or restatement   | a colon                  |
+| A short aside                       | commas                   |
+| A second, separable thought         | a full stop              |
+| A true interruption of the sentence | keep the em dash, rarely |
+
+Not a ban, so one or two in a long piece is fine. It should be a choice, not a reflex. A
+blind find-and-replace will mangle prose, since each one wants a different fix.
+
 ## Verification Checklist
 
 After changes, always verify:

@@ -1,0 +1,92 @@
+---
+import { twMerge } from 'tailwind-merge';
+import { fetchSeriesPosts } from '~/utils/blog';
+import { getPermalink } from '~/utils/permalinks';
+import { getFormattedDate } from '~/utils/utils';
+
+// The series hub: every piece in a series, in reading order, on one card.
+//
+// Published pieces link. Scheduled ones are named and dated but deliberately left as
+// plain text — a draft has no route in a production build, so linking it would 404 on
+// the very page the series is trying to make legible. Naming them anyway is the point:
+// it's what turns a run of posts into one argument in N parts, and it tells a reader who
+// arrives at the manifesto that there is more coming and roughly when.
+//
+// Everything is read from post frontmatter — `series.name`, `publishDate`, `draft` — so
+// shipping a piece stays a one-line change. Drop `draft: true` and this list relinks
+// itself; no second place to update, which is the failure mode a hand-written index has.
+//
+// No JavaScript by design. It's a list of links, so it degrades to exactly itself.
+
+export interface Props {
+  /** Matches `series.name` in post frontmatter. */
+  name?: string;
+  /** One line under the heading. Pass `null` to omit. */
+  description?: string | null;
+  /** Slug of the post this renders inside — marked "You are here" and never linked. */
+  current?: string;
+  class?: string;
+}
+
+const {
+  name = 'The Future of Programming',
+  description = 'One layer per piece, from what a business means to what a machine runs.',
+  current,
+  class: className = '',
+} = Astro.props;
+
+const posts = await fetchSeriesPosts(name);
+---
+
+{
+  posts.length > 0 && (
+    <aside
+      class={twMerge(
+        'not-prose my-10 rounded-lg border border-gray-200 bg-gray-50 p-5 sm:p-6 dark:border-slate-700 dark:bg-slate-800/50',
+        className
+      )}
+      aria-labelledby="series-nav-heading"
+    >
+      <h2
+        id="series-nav-heading"
+        class="text-sm font-semibold uppercase tracking-wider text-primary dark:text-blue-400"
+      >
+        {name}
+      </h2>
+      {description && <p class="mt-1 text-sm text-muted dark:text-slate-400">{description}</p>}
+
+      <ol class="mt-4 list-decimal space-y-1.5 ps-5 marker:text-xs marker:font-semibold marker:text-muted dark:marker:text-slate-500">
+        {posts.map((post) => {
+          const isCurrent = !!current && post.slug === current;
+
+          return (
+            <li class="text-sm">
+              <div class="flex flex-col gap-x-3 gap-y-0.5 sm:flex-row sm:items-baseline sm:justify-between">
+                {post.draft ? (
+                  <span class="text-muted dark:text-slate-400">{post.title}</span>
+                ) : isCurrent ? (
+                  <span class="font-semibold text-gray-900 dark:text-slate-200" aria-current="true">
+                    {post.title}
+                  </span>
+                ) : (
+                  <a
+                    class="font-medium text-primary hover:underline dark:text-blue-400"
+                    href={getPermalink(post.permalink, 'post')}
+                  >
+                    {post.title}
+                  </a>
+                )}
+
+                <span class="shrink-0 text-xs text-muted dark:text-slate-500">
+                  {isCurrent && <span class="font-medium">You are here · </span>}
+                  {post.draft && 'Scheduled · '}
+                  <time datetime={String(post.publishDate)}>{getFormattedDate(post.publishDate)}</time>
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </aside>
+  )
+}

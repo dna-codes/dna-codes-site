@@ -1,12 +1,12 @@
 ---
-publishDate: 2026-10-11T00:00:00Z
+publishDate: 2026-10-25T00:00:00Z
 series:
   name: The Future of Programming
   layer: 'Layer 07: Technology Stack'
 author: Tim Kleier
 title: 'You Choose Your Technology Stack Too Early'
 excerpt: 'The first real decision on most projects is React or Vue, Postgres or Mongo — made before anyone has said precisely what the system is supposed to do. The stack then quietly bends the business to fit it, and everyone calls the result a requirement.'
-image: '~/assets/images/abstraction-layers.png' # PLACEHOLDER — replace before publish
+image: '~/assets/images/series/you-choose-your-tech-stack-too-early.png'
 draft: true
 category: Engineering
 tags:

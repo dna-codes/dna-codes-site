@@ -1,0 +1,90 @@
+---
+publishDate: 2026-09-06T00:00:00Z
+series:
+  name: The Future of Programming
+  layer: 'Layer 02: Semantics'
+author: Tim Kleier
+title: 'Semantics: Software Without Meaning Is Meaningless'
+excerpt: 'Every layer beneath meaning inherits it: the ontology, the operations, the endpoints, the code. Get one word wrong and they are all wrong in the same direction.'
+image: '~/assets/images/series/semantics-software-without-meaning.png'
+category: Engineering
+tags:
+  - semantics
+  - domain-driven design
+  - ai agents
+  - abstraction
+---
+
+import AmbiguityResolver from '~/components/widgets/AmbiguityResolver.astro';
+
+Two dashboards disagree about your biggest customer.
+
+One says Acme Corp, $400,000 this year. The other has never heard of Acme. It shows forty separate people, none of them over $20,000. Same payments, same database.
+
+Neither is broken. Acme is one customer in your reporting service, which records whoever signed the contract. It is forty customers in your billing service, which records whoever's card was charged. Both call that field `customer_id`. Both are right.
+
+Nobody wrote this bug, and it takes weeks to find that out. That is what makes it expensive.
+
+<AmbiguityResolver />
+
+## Semantics in Software
+
+The word does a lot of unrelated work in this industry. Semantic HTML is about picking the right tag; semantic versioning is about what a number promises; semantic search means embeddings now.
+
+Here it means one thing: **the abstraction layer where words get their meaning.** One meaning per word: `Customer`, `Invoice`, `Pay`, the same in billing as in reporting wherever that is possible. Where it genuinely is not, split the word instead of overloading it: `CustomerAccount` and `CustomerPayer`, each defined once. Not how they are stored, not what they do. What they _are_.
+
+That sounds like philosophy until you notice what separates it from every other layer. Your code is written down; it has to be, or it does not run. So are your schema and your API contract. Every layer has an artifact the machine reads, which gives a correction somewhere to land.
+
+The meanings underneath them all do not: they live in the heads of whoever was in the room, or in an inference some AI agent made at two in the morning. Meaning is the one input every layer depends on and the one input no layer stores.
+
+That is why this is a formal abstraction layer and not a hygiene problem, and why the bug above cost weeks. There was no artifact to be wrong.
+
+Types don't catch it, because `customer_id: UUID` is true under both readings. Neither do tests, since each service's suite was written by the person holding that service's definition. The defect is not in any file. It is in the space between two files, where the meaning should have been.
+
+## Semantics: a Binding Definition
+
+The usual remedy is a glossary, and nothing depends on a glossary. But the content was never the hard part. Any competent team could write these in an afternoon:
+
+> **Invoice**: a demand for payment issued against a completed order. Not a Receipt, which acknowledges one. Not a Statement, which summarizes several.
+>
+> **CustomerAccount**: the legal entity a contract is signed with and an invoice is reconciled against.
+>
+> **CustomerPayer**: a Person who settles an invoice on behalf of a CustomerAccount. Not a kind of CustomerAccount.
+
+The hard part is making it binding. A definition written beside the system is a comment. A definition the system is built from is the only place an answer can come from: billing and reporting both read `Invoice` from it, so they cannot quietly disagree, and correcting it corrects them both.
+
+None of this is new. Domain-Driven Design named the problem in 2003, and data catalogs have recorded what words mean ever since. But all of it is advisory, which is the distinction this series turns on: a practice describes the layers below it, an abstraction layer is what they are derived from. Semantics has been a practice for twenty years. It has never been an abstraction layer.
+
+## The Semantic Abstraction Layer
+
+An abstraction layer is only real if you can say what it receives and what it produces.
+
+**In, from Intent.** Someone says: _"A customer should be able to pay an invoice."_ A goal, in their own words, with no structure.
+
+This layer asks one question of it: which words carry a specific meaning here? Three do: `customer`, `invoice`, `pay`. The rest is ordinary English. A sentence becomes a short list of load-bearing terms, each with one meaning.
+
+**Out, to Ontology.** Read the Invoice definition again: _a demand for payment issued against a completed order._ Three things are already in that sentence:
+
+- `Invoice`: an entity
+- `Order`: a second entity that `Invoice` references
+- `issued_against`: the relationship between them
+
+It is already a structure, just written in prose. The CustomerPayer definition does the same work, and settles the bug at the top of this article on the way: a `CustomerPayer` is a `Person` acting for a `CustomerAccount`, which is a relationship, not a subtype.
+
+Nobody designs that structure. A definition written precisely enough already contains it. The step is mechanical, and a reviewer can check it. It only gets hard when the definition was vague, which is exactly what happens when nobody formalizes semantics.
+
+## Agents and the Rate of Drift
+
+An AI agent resolves ambiguity confidently. Hand it `customer` with no definition and it will pick a reading and build clean, plausible code on top of it. It never does the thing a new engineer does on day three, which is ask _wait, which customer?_
+
+Then it re-picks. A human who holds the wrong definition at least holds it consistently, which is a pattern you can eventually spot; an agent starts fresh each session and may take the other reading next Tuesday, forty lines away. Human drift is slow enough to catch. Agent drift is per-session.
+
+## Semantic Resolution
+
+People will keep saying `customer` to mean two things, and that is fine. Businesses really do have parent accounts and billing contacts, and both deserve names. What cannot survive is both of them being `Customer` in the system. Two engineers can notice the ambiguity, talk it through, agree completely, and still ship the same bug, because an agreement that lives in a conversation is not available to the next service, the next hire, or the next session. The understanding was correct. It just had no address.
+
+Knowing what your words mean is not the same as knowing what exists. A vocabulary can tell you that a CustomerAccount and an Invoice are different things; it cannot tell you that an Invoice belongs to exactly one CustomerAccount. That is the next abstraction layer, and the one most teams are confident they have already built, because they have a database. Next: Ontology.
+
+---
+
+This is the second piece in [The Future of Programming](/blog/future-of-programming-abstraction-layers), a series on the abstraction layers between intent and execution. We're building [DNA Codes](/) to make the middle of that ladder real: terms defined once, in the place the layers below are read from. If this is how you're thinking about the problem too, [join the waitlist](/waitlist).

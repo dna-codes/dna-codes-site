@@ -1,12 +1,12 @@
 ---
-publishDate: 2026-10-04T00:00:00Z
+publishDate: 2026-10-18T00:00:00Z
 series:
   name: The Future of Programming
   layer: 'Layer 06: Code'
 author: Tim Kleier
 title: "Code Isn't Disappearing. It's Moving Down the Stack"
 excerpt: 'Every prediction that programming is ending has been wrong in the same way. Code does not vanish when a layer appears above it — it stops being the place decisions get made. Programming and writing code were never the same activity, and the gap between them is about to become obvious.'
-image: '~/assets/images/abstraction-layers.png' # PLACEHOLDER — replace before publish
+image: '~/assets/images/series/code-is-moving-down-the-stack.png'
 draft: true
 category: Engineering
 tags:
