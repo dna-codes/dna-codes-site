@@ -1,12 +1,12 @@
 ---
-publishDate: 2026-10-18T00:00:00Z
+publishDate: 2026-11-01T00:00:00Z
 series:
   name: The Future of Programming
   layer: 'Layer 08: Machine / Runtime'
 author: Tim Kleier
 title: 'The Best Abstraction Layer Is the One You Never Think About'
 excerpt: 'Nobody debugs register allocation anymore. Not because it stopped mattering — because the handoff beneath code got engineered so thoroughly it went invisible. That is the only bar that has ever counted, and every layer above code is still failing it.'
-image: '~/assets/images/abstraction-layers.png' # PLACEHOLDER — replace before publish
+image: '~/assets/images/series/the-best-abstraction-layer-is-invisible.png'
 draft: true
 category: Engineering
 tags:

@@ -1,12 +1,12 @@
 ---
-publishDate: 2026-08-30T00:00:00Z
+publishDate: 2026-09-13T00:00:00Z
 series:
   name: The Future of Programming
   layer: 'Layer 03: Ontology'
 author: Tim Kleier
 title: 'Ontology: Your Database Is Not Your Business Model'
 excerpt: 'A schema tells you how your business stores things. An ontology tells you what your business believes exists. Most teams have only ever written the first one down — and then read it backwards, hoping to recover the second.'
-image: '~/assets/images/abstraction-layers.png' # PLACEHOLDER — replace before publish
+image: '~/assets/images/series/ontology-your-database-is-not-your-business-model.png'
 draft: true
 category: Engineering
 tags:

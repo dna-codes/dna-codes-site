@@ -25,34 +25,41 @@ open items live here under "Open items per post" instead.
 
 ### Open items per post
 
-**Semantics — Software Runs on Words Nobody Defined** (Aug 23, drafted, `.mdx`)
+**Semantics — Software Without Meaning Is Meaningless** (Sep 6, published, `.mdx`)
 
-1. Replace the placeholder hero. Shoot it from the `<AmbiguityResolver />` figure, dark
-   mode, 1200×628, in the `Undefined` state — that is the status quo and where the
-   article opens.
-2. Add the "Next: Ontology" link in the closing section once that post ships Aug 30.
-   Deliberately unlinked for now; it would 404 on publish day.
-3. Add the series nav block to the manifesto (see the series rules below).
+1. Add the "Next: Ontology" link in the closing section once that post ships.
+   Deliberately unlinked for now; it would 404 today.
+
+Done: hero card, cut from 2,442 to ~1,100 words, series nav on the manifesto, retitled.
+
+**Ontology — Your Database Is Not Your Business Model** (Sep 13, still a stub)
+
+Nothing written. The brief in the post file is good and detailed; the work is the
+one-ontology-two-schemas figure, then ~1,000 words, then `.md` → `.mdx`. The hero card
+already exists. Due in one week.
 
 ### Calendar
 
-Sundays, matching the manifesto's publish day. The series runs 10 weeks, Aug 9 – Oct 18.
+Sundays, matching the manifesto's publish day. The run is Aug 9 to Nov 1. Everything from
+Semantics on slipped two weeks against the original plan; the whole tail moved with it, so
+the Sunday cadence and the relative order of the syndicated weeks are unchanged.
 
-| Week | Date   | Venue        | Piece                                                                                    | Status                                |
-| ---- | ------ | ------------ | ---------------------------------------------------------------------------------------- | ------------------------------------- |
-| 1    | Aug 9  | DNA          | The Future of Programming: The Abstraction Layers Between Intent and Execution           | **Published**                         |
-| 2    | Aug 23 | DNA          | Semantics: Software Runs on Words Nobody Defined                                         | **Drafted** — needs figure + OG image |
-| 3    | Aug 30 | DNA          | Ontology: Your Database Is Not Your Business Model                                       | Stub                                  |
-| 4    | Sep 6  | DNA          | The Operational Model: The Missing Abstraction for What a Business Can Do — **flagship** | Stub                                  |
-| 5    | Sep 13 | HackerNoon   | AI Can Write the Code. Who Defines What the Code Is Supposed to Mean?                    | Brief below · _submit by Aug 30_      |
-| 6    | Sep 20 | DNA          | The Execution Model: Your API and Your MCP Tool Should Not Be Written Twice              | Stub                                  |
-| 7    | Sep 27 | freeCodeCamp | From Writing Code to Designing Systems: Programming After AI                             | Brief below · _submit by Sep 13_      |
-| 8    | Oct 4  | DNA          | Code Isn't Disappearing. It's Moving Down the Stack                                      | Stub                                  |
-| 9    | Oct 11 | DNA          | You Choose Your Technology Stack Too Early                                               | Stub                                  |
-| 10   | Oct 18 | DNA          | The Best Abstraction Layer Is the One You Never Think About                              | Stub                                  |
+| Week | Date   | Venue        | Piece                                                                                    | Status                           |
+| ---- | ------ | ------------ | ---------------------------------------------------------------------------------------- | -------------------------------- |
+| 1    | Aug 9  | DNA          | The Future of Programming: The Abstraction Layers Between Intent and Execution           | **Published**                    |
+| 2    | Sep 6  | DNA          | Semantics: Software Without Meaning Is Meaningless                                       | **Published** — two weeks late   |
+| 3    | Sep 13 | DNA          | Ontology: Your Database Is Not Your Business Model                                       | Stub                             |
+| 4    | Sep 20 | DNA          | The Operational Model: The Missing Abstraction for What a Business Can Do — **flagship** | Stub                             |
+| 5    | Sep 27 | HackerNoon   | AI Can Write the Code. Who Defines What the Code Is Supposed to Mean?                    | Brief below · _submit by Sep 13_ |
+| 6    | Oct 4  | DNA          | The Execution Model: Your API and Your MCP Tool Should Not Be Written Twice              | Stub                             |
+| 7    | Oct 11 | freeCodeCamp | From Writing Code to Designing Systems: Programming After AI                             | Brief below · _submit by Sep 27_ |
+| 8    | Oct 18 | DNA          | Code Isn't Disappearing. It's Moving Down the Stack                                      | Stub                             |
+| 9    | Oct 25 | DNA          | You Choose Your Technology Stack Too Early                                               | Stub                             |
+| 10   | Nov 1  | DNA          | The Best Abstraction Layer Is the One You Never Think About                              | Stub                             |
 
-Aug 16 is deliberately left empty to give the first deep dive a full writing week. The
-gap is invisible to readers — the manifesto is a week old and still the top post.
+There is a four-week gap between the manifesto and Semantics. Only the first week of it
+was deliberate. It is invisible to a new reader, who sees a dated archive rather than a
+cadence, but it is the whole reason the tail now runs into November.
 
 Weeks 5 and 7 have no DNA post. LinkedIn points at the external piece instead. That is
 the point of those weeks, not a hole in the schedule.
@@ -81,8 +88,12 @@ them at https://claude.ai/code/routines.
 
 | Fires                | Reminds about      | Submit by |
 | -------------------- | ------------------ | --------- |
-| Mon Aug 17, 9:00 MDT | HackerNoon piece   | Aug 30    |
-| Mon Aug 31, 9:00 MDT | freeCodeCamp piece | Sep 13    |
+| Mon Aug 31, 9:00 MDT | HackerNoon piece   | Sep 13    |
+| Mon Sep 14, 9:00 MDT | freeCodeCamp piece | Sep 27    |
+
+**These two routines still hold the old dates** and fire against the pre-slip schedule.
+They live at https://claude.ai/code/routines and have to be edited there; nothing in this
+repo drives them.
 
 **If something slips**, the three consequence pieces (Code, Technology Stack,
 Machine/Runtime) absorb it — they are the least time-sensitive and read fine at any
@@ -101,21 +112,44 @@ versioning, the semantic web and semantic search, all unrelated. So the reader a
 the colon with either nothing or the wrong thing.
 
 Which means the hook after the colon has to do two jobs at once — say what the layer
-covers, and say why it costs something. _Software Runs on Words Nobody Defined_ does both
-in six words. _The Most Dangerous Word in Software Is 'Customer'_ does neither; it is a
-clever line about an example rather than about the layer.
+covers, and say why it costs something. _The Most Dangerous Word in Software Is
+'Customer'_ does neither; it is a clever line about an example rather than about the
+layer.
+
+_Software Without Meaning Is Meaningless_ does both in five, and it shows what the prefix
+is good for beyond scanning. On its own the line is a fortune cookie. Behind `Semantics:`
+the first "meaning" reads as the name of a layer and the second as a verdict on
+everything built without it — so the prefix is what makes the pun resolve. An earlier
+draft ran _Software Runs on Words Nobody Defined_, which is about definitions being
+absent rather than about meaning, and named the symptom instead of the layer.
+
+Where a title asserts a cost rather than showing it, make the excerpt carry the
+mechanism. _Meaningless_ is a verdict; the excerpt underneath it explains inheritance,
+so the pair does what neither half does alone.
 
 Then the article's opening has to finish the job. Each piece needs an early passage that
 plainly says what this layer is and why it is a layer rather than a discipline — before
 the argument assumes it. Reading the draft and asking "would someone who has never heard
 this term know what it means by paragraph five?" is the check.
 
+**Target about 1,000 words.** The manifesto runs ~1,170 and the two older ops posts sit
+at ~950, so that is the house length — long enough to make one argument properly, short
+enough that the piece gets finished and read. Semantics was drafted at 2,442 and cut to
+~1,150; the cut improved it, which is the usual result.
+
+Be honest about what the budget costs. At this length a piece fits its Purpose section,
+its Handoffs section, the prior art, the one novel claim, and roughly two supporting
+moves — no more. When something has to go, cut supporting elaboration and keep the two
+required sections intact; they are what makes the piece part of a series rather than a
+standalone essay. If a draft cannot make its argument in 1,200, the argument is probably
+two pieces.
+
 **Every piece states its layer's purpose, and shows both handoffs.** Two required
 sections, in every article.
 
 _Purpose_ — an early passage saying plainly what this layer is and why it is a layer
 rather than a discipline, before the argument assumes it. In the Semantics draft that is
-"What semantics means here," and it does the work by first clearing away the four
+"Semantics in Software," and it does the work by first clearing away the four
 unrelated things "semantic" already means to a developer, then giving the one-line
 definition, then the argument that makes it matter: every other layer has an artifact the
 machine reads, so every other layer has somewhere a correction can land.
@@ -123,7 +157,7 @@ machine reads, so every other layer has somewhere a correction can land.
 _Handoffs_ — a section showing what the layer receives from above and what it produces
 for the layer below, worked through on `customer` / `invoice` / `pay`. Not described,
 demonstrated: show the actual input, the actual output, and why the transformation is
-mechanical rather than creative. The Semantics draft's "What comes in, and what goes out"
+mechanical rather than creative. The Semantics draft's "The Semantic Abstraction Layer"
 is the template.
 
 This is what keeps the series from being eight disconnected essays. `AbstractionStack.astro`
@@ -166,27 +200,31 @@ Reuse beats rebuild. `OperationsDemo` in particular already does most of what th
 Operational Model and Execution Model pieces need; check it before starting from scratch.
 Any post embedding a component must be renamed `.md` → `.mdx`.
 
-**Each post's hero is a still of its own figure.** Every piece needs its own image —
-seven posts sharing one OG card looks like a content farm, and the card is most of what
-a LinkedIn or Slack preview actually shows. But they shouldn't be seven unrelated
-illustrations either.
+**Each post's hero is the ladder with its own layer lit.** One card design across the
+whole series, with exactly one layer picked out in teal — the layer that post is about.
+The rest follow the rule the series argues for: white for the layers that exist today
+(Intent, Code, Technology Stack, Machine), grey for the four that are missing. So the
+greyness is doing argumentative work in every card, and the set reads as one image with
+a moving highlight rather than eight unrelated illustrations.
 
-Since each piece already has a specific interactive figure in its brief, shoot the hero
-from that: the ontology-with-two-schemas panel, the Pay Invoice definition mid-edit with
-a precondition dropped, the one-operation-four-surfaces fan-out. Screenshot it in dark
-mode at 1200×628, at whatever state of the interaction makes the argument clearest.
+This replaces the earlier rule of shooting each hero from that post's interactive figure.
+Stills of eight different widgets were distinct but not obviously kin, and at LinkedIn
+thumbnail size the differences read as noise. A moving highlight on a fixed ladder is
+legible at any size and unmistakably a series.
 
-That gets three things from one piece of work:
+`scripts/generate-series-og.mjs` renders all eight at 1200×628 — edit the `CARDS` array
+and re-run. Output lands in `src/assets/images/series/<post-slug>.png`, so the frontmatter
+`image:` line always matches the filename. There is no vector source for the original
+card; the script reconstructs it, which is why every card must come from the script
+rather than being hand-edited afterwards.
 
-- Every post has a distinct hero that is actually about that post
-- The series looks like a series, because the figures share a visual system
-- The syndicated HackerNoon and freeCodeCamp versions need exactly these stills, since
-  neither platform runs our components — and captioning them "the live version is on
-  dna.codes" is the most natural backlink either piece will get
+It also frees the build order: prose and figure can now proceed in either order, since
+the hero no longer depends on the figure being finished.
 
-It also sets the build order per post: figure first, then prose, then screenshot. The
-figure was already the recommended starting point for the flagship; this makes it the
-default everywhere.
+The syndicated HackerNoon and freeCodeCamp versions still need stills of the interactive
+figures — neither platform runs our components, and captioning one "the live version is
+on dna.codes" is the most natural backlink either piece will get. That is a separate
+asset from the hero card, and only needed at submission time.
 
 **Reuse the one example.** `customer`, `invoice`, `pay` — every piece, every layer. The
 series compounds because the same three words keep revealing new structure. Introducing a
@@ -209,25 +247,37 @@ Machine/Runtime should read as arguments about software. They will be the most s
 precisely because they are the least about DNA.
 
 **Build the series nav in week 2, not week 10.** The manifesto is already the most-read
-post and will keep collecting traffic for the whole run. Add a "The Future of
-Programming series" block to it as soon as Semantics ships, listing the published pieces
-and naming the ones still coming — then extend it each week. Deferring it to the wrap-up
-wastes ten weeks of the one page readers actually land on. This is an edit to a live,
-indexed article; keep it additive and leave the argument untouched.
+post and will keep collecting traffic for the whole run. Deferring it to the wrap-up
+wastes ten weeks of the one page readers actually land on.
+
+Built: `<SeriesNav />` in `src/components/widgets/SeriesNav.astro`, embedded in the
+manifesto after the closing argument. It reads `series.name`, `publishDate` and `draft`
+straight from frontmatter, links the published pieces and lists the scheduled ones
+unlinked — so "extend it each week" is just dropping `draft: true`, with no second list
+to maintain. `fetchSeriesPosts()` in `src/utils/blog.ts` deliberately bypasses the draft
+filter to make that work; `fetchPosts()` would hide the forthcoming pieces in production,
+which is the only build that matters.
+
+Weeks 5 and 7 are absent from it — the HackerNoon and freeCodeCamp pieces have no post
+file and no accepted URL. When either lands, add a stub post carrying the `series`
+frontmatter and a `metadata.canonical` pointing at the external URL, and it will appear
+in the nav automatically.
 
 ### Pre-publish checklist per piece
 
 - [ ] Delete the `<!-- BRIEF -->` block
 - [ ] Remove `draft: true`
-- [ ] Replace the placeholder hero with a still of this post's own figure (see the
-      titling and figure rules above). Every stub currently points `image:` at the series
-      image so drafts preview with a header; the line is tagged `# PLACEHOLDER` so it
-      greps. `grep -rn PLACEHOLDER src/data/post/` before any publish.
+- [ ] Word count is about 1,000 — both required sections intact after the cut
+- [ ] Hero card exists at `src/assets/images/series/<slug>.png` and `image:` points at it.
+      All eight are already generated; only re-run `node scripts/generate-series-og.mjs`
+      if the footer line or highlight changed.
 - [ ] Interactive figure built, or a written reason why this piece doesn't support one
 - [ ] Rename `.md` → `.mdx` if the piece embeds a component
 - [ ] Figure checked on mobile and in dark mode, and degrades to something readable
       without JS — it carries the argument, so it can't be the part that breaks
-- [ ] Link back to the manifesto; add the new piece to the manifesto's series links
+- [ ] Link back to the manifesto. The manifesto's `<SeriesNav />` relinks itself from
+      frontmatter, so there is nothing to edit there — but add the "Next: <layer>" link
+      in the _previous_ post's closing, which was left unlinked to avoid a 404.
 - [ ] Confirm the excerpt reads as a standalone claim (it is the blog-list and OG copy)
 - [ ] LinkedIn post drafted from the hook — the observation, not a summary of the article
 

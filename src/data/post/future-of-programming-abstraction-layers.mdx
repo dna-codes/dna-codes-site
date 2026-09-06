@@ -1,9 +1,12 @@
 ---
 publishDate: 2026-08-09T00:00:00Z
+series:
+  name: The Future of Programming
+  # No `layer` — this piece is the map, not a rung on it.
 author: Tim Kleier
 title: 'The Future of Programming: The Abstraction Layers Between Intent and Execution'
 excerpt: 'Today an LLM leaps straight from a prompt to code, deciding everything in between and writing none of it down. The next era of software engineering fills that gap with real abstraction layers: semantics, ontology, operational model, and execution model. Every handoff checkable, nothing guessed.'
-image: '~/assets/images/abstraction-layers.png'
+image: '~/assets/images/series/future-of-programming-abstraction-layers.png'
 category: Engineering
 tags:
   - ai agents
@@ -12,6 +15,7 @@ tags:
 ---
 
 import AbstractionStack from '~/components/widgets/AbstractionStack.astro';
+import SeriesNav from '~/components/widgets/SeriesNav.astro';
 
 "A customer should be able to pay an invoice."
 
@@ -66,5 +70,7 @@ Layering changes where agents fit, too. Today we aim them at the widest gap on t
 The future of programming isn't an LLM that jumps further across abstraction layers; it's a stack that makes the leap unnecessary, with new abstraction layers that are as dependable as the ones we've relied upon for decades.
 
 ---
+
+<SeriesNav current="future-of-programming-abstraction-layers" />
 
 We're building [DNA Codes](/) for the parts of software nobody writes down — the vocabulary, entities, and operations a business runs on, modeled once and run everywhere. If that's how you're thinking about the problem too, [join the waitlist](/waitlist) — we'd like to have you involved.

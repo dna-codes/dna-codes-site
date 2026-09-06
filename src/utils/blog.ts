@@ -142,6 +142,21 @@ export const fetchPosts = async (): Promise<Array<Post>> => {
   return _posts;
 };
 
+/**
+ * Every piece in a series, oldest first, drafts included.
+ *
+ * Deliberately skips the draft filter in `load()`. The series hub names the pieces that
+ * haven't shipped yet — that naming is most of what makes ten posts read as one body of
+ * work rather than a list of links. Callers must branch on `post.draft` and never assume
+ * an entry has a live route: in a production build those drafts have no page to link to.
+ */
+export const fetchSeriesPosts = async (name: string): Promise<Array<Post>> => {
+  const posts = await getCollection('post', ({ data }) => data.series?.name === name);
+  const normalized = await Promise.all(posts.map(async (post) => await getNormalizedPost(post)));
+
+  return normalized.sort((a, b) => a.publishDate.valueOf() - b.publishDate.valueOf());
+};
+
 /** */
 export const findPostsBySlugs = async (slugs: Array<string>): Promise<Array<Post>> => {
   if (!Array.isArray(slugs)) return [];
