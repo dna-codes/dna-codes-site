@@ -37,7 +37,12 @@ const metadata = {
 
 <Layout metadata={metadata}>
   <section class="px-6 sm:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
-    <Headline subtitle="Thinking on operations, process design, and building teams that scale."> DNA Blog </Headline>
+    <!-- The subtitle described a blog about operations and process design, which is what the
+         two retired pieces were. What is left is one argument in eight parts about the layers
+         between what a business means and what a machine runs, so the line says that. -->
+    <Headline subtitle="The abstraction layers between what a business means and what a machine runs.">
+      DNA Blog
+    </Headline>
     <BlogList posts={page.data} />
     <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
     <!--

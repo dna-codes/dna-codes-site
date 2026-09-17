@@ -77,7 +77,12 @@ Components use `twMerge` from `tailwind-merge` v3 for conditional class composit
 
 Defined in `src/content.config.ts` using the Astro v6 Content Layer API with `glob()` loader. Posts are in `src/data/post/` as `.md` or `.mdx` files.
 
-Post frontmatter: `title` (required), `publishDate`, `updateDate`, `draft`, `excerpt`, `image`, `category`, `tags`, `author`, `metadata`.
+Post frontmatter: `title` (required), `publishDate`, `updateDate`, `draft`, `excerpt`, `image`, `category`, `tags`, `author`, `coAuthor`, `series`, `metadata`.
+
+**Every post carries `coAuthor: Claude (Anthropic)`.** These pieces are drafted with a model in
+the loop, so the blog says so: the byline reads "Tim Kleier with Claude (Anthropic)" and a line
+under the article explains what that means. A new post gets the field. If one is ever written
+without a model, leave the field off rather than writing a disclaimer about it.
 
 ## Component Patterns
 

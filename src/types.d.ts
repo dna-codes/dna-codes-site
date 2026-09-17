@@ -20,6 +20,8 @@ export interface Post {
   category?: Taxonomy;
   tags?: Taxonomy[];
   author?: string;
+  /** Named beside the author, e.g. an AI model the piece was drafted with. */
+  coAuthor?: string;
 
   /** Series membership, rendered as a kicker above the headline. */
   series?: Series;

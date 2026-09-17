@@ -4,6 +4,7 @@ import { Icon } from 'astro-icon/components';
 import Image from '~/components/common/Image.astro';
 import PostTags from '~/components/blog/Tags.astro';
 import DraftBadge from '~/components/blog/DraftBadge.astro';
+import SeriesNav from '~/components/widgets/SeriesNav.astro';
 import SocialShare from '~/components/common/SocialShare.astro';
 
 import { getPermalink } from '~/utils/permalinks';
@@ -43,7 +44,10 @@ const { post, url } = Astro.props;
               <>
                 {' '}
                 · <Icon name="tabler:user" class="w-4 h-4 inline-block -mt-0.5 dark:text-gray-400" />
-                <span class="inline-block">{post.author}</span>
+                <span class="inline-block">
+                  {post.author}
+                  {post.coAuthor && <> with {post.coAuthor}</>}
+                </span>
               </>
             )
           }
@@ -114,6 +118,35 @@ const { post, url } = Astro.props;
     >
       <slot />
     </div>
+
+    {
+      /* The series map, on every piece in the series rather than only the one that
+         remembered to import it. A post is in a series or it isn't, and that fact is
+         already in its frontmatter — so the map belongs to the layout, not to each
+         body. Renders after the article's own close, where it reads as a footer to the
+         argument rather than an interruption of it. */
+      post.series && (
+        <div class="mx-auto px-6 sm:px-6 max-w-3xl">
+          <SeriesNav name={post.series.name} current={post.slug} />
+        </div>
+      )
+    }
+
+    {
+      /* The byline names the co-author; this says what that means, which is the part a
+         byline cannot carry. It sits at the foot rather than the head: a disclosure above
+         the first paragraph asks the reader to hold a question about provenance through a
+         piece they have not read yet, and the honest moment to answer it is after. */
+      post.coAuthor && (
+        <div class="mx-auto px-6 sm:px-6 max-w-3xl mt-10">
+          <p class="border-t pt-4 text-sm text-muted dark:border-slate-700 dark:text-slate-400">
+            Written by {post.author} with {post.coAuthor}. The argument, the claims and the last word are {post.author}
+            's; the drafting and the editing were done together.
+          </p>
+        </div>
+      )
+    }
+
     <div class="mx-auto px-6 sm:px-6 max-w-3xl mt-8 flex justify-between flex-col sm:flex-row">
       <PostTags tags={post.tags} class="mr-5 rtl:mr-0 rtl:ml-5" />
       <SocialShare url={url} text={post.title} class="mt-5 sm:mt-1 align-middle text-gray-500 dark:text-slate-600" />

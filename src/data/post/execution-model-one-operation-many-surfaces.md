@@ -4,6 +4,7 @@ series:
   name: The Future of Programming
   layer: 'Layer 05: Execution Model'
 author: Tim Kleier
+coAuthor: Claude (Anthropic)
 title: 'The Execution Model: Your API and Your MCP Tool Should Not Be Written Twice'
 excerpt: 'A REST endpoint, an MCP tool, a workflow step and a button are four descriptions of the same operation, written by four people, drifting apart from the day they ship. They should be projections of one definition — same preconditions, same effects, same errors, by construction.'
 image: '~/assets/images/series/execution-model-one-operation-many-surfaces.png'

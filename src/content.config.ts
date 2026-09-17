@@ -62,6 +62,13 @@ const postCollection = defineCollection({
     tags: z.array(z.string()).optional(),
     author: z.string().optional(),
 
+    // Named alongside the author in the byline and disclosed in a line under the piece.
+    // Every article on this blog is drafted with an AI model in the loop, and a reader
+    // who finds that out from the prose rather than from the masthead has been told
+    // something by accident. Stating it is cheap; a series arguing that unwritten
+    // assumptions are the problem cannot leave this one unwritten.
+    coAuthor: z.string().optional(),
+
     // Renders as a kicker above the headline: "The Future of Programming · Layer 02:
     // Semantics". It carries series identity and the layer's position in the stack so
     // the title itself doesn't have to — the title stays an argument, not a label.
