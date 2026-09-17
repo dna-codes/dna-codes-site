@@ -1,7 +1,9 @@
 ---
-// /playground — the site's interactive surface: pick an industry, watch an operating model
-// generate. It began life as a campaign-only page at /whats-your-dna and is now in the fold —
-// the hero's second action, a header nav entry, and a footer link all land here.
+// /playground — the site's interactive surface, and the page that collects everything a visitor
+// can press. Three acts generate an operating model from an industry; a fourth reads an OpenAPI
+// document the visitor brings themselves. It began life as a campaign-only page at
+// /whats-your-dna and is now in the fold — the hero's second action, a header nav entry, and a
+// footer link all land here.
 //
 // Being linked from everywhere does not change how the page is written. It still assumes a
 // visitor who arrived cold, with no prior exposure to DNA, so each act carries its own framing
@@ -16,11 +18,12 @@ import Layout from '~/layouts/PageLayout.astro';
 import IndustryHelix from '~/components/widgets/IndustryHelix.astro';
 import LensPicker from '~/components/widgets/LensPicker.astro';
 import GenomeGenerator from '~/components/widgets/GenomeGenerator.astro';
+import ApiOpsDemo from '~/components/widgets/ApiOpsDemo.astro';
 
 const metadata = {
   title: "Playground — What's your DNA? — DNA Codes",
   description:
-    'Pick your industry and watch a whole operating model fall out of one file — process, roles, screens, API, architecture.',
+    'Pick your industry and watch a whole operating model fall out of one file: process, roles, screens, API, architecture. Then paste your own OpenAPI document and read it in your browser.',
   ignoreTitleTemplate: true,
 };
 ---
@@ -29,6 +32,38 @@ const metadata = {
   <IndustryHelix />
   <LensPicker />
   <GenomeGenerator />
+
+  <!-- Act IV — the spec reader, which also lives on /api-operations as that page's hero.
+       It is here because this is where a visitor goes looking for something to press, and it
+       is the same component in both places rather than a copy: /api-operations needs it to
+       make its argument, and removing it from there to satisfy a navigation instinct would
+       cost that page the only working thing on it.
+
+       It earns its keep here on a contrast the first three acts cannot make. Steps one to
+       three are honest theatre over a genome we wrote; this one runs on the visitor's own
+       document, in their own browser, and reports a number about their estate. Saying that
+       out loud is the point of the section, so the heading is about whose file it is. -->
+  <section id="act-api" class="relative bg-slate-900 py-14 sm:py-20" aria-labelledby="act-api-h">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <div class="mb-2 text-center text-xs font-bold uppercase tracking-widest text-primary">Step four</div>
+      <h2 id="act-api-h" class="text-center text-2xl font-bold tracking-tight text-white sm:text-4xl">
+        Now run it on something of yours.
+      </h2>
+      <p class="mx-auto mt-4 max-w-2xl text-center text-base text-slate-400">
+        Everything above is a model we wrote. Paste your own OpenAPI document and the reading is real: your endpoints,
+        resolved to the acts and resources behind them. It happens in this tab. Nothing is uploaded.
+      </p>
+
+      <div class="mt-8 sm:mt-10">
+        <ApiOpsDemo />
+      </div>
+
+      <p class="mt-6 text-center text-sm text-slate-500">
+        This is the first rung of <a class="text-primary hover:underline" href="/api-operations">API Operations</a>,
+        which is what the rest of the ladder looks like.
+      </p>
+    </div>
+  </section>
 </Layout>
 
 <script>

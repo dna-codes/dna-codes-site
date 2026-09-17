@@ -26,13 +26,20 @@ export default defineConfig({
   site: 'https://dna.codes',
   output: 'static',
 
-  // Posts moved from /%slug% to /blog/%slug% (see src/config.yaml). These two
-  // were already published at the root, so the old URLs are kept alive. GitHub
-  // Pages can't serve real 301s — for a static build Astro emits a meta-refresh
+  // GitHub Pages can't serve real 301s — for a static build Astro emits a meta-refresh
   // page with a canonical link, which is the standard substitute.
+  //
+  // The two Operations pieces (SOPs, Operational DNA as source code) are retired. They were
+  // written for a different reader than the one the blog now addresses, in a different
+  // register, and two posts of a third voice is what made the blog read as three blogs.
+  // Both were published, at the root first and then under /blog, so all four URLs are still
+  // out there — they land on the blog index rather than a 404. There is no equivalent piece
+  // to send them to; the index is the honest destination.
   redirects: {
-    '/operational-dna-processes-like-source-code': '/blog/operational-dna-processes-like-source-code',
-    '/why-sops-go-out-of-date': '/blog/why-sops-go-out-of-date',
+    '/operational-dna-processes-like-source-code': '/blog',
+    '/why-sops-go-out-of-date': '/blog',
+    '/blog/operational-dna-processes-like-source-code': '/blog',
+    '/blog/why-sops-go-out-of-date': '/blog',
     // /playground is a real page again — the industry genome generator, which shipped
     // first as a campaign-only page at /whats-your-dna. Campaign links to the old URL
     // keep working. (The name previously pointed at /operations, back when the

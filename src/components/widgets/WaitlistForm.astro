@@ -57,35 +57,42 @@ const identityFields: Field[] = [
 // more than one is the common answer rather than a fence-sit. "Not sure yet" is a real
 // answer too, and cheaper to give than a wrong one — it routes to a conversation
 // instead of a demo of the wrong half.
+//
+// The `problem` is what the visitor reads first and the product `name` is the small line
+// under it, which is the reverse of how this was written. "Operational DNA" is our word
+// for the answer; somebody deciding whether to fill this in is holding the question, and
+// asking them to map their own situation onto four of our nouns puts the work on the
+// wrong side of the form. Each problem is stated the way the series states it — the
+// symptom, in the buyer's own terms, not the capability that fixes it.
 const interests = [
   {
     value: 'operations',
     label: PRODUCT.operations.name,
-    blurb: 'Turn how we work into a living operating model',
+    problem: 'How we actually work lives in people’s heads and stale docs',
     icon: PRODUCT.operations.icon,
   },
   {
     value: 'ui-operations',
     label: PRODUCT['ui-operations'].name,
-    blurb: 'Govern the controls inside our product',
+    problem: 'Feature flags and access controls are written inline in code',
     icon: PRODUCT['ui-operations'].icon,
   },
   {
     value: 'api-operations',
     label: PRODUCT['api-operations'].name,
-    blurb: 'Govern the endpoints other software calls',
+    problem: 'We can’t easily say which of our endpoints have controls on them',
     icon: PRODUCT['api-operations'].icon,
   },
   {
     value: 'agent-operations',
     label: PRODUCT['agent-operations'].name,
-    blurb: 'Put agents to work under our own rules',
+    problem: 'Our agents can do anything the service account can',
     icon: PRODUCT['agent-operations'].icon,
   },
   {
     value: 'undecided',
     label: 'Not sure yet',
-    blurb: 'Show me which one fits what we are doing',
+    problem: 'Some of this sounds familiar. I’d rather talk it through',
     icon: 'tabler:help-circle',
   },
 ];
@@ -156,29 +163,37 @@ const questions = [
 
     <fieldset class="mt-5" data-waitlist-interest>
       <legend class="block text-xs font-semibold text-slate-300 mb-2">
-        Which parts are you interested in? <span class="font-normal text-slate-500">Pick as many as apply.</span>
+        Which of these sounds like you? <span class="font-normal text-slate-500">Pick as many as apply.</span>
       </legend>
 
-      <div class="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Two columns, not four. The statements are sentences now, and four of them across a
+           max-w-xl form wrapped to three lines each. "Not sure yet" takes the last row whole,
+           where it reads as the honest option rather than the leftover one. -->
+      <div class="grid gap-2.5 sm:grid-cols-2">
         {
-          interests.map(({ value, label, blurb, icon }) => (
+          interests.map(({ value, label, problem, icon }) => (
             <label
-              class="interest-option group flex flex-col gap-1.5 rounded-xl border border-white/10 bg-slate-800/50 px-3.5 py-3 cursor-pointer transition-colors duration-150 hover:border-primary/40"
+              class:list={[
+                'interest-option group flex flex-col gap-1.5 rounded-xl border border-white/10 bg-slate-800/50 px-3.5 py-3 cursor-pointer transition-colors duration-150 hover:border-primary/40',
+                value === 'undecided' && 'sm:col-span-2',
+              ]}
               for={`${id}-interest-${value}`}
             >
-              <span class="flex items-center gap-2">
+              <span class="flex items-start gap-2">
                 <input
                   id={`${id}-interest-${value}`}
                   type="checkbox"
                   name="interest"
                   value={value}
                   checked={preselect === value}
-                  class="interest-checkbox w-4 h-4 flex-shrink-0 rounded border-slate-500 bg-slate-900 text-primary accent-[var(--aw-color-primary)] focus:ring-1 focus:ring-primary"
+                  class="interest-checkbox mt-0.5 w-4 h-4 flex-shrink-0 rounded border-slate-500 bg-slate-900 text-primary accent-[var(--aw-color-primary)] focus:ring-1 focus:ring-primary"
                 />
-                <Icon name={icon} class="w-4 h-4 text-primary flex-shrink-0" />
-                <span class="text-sm font-semibold text-slate-100">{label}</span>
+                <span class="text-sm font-semibold text-slate-100 leading-snug">“{problem}”</span>
               </span>
-              <span class="text-xs text-slate-400 leading-snug">{blurb}</span>
+              <span class="flex items-center gap-1.5 ps-6 text-xs text-slate-400">
+                <Icon name={icon} class="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                {label}
+              </span>
             </label>
           ))
         }
