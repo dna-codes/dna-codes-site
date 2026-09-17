@@ -230,7 +230,7 @@ the browser.
 Both predate this change and neither is caused by it; they are recorded here because §7.3 is
 what surfaced them, and §7.3 cannot be called clean while they stand.
 
-- [ ] 9.1 **Sentences run together below `sm`.** The HTML minifier strips whitespace either side
+- [x] 9.1 **Sentences run together below `sm`.** _Fixed._ The HTML minifier strips whitespace either side
       of a `<br>`, so a line written as `…endpoints do.<br class="hidden sm:block" />DNA says…`
       renders as "do.DNA" on a phone, where the `<br>` is `display: none`. Five occurrences in the
       build, all on product pages: one on `/api-operations` (the hero subtitle), one on
@@ -239,7 +239,7 @@ what surfaced them, and §7.3 cannot be called clean while they stand.
       button"). The two hits on `/` and `/operations` are safe — those breaks carry an `&nbsp;`.
       Fix is a literal space or `&#32;` before the tag, not a minifier setting: the same class of
       bug will come back the next time somebody writes this idiom.
-- [ ] 9.2 **The site has no favicon.** Every page emits
+- [x] 9.2 **The site has no favicon.** _Fixed._ Every page emits
       `<link rel="icon" href="/_astro/logo.ZstRgKwB.png">` and `rel="apple-touch-icon"` at the same
       URL, and that file is not in `dist/`. `src/assets/favicons/favicon.png` is byte-identical to
       `src/assets/images/logo.png` (same md5), so Vite dedupes them onto one asset id; the logo is
@@ -247,3 +247,10 @@ what surfaced them, and §7.3 cannot be called clean while they stand.
       the original `.png` the raw import in `Favicons.astro` points at. Every page load 404s on its
       own icon. Making the two files differ, or pointing `Favicons.astro` at a `public/` file, both
       fix it.
+
+  Both fixed and verified in Chrome at 390px: the three sentences read with their space, and
+  eight routes load with no 4xx of any kind. 9.1 took an `&#32;` before each of the six
+  `<br class="hidden sm:block" />` in `src/`, which survives minification because it is an entity
+  rather than whitespace. 9.2 moved `favicon.png` into `public/` and pointed `Favicons.astro` at
+  `/favicon.png`, so the file is copied verbatim and can never be hashed, deduped or routed
+  through the image pipeline again.
