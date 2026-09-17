@@ -1,6 +1,16 @@
 ---
-import favIconPng from '~/assets/favicons/favicon.png';
+// Served straight out of `public/`, deliberately not imported through `astro:assets`.
+//
+// It used to be `import favIconPng from '~/assets/favicons/favicon.png'`, and that silently
+// produced a site with no favicon at all. The file was byte-identical to `assets/images/logo.png`,
+// so Vite deduped the two onto one asset id; the logo is also consumed by `<Image />`, which emits
+// only the `.webp` variants and never writes the original `.png`. The `.src` here kept pointing at
+// a `/_astro/logo.<hash>.png` that was never built, so every page 404'd on its own icon.
+//
+// A file in `public/` is copied verbatim, never hashed, never deduped and never routed through the
+// image pipeline, so the same class of failure cannot recur — which matters more here than the
+// cache-busting an import would have bought, for an asset browsers request by convention anyway.
 ---
 
-<link rel="icon" type="image/png" href={favIconPng.src} />
-<link rel="apple-touch-icon" sizes="180x180" href={favIconPng.src} />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />

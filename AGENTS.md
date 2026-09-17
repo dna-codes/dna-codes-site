@@ -120,6 +120,22 @@ Reach for the punctuation that names the relationship instead:
 Not a ban, so one or two in a long piece is fine. It should be a choice, not a reflex. A
 blind find-and-replace will mangle prose, since each one wants a different fix.
 
+## A `<br>` needs an explicit space beside it
+
+The HTML minifier strips whitespace either side of a `<br>`, so a responsive break written the
+obvious way silently joins two sentences at the breakpoint where the break is hidden:
+
+```astro
+<!-- renders as "endpoints do.DNA says" on a phone -->…your endpoints do.<br class="hidden sm:block" />DNA says who may
+call them.
+
+<!-- correct: an entity survives minification, a space does not -->
+…your endpoints do.&#32;<br class="hidden sm:block" />DNA says who may call them.
+```
+
+A break carrying an adjacent `&nbsp;` is already safe. This cost the site five run-together
+sentences across three product pages before anyone opened it on a phone.
+
 ## Verification Checklist
 
 After changes, always verify:
