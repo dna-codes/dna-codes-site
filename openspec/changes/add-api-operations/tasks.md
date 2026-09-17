@@ -104,10 +104,13 @@ the browser.
 
 - [x] 7.1 `npm run build` succeeds. **Not `astro check` alone** — it never renders.
 - [x] 7.2 `npm run check` passes.
-- [ ] 7.3 Browser pass: `/api-operations`, homepage four-card grid, nav dropdown, `/pricing`,
-      `/overlay` teaser, dark mode, mobile. **Still outstanding for anything visual** — no browser
-      has been driven and nothing on this page has been _looked_ at. The 2x2 card grid in particular
-      was changed on reasoning, not on sight.
+- [x] 7.3 Browser pass: `/api-operations`, homepage four-card grid, nav dropdown, `/pricing`,
+      `/overlay` teaser, dark mode, mobile. **Driven in Chrome at 1280px and 390px.** The 2x2 card
+      grid has now been looked at: four cards, each with its demo panel and its own call to action,
+      bottoms aligned on both rows, with the CLI Operations "planned" line beneath. The nav dropdown
+      lists all four products with the right hrefs and descriptions. The site is `theme: dark:only`,
+      so dark mode is the only mode and is what every shot above is in — there is no toggle in the
+      DOM to test. No page or console errors on any route. Two defects found, logged as §9.
       Interaction is no longer unverified: `npm run check:demo` drives the built page in jsdom and
       presses the buttons. jsdom does not lay anything out, so a pass says the wiring works and says
       nothing about how it looks.
@@ -210,11 +213,37 @@ the browser.
 
 ## 8. Left for a person
 
-- [ ] 8.1 **Look at it.** §7.3. The wiring is now covered by `check:demo`; what remains uncovered is
-      everything visual — the 2x2 card grid, the accordion at real widths, mobile, dark mode.
+- [x] 8.1 **Look at it.** §7.3. Done: the 2x2 grid, the accordion opened on a real gap row, the
+      "Paste your own" panel, and the page at 390px. The accordion rows are native `<summary>`
+      elements, so they are keyboard-reachable without any script. What looking at it bought is
+      §9.1 — a text defect that only exists below the `sm` breakpoint and could not have been
+      found any other way.
 - [ ] 8.2 **Re-run the corpus against a design partner's internal spec** before quoting 88%
       anywhere a customer can see it. Nine large public developer APIs are not the buyer, and an
       internal API written by four teams over five years is likely to score lower — see
       [`findings.md`](./findings.md) limits.
 - [ ] 8.3 **Retake the homepage card** for API Operations once the demo can be screenshotted. It
       renders `ApiCoveragePanel` live today, which is honest but is not the demo.
+
+## 9. Found by the browser pass
+
+Both predate this change and neither is caused by it; they are recorded here because §7.3 is
+what surfaced them, and §7.3 cannot be called clean while they stand.
+
+- [ ] 9.1 **Sentences run together below `sm`.** The HTML minifier strips whitespace either side
+      of a `<br>`, so a line written as `…endpoints do.<br class="hidden sm:block" />DNA says…`
+      renders as "do.DNA" on a phone, where the `<br>` is `display: none`. Five occurrences in the
+      build, all on product pages: one on `/api-operations` (the hero subtitle), one on
+      `/agent-operations` ("One wrapper,and nothing else changes"), and three on `/ui-operations`
+      ("…error logsand user analytics", "separately,answered in one place", "or all five.On one
+      button"). The two hits on `/` and `/operations` are safe — those breaks carry an `&nbsp;`.
+      Fix is a literal space or `&#32;` before the tag, not a minifier setting: the same class of
+      bug will come back the next time somebody writes this idiom.
+- [ ] 9.2 **The site has no favicon.** Every page emits
+      `<link rel="icon" href="/_astro/logo.ZstRgKwB.png">` and `rel="apple-touch-icon"` at the same
+      URL, and that file is not in `dist/`. `src/assets/favicons/favicon.png` is byte-identical to
+      `src/assets/images/logo.png` (same md5), so Vite dedupes them onto one asset id; the logo is
+      then consumed through `astro:assets`, which emits only the `.webp` variants and never writes
+      the original `.png` the raw import in `Favicons.astro` points at. Every page load 404s on its
+      own icon. Making the two files differ, or pointing `Favicons.astro` at a `public/` file, both
+      fix it.

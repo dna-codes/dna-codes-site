@@ -164,18 +164,40 @@ genomes (§2–§6), then author the remaining four against a contract that is a
 - [x] 8.1 `npm run build` succeeds and emits `/playground`; genome validation runs in the
       build.
 - [x] 8.2 `npm run check` passes (astro check + ESLint + Prettier).
-- [ ] 8.3 Walk all three acts for at least three industries: selection, spotlight
-      pre-selection, Go, paced generation, artifact correctness.
-- [ ] 8.4 Accessibility pass: keyboard-only completion of all three acts, focus visible and
+- [x] 8.3 Walk all three acts for at least three industries: selection, spotlight
+      pre-selection, Go, paced generation, artifact correctness. **Driven in Chrome** for
+      E-commerce, Health care and M&A. Each resolves its own label and value proposition, arrives
+      with 4 of 12 lenses pre-selected, and generates 4 artifact tabs with no console or page
+      errors. §8.8's disclosure reads as prose rather than a badge ("BrightBox Commerce — a worked
+      genome, not your data"), which is why a search for the word "demo" does not find it.
+- [x] 8.4 Accessibility pass: keyboard-only completion of all three acts, focus visible and
       sensibly ordered across act transitions, selected states announced, reduced-motion honoured
-      in both the helix and the generation sequence.
-- [ ] 8.5 Mobile pass at 375px: three acts usable, every artifact readable or
-      scrollable in its own container.
+      in both the helix and the generation sequence. **Driven with the mouse unplugged**, which is
+      what §8's note asked for. Enter opens the listbox with `aria-expanded="true"` and
+      `aria-activedescendant` on the first option; ArrowDown moves it; Enter selects and returns
+      focus to the button; Escape closes. Lens options are real `<button>`s carrying
+      `aria-pressed`, and toggle from the keyboard. Tab order runs model button → twelve lenses →
+      Go → Act IV in document order, skipping Act III while it has nothing focusable in it. Focus
+      ring is visible (`outline-style: auto`). Under `prefers-reduced-motion` the helix renders the
+      static SVG frame rather than mounting a canvas, and generation completes in ~1s with all
+      four tabs instead of running the paced sequence.
+- [x] 8.5 Mobile pass at 375px: three acts usable, every artifact readable or
+      scrollable in its own container. `document.scrollWidth` stays equal to the 375px viewport at
+      every stage — before Go, after generation, and at Act IV — so nothing bleeds off the page.
+      The Act III tab strip is a genuine scroller (`overflow-x: auto`, 484px of content in 341px)
+      rather than a clip, and the architecture cells reflow two-up then one-up with their code
+      chips still legible.
 - [x] 8.6 Regression: homepage, `/operations`, `/overlay`, `/agent-operations`, and
       `/pricing` verified byte-identical to a pre-change build once content-hashed asset
       filenames are normalised. The shared `Layout` CSS grows ~3.5KB (+2.3%) on every page from
       Tailwind picking up the new components' utility classes; the artifact CSS (14KB) is
       page-scoped to `/playground` and does not touch the shared bundle.
-- [ ] 8.7 Deep-link pass: share a configured URL, open it cold, confirm the state restores; open
-      one with a garbage industry key and confirm it degrades quietly.
+- [x] 8.7 Deep-link pass: share a configured URL, open it cold, confirm the state restores; open
+      one with a garbage industry key and confirm it degrades quietly. A URL carrying
+      `industry=healthcare` and `lenses=process-flow,sop` opens cold on Health care with exactly
+      those two lenses pressed.
+      `?industry=not-a-real-industry&lenses=bogus,alsobogus` falls back to "Select Model", the
+      standing pitch line and zero pressed lenses, with Go correctly left disabled and no console
+      error. The unrecognised query string is left in the address bar untouched, which is
+      harmless: nothing reads it twice.
 - [x] 8.8 Confirm the demo-mode marker and the named genome are visible wherever artifacts are.
