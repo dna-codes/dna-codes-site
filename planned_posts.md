@@ -27,16 +27,12 @@ open items live here under "Open items per post" instead.
 
 **Semantics — Software Without Meaning Is Meaningless** (Sep 6, published, `.mdx`)
 
-1. Add the "Next: Ontology" link in the closing section once that post ships.
-   Deliberately unlinked for now; it would 404 today.
-
 Done: hero card, cut from 2,442 to ~1,100 words, series nav on the manifesto, retitled.
+"Next: Ontology" link is live.
 
-**Ontology — Your Database Is Not Your Business Model** (Sep 13, still a stub)
+**Ontology — Your Data Model Is Not Your Business Model** (Sep 13, published, `.mdx`)
 
-Nothing written. The brief in the post file is good and detailed; the work is the
-one-ontology-two-schemas figure, then ~1,000 words, then `.md` → `.mdx`. The hero card
-already exists. Due in one week.
+Published. ~1,100 words with `<OntologyExample>`.
 
 ### Calendar
 
@@ -48,7 +44,7 @@ the Sunday cadence and the relative order of the syndicated weeks are unchanged.
 | ---- | ------ | ------------ | ---------------------------------------------------------------------------------------- | -------------------------------- |
 | 1    | Aug 9  | DNA          | The Future of Programming: The Abstraction Layers Between Intent and Execution           | **Published**                    |
 | 2    | Sep 6  | DNA          | Semantics: Software Without Meaning Is Meaningless                                       | **Published** — two weeks late   |
-| 3    | Sep 13 | DNA          | Ontology: Your Database Is Not Your Business Model                                       | Stub                             |
+| 3    | Sep 13 | DNA          | Ontology: Your Data Model Is Not Your Business Model                                     | **Published**                    |
 | 4    | Sep 20 | DNA          | The Operational Model: The Missing Abstraction for What a Business Can Do — **flagship** | Stub                             |
 | 5    | Sep 27 | HackerNoon   | AI Can Write the Code. Who Defines What the Code Is Supposed to Mean?                    | Brief below · _submit by Sep 13_ |
 | 6    | Oct 4  | DNA          | The Execution Model: Your API and Your MCP Tool Should Not Be Written Twice              | Stub                             |
@@ -136,6 +132,10 @@ this term know what it means by paragraph five?" is the check.
 at ~950, so that is the house length — long enough to make one argument properly, short
 enough that the piece gets finished and read. Semantics was drafted at 2,442 and cut to
 ~1,150; the cut improved it, which is the usual result.
+
+**Avoid em dashes (—) whenever possible.** Prefer commas, periods, colons, or parentheses.
+Full guidance lives under **Prose Style** in `AGENTS.md`. Cut them on sight in published
+pieces; keep one only when a shorter alternative muddies the sentence.
 
 Be honest about what the budget costs. At this length a piece fits its Purpose section,
 its Handoffs section, the prior art, the one novel claim, and roughly two supporting

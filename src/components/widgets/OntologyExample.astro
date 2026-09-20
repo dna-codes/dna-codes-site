@@ -1,0 +1,107 @@
+---
+import { twMerge } from 'tailwind-merge';
+
+// The figure for "Ontology: Your Database Is Not Your Business Model".
+//
+// A worked Billing ontology: Domain, Entities with Attributes, Relationships.
+// Static by design — no toggle, so no script, and nothing to degrade without JS.
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+const ontology = {
+  domain: 'Billing',
+  entities: [
+    {
+      name: 'CustomerAccount',
+      attrs: ['id', 'legal_name'],
+    },
+    {
+      name: 'Invoice',
+      attrs: ['id', 'amount_due', 'status'],
+    },
+    {
+      name: 'Payment',
+      attrs: ['id', 'amount', 'received_at'],
+    },
+  ],
+  relationships: [
+    { from: 'CustomerAccount', via: 'owns', to: 'Invoice' },
+    { from: 'Invoice', via: 'settled_by', to: 'Payment' },
+  ],
+};
+---
+
+<figure class={twMerge('not-prose my-10', className)}>
+  <div
+    class="overflow-hidden rounded-2xl border-2 border-primary bg-slate-900/90 shadow-[0_0_48px_rgba(13,148,136,0.25)]"
+  >
+    <div class="border-b border-white/8 p-3 sm:px-4">
+      <span class="text-xs font-bold uppercase tracking-widest text-primary">Ontology</span>
+    </div>
+
+    <div class="space-y-4 px-4 py-4 sm:px-5">
+      <div>
+        <p class="onto-label">Domain</p>
+        <p class="mt-1.5 font-mono text-sm text-slate-200">{ontology.domain}</p>
+      </div>
+
+      <div>
+        <p class="onto-label">Entities</p>
+        <div class="mt-2 grid gap-2 sm:grid-cols-3">
+          {
+            ontology.entities.map((e) => (
+              <div class="rounded-md bg-white/5 px-3 py-2.5">
+                <p class="font-mono text-sm font-medium text-primary">{e.name}</p>
+                <p class="mt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Attributes</p>
+                <ul class="mt-1 space-y-0.5">
+                  {e.attrs.map((a) => (
+                    <li class="font-mono text-[11px] text-slate-400">{a}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div>
+        <p class="onto-label">Relationships</p>
+        <ul class="mt-2 space-y-1.5">
+          {
+            ontology.relationships.map((r) => (
+              <li class="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md bg-white/5 px-3 py-2 font-mono text-xs">
+                <span class="text-slate-200">{r.from}</span>
+                <span class="text-slate-600" aria-hidden="true">
+                  →
+                </span>
+                <span class="text-primary">{r.via}</span>
+                <span class="text-slate-600" aria-hidden="true">
+                  →
+                </span>
+                <span class="text-slate-200">{r.to}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <figcaption class="mt-3 text-sm leading-relaxed text-muted dark:text-slate-400">
+    A Billing ontology in four parts: Domain, Entities, Attributes, Relationships. Nothing here is a table.
+  </figcaption>
+</figure>
+
+<style>
+  .onto-label {
+    color: rgb(45 212 191);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+</style>

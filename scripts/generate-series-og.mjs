@@ -127,7 +127,7 @@ const CARDS = [
     highlight: 'Semantics',
   },
   {
-    slug: 'ontology-your-database-is-not-your-business-model',
+    slug: 'ontology-your-data-model-is-not-your-business-model',
     subtitle: 'Layer 03 · Ontology',
     footer: 'A schema says how you store things. Not what exists.',
     highlight: 'Ontology',
