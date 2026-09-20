@@ -1,0 +1,75 @@
+---
+publishDate: 2026-09-20T00:00:00Z
+series:
+  name: The Future of Programming
+  layer: 'Layer 03: Ontology'
+author: Tim Kleier
+coAuthor: Claude (Anthropic)
+title: 'Ontology: Your Data Model Is Not Your Business Model'
+excerpt: 'A database schema tells you how your business stores things. An ontology tells you what your business believes exists. Most teams have only ever written down schemas, and the missing formal ontology unintentionally causes an existential crisis.'
+image: '~/assets/images/series/ontology-your-data-model-is-not-your-business-model.png'
+category: Engineering
+tags:
+  - ontology
+  - knowledge graphs
+  - architecture
+  - ai agents
+---
+
+import OntologyExample from '~/components/widgets/OntologyExample.astro';
+import OntologyHandoffs from '~/components/widgets/OntologyHandoffs.astro';
+
+I once worked for a company with a giant ontological problem. In the Fintech lending space, they couldn't differentiate between a Deal (a potential loan package) and the Loan itself. Everyone complained about the attributes that were attached to the Deal when they should have been on the Loan, but the Deal model was everywhere and couldn't be easily changed.
+
+More than a semantic problem, their ontological confusion propagated through all of their systems in a nearly unrecoverable fashion.
+
+## Ontology in Software
+
+What is Ontology? In philosophy, it's the study of being and existence. In computer science, it is often synonymous with a data model--the database tables, columns, relationships, and constraints.
+
+But we need to think of ontology as more than a data model. We've got to dig into the concepts themselves. What is a Deal conceptually compared to a Loan? What is a CustomerAccount versus a PayerAccount?
+
+Ontology is not about what the words mean; that is Semantics. It's about what _is_: **the nouns of the business, and how those nouns relate to each other.**
+
+## Ontology Primitives: Domains, Entities, Attributes, Relationships
+
+Ontology includes four key primitives:
+
+1. **Domains** carve the business into areas of concern (Billing, Fulfillment, Identity) so a model does not pretend every noun lives in one flat list.
+2. **Entities** are the nouns: `CustomerAccount`, `Invoice`, `Payment`, `Order`. The things the business believes can exist.
+3. **Attributes** are what an entity holds: `Invoice.amount_due`, `Invoice.status`, `Payment.received_at`. Properties of the thing, not of the table row.
+4. **Relationships** connect entities through those attributes: `CustomerAccount → owns → Invoice`, `Invoice → settled_by → Payment`, `Invoice → issued_against → Order`. The edges are first-class. They are not accidents of a foreign key you happened to need for a join.
+
+Pulling on the Invoice definition from the [Semantics](https://dna.codes/blog/semantics-software-without-meaning/) post: _a demand for payment issued against a completed order._ The structure is already in the sentence: `Invoice`, `Order`, and `issued_against` between them. The ontology is where that structure stops being prose and becomes the list of what exists.
+
+<OntologyExample />
+
+## Ontology Frameworks
+
+None of this is new tooling looking for a problem. [RDF](https://www.w3.org/TR/rdf11-concepts/) and [OWL](https://www.w3.org/TR/owl2-overview/) have been standardized for decades. Palantir built a company on programming against "the ontology." Upper ontologies like [gist](https://www.semanticarts.com/gist/) give you a small, business-legible vocabulary of things and relationships so you are not reinventing the wheel. Data modeling tools have drawn these boxes for forty years.
+
+Those tools are real. What they mostly produced was specialist models or documentation that sat beside the application and drifted. Almost nothing made the ontology the thing you _build from_: Domains, Entities, Attributes, and Relationships declared once, with the database schema generated from that declaration rather than treated as the declaration itself. That is why a schema keeps getting mistaken for a business model. It was the only written record of what exists, so teams read storage decisions as if they were ontological facts.
+
+## The Ontology Abstraction Layer
+
+An abstraction layer is only real if you can say what it receives and what it produces.
+
+<OntologyHandoffs />
+
+Semantics arrives as binding definitions: what `Invoice`, `CustomerAccount`, and `CustomerPayer` refer to. Ontology turns that into Domains, Entities, Attributes, and Relationships. The Invoice definition (_a demand for payment issued against a completed order_) already names two entities and a relationship between them. `CustomerPayer` is a `Person` acting for a `CustomerAccount`: that is an edge, not a subtype.
+
+The Operational Model then writes behavior against that structure: who may do what, under which conditions, with which effects. `Pay Invoice` leverages `Invoice.status` as a precondition, as the `status` must equal `Issued` before payment can be accepted. Once a `User` or `Customer` is structurally defined, they can be used as actors to perform operations.
+
+## AI Agents & Ontology
+
+An AI agent pointed at your database inherits the same mistake the Deal/Loan company made. Give it tables, columns, and joins, and it will invent an ontology from storage: confident, plausible, and often wrong. It will treat a soft-delete column as a fact about invoices, collapse two entities into one because they share a foreign key, or attach attributes to the wrong noun because that is where the schema put them.
+
+That is not an intelligence problem. It is a ontology problem. Without Domains, Entities, Attributes, and Relationships declared as the thing you build from, the agent has only the schema to read, so it does what every team has done for decades: it mistakes the data model for the business model.
+
+Hand the agent a real ontology instead and the job changes. It proposes structure from meaning, a human confirms Deal is not Loan, and the schema is generated underneath. The agent stops guessing what exists and starts working from what you already decided exists.
+
+Knowing what exists is still not knowing what may happen. Ontology provides the structure that Operations act upon. Up next: the Operational Model.
+
+---
+
+We're building [DNA Codes](/) to make the middle of the ladder real: terms defined once, entities and relationships declared once, and the layers below read from those, not inferred from whichever schema happens to be running. If this is how you're thinking about the problem too, [join the waitlist](/waitlist).
