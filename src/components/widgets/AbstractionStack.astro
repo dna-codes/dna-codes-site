@@ -203,12 +203,16 @@ const leapRowEnd = LEAP_LAST_LAYER + 2; // exclusive grid-row end for the chute
 // Pass `mode` to lock the figure to one view: the toggle is replaced by a static
 // label, and only that mode's caption renders. Omit it for the interactive
 // two-mode version.
+//
+// Pass `highlight` (a layer `name`, e.g. "Operational Model") when a piece is
+// about one rung. That card is marked and its rail bead pulses.
 export interface Props {
   class?: string;
   mode?: 'leap' | 'ladder';
+  highlight?: string;
 }
 
-const { class: className, mode } = Astro.props;
+const { class: className, mode, highlight } = Astro.props;
 
 const locked = mode !== undefined;
 const initialMode = mode ?? 'leap';
@@ -226,6 +230,8 @@ const figcaptions = {
 
 // Derived per-row flags. Computed here rather than inline in the template: the
 // Astro compiler reads a `<` inside a template expression as the start of a tag.
+const highlighted = layers.find((layer) => layer.name === highlight);
+
 const rows = layers.map((layer, i) => ({
   layer,
   row: i + 1,
@@ -233,12 +239,15 @@ const rows = layers.map((layer, i) => ({
   leaped: i <= LEAP_LAST_LAYER,
   /** Ghosted card: the four layers the leap silently decides. */
   ghost: i > 0 && i < 5,
+  /** The rung this piece is about. */
+  current: highlighted?.name === layer.name,
 }));
 ---
 
 <figure
   data-abstraction-stack
   data-mode={initialMode}
+  data-highlight={highlighted ? '' : undefined}
   class={twMerge('not-prose my-10 lg:-mx-20 xl:-mx-32', className)}
 >
   <div
@@ -308,19 +317,30 @@ const rows = layers.map((layer, i) => ({
       </div>
 
       {
-        rows.map(({ layer, row, leaped, ghost }) => {
+        rows.map(({ layer, row, leaped, ghost, current }) => {
           return (
             <>
-              <div class="rail" style={`grid-row: ${row}`} data-leaped={leaped ? '' : undefined}>
+              <div
+                class="rail"
+                style={`grid-row: ${row}`}
+                data-leaped={leaped ? '' : undefined}
+                data-current={current ? '' : undefined}
+              >
                 <span class="rung" />
               </div>
 
-              <div class="cell" style={`grid-row: ${row}`} data-ghost={ghost ? '' : undefined}>
+              <div
+                class="cell"
+                style={`grid-row: ${row}`}
+                data-ghost={ghost ? '' : undefined}
+                data-current={current ? '' : undefined}
+              >
                 <button type="button" class="card" data-card aria-expanded="false">
                   <span class="idx">{layer.n}</span>
                   <span class="head">
                     <span class="lname">
                       {layer.name}
+                      {current && <span class="pill-here">This piece</span>}
                       <span class="pill-ghost">usually inferred</span>
                     </span>
                     <span class="lq">{layer.question}</span>
@@ -370,7 +390,13 @@ const rows = layers.map((layer, i) => ({
   </div>
 
   <figcaption class="mt-3 px-4 text-center text-base text-slate-500">
-    {locked ? figcaptions[initialMode] : figcaptions.both}
+    {
+      highlighted
+        ? `The eight abstraction layers between intent and execution. This piece is layer ${highlighted.n}, ${highlighted.name}.`
+        : locked
+          ? figcaptions[initialMode]
+          : figcaptions.both
+    }
   </figcaption>
 </figure>
 
@@ -673,6 +699,59 @@ const rows = layers.map((layer, i) => ({
     opacity: 1;
   }
 
+  /* The rung this piece is about. A highlight wins over the leap-mode ghost. */
+  .pill-here {
+    display: inline;
+    border-radius: 9999px;
+    border: 1px solid rgb(45 212 191 / 0.5);
+    background: rgb(13 148 136 / 0.22);
+    color: rgb(153 246 228);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.0625rem 0.375rem;
+    white-space: nowrap;
+  }
+  .cell[data-current] .card {
+    border-color: rgb(45 212 191 / 0.65);
+    background: rgb(13 148 136 / 0.14);
+    box-shadow:
+      0 0 0 1px rgb(13 148 136 / 0.35),
+      0 0 28px rgb(13 148 136 / 0.22);
+    opacity: 1;
+  }
+  .cell[data-current] .idx,
+  .cell[data-current] .lname {
+    color: rgb(153 246 228);
+  }
+  .cell[data-current] .ex code {
+    color: rgb(204 251 241);
+    border-color: rgb(13 148 136 / 0.45);
+    background: rgb(13 148 136 / 0.12);
+  }
+  [data-mode='leap'] .cell[data-current] .card {
+    opacity: 1;
+    border-style: solid;
+  }
+  [data-mode='leap'] .cell[data-current] .pill-ghost {
+    display: none;
+  }
+  .rail[data-current] .rung::before {
+    animation: rung-ping 1.8s ease-out infinite;
+  }
+  @keyframes rung-ping {
+    0% {
+      box-shadow: 0 0 0 0 rgb(45 212 191 / 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 8px rgb(45 212 191 / 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgb(45 212 191 / 0);
+    }
+  }
+
   /* ── Expandable detail ───────────────────────────────────────────── */
   .detail {
     padding: 1rem 1rem 0.5rem 1rem;
@@ -759,6 +838,9 @@ const rows = layers.map((layer, i) => ({
     .card,
     .chev {
       transition: none;
+    }
+    .rail[data-current] .rung::before {
+      animation: none;
     }
   }
 </style>

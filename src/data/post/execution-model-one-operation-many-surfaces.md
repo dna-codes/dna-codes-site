@@ -1,5 +1,5 @@
 ---
-publishDate: 2026-10-04T00:00:00Z
+publishDate: 2026-10-04T12:00:00Z
 series:
   name: The Future of Programming
   layer: 'Layer 05: Execution Model'
