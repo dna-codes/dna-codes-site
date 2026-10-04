@@ -1,0 +1,73 @@
+---
+publishDate: 2026-10-04T00:00:00Z
+series:
+  name: The Future of Programming
+  layer: 'Layer 04: Operational Model'
+author: Tim Kleier
+coAuthor: Claude (Anthropic)
+title: 'The Operational Model: Formally Capturing Business Operations'
+excerpt: 'Biz Ops is often a function and/or team in organizations that captures the key processes of a company. The operational model formalizes business operations, and puts it in context: after the ontology, and before execution.'
+image: '~/assets/images/series/operational-model-the-missing-abstraction.png'
+category: Engineering
+tags:
+  - operational model
+  - architecture
+  - ai agents
+  - abstraction
+---
+
+import OperationExamples from '~/components/widgets/OperationExamples.astro';
+import OperationWorkflow from '~/components/widgets/OperationWorkflow.astro';
+
+Ask someone about a key business process. How an invoice gets paid. How a claim gets settled. What comes back is hand-waving, an hour-long tour, or "I will get back to you on that."
+
+A Biz Ops function often already has the pieces: an SOP, a process map, notes from a workshop. Engineering has the code. There is no map between them. The docs describe the process but the code could be running an older or incorrect version of it. That's why the answer is often unclear.
+
+## The Operational Layer
+
+To get this clarity, we need a formal layer to map between Operations and their execution. That layer is behavior, the formal version of what Biz Ops already catalogues: what happens, to what, with what inputs and outputs. [Ontology](https://dna.codes/blog/ontology-your-data-model-is-not-your-business-model/) defines the structure an operation is written against. Operations says what happens to that structure. Execution provides the interfaces that fulfill those operations, a button, an endpoint, and an agent tool, which run an operation rather than defining one. This is the last layer that is still about the business.
+
+## Actor, Action, Resource
+
+The primitive is an Operation. At its base it is a triple: **Actor → Action → Resource**. Subject, verb, object. That is the atomic sentence of Biz Ops, and it has the same shape in a hospital, a lender, and a warehouse.
+
+An **actor** is who performs the action. A person, a system, or an AI agent. The physician discharging an encounter, the billing system issuing an invoice, the collections agent escalating one. The actor belongs on the operation because the work has a performer. A verb with nobody doing it is not yet an operation.
+
+An **action** is a verb on a noun, and it has a lifecycle. Underneath, it is a function against the ontology: it reads and writes domains, entities, attributes, and relationships. A verb that cannot say which noun it touches is a label, not an action.
+
+A **resource** is anything operable. That includes the ontology itself: any domain, entity, attribute, or relationship. It also includes the rest of what a business handles: a file, a signed contract, a generated report. If the work touches it, it is a resource.
+
+The triple is the base, not the whole operation. An operation also has inputs and outputs, as well as potential conditions.
+
+The grid below keeps inputs and outputs off. Those vary by operation. The triple and its condition do not.
+
+<OperationExamples />
+
+## Workflows
+
+One operation is a sentence. A process is the paragraph.
+
+A workflow composes operations into paths. Some run in sequence, some in parallel, some branch. That is the SOP, the process map, the Event Storming board a Biz Ops team already keeps. Each step names an actor, an action, and a resource.
+
+<OperationWorkflow />
+
+Accept the order once the quote is approved. Reserve stock and authorize payment together. Ship only when both have completed. Issue the invoice once the shipment has left. Four operations, one of them a pair. A workflow is operations, plus the paths between them.
+
+BPMN has drawn those paths for years. Temporal and Camunda will run them durably. Event Storming will cover a wall in the verbs. What those leave you holding is the flow, or the run of a flow decided somewhere else. The operation at each step, actor and action and resource together, must still be executable wherever your code lives.
+
+## Bridge to Technology
+
+This presents a clear need for a bridge between the Operational and the Technical. An operation names the work. Execution is the interface that runs it. The same operation might be reached through more than one surface.
+
+| Operation                 | Interface                |
+| ------------------------- | ------------------------ |
+| Close Loan                | A button                 |
+| Collect Customer Feedback | A form                   |
+| Issue Invoice             | An endpoint              |
+| Escalate Invoice          | A tool an agent can call |
+
+Each Operation has a natural Interface, and this begins to form our bridge over into the Technical world.
+
+---
+
+We're building [DNA Codes](/) to make the middle of the ladder real: an operation declared once, actor and action and resource, and the interfaces below read from that declaration. If this is how you're thinking about the problem too, [join the waitlist](/waitlist).
