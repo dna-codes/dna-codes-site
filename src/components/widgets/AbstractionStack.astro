@@ -117,18 +117,18 @@ const layers: Layer[] = [
   },
   {
     n: '05',
-    name: 'Interface',
+    name: 'Execution Model',
     question: 'How can that operation be exposed and reached?',
     example: 'POST /invoices/:id/pay · MCP tool · workflow step · UI command',
-    what: 'The surfaces an operation is reachable through, and the contract each surface honors.',
+    what: 'The interfaces an operation is reachable through, and the contract each interface honors.',
     problem:
       'The tool description and the endpoint drift apart. An agent calls what it was told exists, not what actually does.',
     today: {
       practice: 'OpenAPI, protobuf, GraphQL SDL, AsyncAPI, JSON Schema — and now MCP tool definitions.',
-      gap: 'But each describes a surface, not the operation behind it. Four specs for one behavior, hand-kept, each free to disagree.',
+      gap: 'But each describes an interface, not the operation behind it. Four specs for one behavior, hand-kept, each free to disagree.',
     },
     future: {
-      solution: 'Every surface projected from the one operation — REST endpoint, MCP tool, queue consumer, button.',
+      solution: 'Every interface projected from the one operation — REST endpoint, MCP tool, queue consumer, button.',
       resolves:
         'Same preconditions, same effects, same errors by construction — the tool description can no longer promise something the endpoint does not do.',
     },

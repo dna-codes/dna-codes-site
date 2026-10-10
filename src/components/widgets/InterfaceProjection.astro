@@ -1,10 +1,10 @@
 ---
 import { twMerge } from 'tailwind-merge';
 
-// Figure for "Interface: Your API and Your MCP Tool Should Not Be Written Twice".
+// Figure for "The Execution Model: Your API and Your MCP Tool Should Not Be Written Twice".
 //
-// One operation, four surfaces. Toggle between projected (one source) and
-// hand-written (surfaces free to disagree). The drift is the argument: the MCP
+// One operation, four interfaces. Toggle between projected (one source) and
+// hand-written (interfaces free to disagree). The drift is the argument: the MCP
 // tool claims amount is optional while the endpoint still requires it.
 
 export interface Props {
@@ -46,7 +46,7 @@ const surfaces = [
     class="overflow-hidden rounded-2xl border-2 border-primary bg-slate-900/90 shadow-[0_0_48px_rgba(13,148,136,0.25)]"
   >
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/8 p-3 sm:px-4">
-      <span class="text-xs font-bold uppercase tracking-widest text-primary">One operation, four surfaces</span>
+      <span class="text-xs font-bold uppercase tracking-widest text-primary">One operation, four interfaces</span>
       <div class="flex items-center gap-1 rounded-lg bg-slate-800/80 p-0.5" role="group" aria-label="Projection mode">
         <button
           type="button"
@@ -109,7 +109,7 @@ const surfaces = [
   </div>
 
   <figcaption class="mt-3 text-sm leading-relaxed text-muted dark:text-slate-400" data-caption>
-    Projected: every surface inherits the same precondition and required amount. Flip to hand-written to unpin the MCP
+    Projected: every interface inherits the same precondition and required amount. Flip to hand-written to unpin the MCP
     tool and watch the seam an agent finds first.
   </figcaption>
 </figure>
@@ -124,7 +124,7 @@ const surfaces = [
 
     const captions = {
       projected:
-        'Projected: every surface inherits the same precondition and required amount. Flip to hand-written to unpin the MCP tool and watch the seam an agent finds first.',
+        'Projected: every interface inherits the same precondition and required amount. Flip to hand-written to unpin the MCP tool and watch the seam an agent finds first.',
       handwritten:
         'Hand-written: the MCP tool drifted. Amount became optional in the description only. An agent calls what it was told exists, not what the endpoint enforces.',
     };

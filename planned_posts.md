@@ -36,16 +36,16 @@ Published. ~1,100 words with `<OntologyExample>`.
 
 **Operational Model — Formally Capturing Business Operations** (Oct 4, published, `.mdx`)
 
-Published. Sets up the next layer as Interface (Operation → Interface table).
+Published. Bridges with an Operation → Interface table: Execution is the next
+layer, Interface is its construct.
 
-**Interface — Your API and Your MCP Tool Should Not Be Written Twice** (Oct 11, draft, `.mdx`)
+**Execution Model — Your API and Your MCP Tool Should Not Be Written Twice** (Oct 11, draft, `.mdx`)
 
-Renamed from Execution Model: the ops post already called this layer Interface, and
-"execution model" reads too much like a runtime. Draft is in
-`interface-one-operation-many-surfaces.mdx` with `<InterfaceProjection>` (projected vs
-hand-written toggle). Still `draft: true`. On publish: drop the flag, add "Next:
-Interface" on the Operational Model closing, and undraft the Code next-link if that
-piece is ready.
+Layer stays Execution Model. Interface is the key construct (parallel to Operation
+above it). Draft is in `execution-model-one-operation-many-surfaces.mdx` with
+`<InterfaceProjection>` (projected vs hand-written toggle). Still `draft: true`.
+On publish: drop the flag, add "Next: Execution" on the Operational Model closing,
+and wire the Code next-link when that piece is ready.
 
 ### Calendar
 
@@ -60,7 +60,7 @@ the Sunday cadence and the relative order of the syndicated weeks are unchanged.
 | 3    | Sep 13 | DNA          | Ontology: Your Data Model Is Not Your Business Model                                     | **Published**                    |
 | 4    | Sep 20 | DNA          | The Operational Model: The Missing Abstraction for What a Business Can Do — **flagship** | Stub                             |
 | 5    | Sep 27 | HackerNoon   | AI Can Write the Code. Who Defines What the Code Is Supposed to Mean?                    | Brief below · _submit by Sep 13_ |
-| 6    | Oct 11 | DNA          | Interface: Your API and Your MCP Tool Should Not Be Written Twice                        | Draft (renamed from Execution)   |
+| 6    | Oct 11 | DNA          | The Execution Model: Your API and Your MCP Tool Should Not Be Written Twice              | Draft (Interface = construct)    |
 | 7    | Oct 11 | freeCodeCamp | From Writing Code to Designing Systems: Programming After AI                             | Brief below · _submit by Sep 27_ |
 | 8    | Oct 18 | DNA          | Code Isn't Disappearing. It's Moving Down the Stack                                      | Stub                             |
 | 9    | Oct 25 | DNA          | You Choose Your Technology Stack Too Early                                               | Stub                             |
@@ -181,8 +181,8 @@ already names all seven handoffs, and the series should use those names:
 | Elicitation | Intent → Semantics                  | Semantics (in)                                |
 | Structuring | Semantics → Ontology                | Semantics (out), Ontology (in)                |
 | Derivation  | Ontology → Operational Model        | Ontology (out), Operational Model (in)        |
-| Projection  | Operational Model → Interface       | Operational Model (out), Interface (in)       |
-| Generation  | Interface → Code                    | Interface (out), Code (in)                    |
+| Projection  | Operational Model → Execution Model | Operational Model (out), Execution Model (in) |
+| Generation  | Execution Model → Code              | Execution Model (out), Code (in)              |
 | Binding     | Code → Technology Stack             | Code (out), Technology Stack (in)             |
 | Compilation | Technology Stack → Machine          | Technology Stack (out), Machine (in)          |
 
@@ -210,7 +210,7 @@ Existing components to read before building a new one — the pattern is vanilla
 - `LensDemo.astro`, `AgentOpsDemo.astro`, `OverlayDemo.astro` — other worked examples
 
 Reuse beats rebuild. `OperationsDemo` in particular already does most of what the
-Operational Model and Interface pieces need; check it before starting from scratch.
+Operational Model and Execution Model pieces need; check it before starting from scratch.
 Any post embedding a component must be renamed `.md` → `.mdx`.
 
 **Each post's hero is the ladder with its own layer lit.** One card design across the
@@ -347,7 +347,7 @@ each one asks of a programmer:
 ```
 Yesterday   Human → Code → Machine
 Today       Human → Prompt → AI → Code → Machine
-Tomorrow    Human → Intent → Semantics → Ontology → Operations → Interface → Code → Machine
+Tomorrow    Human → Intent → Semantics → Ontology → Operations → Execution → Code → Machine
 ```
 
 Then walk each layer from a developer's point of view: what you would actually write,
@@ -362,7 +362,7 @@ programming-vs-writing-code distinction and let this one own the career framing.
 ## Strategy note
 
 The series is the outer ring of the market-playground idea. It gradually introduces a
-vocabulary — intent → semantics → ontology → operational model → interface → code
+vocabulary — intent → semantics → ontology → operational model → execution model → code
 — which readers then encounter in LinkedIn posts, then in the diagrams on the site, then
 in the Operations demo. The eventual recognition is "DNA is the thing that implements the
 operational layer," which is a stronger motion than "here's our product, come try it."
