@@ -80,7 +80,11 @@ const surfaces = [
         surfaces.map((s) => (
           <div class="surface bg-slate-900/90 p-4 sm:p-5" data-surface={s.name}>
             <p class="text-sm font-semibold text-slate-200">{s.name}</p>
-            <p class="surface-contract mt-2 font-mono text-xs leading-relaxed text-slate-300" data-projected={s.projected} data-drifted={s.drifted}>
+            <p
+              class="surface-contract mt-2 font-mono text-xs leading-relaxed text-slate-300"
+              data-projected={s.projected}
+              data-drifted={s.drifted}
+            >
               {s.projected}
             </p>
             <p
@@ -94,17 +98,12 @@ const surfaces = [
       }
     </div>
 
-    <div
-      class="agent-call hidden border-t border-amber-500/30 bg-amber-500/10 px-4 py-3 sm:px-5"
-      data-agent-call
-    >
+    <div class="agent-call hidden border-t border-amber-500/30 bg-amber-500/10 px-4 py-3 sm:px-5" data-agent-call>
       <p class="text-[10px] font-bold uppercase tracking-widest text-amber-400">Agent call</p>
       <p class="mt-1 font-mono text-xs leading-relaxed text-slate-200">
         pay_invoice(invoice_id) <span class="text-slate-500">← amount omitted, because the tool said optional</span>
       </p>
-      <p class="mt-1 text-xs text-amber-200/90">
-        Endpoint returns 400. Logged as a hallucination. It was not.
-      </p>
+      <p class="mt-1 text-xs text-amber-200/90">Endpoint returns 400. Logged as a hallucination. It was not.</p>
     </div>
   </div>
 
@@ -144,8 +143,7 @@ const surfaces = [
       notes.forEach((el) => {
         const parent = el.closest('.surface');
         const contract = parent?.querySelector<HTMLElement>('.surface-contract');
-        const show =
-          mode === 'handwritten' && contract?.dataset.projected !== contract?.dataset.drifted;
+        const show = mode === 'handwritten' && contract?.dataset.projected !== contract?.dataset.drifted;
         el.classList.toggle('hidden', !show);
       });
 
