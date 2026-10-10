@@ -59,7 +59,7 @@ THE SPINE
    transcription that is being automated. Do not resolve this cheaply. Naming it
    honestly is worth more than an optimistic answer.
 7. THE HANDOFF SECTION (required in every piece — see planned_posts.md).
-   In, from the Execution Model — "Generation": the code implements a contract it
+   In, from Interface — "Generation": the code implements a contract it
    did not invent. That is not new; it is what every scaffold and client generator
    has done for years. What changes is how much of the contract arrives specified.
    Out, to Technology Stack — "Binding": frameworks, packages, the substrate. This

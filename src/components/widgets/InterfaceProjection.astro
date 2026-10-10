@@ -1,0 +1,178 @@
+---
+import { twMerge } from 'tailwind-merge';
+
+// Figure for "Interface: Your API and Your MCP Tool Should Not Be Written Twice".
+//
+// One operation, four surfaces. Toggle between projected (one source) and
+// hand-written (surfaces free to disagree). The drift is the argument: the MCP
+// tool claims amount is optional while the endpoint still requires it.
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+const surfaces = [
+  {
+    name: 'REST endpoint',
+    projected: 'POST /invoices/:id/pay · amount required · 409 if status ≠ Issued',
+    drifted: 'POST /invoices/:id/pay · amount required · 409 if status ≠ Issued',
+    driftedNote: 'Still enforces the real contract',
+  },
+  {
+    name: 'MCP tool',
+    projected: 'pay_invoice · amount required · refuses when status ≠ Issued',
+    drifted: 'pay_invoice · amount optional · no status check in the description',
+    driftedNote: 'What the agent was told exists',
+  },
+  {
+    name: 'Workflow step',
+    projected: 'Pay Invoice · guard: status = Issued · amount == amount_due',
+    drifted: 'Pay Invoice · guard: status = Issued · amount == amount_due',
+    driftedNote: 'Still matches the operation',
+  },
+  {
+    name: 'UI button',
+    projected: 'Pay · disabled unless Issued · amount field required',
+    drifted: 'Pay · disabled unless Issued · amount field required',
+    driftedNote: 'Still matches the operation',
+  },
+];
+---
+
+<figure class={twMerge('not-prose my-10', className)} data-interface-projection>
+  <div
+    class="overflow-hidden rounded-2xl border-2 border-primary bg-slate-900/90 shadow-[0_0_48px_rgba(13,148,136,0.25)]"
+  >
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/8 p-3 sm:px-4">
+      <span class="text-xs font-bold uppercase tracking-widest text-primary">One operation, four surfaces</span>
+      <div class="flex items-center gap-1 rounded-lg bg-slate-800/80 p-0.5" role="group" aria-label="Projection mode">
+        <button
+          type="button"
+          data-mode="projected"
+          class="mode-btn is-active rounded-md px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-300"
+        >
+          Projected
+        </button>
+        <button
+          type="button"
+          data-mode="handwritten"
+          class="mode-btn rounded-md px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-300"
+        >
+          Hand-written
+        </button>
+      </div>
+    </div>
+
+    <div class="border-b border-white/8 px-4 py-3 sm:px-5">
+      <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Operation</p>
+      <p class="mt-1 font-mono text-sm text-slate-200">
+        Customer → Pay → Invoice <span class="text-slate-500">·</span>
+        <span class="text-teal-200">status = Issued</span>
+        <span class="text-slate-500">·</span>
+        <span class="text-teal-200">amount required</span>
+      </p>
+    </div>
+
+    <div class="grid gap-px bg-white/8 sm:grid-cols-2">
+      {
+        surfaces.map((s) => (
+          <div class="surface bg-slate-900/90 p-4 sm:p-5" data-surface={s.name}>
+            <p class="text-sm font-semibold text-slate-200">{s.name}</p>
+            <p class="surface-contract mt-2 font-mono text-xs leading-relaxed text-slate-300" data-projected={s.projected} data-drifted={s.drifted}>
+              {s.projected}
+            </p>
+            <p
+              class="surface-note mt-2 hidden text-[11px] font-semibold uppercase tracking-wider text-amber-400/90"
+              data-note={s.driftedNote}
+            >
+              {s.driftedNote}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div
+      class="agent-call hidden border-t border-amber-500/30 bg-amber-500/10 px-4 py-3 sm:px-5"
+      data-agent-call
+    >
+      <p class="text-[10px] font-bold uppercase tracking-widest text-amber-400">Agent call</p>
+      <p class="mt-1 font-mono text-xs leading-relaxed text-slate-200">
+        pay_invoice(invoice_id) <span class="text-slate-500">← amount omitted, because the tool said optional</span>
+      </p>
+      <p class="mt-1 text-xs text-amber-200/90">
+        Endpoint returns 400. Logged as a hallucination. It was not.
+      </p>
+    </div>
+  </div>
+
+  <figcaption class="mt-3 text-sm leading-relaxed text-muted dark:text-slate-400" data-caption>
+    Projected: every surface inherits the same precondition and required amount. Flip to hand-written to unpin the MCP
+    tool and watch the seam an agent finds first.
+  </figcaption>
+</figure>
+
+<script>
+  function bind(root: HTMLElement) {
+    const buttons = root.querySelectorAll<HTMLButtonElement>('.mode-btn');
+    const contracts = root.querySelectorAll<HTMLElement>('.surface-contract');
+    const notes = root.querySelectorAll<HTMLElement>('.surface-note');
+    const agentCall = root.querySelector<HTMLElement>('[data-agent-call]');
+    const caption = root.querySelector<HTMLElement>('[data-caption]');
+
+    const captions = {
+      projected:
+        'Projected: every surface inherits the same precondition and required amount. Flip to hand-written to unpin the MCP tool and watch the seam an agent finds first.',
+      handwritten:
+        'Hand-written: the MCP tool drifted. Amount became optional in the description only. An agent calls what it was told exists, not what the endpoint enforces.',
+    };
+
+    function setMode(mode: 'projected' | 'handwritten') {
+      buttons.forEach((btn) => {
+        btn.classList.toggle('is-active', btn.dataset.mode === mode);
+      });
+
+      contracts.forEach((el) => {
+        const text = mode === 'projected' ? el.dataset.projected : el.dataset.drifted;
+        if (text) el.textContent = text;
+        const drifted = mode === 'handwritten' && el.dataset.projected !== el.dataset.drifted;
+        el.classList.toggle('is-drifted', drifted);
+      });
+
+      notes.forEach((el) => {
+        const parent = el.closest('.surface');
+        const contract = parent?.querySelector<HTMLElement>('.surface-contract');
+        const show =
+          mode === 'handwritten' && contract?.dataset.projected !== contract?.dataset.drifted;
+        el.classList.toggle('hidden', !show);
+      });
+
+      agentCall?.classList.toggle('hidden', mode !== 'handwritten');
+      if (caption) caption.textContent = captions[mode];
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode === 'handwritten' ? 'handwritten' : 'projected';
+        setMode(mode);
+      });
+    });
+
+    setMode('projected');
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-interface-projection]').forEach(bind);
+</script>
+
+<style>
+  .mode-btn.is-active {
+    background-color: rgb(45 212 191 / 0.15);
+    color: rgb(94 234 212);
+  }
+
+  .surface-contract.is-drifted {
+    color: rgb(252 211 77);
+  }
+</style>

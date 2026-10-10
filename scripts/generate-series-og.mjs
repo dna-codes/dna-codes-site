@@ -6,7 +6,7 @@
 //
 //   white  — the layer exists today (Intent, Code, Technology Stack, Machine)
 //   grey   — the layer is missing today (Semantics, Ontology, Operational Model,
-//            Execution Model), which is the whole thesis
+//            Interface), which is the whole thesis
 //   teal   — this post's layer, whichever it is
 //
 // So the set reads as one image with a moving highlight rather than eight illustrations,
@@ -47,7 +47,7 @@ const LAYERS = [
   { name: 'Semantics', exists: false },
   { name: 'Ontology', exists: false },
   { name: 'Operational Model', exists: false },
-  { name: 'Execution Model', exists: false },
+  { name: 'Interface', exists: false },
   { name: 'Code / Program', exists: true },
   { name: 'Technology Stack', exists: true },
   { name: 'Machine / Runtime', exists: true },
@@ -139,10 +139,10 @@ const CARDS = [
     highlight: 'Operational Model',
   },
   {
-    slug: 'execution-model-one-operation-many-surfaces',
-    subtitle: 'Layer 05 · Execution Model',
+    slug: 'interface-one-operation-many-surfaces',
+    subtitle: 'Layer 05 · Interface',
     footer: 'One operation. Four surfaces. Written four times.',
-    highlight: 'Execution Model',
+    highlight: 'Interface',
   },
   {
     slug: 'code-is-moving-down-the-stack',
