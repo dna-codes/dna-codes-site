@@ -29,23 +29,15 @@ That discipline made our interfaces clean. More than that, it opened the door fo
 
 If the mirror is faithful, every surface agrees on preconditions, effects, and errors because they read from one operation. If it is not, you do not have an Execution Model. You have four interfaces that happen to share a name, often dressed in CRUD because that was the template in the scaffold.
 
-## Action at the Center
-
-[Agent-Native](https://agent-native.com) puts this shape in sharp focus. Define a capability once as an action. The agent, the React UI, HTTP clients, and integrations call the same code. One action powers every surface. That is the right paradigm for Execution: the callable thing sits at the center, and surfaces are projections, not authors.
-
-Business operations need more than a bare action, though. An operation also carries the actor who may perform it, the resource it acts on, the inputs and outputs, the conditions that must hold, and the workflows that compose operations into paths. Agent-native architecture is how interfaces should attach. The operation is what they attach to.
-
 ## One Operation, Many Interfaces
+
+[Agent-Native](https://agent-native.com) puts the action at the center: define a capability once, and the agent, UI, HTTP clients, and integrations all call the same code. That is the right paradigm for Execution. Business operations need more than a bare action (actor, resource, conditions, workflows), but agent-native architecture is how interfaces should attach. The operation is what they attach to.
 
 The same `Pay Invoice` usually appears as more than one interface:
 
 <InterfaceProjection />
 
-Four interfaces. Four owners. Four calendars for when they get updated. Written by hand, they agree on the day they ship. They do not stay that way.
-
-Projection means one operation definition, and every interface inherits its contract rather than restating it. Change a precondition once; every expression of it moves. `status = Issued` becomes a 409 on the endpoint, a refusal in the tool's error contract, a guard on the workflow step, and a disabled button. `amount` required becomes a required body field, a required tool parameter, a step input, and a required form control. Same source. Four expressions. None of them authored separately.
-
-Interfaces are not fully interchangeable. A UI needs affordances and copy. A queue consumer needs idempotency and retry semantics. An MCP tool needs a description written for a model's benefit. Projection settles the contract, not the presentation. Saying that out loud is what makes the rest credible.
+Written by hand, those four drift. Projected from one operation, they stay one contract in four idioms.
 
 ## Why the Mirror Matters
 
