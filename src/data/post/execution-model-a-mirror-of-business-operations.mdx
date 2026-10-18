@@ -48,7 +48,7 @@ Operations compose. A customer submitting an order is not one interface. It is a
 
 ## Operational Mirror
 
-Agents make a cracked mirror expensive. When a tool says `amount` is optional and the endpoint requires it, the agent omits the field, gets a 400, and the failure gets logged as a hallucination. It was not. The model called what it was told exists.
+Agents make a cracked operational mirror expensive. When a tool says `amount` is optional and the endpoint requires it, the agent omits the field, gets a 400, and the failure gets logged as a hallucination. It was not. The model called what it was told exists.
 
 OpenAPI, GraphQL SDL, protobuf, AsyncAPI, JSON Schema, and now MCP already keep wire formats aligned. They project from paths and payloads. They do not carry the operation's preconditions, effects, and permissions into every face that exposes it. Multi-interface projection is accepted. The missing move is projecting from the business operation.
 
