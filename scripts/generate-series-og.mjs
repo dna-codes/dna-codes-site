@@ -144,24 +144,6 @@ const CARDS = [
     footer: 'Interfaces that mirror the operation, not four hand-written copies.',
     highlight: 'Execution Model',
   },
-  {
-    slug: 'code-is-moving-down-the-stack',
-    subtitle: 'Layer 06 · Code',
-    footer: "Code doesn't vanish. It stops being where decisions get made.",
-    highlight: 'Code / Program',
-  },
-  {
-    slug: 'you-choose-your-tech-stack-too-early',
-    subtitle: 'Layer 07 · Technology Stack',
-    footer: 'Chosen first, before anyone said what the system does.',
-    highlight: 'Technology Stack',
-  },
-  {
-    slug: 'the-best-abstraction-layer-is-invisible',
-    subtitle: 'Layer 08 · Machine / Runtime',
-    footer: 'The handoff got engineered so well it went invisible.',
-    highlight: 'Machine / Runtime',
-  },
 ];
 
 await mkdir(OUT_DIR, { recursive: true });

@@ -7,15 +7,14 @@
 
 The published manifesto is the map. Each subsequent piece is a deep dive that makes a
 different argument, escalating toward the Operational Model as the flagship. This is a
-point-of-view series, not eight articles explaining eight layers — if a draft starts
-reading like a definition, it has gone wrong.
+point-of-view series, not one article per ladder rung — if a draft starts reading like a
+definition, it has gone wrong. The DNA run closes at the Execution Model; Code, Technology
+Stack, and Machine / Runtime stubs were removed rather than written.
 
-Every DNA article exists as a stub in `src/data/post/` with `draft: true` and its
-scheduled `publishDate` already set. Drafts are filtered in `src/utils/blog.ts`, so they
-produce no route, no sitemap entry and no RSS item until the flag comes off — and they
-render under `astro dev` with a Draft badge so a preview is never mistaken for a live
-page. Each stub carries a brief in an HTML comment: thesis, spine, prior art, DNA's one
-novel claim, figure notes and the LinkedIn hook. Delete the comment when you write it.
+Published DNA pieces live in `src/data/post/`. Drafts are filtered in `src/utils/blog.ts`,
+so they produce no route, no sitemap entry and no RSS item until the flag comes off — and
+they render under `astro dev` with a Draft badge so a preview is never mistaken for a live
+page.
 
 **Keep briefs out of `.mdx` files.** The moment a post needs a component it gets renamed
 to `.mdx`, and MDX rejects HTML comments — the page 500s with a bare `MDXError`. The JSX
@@ -45,7 +44,8 @@ Published. Layer stays Execution Model; Interface is the construct that mirrors
 the operation. Framing cites agent-native.com (action at the center; every surface
 calls into it) and extends that to full operations (actor, resource, conditions,
 workflows). Post is `execution-model-a-mirror-of-business-operations.mdx` with
-`<InterfaceProjection>`. Operational Model closing links Next here.
+`<InterfaceProjection>` and `<WorkflowInterfaces>`. Operational Model closing links
+Next here. Series nav ends on this piece.
 
 ### Calendar
 
@@ -53,18 +53,15 @@ Sundays, matching the manifesto's publish day. The run is Aug 9 to Nov 1. Everyt
 Semantics on slipped two weeks against the original plan; the whole tail moved with it, so
 the Sunday cadence and the relative order of the syndicated weeks are unchanged.
 
-| Week | Date   | Venue        | Piece                                                                                    | Status                           |
-| ---- | ------ | ------------ | ---------------------------------------------------------------------------------------- | -------------------------------- |
-| 1    | Aug 9  | DNA          | The Future of Programming: The Abstraction Layers Between Intent and Execution           | **Published**                    |
-| 2    | Sep 6  | DNA          | Semantics: Software Without Meaning Is Meaningless                                       | **Published** — two weeks late   |
-| 3    | Sep 13 | DNA          | Ontology: Your Data Model Is Not Your Business Model                                     | **Published**                    |
-| 4    | Sep 20 | DNA          | The Operational Model: The Missing Abstraction for What a Business Can Do — **flagship** | Stub                             |
-| 5    | Sep 27 | HackerNoon   | AI Can Write the Code. Who Defines What the Code Is Supposed to Mean?                    | Brief below · _submit by Sep 13_ |
-| 6    | Oct 18 | DNA          | The Execution Model: A Mirror of Business Operations                                     | **Published**                    |
-| 7    | Oct 11 | freeCodeCamp | From Writing Code to Designing Systems: Programming After AI                             | Brief below · _submit by Sep 27_ |
-| 8    | Oct 18 | DNA          | Code Isn't Disappearing. It's Moving Down the Stack                                      | Stub                             |
-| 9    | Oct 25 | DNA          | You Choose Your Technology Stack Too Early                                               | Stub                             |
-| 10   | Nov 1  | DNA          | The Best Abstraction Layer Is the One You Never Think About                              | Stub                             |
+| Week | Date   | Venue        | Piece                                                                                    | Status                             |
+| ---- | ------ | ------------ | ---------------------------------------------------------------------------------------- | ---------------------------------- |
+| 1    | Aug 9  | DNA          | The Future of Programming: The Abstraction Layers Between Intent and Execution           | **Published**                      |
+| 2    | Sep 6  | DNA          | Semantics: Software Without Meaning Is Meaningless                                       | **Published** — two weeks late     |
+| 3    | Sep 13 | DNA          | Ontology: Your Data Model Is Not Your Business Model                                     | **Published**                      |
+| 4    | Sep 20 | DNA          | The Operational Model: The Missing Abstraction for What a Business Can Do — **flagship** | Stub                               |
+| 5    | Sep 27 | HackerNoon   | AI Can Write the Code. Who Defines What the Code Is Supposed to Mean?                    | Brief below · _submit by Sep 13_   |
+| 6    | Oct 18 | DNA          | The Execution Model: A Mirror of Business Operations                                     | **Published** — series closes here |
+| 7    | Oct 11 | freeCodeCamp | From Writing Code to Designing Systems: Programming After AI                             | Brief below · _submit by Sep 27_   |
 
 There is a four-week gap between the manifesto and Semantics. Only the first week of it
 was deliberate. It is invisible to a new reader, who sees a dated archive rather than a
@@ -355,15 +352,14 @@ what it saves you, what still needs judgment. Career-relevant and concrete, not
 visionary. freeCodeCamp's audience is early-to-mid career; the piece should leave a
 reader with a clearer sense of what to get good at, not an argument to agree with.
 
-Note the overlap with the week-8 DNA piece (Code Isn't Disappearing) — the three-era
-figure does load-bearing work here first. Keep the DNA piece focused on the
-programming-vs-writing-code distinction and let this one own the career framing.
+With the DNA Code post cancelled, this syndication piece owns the three-era figure and
+the career framing for the developer audience.
 
 ## Strategy note
 
 The series is the outer ring of the market-playground idea. It gradually introduces a
-vocabulary — intent → semantics → ontology → operational model → execution model → code
-— which readers then encounter in LinkedIn posts, then in the diagrams on the site, then
+vocabulary — intent → semantics → ontology → operational model → execution model —
+which readers then encounter in LinkedIn posts, then in the diagrams on the site, then
 in the Operations demo. The eventual recognition is "DNA is the thing that implements the
 operational layer," which is a stronger motion than "here's our product, come try it."
 
@@ -373,8 +369,8 @@ increasingly obvious.
 ## Backlog
 
 Kept from the earlier plan. These target a different audience (ops leaders, not
-engineers) and different search intent. Worth resuming after the series concludes in
-late October — running them concurrently would split the blog's voice mid-argument.
+engineers) and different search intent. Worth resuming after the Execution close — running them concurrently would split the
+blog's voice mid-argument.
 
 ### Pain-point / problem awareness
 
