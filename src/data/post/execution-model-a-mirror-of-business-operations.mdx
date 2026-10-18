@@ -1,0 +1,87 @@
+---
+publishDate: 2026-10-18T00:00:00Z
+series:
+  name: The Future of Programming
+  layer: 'Layer 05: Execution Model'
+author: Tim Kleier
+coAuthor: Claude (Anthropic)
+title: 'The Execution Model: A Mirror of Business Operations'
+excerpt: 'The Operational Model names the work. The Execution Model is where that work becomes reachable: interfaces that reflect the same operation as a button, an endpoint, a workflow step, and an agent tool, instead of four hand-written copies that drift apart.'
+image: '~/assets/images/series/execution-model-a-mirror-of-business-operations.png'
+category: Engineering
+tags:
+  - execution model
+  - api design
+  - ai agents
+  - architecture
+  - mcp
+---
+
+import InterfaceProjection from '~/components/widgets/InterfaceProjection.astro';
+
+[The Operational Model](/blog/operational-model-the-missing-abstraction/) names the work: actor, action, resource, plus the conditions under which the action applies. `Customer → Pay → Invoice`, only when `status = Issued`, only when `amount` is present and matches what is due.
+
+That is still about the business. The next question is how that work is reached.
+
+## The Execution Layer
+
+**Execution is the layer where a business operation becomes reachable.** Its construct is the Interface: a button, a form, a REST endpoint, a workflow step, an MCP tool. Each interface runs an operation. None of them should redefine it.
+
+That is the bridge the Operational Model left open. An operation names the work. Execution projects it into the surfaces that call it. The Execution Model is a mirror of business operations: the same `Pay Invoice` expressed as the interfaces your people, systems, and agents actually use.
+
+If the mirror is faithful, every surface agrees on preconditions, effects, and errors because they read from one operation. If it is not, you do not have an Execution Model. You have four interfaces that happen to share a name.
+
+## Action at the Center
+
+[Agent-Native](https://agent-native.com) puts this shape in sharp focus. Define a capability once as an action. The agent, the React UI, HTTP clients, and integrations call the same code. One action powers every surface. The agent does not click through the UI; it works through the same action layer the UI uses.
+
+That is the right paradigm for Execution. The callable thing sits at the center. Surfaces are projections, not authors.
+
+Business operations need more than a bare action, though. An operation also carries the actor who may perform it, the resource it acts on, the inputs and outputs, the conditions that must hold, and the workflows that compose operations into paths. Agent-Native's action is the center of gravity for how surfaces call in. The Operational Model is what that center has to hold if the mirror is going to reflect Biz Ops, not only a function signature.
+
+Put differently: agent-native architecture is how interfaces should attach. The operation is what they attach to.
+
+## One Operation, Many Interfaces
+
+The same `Pay Invoice` usually appears as more than one interface:
+
+| Operation   | Interface                |
+| ----------- | ------------------------ |
+| Pay Invoice | A button                 |
+| Pay Invoice | A REST endpoint          |
+| Pay Invoice | A workflow step          |
+| Pay Invoice | A tool an agent can call |
+
+Four interfaces. Four owners. Four calendars for when they get updated. Written by hand, they agree on the day they ship. They do not stay that way.
+
+Projection means one operation definition, and every interface inherits its contract rather than restating it. Change a precondition once; every expression of it moves.
+
+`status = Issued` becomes a 409 on the endpoint, a refusal in the tool's error contract, a guard on the workflow step, and a disabled button. `amount` required becomes a required body field, a required tool parameter, a step input, and a required form control. Same source. Four expressions. None of them authored separately.
+
+<InterfaceProjection />
+
+Interfaces are not fully interchangeable. A UI needs affordances and copy. A queue consumer needs idempotency and retry semantics. An MCP tool needs a description written for a model's benefit. Projection settles the contract, not the presentation. Saying that out loud is what makes the rest credible.
+
+## Why the Mirror Matters
+
+Agents make a cracked mirror expensive faster than humans do. A person clicking a button and a person calling an endpoint still share tribal knowledge. An agent has only the tool description. When that description says `amount` is optional and the endpoint has required it since March, the agent omits the field, gets a 400, and the failure gets logged as a hallucination. It was not. The model called what it was told exists.
+
+The industry already knows how to keep wire formats aligned. OpenAPI, GraphQL SDL, protobuf, AsyncAPI, and JSON Schema are mature. MCP tool definitions are the newest face of the same idea. Smithy and model-first API generation already prove that one model can project many protocol interfaces.
+
+What those traditions mostly project from is a transport shape: paths, messages, payloads. They keep endpoints consistent with clients. They do not carry the operation's preconditions, effects, and permission checks into every face that exposes it. Multi-interface projection is accepted. The missing move is projecting from the business operation, not from the payload.
+
+## The Execution Abstraction Layer
+
+An abstraction layer is only real if you can say what it receives and what it produces.
+
+**In, from the Operational Model: Projection.** The operation arrives with its contract intact: actor, action, resource, preconditions, effects. Execution does not renegotiate `status = Issued`. It projects that rule into each interface's idiom. The transformation is mechanical. A reviewer can check that the 409, the tool refusal, the workflow guard, and the disabled button all name the same condition.
+
+**Out, to Code: Generation.** This is the handoff the industry has already built. Contract-first codegen from OpenAPI is unglamorous, which is the point. Once the interface contract is singular, generating the stubs, clients, and validators underneath it is ordinary work.
+
+Knowing how an operation is reached is still not knowing how it is implemented. Execution hands Code a set of interfaces to fulfill. The next piece is about what happens when that contract, not the editor buffer, becomes where decisions stop living.
+
+Next: Code Isn't Disappearing. It's Moving Down the Stack.
+
+---
+
+We're building [DNA Codes](/) to make the middle of the ladder real: an operation declared once, and the interfaces below read from that declaration. If this is how you're thinking about the problem too, [join the waitlist](/waitlist).

@@ -39,13 +39,13 @@ Published. ~1,100 words with `<OntologyExample>`.
 Published. Bridges with an Operation → Interface table: Execution is the next
 layer, Interface is its construct.
 
-**Execution Model — Your API and Your MCP Tool Should Not Be Written Twice** (Oct 11, draft, `.mdx`)
+**Execution Model — A Mirror of Business Operations** (Oct 18, published, `.mdx`)
 
-Layer stays Execution Model. Interface is the key construct (parallel to Operation
-above it). Draft is in `execution-model-one-operation-many-surfaces.mdx` with
-`<InterfaceProjection>` (projected vs hand-written toggle). Still `draft: true`.
-On publish: drop the flag, add "Next: Execution" on the Operational Model closing,
-and wire the Code next-link when that piece is ready.
+Published. Layer stays Execution Model; Interface is the construct that mirrors
+the operation. Framing cites agent-native.com (action at the center; every surface
+calls into it) and extends that to full operations (actor, resource, conditions,
+workflows). Post is `execution-model-a-mirror-of-business-operations.mdx` with
+`<InterfaceProjection>`. Operational Model closing links Next here.
 
 ### Calendar
 
@@ -60,7 +60,7 @@ the Sunday cadence and the relative order of the syndicated weeks are unchanged.
 | 3    | Sep 13 | DNA          | Ontology: Your Data Model Is Not Your Business Model                                     | **Published**                    |
 | 4    | Sep 20 | DNA          | The Operational Model: The Missing Abstraction for What a Business Can Do — **flagship** | Stub                             |
 | 5    | Sep 27 | HackerNoon   | AI Can Write the Code. Who Defines What the Code Is Supposed to Mean?                    | Brief below · _submit by Sep 13_ |
-| 6    | Oct 11 | DNA          | The Execution Model: Your API and Your MCP Tool Should Not Be Written Twice              | Draft (Interface = construct)    |
+| 6    | Oct 18 | DNA          | The Execution Model: A Mirror of Business Operations                                     | **Published**                    |
 | 7    | Oct 11 | freeCodeCamp | From Writing Code to Designing Systems: Programming After AI                             | Brief below · _submit by Sep 27_ |
 | 8    | Oct 18 | DNA          | Code Isn't Disappearing. It's Moving Down the Stack                                      | Stub                             |
 | 9    | Oct 25 | DNA          | You Choose Your Technology Stack Too Early                                               | Stub                             |

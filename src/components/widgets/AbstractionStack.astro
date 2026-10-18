@@ -120,7 +120,7 @@ const layers: Layer[] = [
     name: 'Execution Model',
     question: 'How can that operation be exposed and reached?',
     example: 'POST /invoices/:id/pay · MCP tool · workflow step · UI command',
-    what: 'The interfaces an operation is reachable through, and the contract each interface honors.',
+    what: 'Interfaces that mirror a business operation so every surface calls the same contract.',
     problem:
       'The tool description and the endpoint drift apart. An agent calls what it was told exists, not what actually does.',
     today: {
@@ -128,7 +128,8 @@ const layers: Layer[] = [
       gap: 'But each describes an interface, not the operation behind it. Four specs for one behavior, hand-kept, each free to disagree.',
     },
     future: {
-      solution: 'Every interface projected from the one operation — REST endpoint, MCP tool, queue consumer, button.',
+      solution:
+        'Every interface projected from the one operation — button, endpoint, workflow step, agent tool — action at the center.',
       resolves:
         'Same preconditions, same effects, same errors by construction — the tool description can no longer promise something the endpoint does not do.',
     },

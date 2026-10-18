@@ -16,7 +16,7 @@ That gap is visible in the repo already:
 - `/docs/product` publishes **Endpoint · Namespace · Param · Schema** as first-class primitives and
   calls the API group _"the REST surface."_ The model has always had a place for endpoints. No
   product reads it.
-- `src/data/post/execution-model-one-operation-many-surfaces.md` — Layer 05 of _The Future of
+- `src/data/post/execution-model-a-mirror-of-business-operations.mdx` — Layer 05 of _The Future of
   Programming_, drafted and scheduled — argues that _"a REST endpoint, an MCP tool, a workflow step
   and a button are four descriptions of the same operation."_ The essay ships in three weeks. Two of
   the four surfaces have products behind them; the REST endpoint, which is the one the essay opens

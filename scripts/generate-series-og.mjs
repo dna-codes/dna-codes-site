@@ -139,9 +139,9 @@ const CARDS = [
     highlight: 'Operational Model',
   },
   {
-    slug: 'execution-model-one-operation-many-surfaces',
+    slug: 'execution-model-a-mirror-of-business-operations',
     subtitle: 'Layer 05 · Execution Model',
-    footer: 'One operation. Four interfaces. Written four times.',
+    footer: 'Interfaces that mirror the operation, not four hand-written copies.',
     highlight: 'Execution Model',
   },
   {
