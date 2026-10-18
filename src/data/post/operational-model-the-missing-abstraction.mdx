@@ -25,7 +25,7 @@ A Biz Ops function often already has the pieces: an SOP, a process map, notes fr
 
 ## The Operational Layer
 
-To get this clarity, we need a formal layer to map between Operations and their execution. That layer is behavior, the formal version of what Biz Ops already catalogues: what happens, to what, with what inputs and outputs. [Ontology](https://dna.codes/blog/ontology-your-data-model-is-not-your-business-model/) defines the structure an operation is written against. Operations says what happens to that structure. Execution provides the interfaces that fulfill those operations, a button, an endpoint, and an agent tool, which run an operation rather than defining one. This is the last layer that is still about the business.
+To get this clarity, we need a formal layer to map between Operations and their execution. That layer is behavior, the formal version of what Biz Ops already catalogues: what happens, to what, with what inputs and outputs. [Ontology](https://dna.codes/blog/ontology-your-data-model-is-not-your-business-model/) defines the structure an operation is written against. Operations says what happens to that structure. Execution is the layer below: its construct is the Interface, a button, an endpoint, and an agent tool that run an operation rather than defining one. This is the last layer that is still about the business.
 
 ## Actor, Action, Resource
 
@@ -57,7 +57,7 @@ BPMN has drawn those paths for years. Temporal and Camunda will run them durably
 
 ## Bridge to Technology
 
-This presents a clear need for a bridge between the Operational and the Technical. An operation names the work. Execution is the interface that runs it. The same operation might be reached through more than one surface.
+This presents a clear need for a bridge between the Operational and the Technical. An operation names the work. Execution projects it into interfaces that run it. The same operation might be reached through more than one interface.
 
 | Operation                 | Interface                |
 | ------------------------- | ------------------------ |
@@ -67,6 +67,8 @@ This presents a clear need for a bridge between the Operational and the Technica
 | Escalate Invoice          | A tool an agent can call |
 
 Each Operation has a natural Interface, and this begins to form our bridge over into the Technical world.
+
+Up next: [the Execution Model](/blog/execution-model-a-mirror-of-business-operations).
 
 ---
 

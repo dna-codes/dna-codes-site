@@ -1,0 +1,68 @@
+---
+publishDate: 2026-10-18T00:00:00Z
+series:
+  name: The Future of Programming
+  layer: 'Layer 05: Execution Model'
+author: Tim Kleier
+coAuthor: Claude (Anthropic)
+title: 'The Execution Model: A Mirror of Business Operations'
+excerpt: 'The Execution Model is where operational work becomes usable, with composable interfaces that faithfully reflect the underlying operational model.'
+image: '~/assets/images/series/execution-model-a-mirror-of-business-operations.png'
+category: Engineering
+tags:
+  - execution model
+  - api design
+  - ai agents
+  - architecture
+  - mcp
+---
+
+import InterfaceProjection from '~/components/widgets/InterfaceProjection.astro';
+import WorkflowInterfaces from '~/components/widgets/WorkflowInterfaces.astro';
+
+Years ago I worked with an architect who would not let "CRUD" into a design review. No Create Invoice button. No Update Loan endpoint. No InvoiceCreated event if what we meant was Issued. Every UI component, every API endpoint, every pub/sub message had to use business nouns and verbs: Issue Invoice, Close Loan, Escalate Claim. He was not being pedantic about naming. He was keeping the interface vocabulary identical to the work the business already had words for.
+
+That discipline made our interfaces clean. More than that, it opened the door for a near-perfect mirror between the [operational model](/blog/operational-model-the-missing-abstraction) and the execution model: the same actor, action, and resource on both sides of the glass.
+
+## The Execution Layer
+
+**The Execution Model is where operational work becomes usable, with composable interfaces that faithfully reflect the underlying operational model.** Its construct is the Interface: a button, a form, a REST endpoint, a workflow step, an MCP tool. Each interface runs an operation. None of them should redefine it.
+
+If the mirror is faithful, every surface agrees on preconditions, effects, and errors because they read from one operation. If it is not, you do not have an Execution Model. You have four interfaces that happen to share a name, often dressed in CRUD because that was the template in the scaffold.
+
+## Interfaces for Operations
+
+[Agent-Native](https://agent-native.com) puts the action at the center: define a capability once, and the agent, UI, HTTP clients, and integrations all call the same code. That is the right paradigm for Execution. Business operations need more than a bare action (actor, resource, conditions, workflows), but agent-native architecture is how interfaces should attach. The operation is what they attach to.
+
+The same `Pay Invoice` usually appears as more than one interface:
+
+<InterfaceProjection />
+
+Written by hand, those four drift. Projected from one operation, they stay one contract in four idioms.
+
+## Interfaces for Workflows
+
+Operations compose. A customer submitting an order is not one interface. It is a workflow: validate on the frontend, submit through an API that validates again, create the order, send a confirmation email, and route to the confirmation page. Each step is still an operation with a noun and a verb. The actor, often the system, sits beside it.
+
+<WorkflowInterfaces />
+
+## Operational Mirror
+
+Agents make a cracked operational mirror expensive. When a tool says `amount` is optional and the endpoint requires it, the agent omits the field, gets a 400, and the failure gets logged as a hallucination. It was not. The model called what it was told exists.
+
+OpenAPI, GraphQL SDL, protobuf, AsyncAPI, JSON Schema, and now MCP already keep wire formats aligned. They project from paths and payloads. They do not carry the operation's preconditions, effects, and permissions into every face that exposes it. Multi-interface projection is accepted. The missing move is projecting from the business operation.
+
+## The Execution Abstraction Layer
+
+An abstraction layer is only real if you can say what it receives and what it produces.
+
+|         | Direction                  | Handoff    | What happens                                                                    |
+| ------- | -------------------------- | ---------- | ------------------------------------------------------------------------------- |
+| **In**  | from the Operational Model | Projection | The operation arrives intact; Execution expresses it in each interface's idiom. |
+| **Out** | to Code                    | Generation | Once the interface contract is singular, stubs, clients, and validators follow. |
+
+That architect was enforcing the mirror by hand: every button, endpoint, and event had to speak the same nouns and verbs as the business. The Execution Model is that discipline made structural. When interfaces project from the operation, CRUD is no longer necessary. Instead, execution is directly informed by the actual business operations.
+
+---
+
+We're building [DNA Codes](/) to make the middle of the ladder real: an operation declared once, and the interfaces below read from that declaration. If this is how you're thinking about the problem too, [join the waitlist](/waitlist).
