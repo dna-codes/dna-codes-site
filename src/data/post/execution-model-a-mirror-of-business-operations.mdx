@@ -54,11 +54,14 @@ OpenAPI, GraphQL SDL, protobuf, AsyncAPI, JSON Schema, and now MCP already keep 
 
 ## The Execution Abstraction Layer
 
-An abstraction layer is only real if you can say what it receives and what it produces. **In, from the Operational Model: Projection** — the operation arrives intact, and Execution expresses it in each interface's idiom. **Out, to Code: Generation** — once that interface contract is singular, stubs, clients, and validators are ordinary work.
+An abstraction layer is only real if you can say what it receives and what it produces.
 
-Knowing how an operation is reached is still not knowing how it is implemented. Execution hands Code a set of interfaces to fulfill. The next piece is about what happens when that contract, not the editor buffer, becomes where decisions stop living.
+| Direction                      | Handoff    | What happens                                                                    |
+| ------------------------------ | ---------- | ------------------------------------------------------------------------------- |
+| In, from the Operational Model | Projection | The operation arrives intact; Execution expresses it in each interface's idiom. |
+| Out, to Code                   | Generation | Once the interface contract is singular, stubs, clients, and validators follow. |
 
-Next: Code Isn't Disappearing. It's Moving Down the Stack.
+Knowing how an operation is reached is still not knowing how it is implemented. Execution hands Code a set of interfaces to fulfill.
 
 ---
 
