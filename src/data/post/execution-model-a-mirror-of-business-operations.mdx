@@ -54,11 +54,7 @@ OpenAPI, GraphQL SDL, protobuf, AsyncAPI, JSON Schema, and now MCP already keep 
 
 ## The Execution Abstraction Layer
 
-An abstraction layer is only real if you can say what it receives and what it produces.
-
-**In, from the Operational Model: Projection.** The operation arrives with its contract intact: actor, action, resource, preconditions, effects. Execution does not renegotiate `status = Issued`. It projects that rule into each interface's idiom. The transformation is mechanical. A reviewer can check that the 409, the tool refusal, the workflow guard, and the disabled button all name the same condition.
-
-**Out, to Code: Generation.** This is the handoff the industry has already built. Contract-first codegen from OpenAPI is unglamorous, which is the point. Once the interface contract is singular, generating the stubs, clients, and validators underneath it is ordinary work.
+An abstraction layer is only real if you can say what it receives and what it produces. **In, from the Operational Model: Projection** — the operation arrives intact, and Execution expresses it in each interface's idiom. **Out, to Code: Generation** — once that interface contract is singular, stubs, clients, and validators are ordinary work.
 
 Knowing how an operation is reached is still not knowing how it is implemented. Execution hands Code a set of interfaces to fulfill. The next piece is about what happens when that contract, not the editor buffer, becomes where decisions stop living.
 
