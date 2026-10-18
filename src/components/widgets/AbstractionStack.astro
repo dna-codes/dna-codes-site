@@ -120,7 +120,7 @@ const layers: Layer[] = [
     name: 'Execution Model',
     question: 'How can that operation be exposed and reached?',
     example: 'POST /invoices/:id/pay · MCP tool · workflow step · UI command',
-    what: 'Interfaces that mirror a business operation so every surface calls the same contract.',
+    what: 'Composable interfaces that faithfully reflect the operational model so every surface calls the same contract.',
     problem:
       'The tool description and the endpoint drift apart. An agent calls what it was told exists, not what actually does.',
     today: {

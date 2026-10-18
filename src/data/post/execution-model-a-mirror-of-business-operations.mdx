@@ -6,7 +6,7 @@ series:
 author: Tim Kleier
 coAuthor: Claude (Anthropic)
 title: 'The Execution Model: A Mirror of Business Operations'
-excerpt: 'The Operational Model names the work. The Execution Model is where that work becomes reachable: interfaces that reflect the same operation as a button, an endpoint, a workflow step, and an agent tool, instead of four hand-written copies that drift apart.'
+excerpt: 'The Execution Model is where operational work becomes usable, with composable interfaces that faithfully reflect the underlying operational model. Refuse CRUD labels, keep business nouns and verbs on every surface, and the mirror almost draws itself.'
 image: '~/assets/images/series/execution-model-a-mirror-of-business-operations.png'
 category: Engineering
 tags:
@@ -19,17 +19,17 @@ tags:
 
 import InterfaceProjection from '~/components/widgets/InterfaceProjection.astro';
 
-[The Operational Model](/blog/operational-model-the-missing-abstraction/) names the work: actor, action, resource, plus the conditions under which the action applies. `Customer → Pay → Invoice`, only when `status = Issued`, only when `amount` is present and matches what is due.
+Years ago I worked with an architect who would not let "CRUD" into a design review. No Create Invoice button. No Update Loan endpoint. No InvoiceCreated event if what we meant was Issued. Every UI component, every API endpoint, every pub/sub message had to use business nouns and verbs: Issue Invoice, Close Loan, Escalate Claim. He was not being pedantic about naming. He was keeping the interface vocabulary identical to the work the business already had words for.
 
-That is still about the business. The next question is how that work is reached.
+That discipline made our interfaces clean. More than that, it opened the door for a near-perfect mirror between the [operational model](/blog/operational-model-the-missing-abstraction/) and the execution model: the same actor, action, and resource on both sides of the glass.
 
 ## The Execution Layer
 
-**Execution is the layer where a business operation becomes reachable.** Its construct is the Interface: a button, a form, a REST endpoint, a workflow step, an MCP tool. Each interface runs an operation. None of them should redefine it.
+**The Execution Model is where operational work becomes usable, with composable interfaces that faithfully reflect the underlying operational model.** Its construct is the Interface: a button, a form, a REST endpoint, a workflow step, an MCP tool. Each interface runs an operation. None of them should redefine it.
 
-That is the bridge the Operational Model left open. An operation names the work. Execution projects it into the surfaces that call it. The Execution Model is a mirror of business operations: the same `Pay Invoice` expressed as the interfaces your people, systems, and agents actually use.
+An operation names the work. Execution projects it into the surfaces that call it. `Customer → Pay → Invoice`, only when `status = Issued`, only when `amount` is present and matches what is due, becomes the same contract on every face that exposes it.
 
-If the mirror is faithful, every surface agrees on preconditions, effects, and errors because they read from one operation. If it is not, you do not have an Execution Model. You have four interfaces that happen to share a name.
+If the mirror is faithful, every surface agrees on preconditions, effects, and errors because they read from one operation. If it is not, you do not have an Execution Model. You have four interfaces that happen to share a name, often dressed in CRUD because that was the template in the scaffold.
 
 ## Action at the Center
 
