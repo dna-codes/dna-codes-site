@@ -42,11 +42,9 @@ Written by hand, those four drift. Projected from one operation, they stay one c
 
 ## Interfaces for Workflows
 
-Operations compose. A customer submitting an order is not one interface. It is a path: validate on the frontend, submit through an API that validates again, create the order, send a confirmation email, and route to the confirmation page. Each step is still an operation with a noun and a verb. The actor, often the system, sits beside it.
+Operations compose. A customer submitting an order is not one interface. It is a workflow: validate on the frontend, submit through an API that validates again, create the order, send a confirmation email, and route to the confirmation page. Each step is still an operation with a noun and a verb. The actor, often the system, sits beside it.
 
 <WorkflowInterfaces />
-
-The side flow is the point. Confirmation · Send is triggered from Order · Create; it does not sit on the main path. The browser still gets Confirmation · Show. The mail worker is another interface onto another operation, still named in business vocabulary.
 
 ## Why the Mirror Matters
 
