@@ -3,9 +3,9 @@ import { twMerge } from 'tailwind-merge';
 
 // Figure for "The Execution Model: A Mirror of Business Operations".
 //
-// One operation, four interfaces. Toggle between projected (one source) and
-// hand-written (interfaces free to disagree). The drift is the cracked mirror:
-// the MCP tool claims amount is optional while the endpoint still requires it.
+// One operation, four interfaces. Super simple table: same Pay Invoice on the
+// left, the surface that runs it on the right. Visual interfaces render as UI
+// (a real button); the rest are light surface chips.
 
 export interface Props {
   class?: string;
@@ -13,30 +13,29 @@ export interface Props {
 
 const { class: className } = Astro.props;
 
-const surfaces = [
+const rows = [
   {
-    name: 'REST endpoint',
-    projected: 'POST /invoices/:id/pay · amount required · 409 if status ≠ Issued',
-    drifted: 'POST /invoices/:id/pay · amount required · 409 if status ≠ Issued',
-    driftedNote: 'Still enforces the real contract',
+    operation: 'Pay Invoice',
+    kind: 'Button',
+    visual: 'button' as const,
   },
   {
-    name: 'MCP tool',
-    projected: 'pay_invoice · amount required · refuses when status ≠ Issued',
-    drifted: 'pay_invoice · amount optional · no status check in the description',
-    driftedNote: 'What the agent was told exists',
+    operation: 'Pay Invoice',
+    kind: 'REST endpoint',
+    visual: 'endpoint' as const,
+    detail: 'POST /invoices/:id/pay',
   },
   {
-    name: 'Workflow step',
-    projected: 'Pay Invoice · guard: status = Issued · amount == amount_due',
-    drifted: 'Pay Invoice · guard: status = Issued · amount == amount_due',
-    driftedNote: 'Still matches the operation',
+    operation: 'Pay Invoice',
+    kind: 'Workflow step',
+    visual: 'step' as const,
+    detail: 'Pay Invoice',
   },
   {
-    name: 'UI button',
-    projected: 'Pay · disabled unless Issued · amount field required',
-    drifted: 'Pay · disabled unless Issued · amount field required',
-    driftedNote: 'Still matches the operation',
+    operation: 'Pay Invoice',
+    kind: 'Agent tool',
+    visual: 'tool' as const,
+    detail: 'pay_invoice',
   },
 ];
 ---
@@ -45,26 +44,6 @@ const surfaces = [
   <div
     class="overflow-hidden rounded-2xl border-2 border-primary bg-slate-900/90 shadow-[0_0_48px_rgba(13,148,136,0.25)]"
   >
-    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/8 p-3 sm:px-4">
-      <span class="text-xs font-bold uppercase tracking-widest text-primary">One operation, four interfaces</span>
-      <div class="flex items-center gap-1 rounded-lg bg-slate-800/80 p-0.5" role="group" aria-label="Projection mode">
-        <button
-          type="button"
-          data-mode="projected"
-          class="mode-btn is-active rounded-md px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-300"
-        >
-          Projected
-        </button>
-        <button
-          type="button"
-          data-mode="handwritten"
-          class="mode-btn rounded-md px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-300"
-        >
-          Hand-written
-        </button>
-      </div>
-    </div>
-
     <div class="border-b border-white/8 px-4 py-3 sm:px-5">
       <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Operation</p>
       <p class="mt-1 font-mono text-sm text-slate-200">
@@ -75,102 +54,59 @@ const surfaces = [
       </p>
     </div>
 
-    <div class="grid gap-px bg-white/8 sm:grid-cols-2">
-      {
-        surfaces.map((s) => (
-          <div class="surface bg-slate-900/90 p-4 sm:p-5" data-surface={s.name}>
-            <p class="text-sm font-semibold text-slate-200">{s.name}</p>
-            <p
-              class="surface-contract mt-2 font-mono text-xs leading-relaxed text-slate-300"
-              data-projected={s.projected}
-              data-drifted={s.drifted}
-            >
-              {s.projected}
-            </p>
-            <p
-              class="surface-note mt-2 hidden text-[11px] font-semibold uppercase tracking-wider text-amber-400/90"
-              data-note={s.driftedNote}
-            >
-              {s.driftedNote}
-            </p>
-          </div>
-        ))
-      }
-    </div>
-
-    <div class="agent-call hidden border-t border-amber-500/30 bg-amber-500/10 px-4 py-3 sm:px-5" data-agent-call>
-      <p class="text-[10px] font-bold uppercase tracking-widest text-amber-400">Agent call</p>
-      <p class="mt-1 font-mono text-xs leading-relaxed text-slate-200">
-        pay_invoice(invoice_id) <span class="text-slate-500">← amount omitted, because the tool said optional</span>
-      </p>
-      <p class="mt-1 text-xs text-amber-200/90">Endpoint returns 400. Logged as a hallucination. It was not.</p>
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[28rem] border-collapse text-left">
+        <thead>
+          <tr class="border-b border-white/8 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            <th class="px-4 py-2.5 font-bold sm:px-5" scope="col">Operation</th>
+            <th class="px-4 py-2.5 font-bold sm:px-5" scope="col">Interface</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map((row) => (
+              <tr class="border-b border-white/5 last:border-0">
+                <td class="px-4 py-4 align-middle font-mono text-sm text-primary sm:px-5">{row.operation}</td>
+                <td class="px-4 py-4 align-middle sm:px-5">
+                  <div class="flex flex-wrap items-center gap-3">
+                    <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{row.kind}</span>
+                    {row.visual === 'button' && (
+                      <button
+                        type="button"
+                        class="rounded-md bg-primary px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      >
+                        Pay Invoice
+                      </button>
+                    )}
+                    {row.visual === 'endpoint' && (
+                      <code class="rounded-md border border-white/10 bg-slate-800/80 px-2.5 py-1 font-mono text-xs text-slate-200">
+                        {row.detail}
+                      </code>
+                    )}
+                    {row.visual === 'step' && (
+                      <span class="inline-flex items-center gap-2 rounded-md border border-teal-400/30 bg-teal-400/10 px-2.5 py-1 text-xs font-semibold text-teal-200">
+                        <span class="flex h-5 w-5 items-center justify-center rounded-full bg-teal-400/20 text-[10px] font-bold text-teal-200">
+                          3
+                        </span>
+                        {row.detail}
+                      </span>
+                    )}
+                    {row.visual === 'tool' && (
+                      <code class="rounded-md border border-white/10 bg-slate-800/80 px-2.5 py-1 font-mono text-xs text-slate-200">
+                        {row.detail}()
+                      </code>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <figcaption class="mt-3 text-sm leading-relaxed text-muted dark:text-slate-400" data-caption>
-    Projected: every interface inherits the same precondition and required amount. Flip to hand-written to unpin the MCP
-    tool and watch the seam an agent finds first.
+  <figcaption class="mt-3 text-sm leading-relaxed text-muted dark:text-slate-400">
+    Same operation. Four interfaces. A button, an endpoint, a workflow step, and a tool an agent can call.
   </figcaption>
 </figure>
-
-<script>
-  function bind(root: HTMLElement) {
-    const buttons = root.querySelectorAll<HTMLButtonElement>('.mode-btn');
-    const contracts = root.querySelectorAll<HTMLElement>('.surface-contract');
-    const notes = root.querySelectorAll<HTMLElement>('.surface-note');
-    const agentCall = root.querySelector<HTMLElement>('[data-agent-call]');
-    const caption = root.querySelector<HTMLElement>('[data-caption]');
-
-    const captions = {
-      projected:
-        'Projected: every interface inherits the same precondition and required amount. Flip to hand-written to unpin the MCP tool and watch the seam an agent finds first.',
-      handwritten:
-        'Hand-written: the MCP tool drifted. Amount became optional in the description only. An agent calls what it was told exists, not what the endpoint enforces.',
-    };
-
-    function setMode(mode: 'projected' | 'handwritten') {
-      buttons.forEach((btn) => {
-        btn.classList.toggle('is-active', btn.dataset.mode === mode);
-      });
-
-      contracts.forEach((el) => {
-        const text = mode === 'projected' ? el.dataset.projected : el.dataset.drifted;
-        if (text) el.textContent = text;
-        const drifted = mode === 'handwritten' && el.dataset.projected !== el.dataset.drifted;
-        el.classList.toggle('is-drifted', drifted);
-      });
-
-      notes.forEach((el) => {
-        const parent = el.closest('.surface');
-        const contract = parent?.querySelector<HTMLElement>('.surface-contract');
-        const show = mode === 'handwritten' && contract?.dataset.projected !== contract?.dataset.drifted;
-        el.classList.toggle('hidden', !show);
-      });
-
-      agentCall?.classList.toggle('hidden', mode !== 'handwritten');
-      if (caption) caption.textContent = captions[mode];
-    }
-
-    buttons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const mode = btn.dataset.mode === 'handwritten' ? 'handwritten' : 'projected';
-        setMode(mode);
-      });
-    });
-
-    setMode('projected');
-  }
-
-  document.querySelectorAll<HTMLElement>('[data-interface-projection]').forEach(bind);
-</script>
-
-<style>
-  .mode-btn.is-active {
-    background-color: rgb(45 212 191 / 0.15);
-    color: rgb(94 234 212);
-  }
-
-  .surface-contract.is-drifted {
-    color: rgb(252 211 77);
-  }
-</style>

@@ -43,20 +43,11 @@ Put differently: agent-native architecture is how interfaces should attach. The 
 
 The same `Pay Invoice` usually appears as more than one interface:
 
-| Operation   | Interface                |
-| ----------- | ------------------------ |
-| Pay Invoice | A button                 |
-| Pay Invoice | A REST endpoint          |
-| Pay Invoice | A workflow step          |
-| Pay Invoice | A tool an agent can call |
+<InterfaceProjection />
 
 Four interfaces. Four owners. Four calendars for when they get updated. Written by hand, they agree on the day they ship. They do not stay that way.
 
-Projection means one operation definition, and every interface inherits its contract rather than restating it. Change a precondition once; every expression of it moves.
-
-`status = Issued` becomes a 409 on the endpoint, a refusal in the tool's error contract, a guard on the workflow step, and a disabled button. `amount` required becomes a required body field, a required tool parameter, a step input, and a required form control. Same source. Four expressions. None of them authored separately.
-
-<InterfaceProjection />
+Projection means one operation definition, and every interface inherits its contract rather than restating it. Change a precondition once; every expression of it moves. `status = Issued` becomes a 409 on the endpoint, a refusal in the tool's error contract, a guard on the workflow step, and a disabled button. `amount` required becomes a required body field, a required tool parameter, a step input, and a required form control. Same source. Four expressions. None of them authored separately.
 
 Interfaces are not fully interchangeable. A UI needs affordances and copy. A queue consumer needs idempotency and retry semantics. An MCP tool needs a description written for a model's benefit. Projection settles the contract, not the presentation. Saying that out loud is what makes the rest credible.
 
