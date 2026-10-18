@@ -3,9 +3,8 @@ import { twMerge } from 'tailwind-merge';
 
 // Figure for "Interfaces for Workflows" in the Execution Model post.
 //
-// Compose operations into a Submit Order path. Each step is noun · verb, with
-// the actor on the right. After Order · Create, a background fork sends the
-// confirmation email while the main path routes to the confirmation page.
+// Main path: validate → submit → create → show confirmation.
+// Side flow: Order · Create triggers Confirmation · Send as a background job.
 
 export interface Props {
   class?: string;
@@ -19,59 +18,43 @@ type Step = {
   actor: string;
   kind: string;
   note?: string;
+  side?: Step;
 };
 
-type Node = { type: 'step'; step: Step } | { type: 'fork'; label: string; steps: Step[] };
-
-const nodes: Node[] = [
+const steps: Step[] = [
   {
-    type: 'step',
-    step: {
-      noun: 'Order',
-      verb: 'Validate',
-      actor: 'Browser',
-      kind: 'UI',
-      note: 'Frontend validation',
-    },
+    noun: 'Order',
+    verb: 'Validate',
+    actor: 'Browser',
+    kind: 'UI',
+    note: 'Frontend validation',
   },
   {
-    type: 'step',
-    step: {
-      noun: 'Order',
-      verb: 'Submit',
-      actor: 'API',
+    noun: 'Order',
+    verb: 'Submit',
+    actor: 'API',
+    kind: 'System',
+    note: 'API validation',
+  },
+  {
+    noun: 'Order',
+    verb: 'Create',
+    actor: 'Order system',
+    kind: 'System',
+    side: {
+      noun: 'Confirmation',
+      verb: 'Send',
+      actor: 'Mail worker',
       kind: 'System',
-      note: 'API validation',
+      note: 'Background job',
     },
   },
   {
-    type: 'step',
-    step: {
-      noun: 'Order',
-      verb: 'Create',
-      actor: 'Order system',
-      kind: 'System',
-    },
-  },
-  {
-    type: 'fork',
-    label: 'Fork',
-    steps: [
-      {
-        noun: 'Confirmation',
-        verb: 'Send',
-        actor: 'Mail worker',
-        kind: 'System',
-        note: 'Background job',
-      },
-      {
-        noun: 'Confirmation',
-        verb: 'Show',
-        actor: 'Browser',
-        kind: 'UI',
-        note: 'Route to confirmation page',
-      },
-    ],
+    noun: 'Confirmation',
+    verb: 'Show',
+    actor: 'Browser',
+    kind: 'UI',
+    note: 'Return to frontend, confirmation page',
   },
 ];
 ---
@@ -87,52 +70,53 @@ const nodes: Node[] = [
 
     <div class="flow px-4 py-4 sm:px-5">
       {
-        nodes.map((node, i) => (
+        steps.map((step, i) => (
           <>
-            {node.type === 'step' && (
-              <div class="step-row">
-                <div class="step-main">
-                  <p class="step-name">
-                    <span class="step-noun">{node.step.noun}</span>
-                    <span class="step-dot" aria-hidden="true">
-                      ·
-                    </span>
-                    <span class="step-verb">{node.step.verb}</span>
-                  </p>
-                  {node.step.note && <p class="step-note">{node.step.note}</p>}
-                </div>
-                <div class="step-actor">
-                  <span class="actor-name">{node.step.actor}</span>
-                  <span class="actor-kind">{node.step.kind}</span>
-                </div>
+            <div class="step-row">
+              <div class="step-main">
+                <p class="step-name">
+                  <span class="step-noun">{step.noun}</span>
+                  <span class="step-dot" aria-hidden="true">
+                    ·
+                  </span>
+                  <span class="step-verb">{step.verb}</span>
+                </p>
+                {step.note && <p class="step-note">{step.note}</p>}
               </div>
-            )}
+              <div class="step-actor">
+                <span class="actor-name">{step.actor}</span>
+                <span class="actor-kind">{step.kind}</span>
+              </div>
+            </div>
 
-            {node.type === 'fork' && (
-              <div class="fork">
-                <p class="fork-label">{node.label}</p>
-                {node.steps.map((step) => (
-                  <div class="step-row fork-step">
+            {step.side && (
+              <div class="side-flow" aria-label="Triggered side flow">
+                <div class="side-rail" aria-hidden="true">
+                  <span class="side-elbow" />
+                </div>
+                <div class="side-body">
+                  <p class="side-label">Triggers</p>
+                  <div class="step-row side-step">
                     <div class="step-main">
                       <p class="step-name">
-                        <span class="step-noun">{step.noun}</span>
+                        <span class="step-noun">{step.side.noun}</span>
                         <span class="step-dot" aria-hidden="true">
                           ·
                         </span>
-                        <span class="step-verb">{step.verb}</span>
+                        <span class="step-verb">{step.side.verb}</span>
                       </p>
-                      {step.note && <p class="step-note">{step.note}</p>}
+                      {step.side.note && <p class="step-note">{step.side.note}</p>}
                     </div>
                     <div class="step-actor">
-                      <span class="actor-name">{step.actor}</span>
-                      <span class="actor-kind">{step.kind}</span>
+                      <span class="actor-name">{step.side.actor}</span>
+                      <span class="actor-kind">{step.side.kind}</span>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
             )}
 
-            {i < nodes.length - 1 && (
+            {i < steps.length - 1 && (
               <span class="connector" aria-hidden="true">
                 <span class="connector-line" />
               </span>
@@ -144,8 +128,8 @@ const nodes: Node[] = [
   </div>
 
   <figcaption class="mt-3 text-sm leading-relaxed text-muted dark:text-slate-400">
-    One workflow, five operations. After Order · Create, the path forks: Confirmation · Send runs as a background job
-    while Confirmation · Show routes the browser.
+    Main path returns to the browser and shows the confirmation page. Order · Create also triggers Confirmation · Send
+    as a background side flow.
   </figcaption>
 </figure>
 
@@ -225,28 +209,49 @@ const nodes: Node[] = [
     text-transform: uppercase;
   }
 
-  .fork {
-    display: flex;
-    flex-direction: column;
+  .side-flow {
+    display: grid;
+    grid-template-columns: 1.25rem minmax(0, 1fr);
     gap: 0.5rem;
-    border: 1px dashed rgb(45 212 191 / 0.45);
-    border-radius: 0.875rem;
-    background: rgb(13 148 136 / 0.07);
-    padding: 0.625rem;
+    margin-top: 0.5rem;
+    margin-left: 0.75rem;
   }
 
-  .fork-label {
+  .side-rail {
+    position: relative;
+  }
+
+  .side-elbow {
+    position: absolute;
+    top: 0;
+    left: 0.35rem;
+    width: 0.9rem;
+    height: 1.6rem;
+    border-left: 2px dashed rgb(45 212 191 / 0.7);
+    border-bottom: 2px dashed rgb(45 212 191 / 0.7);
+    border-bottom-left-radius: 0.5rem;
+  }
+
+  .side-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .side-label {
     margin: 0;
     color: rgb(45 212 191);
     font-size: 0.6875rem;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    text-align: center;
   }
 
-  .fork-step {
-    background: rgb(15 23 42 / 0.55);
+  .side-step {
+    border-style: dashed;
+    border-color: rgb(45 212 191 / 0.4);
+    background: rgb(13 148 136 / 0.08);
   }
 
   .connector {
