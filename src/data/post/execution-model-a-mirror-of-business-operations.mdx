@@ -21,13 +21,11 @@ import InterfaceProjection from '~/components/widgets/InterfaceProjection.astro'
 
 Years ago I worked with an architect who would not let "CRUD" into a design review. No Create Invoice button. No Update Loan endpoint. No InvoiceCreated event if what we meant was Issued. Every UI component, every API endpoint, every pub/sub message had to use business nouns and verbs: Issue Invoice, Close Loan, Escalate Claim. He was not being pedantic about naming. He was keeping the interface vocabulary identical to the work the business already had words for.
 
-That discipline made our interfaces clean. More than that, it opened the door for a near-perfect mirror between the [operational model](/blog/operational-model-the-missing-abstraction/) and the execution model: the same actor, action, and resource on both sides of the glass.
+That discipline made our interfaces clean. More than that, it opened the door for a near-perfect mirror between the [operational model](/blog/operational-model-the-missing-abstraction) and the execution model: the same actor, action, and resource on both sides of the glass.
 
 ## The Execution Layer
 
 **The Execution Model is where operational work becomes usable, with composable interfaces that faithfully reflect the underlying operational model.** Its construct is the Interface: a button, a form, a REST endpoint, a workflow step, an MCP tool. Each interface runs an operation. None of them should redefine it.
-
-An operation names the work. Execution projects it into the surfaces that call it. `Customer → Pay → Invoice`, only when `status = Issued`, only when `amount` is present and matches what is due, becomes the same contract on every face that exposes it.
 
 If the mirror is faithful, every surface agrees on preconditions, effects, and errors because they read from one operation. If it is not, you do not have an Execution Model. You have four interfaces that happen to share a name, often dressed in CRUD because that was the template in the scaffold.
 
