@@ -54,11 +54,16 @@ const {
 >
 </div>
 
-<script is:inline>
+<script is:inline data-astro-rerun>
   (function () {
     // Must stay inline: this component is often rendered into a slot that
     // Hero.astro re-emits via Astro.slots.render + set:html, which strips
     // bundled <script> tags. See src/utils/dnaHelix.ts for the SVG variant.
+    //
+    // data-astro-rerun: ClientRouter soft navigation (blog post → home)
+    // swaps in a fresh document without ever re-running this script, so the
+    // new helix element never initialized. Re-running is safe: the helpers are
+    // guarded and only [data-dna-helix]:not([data-helix-ready]) elements mount.
     if (!window.__initDnaHelix) {
       window.__initDnaHelix = function (el, opts) {
         const DEFAULT_COLOR = { r: 45, g: 212, b: 191 };
@@ -127,7 +132,9 @@ const {
         resize();
 
         function frame(ts) {
-          if (document.hidden) {
+          // The canvas left the document (ClientRouter swapped the page away):
+          // stop instead of animating a detached element forever.
+          if (document.hidden || !canvas.isConnected) {
             raf = 0;
             return;
           }
