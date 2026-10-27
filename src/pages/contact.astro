@@ -1,0 +1,52 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+// Same form as /waitlist: it already asks for everything a first conversation needs, and it
+// is the one inbox somebody reads. The page earns its own URL by saying which channel suits
+// which question, so a bug in the open-source language does not land in the sales inbox.
+const metadata = {
+  title: 'Contact',
+  description:
+    'Reach the DNA Codes team: the contact form for design partnerships and product questions, GitHub for the open-source DNA language.',
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText tagline="Contact" title="Talk to the team.">
+    <Fragment slot="subtitle">Tell us how your team works today, and what you would like it to run on.</Fragment>
+  </HeroText>
+
+  <section class="px-4 sm:px-6 mx-auto max-w-3xl pb-4">
+    <div class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight">
+      <h2>Which channel to use</h2>
+      <ul>
+        <li>
+          <strong>Design partnerships, pricing and product questions:</strong> use the form below. Tell us about your team
+          and the tools you run it on today, and we will reply by email.
+        </li>
+        <li>
+          <strong>The DNA language, schemas and adapters:</strong> open an issue on&#32;
+          <a href="https://github.com/dna-codes/dna">github.com/dna-codes/dna</a>. That is the fastest route for bugs,
+          schema questions and proposals, and the answer helps the next person who asks.
+        </li>
+        <li>
+          <strong>Getting started on your own:</strong> the <a href="/docs/getting-started">getting started guide</a
+          >&#32; walks through installing DNA and validating your first document, and the <a href="/playground"
+            >Playground</a
+          >&#32; shows a complete operating model for six industries.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <WidgetWrapper containerClass="max-w-4xl mx-auto">
+    <div
+      class="rounded-2xl border border-primary/40 bg-slate-900/70 p-6 sm:p-10 shadow-[0_0_48px_rgba(13,148,136,0.18)]"
+    >
+      <WaitlistForm id="contact" />
+    </div>
+  </WidgetWrapper>
+</Layout>
