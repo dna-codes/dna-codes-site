@@ -3,3 +3,5 @@ node_modules
 .github
 .changeset
 .claude/settings.local.json
+# Self-contained talk companion app, kept byte-for-byte as authored
+public/building-with-ai
