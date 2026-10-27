@@ -1,0 +1,74 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import SocialProof from '~/components/widgets/SocialProof.astro';
+import { CORE, SURFACES, type Product } from '~/data/products';
+import { WAITLIST_HREF } from '~/navigation';
+
+const metadata = {
+  title: 'About',
+  description:
+    'DNA Codes builds a living operating model for teams of humans and agents, and DNA, the open description language it runs on.',
+};
+
+const detail = (s: Product) => `: ${s.description.toLowerCase()} (${s.status.toLowerCase()})`;
+---
+
+<Layout metadata={metadata}>
+  <HeroText tagline="About" title="We are building the operating model your software is missing." />
+
+  <section class="px-4 sm:px-6 mx-auto max-w-3xl pb-8">
+    <div class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight">
+      <p>
+        Every business already has an operating model. It lives in people's heads, in onboarding docs, in a wiki nobody
+        trusts and in the permission checks scattered through its code. DNA Codes exists to write that model down once,
+        in a form both people and software can read, and then run on it.
+      </p>
+
+      <h2>What we build</h2>
+      <p>
+        <strong>DNA</strong> is an open description language for business systems. It captures who your business deals with
+        and in what capacity, the things it manages, the operations it performs and the rules that govern them. The language,
+        its schemas and its adapters are published on npm under the <code>@dna-codes</code> scope and developed in the open
+        on <a href="https://github.com/dna-codes">GitHub</a>.
+      </p>
+      <p>
+        <strong>Operations</strong> is the product built on it. At its core is <a href={CORE.href}>{CORE.name}</a>:&#32;
+        {CORE.description.toLowerCase()}. Around that core sit surfaces, one for each place your software meets
+        somebody:
+      </p>
+      <ul>
+        {
+          SURFACES.map((s) => (
+            <li>
+              {s.planned ? <strong>{s.name}</strong> : <a href={s.href}>{s.name}</a>}
+              {detail(s)}
+            </li>
+          ))
+        }
+      </ul>
+
+      <h2>Why it matters now</h2>
+      <p>
+        The future of work is humans and agents working side by side. An agent given a broad API key has no idea which
+        operations it is allowed to perform or whose authority it is acting under. A model that names every role, every
+        operation and every rule gives agents the same job description and the same limits a person would have, and
+        keeps a record of what each one did.
+      </p>
+      <p>
+        We write about the thinking behind this on <a href="/blog">the blog</a>, starting with the series on the
+        abstraction layers between intent and execution that today's software skips.
+      </p>
+
+      <h2>Where we are</h2>
+      <p>
+        Operations is pre-release. We are working with design partners whose work has nothing to do with software, which
+        is the point: an operating model has to hold up in any domain. If that sounds like your team, <a
+          href={WAITLIST_HREF}>join the waitlist</a
+        > or <a href="/contact">get in touch</a>.
+      </p>
+    </div>
+  </section>
+
+  <SocialProof />
+</Layout>
