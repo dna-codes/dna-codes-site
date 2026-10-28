@@ -962,7 +962,7 @@ const KEYWORD_PAIRS = {
 
 /* =================== STATE & HELPERS =================== */
 let mode = "now", view = "overview", ph = 0, sb = 0;
-let patternsBrowse = "keyword", patternsStage = "all", patternsKeyword = null, showTools = false, toolsCat = "harnesses";
+let patternsKeyword = null, showTools = false, toolsCat = "harnesses";
 const $ = (s,el=document)=>el.querySelector(s);
 const root = document.documentElement;
 const main = $("#main"), panel = $("#panel"), ringWrap = $("#ring-wrap");
@@ -1272,24 +1272,8 @@ function resolveKeyword(id){
   if (KEYWORDS.some(k => k.id === id)) return id;
   return KEYWORD_ALIASES[id] || null;
 }
-function kwByStage(stage){
-  if (stage === "all") return KEYWORDS.slice();
-  return KEYWORDS.filter(k => k.stages.includes(stage));
-}
 function toolsForChart(){
-  const stageIds = new Set(kwByStage(patternsStage).map(k => k.id));
-  return TOOLS.filter(t => stageIds.has(t.keyword) && (toolsCat === "all" || t.keyword === toolsCat));
-}
-function browseBar(){
-  return `<div class="browse-row">
-    <span class="lbl">Browse by</span>
-    <button type="button" class="filter" data-pb="keyword" aria-pressed="${patternsBrowse==="keyword"}">Stack category</button>
-    <button type="button" class="filter" data-pb="stage" aria-pressed="${patternsBrowse==="stage"}">Lifecycle stage</button>
-  </div>`;
-}
-function stageFilters(active){
-  const opts = [["all","All"], ...PHASES.map(p=>[p.id,p.name])];
-  return `<div class="filters" role="group" aria-label="Filter by stage">${opts.map(([v,l])=>`<button type="button" class="filter" data-tf="${v}" aria-pressed="${v===active}">${l}</button>`).join("")}</div>`;
+  return TOOLS.filter(t => toolsCat === "all" || t.keyword === toolsCat);
 }
 function keywordFilters(active){
   return `<div class="filters" role="group" aria-label="Stack categories">${KEYWORDS.map(k=>`<button type="button" class="filter" data-kw="${k.id}" aria-pressed="${k.id===active}">${esc(k.name)}</button>`).join("")}</div>`;
@@ -1314,7 +1298,7 @@ function chartSVG(){
       </g>`;
     });
   } else {
-    kwByStage(patternsStage).forEach(k=>{
+    KEYWORDS.forEach(k=>{
       const cx = X(k.maturity), cy = Y(k.scope);
       const cur = patternsKeyword === k.id ? ' aria-current="true"' : "";
       nodes += `<g class="chart-dot" tabindex="0" role="button" data-kw="${k.id}"${cur}>
@@ -1358,11 +1342,9 @@ function patternsChartHTML(){
   return `<div class="tips-head"><div class="head">
       <div class="eyebrow-row"><span class="eyebrow-pill">Now</span></div>
       <h2>Patterns for today</h2>
-      <p class="lede">What to do, and what to watch for — across the agent stack, or by lifecycle stage.</p></div>
+      <p class="lede">What to do, and what to watch for, across the agent stack.</p></div>
     <button type="button" class="filter" data-tools="1" aria-pressed="${showTools}">${showTools ? "Show categories" : "Show tools"}</button>
   </div>
-  ${browseBar()}
-  ${stageFilters(patternsStage)}
   ${showTools ? toolsCatFilters() : ""}
   ${chartSVG()}
   <div class="actions"><button type="button" class="btn-ghost" data-home="1"><span aria-hidden="true">←</span> Back to the lifecycle</button></div>`;
@@ -1376,39 +1358,21 @@ function patternsKeywordHTML(id){
       <p class="lede">${esc(k.blurb)}</p></div>
     <button type="button" class="btn-ghost" data-patterns-chart="1"><span aria-hidden="true">←</span> Chart</button>
   </div>
-  ${browseBar()}
   ${keywordFilters(k.id)}
   <div class="kw-meta">
     <button type="button" class="mini link" data-gloss="${k.term}">Glossary · ${esc(TERMS[k.term]?.name || k.name)}</button>
-    ${k.stages.map(s => `<button type="button" class="mini" data-phase="${PHASES.findIndex(p=>p.id===s)}">${stageName(s)}</button>`).join("")}
   </div>
   ${exemplars.length ? `<div class="block"><span class="label">Exemplars · click opens this category</span>
     <div class="chips">${exemplars.map(t=>`<button type="button" class="chip" data-kw="${k.id}" title="${esc(t.note)}">${esc(t.name)}</button>`).join("")}</div></div>` : ""}
   ${keywordPairsBlock(k.id)}
   <div class="actions"><button type="button" class="btn-ghost" data-home="1"><span aria-hidden="true">←</span> Back to the lifecycle</button></div>`;
 }
-function patternsStageHTML(){
-  const list = kwByStage(patternsStage);
-  return `<div class="tips-head"><div class="head">
-      <div class="eyebrow-row"><span class="eyebrow-pill">Now</span></div>
-      <h2>${patternsStage === "all" ? "All stages" : stageName(patternsStage)}</h2>
-      <p class="lede">Stack categories that show up here. Open one for paired anti-patterns and patterns.</p></div>
-  </div>
-  ${browseBar()}
-  ${stageFilters(patternsStage)}
-  <div class="kw-grid">${list.map(k => `<button type="button" class="kw-card" data-kw="${k.id}">
-      <h4>${esc(k.name)}</h4><p>${esc(k.blurb)}</p>
-    </button>`).join("")}</div>
-  <div class="actions"><button type="button" class="btn-ghost" data-home="1"><span aria-hidden="true">←</span> Back to the lifecycle</button></div>`;
-}
 function tipsHTML(){
-  if (patternsBrowse === "stage") return patternsStageHTML();
   if (patternsKeyword) return patternsKeywordHTML(patternsKeyword);
   return patternsChartHTML();
 }
 
 function patternsHash(){
-  if (patternsBrowse === "stage") return patternsStage === "all" ? "#patterns/stage" : `#patterns/stage/${patternsStage}`;
   if (patternsKeyword) return `#patterns/${patternsKeyword}`;
   if (showTools) return toolsCat === "all" ? "#patterns?tools=1" : `#patterns?tools=1&cat=${toolsCat}`;
   return "#patterns";
@@ -1432,18 +1396,15 @@ function goOverview(){ view = "overview"; render(); }
 function goTips(opts){
   view = "tips";
   if (mode !== "now"){ mode = "now"; initDots(); }
-  if (opts && opts.browse) patternsBrowse = opts.browse;
   if (opts && "keyword" in opts) patternsKeyword = resolveKeyword(opts.keyword);
-  if (opts && opts.stage) patternsStage = opts.stage;
   if (opts && "tools" in opts) showTools = !!opts.tools;
   if (opts && opts.toolsCat) toolsCat = opts.toolsCat;
-  if (!opts){ patternsBrowse = "keyword"; patternsKeyword = null; patternsStage = "all"; showTools = false; toolsCat = "harnesses"; }
+  if (!opts){ patternsKeyword = null; showTools = false; toolsCat = "harnesses"; }
   render();
 }
 function openKeyword(id){
   const resolved = resolveKeyword(id);
   if (!resolved) return;
-  patternsBrowse = "keyword";
   patternsKeyword = resolved;
   if (view !== "tips"){ view = "tips"; if (mode !== "now"){ mode = "now"; initDots(); } }
   render();
@@ -1586,9 +1547,7 @@ document.addEventListener("click", e=>{
   if (era){ setMode(era.dataset.mode); return; }
   if (e.target.closest("[data-tips]")){ goTips(); return; }
   if (e.target.closest("[data-home]")){ goOverview(); return; }
-  if (e.target.closest("[data-patterns-chart]")){ patternsKeyword = null; patternsBrowse = "keyword"; render(); return; }
-  const pb = e.target.closest("[data-pb]");
-  if (pb){ patternsBrowse = pb.dataset.pb; if (patternsBrowse === "keyword") patternsKeyword = null; render(); return; }
+  if (e.target.closest("[data-patterns-chart]")){ patternsKeyword = null; render(); return; }
   const toolsBtn = e.target.closest("[data-tools]");
   if (toolsBtn){
     showTools = !showTools;
@@ -1602,8 +1561,6 @@ document.addEventListener("click", e=>{
   if (kw){ openKeyword(kw.dataset.kw); return; }
   const gloss = e.target.closest("[data-gloss]");
   if (gloss){ openGlossary(gloss.dataset.gloss); return; }
-  const tf = e.target.closest("[data-tf]");
-  if (tf){ patternsStage = tf.dataset.tf; if (patternsBrowse === "keyword") patternsKeyword = null; render(); return; }
   if (e.target.closest("#pop-open")){ openGlossary($("#pop-open").dataset.term); return; }
   const gf = e.target.closest("[data-gf]");
   if (gf){ gFilter = gf.dataset.gf; renderGlossary(); return; }
@@ -1664,13 +1621,12 @@ if (h === "tips" || h === "patterns" || h.startsWith("patterns/") || h.startsWit
   const bare = h === "tips" ? "" : h.replace(/^patterns\/?/, "");
   const tools = /(?:^|[?&])tools=1\b/.test(h) || bare.includes("tools=1");
   const catMatch = h.match(/[?&]cat=([a-z0-9-]+)/);
-  const toolsCatOpt = catMatch && (catMatch[1] === "all" || KEYWORDS.some(k=>k.id===catMatch[1])) ? catMatch[1] : (tools ? "harnesses" : "harnesses");
+  const toolsCatOpt = catMatch && (catMatch[1] === "all" || KEYWORDS.some(k=>k.id===catMatch[1])) ? catMatch[1] : "harnesses";
   const path = bare.split("?")[0];
   const parts = path ? path.split("/").filter(Boolean) : [];
-  let browse = "keyword", kw = null, stage = "all";
-  if (parts[0] === "stage"){ browse = "stage"; stage = parts[1] && PHASES.some(p=>p.id===parts[1]) ? parts[1] : "all"; }
-  else if (parts[0]) kw = resolveKeyword(parts[0]);
-  goTips({ browse, keyword: kw, stage, tools, toolsCat: toolsCatOpt });
+  // Old #patterns/stage/... hashes fall through to the chart.
+  const kw = parts[0] && parts[0] !== "stage" ? resolveKeyword(parts[0]) : null;
+  goTips({ keyword: kw, tools, toolsCat: toolsCatOpt });
 } else {
   const mm = h.match(/^([a-z]+)-(\d)$/);
   const pi = PHASES.findIndex(p=>p.id === (mm ? mm[1] : h));
