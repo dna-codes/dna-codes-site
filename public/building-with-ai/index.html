@@ -1295,7 +1295,7 @@ function eraPills(b){
 }
 
 function overviewHTML(){
-  const m = MODES[mode], mb = m.bottlenecks[0], s = PHASES[mb.p].subs[mb.k];
+  const m = MODES[mode];
   return `${eraPills(null)}
   <h1>The lifecycle didn't disappear. <span class="hl">The bottleneck moved.</span></h1>
   <p class="lede">${esc(m.story)}</p>
@@ -1306,8 +1306,6 @@ function overviewHTML(){
   </div>
   <div class="actions">
     <button type="button" class="btn-primary" data-phase="0">Start with Discover <span aria-hidden="true">→</span></button>
-    <button type="button" class="btn-warn" data-sub="${mb.p}-${mb.k}">${mb.label === "NEXT" ? "Next bottleneck" : "The bottleneck"}: ${esc(s.name)}</button>
-    <button type="button" class="btn-ghost" data-nav="patterns">Open Patterns</button>
   </div>`;
 }
 
