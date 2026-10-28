@@ -1388,12 +1388,14 @@ function layoutToolPoints(tools, X, Y, padL, padT, padB, H, gutterX){
 function chartSVG(){
   const tools = showTools ? toolsForChart() : null;
   const allTools = showTools && toolsCat === "all";
-  const n = showTools ? tools.length : 0;
-  const W = showTools ? 1040 : 900;
-  const H = showTools ? Math.max(480, 120 + n * (allTools ? 28 : 26)) : 420;
+  const n = showTools && !allTools ? tools.length : 0;
+  // All-categories is dots+tooltips only: keep a fixed square-ish plot.
+  // One category: grow just enough for the right-gutter labels (≤15).
+  const W = showTools ? (allTools ? 920 : 1040) : 900;
+  const H = !showTools ? 420 : allTools ? 460 : Math.max(420, 120 + n * 26);
   const padL = 64, padT = 28, padB = 52;
-  const gutterX = showTools ? W - 210 : W - 28;
-  const plotW = (showTools ? gutterX - 24 : W - 140) - padL, plotH = H - padT - padB;
+  const gutterX = showTools && !allTools ? W - 210 : W - 28;
+  const plotW = (showTools && !allTools ? gutterX - 24 : W - 140) - padL, plotH = H - padT - padB;
   const X = m => padL + (m / 100) * plotW, Y = s => padT + plotH - (s / 100) * plotH;
   let nodes = "";
   if (showTools){
@@ -1404,7 +1406,7 @@ function chartSVG(){
         const cat = KEYWORDS.find(k => k.id === t.keyword)?.name || "";
         nodes += `<g class="chart-tool" tabindex="0" role="button" data-select-kw="${t.keyword}"${cur}>
           <title>${esc(t.name)} · ${esc(cat)}${t.note ? ": " + esc(t.note) : ""}</title>
-          <circle class="chart-node" cx="${cx}" cy="${cy}" r="5"/>
+          <circle class="chart-node" cx="${cx}" cy="${cy}" r="4.5"/>
         </g>`;
       });
     } else {
