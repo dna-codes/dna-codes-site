@@ -34,8 +34,29 @@ export const headerData = {
     // thing rather than read about it — the hero's second action lands here too.
     { text: 'Playground', href: getPermalink('/playground') },
     { text: 'Pricing', href: getPermalink('/pricing') },
-    { text: 'Docs', href: getPermalink('/docs') },
-    { text: 'Blog', href: getBlogPermalink() },
+    // Learn gathers the things you read or work through: schema docs, the blog, and the
+    // Building With AI companion. Three top-level items for "go read" crowded the bar next
+    // to Products / Playground / Pricing; one menu keeps the conversion path clear.
+    {
+      text: 'Learn',
+      links: [
+        {
+          text: 'Docs',
+          href: getPermalink('/docs'),
+          description: 'Schema reference, getting started, and how DNA maps to familiar frameworks.',
+        },
+        {
+          text: 'Blog',
+          href: getBlogPermalink(),
+          description: 'Essays on the layers between intent and execution.',
+        },
+        {
+          text: 'Building With AI',
+          href: getPermalink('/building-with-ai'),
+          description: 'Interactive patterns and anti-patterns for the agent stack.',
+        },
+      ],
+    },
     // { text: 'About', href: getPermalink('/about') },
   ],
   // The one primary button on the site is the one conversion available pre-GA. Navigating
@@ -55,11 +76,12 @@ export const footerData = {
       ],
     },
     {
-      title: 'Developers',
+      title: 'Learn',
       links: [
         { text: 'Documentation', href: getPermalink('/docs') },
         { text: 'Getting started', href: getPermalink('/docs/getting-started') },
         { text: 'Blog', href: getBlogPermalink() },
+        { text: 'Building With AI', href: getPermalink('/building-with-ai') },
       ],
     },
   ],
