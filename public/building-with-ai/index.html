@@ -351,7 +351,11 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
   .panel{width:100%}
   .cols,.handed,.pair,.pairs-head{grid-template-columns:minmax(0,1fr)}
   .foot{display:none}
-  .top{justify-content:center}
+  /* Logo left, theme right; primary nav on its own row underneath. */
+  .top{display:grid;grid-template-columns:1fr auto;grid-template-areas:"brand actions" "nav nav";align-items:center;gap:10px 12px;justify-content:unset}
+  .brand{grid-area:brand;justify-self:start}
+  .top-actions{grid-area:actions;justify-self:end}
+  .primary-nav{grid-area:nav;justify-self:center;max-width:100%}
 }
 @media (max-width:520px){ .mode-btn small{display:none} .mode-btn{padding:0 12px} .nav-btn{padding:0 10px;font-size:13px} }
 @media (prefers-reduced-motion:reduce){
