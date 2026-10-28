@@ -1275,15 +1275,7 @@ function allPatternsHTML(){
       </div>
     </section>`;
   }).join("");
-  return `<section class="patterns-detail patterns-all" id="patterns-detail" aria-live="polite">
-    <div class="detail-head">
-      <div>
-        <h3>All Patterns</h3>
-        <p class="lede">Every anti-pattern / pattern pair, grouped by layer. Click a category heading or chart dot for that layer’s tools.</p>
-      </div>
-    </div>
-    ${sections}
-  </section>`;
+  return `<section class="patterns-detail patterns-all" id="patterns-detail" aria-live="polite">${sections}</section>`;
 }
 function chip(t){ return TERMS[t] ? `<button type="button" class="chip term" data-term="${t}" aria-expanded="false"><span>${TERMS[t].name}</span></button>` : `<span class="chip">${esc(t)}</span>`; }
 function eraPills(b){
@@ -1516,9 +1508,8 @@ function patternsDetailHTML(id){
 }
 function tipsHTML(){
   return `<div class="tips-head"><div class="head">
-      <div class="eyebrow-row"><span class="eyebrow-pill">Now</span></div>
-      <h2>Patterns for today</h2>
-      <p class="lede">All anti-pattern / pattern pairs below by category. Click a category for its tools, or show tools on the chart.</p></div>
+      <h2>Patterns</h2>
+      <p class="lede">Click a category for its tools, or show tools on the chart.</p></div>
     <button type="button" class="filter" data-tools="1" aria-pressed="${showTools}">${showTools ? "Show categories" : "Show tools"}</button>
   </div>
   ${showTools ? toolsCatFilters() : ""}
