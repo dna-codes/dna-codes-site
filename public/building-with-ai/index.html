@@ -801,7 +801,7 @@ const TERMS = {
     def:"Coordination of multiple agents, steps or systems toward one outcome: handoffs, parallelism, recovery.",
     ex:"A durable graph that assigns research, coding and review to separate agents and merges the result.",
     old:"Workflow engines, job queues and multi-service choreography." },
-  "assurance":{ name:"Assurance", type:"Concept", stages:["design","develop","deliver"], modes:["now","future"],
+  "governance":{ name:"Governance", type:"Concept", stages:["design","develop","deliver"], modes:["now","future"],
     def:"Evals, guardrails, observability and policy that decide whether agent work is good enough to keep or ship.",
     ex:"An eval suite and tracing platform that blocks a prompt change when quality regresses.",
     old:"QA, monitoring, change control and compliance — applied to agents." }
@@ -823,13 +823,13 @@ const KEYWORDS = [
     blurb:"Persistent recall across turns, sessions and agents." },
   { id:"orchestration", name:"Orchestration", term:"orchestration", maturity:46, scope:74, stages:["design","develop","deliver"],
     blurb:"Coordinating multiple agents, steps and recoveries." },
-  { id:"assurance", name:"Assurance", term:"assurance", maturity:60, scope:70, stages:["design","develop","deliver"],
+  { id:"governance", name:"Governance", term:"governance", maturity:60, scope:70, stages:["design","develop","deliver"],
     blurb:"Evals, guardrails, tracing and policy for agent work." }
 ];
 
 /* Old chart hashes → current categories (techniques folded into pairs). */
 const KEYWORD_ALIASES = {
-  "vibe-coding":"harnesses", specs:"skills", evals:"assurance",
+  "vibe-coding":"harnesses", specs:"skills", evals:"governance", assurance:"governance",
   context:"skills", parallel:"orchestration"
 };
 
@@ -949,19 +949,19 @@ const TOOLS = [
   { id:"camel", name:"CAMEL / swarm sims", keyword:"orchestration", group:"Research", maturity:40, scope:72, note:"Multi-agent research" },
   { id:"prefect", name:"Prefect + agents", keyword:"orchestration", group:"Workflows", maturity:60, scope:58, note:"Workflow orchestration" },
   { id:"airflow-agents", name:"Airflow DAGs + LLMs", keyword:"orchestration", group:"Workflows", maturity:54, scope:66, note:"Batch agent jobs" },
-  /* Assurance (≤15) */
-  { id:"braintrust", name:"Braintrust", keyword:"assurance", group:"Evals", maturity:86, scope:74, note:"Evals + traces" },
-  { id:"langsmith", name:"LangSmith", keyword:"assurance", group:"Evals", maturity:84, scope:72, note:"Trace + eval" },
-  { id:"langfuse", name:"Langfuse", keyword:"assurance", group:"Evals", maturity:80, scope:68, note:"OSS observability" },
-  { id:"phoenix", name:"Phoenix / Arize", keyword:"assurance", group:"Evals", maturity:74, scope:66, note:"LLM observability" },
-  { id:"patronus", name:"Patronus", keyword:"assurance", group:"Evals", maturity:68, scope:62, note:"Evaluators" },
-  { id:"agentops", name:"AgentOps", keyword:"assurance", group:"Evals", maturity:58, scope:54, note:"Agent sessions" },
-  { id:"lakera", name:"Lakera Guard", keyword:"assurance", group:"Guardrails", maturity:72, scope:58, note:"Runtime guardrails" },
-  { id:"nemo-guard", name:"NeMo Guardrails", keyword:"assurance", group:"Guardrails", maturity:64, scope:56, note:"Policy rails" },
-  { id:"snyk-agent", name:"Snyk Agent Scan", keyword:"assurance", group:"Guardrails", maturity:60, scope:60, note:"MCP/skill risks" },
-  { id:"opik", name:"Opik", keyword:"assurance", group:"Evals", maturity:66, scope:52, note:"Comet LLM telemetry" },
-  { id:"ragas", name:"Ragas", keyword:"assurance", group:"Evals", maturity:62, scope:48, note:"RAG evaluation" },
-  { id:"deepeval", name:"DeepEval", keyword:"assurance", group:"Evals", maturity:56, scope:46, note:"Unit tests for LLMs" }
+  /* Governance (≤15) */
+  { id:"braintrust", name:"Braintrust", keyword:"governance", group:"Evals", maturity:86, scope:74, note:"Evals + traces" },
+  { id:"langsmith", name:"LangSmith", keyword:"governance", group:"Evals", maturity:84, scope:72, note:"Trace + eval" },
+  { id:"langfuse", name:"Langfuse", keyword:"governance", group:"Evals", maturity:80, scope:68, note:"OSS observability" },
+  { id:"phoenix", name:"Phoenix / Arize", keyword:"governance", group:"Evals", maturity:74, scope:66, note:"LLM observability" },
+  { id:"patronus", name:"Patronus", keyword:"governance", group:"Evals", maturity:68, scope:62, note:"Evaluators" },
+  { id:"agentops", name:"AgentOps", keyword:"governance", group:"Evals", maturity:58, scope:54, note:"Agent sessions" },
+  { id:"lakera", name:"Lakera Guard", keyword:"governance", group:"Guardrails", maturity:72, scope:58, note:"Runtime guardrails" },
+  { id:"nemo-guard", name:"NeMo Guardrails", keyword:"governance", group:"Guardrails", maturity:64, scope:56, note:"Policy rails" },
+  { id:"snyk-agent", name:"Snyk Agent Scan", keyword:"governance", group:"Guardrails", maturity:60, scope:60, note:"MCP/skill risks" },
+  { id:"opik", name:"Opik", keyword:"governance", group:"Evals", maturity:66, scope:52, note:"Comet LLM telemetry" },
+  { id:"ragas", name:"Ragas", keyword:"governance", group:"Evals", maturity:62, scope:48, note:"RAG evaluation" },
+  { id:"deepeval", name:"DeepEval", keyword:"governance", group:"Evals", maturity:56, scope:46, note:"Unit tests for LLMs" }
 ];
 
 /* 1–3 anti/pattern pairs per category. Techniques fold in under the right layer. */
@@ -970,7 +970,7 @@ const KEYWORD_PAIRS = {
     { anti:{ title:"One model for everything", desc:"The same [[models|model]] for architecture, bulk renames and release notes. Cost and judgment get flattened.", warn:"The cheap path and the careful path are identical" },
       pattern:{ title:"Right model", desc:"Pick stronger [[models|models]] for judgment-heavy work and smaller ones for bulk, reversible chores. Match modality too: an image, audio or video input wants a model that can see or hear it, not a text-only path.", old:"Right tool for the job" } },
     { anti:{ title:"Model as oracle", desc:"Treating the model’s first answer as truth. No independent check, no second source.", warn:"Nobody verified the claim" },
-      pattern:{ title:"Model as draft", desc:"Use the model to draft; people, tests and [[assurance|evals]] decide what ships.", old:"Pair programming" } }
+      pattern:{ title:"Model as draft", desc:"Use the model to draft; people, tests and [[governance|evals]] decide what ships.", old:"Pair programming" } }
   ],
   skills:[
     { anti:{ title:"Disorganized Skills", desc:"A folder of [[agent-skills|skills]] nobody loads. The playbook exists; agents still improvise.", warn:"The skill was merged and never referenced" },
@@ -1012,9 +1012,9 @@ const KEYWORD_PAIRS = {
     { anti:{ title:"Chat forever", desc:"Multi-agent debate with no owner, no deadline and no durable handoff.", warn:"The transcript grew; the ticket did not" },
       pattern:{ title:"Owned handoffs", desc:"Name who decides, what gets handed off, and what “done” means between agents.", old:"RACI, workflow states" } }
   ],
-  assurance:[
+  governance:[
     { anti:{ title:"Vibes as the gate", desc:"Shipping an AI change because a few hand-tried prompts “looked fine.”", warn:"No failing case in the suite" },
-      pattern:{ title:"Evals as release gates", desc:"A repeatable [[evals|eval suite]] — part of [[assurance|assurance]] — decides whether a change ships.", old:"Regression testing" } },
+      pattern:{ title:"Evals as release gates", desc:"A repeatable [[evals|eval suite]] — part of [[governance|governance]] — decides whether a change ships.", old:"Regression testing" } },
     { anti:{ title:"Logs without judgment", desc:"Tracing everything but never scoring it. Observability as wallpaper.", warn:"Dashboards nobody uses to block a release" },
       pattern:{ title:"Trace and score", desc:"Pair tracing with scorers and thresholds that can fail CI or roll back.", old:"SLOs, error budgets" } },
     { anti:{ title:"Evals that grade the writer", desc:"The same model writes the output and scores it, with no independent check.", warn:"The build is green and the assertion count went down" },
