@@ -238,7 +238,35 @@ h2{font-size:clamp(28px,2.8vw,42px);line-height:1.08;font-weight:700;letter-spac
 .filters{display:flex;flex-wrap:wrap;gap:8px}
 .filter{min-height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--line-strong);background:none;color:var(--fg);font-size:14px;cursor:pointer}
 .filter[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--heading);font-weight:600}
-.tips-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px}
+.tips-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:4px}
+.browse-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:4px 0 12px}
+.browse-row .lbl{font-size:13px;color:var(--muted);font-weight:600}
+.pairs{display:flex;flex-direction:column;gap:14px}
+.pairs-head{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.pair-side{min-width:0;display:flex;flex-direction:column;gap:12px}
+.chart-wrap{position:relative;width:100%;max-width:920px;margin:8px 0 12px;border:1px solid var(--line-strong);border-radius:16px;background:var(--surface);padding:12px 12px 8px;overflow:hidden}
+.chart-wrap svg{display:block;width:100%;height:auto}
+.chart-dot,.chart-tool{cursor:pointer}
+.chart-dot:focus-visible .chart-node,.chart-tool:focus-visible .chart-node{outline:2px solid var(--accent);outline-offset:3px}
+.chart-node{fill:var(--accent-soft);stroke:var(--accent-line);stroke-width:1.5}
+.chart-dot[aria-current="true"] .chart-node,.chart-tool[aria-current="true"] .chart-node{fill:var(--accent);stroke:var(--accent-strong)}
+.chart-label{fill:var(--heading);font-size:12px;font-weight:600;font-family:var(--font-sans)}
+.chart-sub{fill:var(--muted);font-size:10px;font-family:var(--font-sans)}
+.chart-axis{fill:var(--muted);font-size:11px;font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+.chart-grid{stroke:var(--line);stroke-dasharray:3 4}
+.chart-spine{stroke:var(--line-strong)}
+.chart-link{stroke:var(--accent-line);stroke-dasharray:4 3;fill:none}
+.chart-ex{fill:var(--surface-2);stroke:var(--accent);stroke-width:1.5}
+.chart-note{font-size:13px;color:var(--muted);margin:0 0 8px}
+.kw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.kw-card{text-align:left;padding:16px 18px;border-radius:14px;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer;display:flex;flex-direction:column;gap:6px;color:inherit}
+.kw-card:hover,.kw-card[aria-current="true"]{border-color:var(--accent-line);background:var(--accent-soft)}
+.kw-card h4{margin:0;font-size:16px;font-weight:600;color:var(--heading)}
+.kw-card p{margin:0;font-size:14px;color:var(--muted);line-height:1.45}
+.kw-meta{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px}
+.kw-meta .mini{min-height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--line-strong);background:none;color:var(--fg);font-size:12px;cursor:pointer}
+.kw-meta .mini.link{border-color:var(--accent-line);color:var(--accent-text);font-weight:600}
 
 /* Footer */
 .foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;min-height:56px;padding-inline:clamp(0px,2vw,32px);padding-block:8px;border-top:1px solid var(--line)}
@@ -299,7 +327,7 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
   .stage-layout[data-view="phase"] .ring-wrap,.stage-layout[data-view="sub"] .ring-wrap{position:static}
   .eras{grid-template-columns:minmax(0,1fr)}
   .panel{width:100%}
-  .cols,.handed{grid-template-columns:minmax(0,1fr)}
+  .cols,.handed,.pair,.pairs-head{grid-template-columns:minmax(0,1fr)}
   .keys{display:none}
   .top{justify-content:center}
 }
@@ -326,8 +354,8 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
     <div class="top-actions">
       <button type="button" class="icon-btn" id="theme-btn" aria-label="Switch to light theme"></button>
       <button type="button" class="pill-btn" id="tips-btn" aria-pressed="false">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg>
-        <span class="lbl">Practical tips</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+        <span class="lbl">Patterns</span>
       </button>
       <button type="button" class="pill-btn" id="gloss-btn" aria-expanded="false" aria-controls="glossary">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2.5z"/><path d="M8 7h7"/></svg>
@@ -349,7 +377,7 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
       <span><kbd>1–4</kbd>phase</span>
       <span><kbd>← →</kbd>step</span>
       <span><kbd>↓</kbd>into sub-stages</span>
-      <span><kbd>T</kbd>tips</span>
+      <span><kbd>T</kbd>patterns</span>
       <span><kbd>G</kbd>glossary</span>
       <span><kbd>L</kbd>light/dark</span>
       <span><kbd>F</kbd>full screen</span>
@@ -728,12 +756,117 @@ const TERMS = {
   "software-factory":{ name:"Software factory", type:"Concept", stages:ALLS, modes:["now","future"],
     def:"The whole lifecycle run as a pipeline of agents, with checks between stages.",
     ex:"Ticket in, reviewed pull request out, with tests and evals as the gates.",
-    old:"A CI/CD pipeline, extended upstream into design and planning." }
+    old:"A CI/CD pipeline, extended upstream into design and planning." },
+  "models":{ name:"Models", type:"Concept", stages:ALLS, modes:["now","future"],
+    def:"The foundation models that read context and generate text, code or actions for agents and tools.",
+    ex:"Choosing a stronger model for design tradeoffs and a cheaper one for bulk refactors.",
+    old:"The model behind autocomplete and chat, now the engine of agent work." },
+  "harnesses":{ name:"Harnesses", type:"Concept", stages:["design","develop","deliver"], modes:["now","future"],
+    def:"The runtime around a model: tools, loops, permissions and checks that turn a completion into work that can finish.",
+    ex:"An agentic IDE that edits files, runs tests and opens a PR, versus a bare chat box.",
+    old:"IDEs, CLIs and orchestrators. The difference is how much of the loop is automated." }
+};
+
+/* Keywords for the Patterns chart. maturity/scope are 0–100 teaching positions, not rankings. */
+const KEYWORDS = [
+  { id:"vibe-coding", name:"Vibe coding", term:"vibe-coding", maturity:78, scope:28, stages:["discover","develop"],
+    blurb:"Prompt, accept, iterate — without reading the code closely." },
+  { id:"skills", name:"Skills", term:"agent-skills", maturity:62, scope:55, stages:["design","develop","deliver"],
+    blurb:"Packaged playbooks an agent loads for a recurring task." },
+  { id:"models", name:"Models", term:"models", maturity:88, scope:72, stages:ALLS,
+    blurb:"Foundation models that power agents and tools." },
+  { id:"harnesses", name:"Harnesses", term:"harnesses", maturity:48, scope:68, stages:["develop","deliver"],
+    blurb:"Runtime wrappers that loop, tool-call and gate agents." },
+  { id:"specs", name:"Specs", term:"spec-driven-development", maturity:70, scope:48, stages:["design","develop"],
+    blurb:"Specs as the source of truth agents implement against." },
+  { id:"evals", name:"Evals", term:"evals", maturity:58, scope:60, stages:["design","develop","deliver"],
+    blurb:"Repeatable checks that score model or agent output." },
+  { id:"context", name:"Context engineering", term:"context-engineering", maturity:66, scope:42, stages:["design","develop"],
+    blurb:"Shaping what the model sees so it can do the job." },
+  { id:"parallel", name:"Parallel agents", term:"parallel-agents", maturity:52, scope:38, stages:["develop"],
+    blurb:"Several agents on isolated tasks or branches at once." }
+];
+
+/* Exemplar tools for hybrid chart mode. Click opens the parent keyword. */
+const TOOLS = [
+  { id:"cursor", name:"Cursor", keyword:"harnesses", maturity:82, scope:70, note:"Agentic IDE" },
+  { id:"conductor", name:"Conductor", keyword:"harnesses", maturity:40, scope:68, note:"Earlier harness" },
+  { id:"claude-code", name:"Claude Code", keyword:"harnesses", maturity:72, scope:62, note:"CLI agent harness" },
+  { id:"gpt-class", name:"GPT-class", keyword:"models", maturity:90, scope:74, note:"General model" },
+  { id:"claude-class", name:"Claude-class", keyword:"models", maturity:88, scope:72, note:"General model" },
+  { id:"skill-packages", name:"Skill packages", keyword:"skills", maturity:60, scope:54, note:"Team playbooks" },
+  { id:"vibe-tech", name:"Vibe coding", keyword:"vibe-coding", maturity:78, scope:28, note:"Technique" },
+  { id:"eval-suites", name:"Eval suites", keyword:"evals", maturity:55, scope:58, note:"Release gates" },
+  { id:"spec-files", name:"Spec files", keyword:"specs", maturity:68, scope:46, note:"Executable intent" },
+  { id:"context-packs", name:"Context packs", keyword:"context", maturity:64, scope:40, note:"Task-shaped context" },
+  { id:"parallel-runs", name:"Parallel runs", keyword:"parallel", maturity:50, scope:36, note:"Isolated branches" }
+];
+
+const KEYWORD_EXEMPLARS = {
+  harnesses:[
+    { name:"Cursor", maturity:82, note:"Agentic IDE" },
+    { name:"Conductor", maturity:40, note:"Earlier harness" }
+  ]
+};
+
+/* 1–3 anti/pattern pairs per keyword. Same move, opposite intent. */
+const KEYWORD_PAIRS = {
+  "vibe-coding":[
+    { anti:{ title:"Ship the vibe", desc:"[[vibe-coding|Vibe-coding]] an app and tossing it into production. Nobody designed it to be maintained, secured or owned.", warn:"“We’ll clean it up later,” with no ticket" },
+      pattern:{ title:"Prototype to learn", desc:"[[vibe-coding|Vibe-coding]] a throwaway prototype for exploration and feedback. The prototype is a question, not a product.", old:"Rapid prototyping, spikes" } },
+    { anti:{ title:"Vibe past the bottleneck", desc:"Generating volume while review capacity stays flat. The PR queue becomes the new constraint.", warn:"The PR queue grows faster than merges" },
+      pattern:{ title:"Vibe inside a gate", desc:"Use vibe coding only where the next check is cheap: a usability session, a spike behind a flag, a disposable branch.", old:"Time-boxed spikes" } },
+    { anti:{ title:"Nobody owns the code", desc:"“The agent wrote it” becomes the answer to every why. No human can explain or change it safely.", warn:"“The agent wrote it” answers “why does it do this?”" },
+      pattern:{ title:"Read before you keep", desc:"Keep vibe-coded output only after a person can narrate the change and the tests that hold it.", old:"Code ownership" } }
+  ],
+  skills:[
+    { anti:{ title:"Skills as wallpaper", desc:"A folder of [[agent-skills|skills]] nobody loads. The playbook exists; agents still improvise.", warn:"The skill was merged and never referenced" },
+      pattern:{ title:"Encode the playbook", desc:"Package how your team does recurring work as [[agent-skills|agent skills]], so every agent follows the same steps.", old:"Runbooks, SOPs" } },
+    { anti:{ title:"One mega-skill", desc:"Everything the team knows in a single skill. The agent drowns in rules it does not need.", warn:"The skill is longer than the task" },
+      pattern:{ title:"One job, one skill", desc:"A skill covers one recurring job with the template, scripts and rules that job needs — nothing else.", old:"Single-purpose runbooks" } }
+  ],
+  models:[
+    { anti:{ title:"One model for everything", desc:"The same [[models|model]] for architecture, bulk renames and release notes. Cost and judgment get flattened.", warn:"The cheap path and the careful path are identical" },
+      pattern:{ title:"Model to the job", desc:"Pick stronger [[models|models]] for judgment-heavy work and smaller ones for bulk, reversible chores.", old:"Right tool for the job" } },
+    { anti:{ title:"Model as oracle", desc:"Treating the model’s first answer as truth. No independent check, no second source.", warn:"Nobody verified the claim" },
+      pattern:{ title:"Model as draft", desc:"Use the model to draft; people and tests decide what ships.", old:"Pair programming" } }
+  ],
+  harnesses:[
+    { anti:{ title:"Chat box as IDE", desc:"A bare prompt window with no tools, tests or permissions. The “[[harnesses|harness]]” is copy-paste.", warn:"Every step needs a human to move files" },
+      pattern:{ title:"Loop with checks", desc:"A [[harnesses|harness]] that can edit, run checks and stop when gates fail — an agentic IDE or CLI with a real loop.", old:"IDE + CI" } },
+    { anti:{ title:"Unbounded agency", desc:"The harness can touch anything, deploy anywhere, with no blast-radius limit.", warn:"An agent pushed to production unsupervised" },
+      pattern:{ title:"Scoped agency", desc:"Permissions and tools match the task. Production and secrets stay behind an explicit gate.", old:"Least privilege" } }
+  ],
+  specs:[
+    { anti:{ title:"Spec theater", desc:"Long generated specs that nobody reads. Volume stands in for decisions.", warn:"The spec is longer than the code" },
+      pattern:{ title:"Specs as context", desc:"A short, testable spec feeds the model directly. [[spec-driven-development|Spec-driven development]] keeps intent as the source of truth.", old:"Design by contract" } },
+    { anti:{ title:"Transcript as spec", desc:"A raw, rambling transcript goes straight to an agent, contradictions included.", warn:"The agent built what you said, not what you meant" },
+      pattern:{ title:"Talk, then tighten", desc:"Voice-dump the idea, then turn it into a reviewed spec before implementation.", old:"Whiteboarding, then writing it down" } }
+  ],
+  evals:[
+    { anti:{ title:"Vibes as the gate", desc:"Shipping an AI change because a few hand-tried prompts “looked fine.”", warn:"No failing case in the suite" },
+      pattern:{ title:"Evals as release gates", desc:"A repeatable [[evals|eval suite]] decides whether a change ships.", old:"Regression testing" } },
+    { anti:{ title:"Evals that grade the writer", desc:"The same model writes the output and scores it, with no independent check.", warn:"The build is green and the assertion count went down" },
+      pattern:{ title:"Independent scoring", desc:"Evals use fixed cases, rubrics or a separate checker the generator cannot edit.", old:"Separate test authors" } }
+  ],
+  context:[
+    { anti:{ title:"Context dumping", desc:"Everything gets pasted into the context instead of what the task needs.", warn:"The agent ignored the one rule that mattered" },
+      pattern:{ title:"Task-shaped context", desc:"[[context-engineering|Context engineering]]: hand the model the spec, the failing test and the conventions that apply — not the whole wiki.", old:"Just enough documentation" } },
+    { anti:{ title:"Hidden conventions", desc:"Rules live in people’s heads. Agents rediscover them wrong every time.", warn:"Every PR re-litigates the style guide" },
+      pattern:{ title:"Conventions in-repo", desc:"Instruction files and skills carry the rules agents must follow.", old:"CONTRIBUTING.md" } }
+  ],
+  parallel:[
+    { anti:{ title:"More agents than supervision", desc:"[[parallel-agents|Agents]] run in parallel with nobody watching their output.", warn:"Five branches, none ready to merge" },
+      pattern:{ title:"One agent, one task, one branch", desc:"Run [[parallel-agents|parallel agents]] only on isolated, well-scoped tasks a person can review.", old:"Work breakdown" } },
+    { anti:{ title:"Drifting parallel branches", desc:"Agents work on separate branches for days, then everything collides.", warn:"Every merge needs a manual fix" },
+      pattern:{ title:"Integrate agent work daily", desc:"Merge agent branches often so conflicts show up while they are small.", old:"Continuous integration" } }
+  ]
 };
 
 
 /* =================== STATE & HELPERS =================== */
-let mode = "now", view = "overview", ph = 0, sb = 0, tipsFilter = "all";
+let mode = "now", view = "overview", ph = 0, sb = 0;
+let patternsBrowse = "keyword", patternsStage = "all", patternsKeyword = null, showTools = false;
 const $ = (s,el=document)=>el.querySelector(s);
 const root = document.documentElement;
 const main = $("#main"), panel = $("#panel"), ringWrap = $("#ring-wrap");
@@ -929,13 +1062,38 @@ function card(p, bad, loc){
                   : (p.old ? `<span class="tag">OLD IDEA · <b>${esc(p.old)}</b></span>` : "");
   return `<article class="card${bad?" bad":""}${isBet() && !loc ? " bet":""}">${loc ? `<span class="loc">${esc(loc)}</span>` : ""}<h4>${esc(p.title)}</h4><p>${rich(p.desc)}</p>${tag}</article>`;
 }
-function columns(pats, antis, locs){
-  const bet = isBet() && !locs ? " (bets)" : "";
-  const empty = t => `<p class="none">No ${t} specific to this step in this era.</p>`;
-  return `<div class="cols">
-    <section class="col"><h3 class="col-head good">${icon.check}Patterns${bet} <span class="count">${pats.length}</span></h3>${pats.length ? pats.map((p,k)=>card(p,false,locs&&locs.p[k])).join("") : empty("patterns")}</section>
-    <section class="col"><h3 class="col-head bad">${icon.warn}Anti-patterns${bet} <span class="count">${antis.length}</span></h3>${antis.length ? antis.map((p,k)=>card(p,true,locs&&locs.a[k])).join("") : empty("anti-patterns")}</section>
+/* Zip patterns and anti-patterns into anti|pattern rows (same layout as keyword pairs). */
+function zipPairs(pats, antis, locs){
+  const n = Math.max(pats.length, antis.length), out = [];
+  for (let i = 0; i < n; i++){
+    out.push({
+      anti: antis[i] || null, pattern: pats[i] || null,
+      locA: locs && locs.a ? locs.a[i] : null,
+      locP: locs && locs.p ? locs.p[i] : null
+    });
+  }
+  return out;
+}
+function pairsBlock(pairList, opts){
+  const bet = isBet() && !(opts && opts.locs) ? " (bets)" : "";
+  if (!pairList.length) return `<p class="none">No patterns or anti-patterns specific to this step in this era.</p>`;
+  return `<div class="pairs">
+    <div class="pairs-head">
+      <h3 class="col-head bad">${icon.warn}Anti-pattern${bet} <span class="count">${pairList.filter(x=>x.anti).length}</span></h3>
+      <h3 class="col-head good">${icon.check}Pattern${bet} <span class="count">${pairList.filter(x=>x.pattern).length}</span></h3>
+    </div>
+    ${pairList.map(row => `<div class="pair">
+      <div class="pair-side">${row.anti ? card(row.anti, true, row.locA) : `<p class="none">No paired anti-pattern.</p>`}</div>
+      <div class="pair-side">${row.pattern ? card(row.pattern, false, row.locP) : `<p class="none">No paired pattern.</p>`}</div>
+    </div>`).join("")}
   </div>`;
+}
+function columns(pats, antis, locs){
+  return pairsBlock(zipPairs(pats, antis, locs), { locs });
+}
+function keywordPairsBlock(id){
+  const pairs = KEYWORD_PAIRS[id] || [];
+  return pairsBlock(pairs.map(p => ({ anti:p.anti, pattern:p.pattern })));
 }
 function chip(t){ return TERMS[t] ? `<button type="button" class="chip term" data-term="${t}" aria-expanded="false"><span>${TERMS[t].name}</span></button>` : `<span class="chip">${esc(t)}</span>`; }
 function eraPills(b){
@@ -958,7 +1116,7 @@ function overviewHTML(){
   <div class="actions">
     <button type="button" class="btn-primary" data-phase="0">Start with Discover <span aria-hidden="true">→</span></button>
     <button type="button" class="btn-warn" data-sub="${mb.p}-${mb.k}">${mb.label === "NEXT" ? "Next bottleneck" : "The bottleneck"}: ${esc(s.name)}</button>
-    <button type="button" class="btn-ghost" data-tips="1">Practical tips for now</button>
+    <button type="button" class="btn-ghost" data-tips="1">Patterns for now</button>
   </div>`;
 }
 
@@ -1013,30 +1171,138 @@ function subHTML(i,k){
   </nav>`;
 }
 
-function tipsHTML(){
-  const groups = [];
-  PHASES.forEach(p=>{
-    const c = p.modes.now;
-    groups.push({key:p.id, pats:c.patterns.map(x=>[x, `${p.name} · ${p.subs[x.k].short}`]), antis:c.anti.map(x=>[x, `${p.name} · ${p.subs[x.k].short}`])});
-  });
-  GATES.forEach(g=>{
-    const s = PHASES[g.from].subs.find(x=>x.gate!=null), c = g.modes.now, loc = `Handoff · ${s.short}`;
-    groups.push({key:"handoffs", pats:c.patterns.map(x=>[x,loc]), antis:c.anti.map(x=>[x,loc])});
-  });
-  const sel = groups.filter(gr => tipsFilter === "all" || gr.key === tipsFilter);
-  const pats = [], antis = [], locs = {p:[], a:[]};
-  sel.forEach(gr=>{ gr.pats.forEach(([x,l])=>{pats.push(x); locs.p.push(l);}); gr.antis.forEach(([x,l])=>{antis.push(x); locs.a.push(l);}); });
-  const opts = [["all","All"], ...PHASES.map(p=>[p.id,p.name]), ["handoffs","Handoffs"]];
+function kwByStage(stage){
+  if (stage === "all") return KEYWORDS.slice();
+  return KEYWORDS.filter(k => k.stages.includes(stage));
+}
+function toolsByStage(stage){
+  const ids = new Set(kwByStage(stage).map(k => k.id));
+  return TOOLS.filter(t => ids.has(t.keyword));
+}
+function browseBar(){
+  return `<div class="browse-row">
+    <span class="lbl">Browse by</span>
+    <button type="button" class="filter" data-pb="keyword" aria-pressed="${patternsBrowse==="keyword"}">Keyword / category</button>
+    <button type="button" class="filter" data-pb="stage" aria-pressed="${patternsBrowse==="stage"}">Lifecycle stage</button>
+  </div>`;
+}
+function stageFilters(active){
+  const opts = [["all","All"], ...PHASES.map(p=>[p.id,p.name])];
+  return `<div class="filters" role="group" aria-label="Filter by stage">${opts.map(([v,l])=>`<button type="button" class="filter" data-tf="${v}" aria-pressed="${v===active}">${l}</button>`).join("")}</div>`;
+}
+function keywordFilters(active){
+  return `<div class="filters" role="group" aria-label="Keywords">${KEYWORDS.map(k=>`<button type="button" class="filter" data-kw="${k.id}" aria-pressed="${k.id===active}">${esc(k.name)}</button>`).join("")}</div>`;
+}
+function chartSVG(){
+  const W = 860, H = 420, padL = 64, padR = 28, padT = 28, padB = 52;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const X = m => padL + (m / 100) * plotW, Y = s => padT + plotH - (s / 100) * plotH;
+  const stage = patternsStage;
+  let nodes = "";
+  if (showTools){
+    toolsByStage(stage).forEach(t=>{
+      const cx = X(t.maturity), cy = Y(t.scope);
+      const cur = patternsKeyword === t.keyword ? ' aria-current="true"' : "";
+      nodes += `<g class="chart-tool" tabindex="0" role="button" data-kw="${t.keyword}"${cur}>
+        <circle class="chart-node" cx="${cx}" cy="${cy}" r="7"/>
+        <text class="chart-label" x="${cx+12}" y="${cy+4}">${esc(t.name)}</text>
+        <text class="chart-sub" x="${cx+12}" y="${cy+16}">${esc(KEYWORDS.find(k=>k.id===t.keyword)?.name || "")}</text>
+      </g>`;
+    });
+  } else {
+    kwByStage(stage).forEach(k=>{
+      const cx = X(k.maturity), cy = Y(k.scope);
+      const cur = patternsKeyword === k.id ? ' aria-current="true"' : "";
+      nodes += `<g class="chart-dot" tabindex="0" role="button" data-kw="${k.id}"${cur}>
+        <circle class="chart-node" cx="${cx}" cy="${cy}" r="8"/>
+        <text class="chart-label" x="${cx+12}" y="${cy+4}">${esc(k.name)}</text>
+      </g>`;
+      const ex = KEYWORD_EXEMPLARS[k.id];
+      if (ex){
+        const y0 = Y(k.scope);
+        nodes += `<line class="chart-link" x1="${X(ex[1].maturity)}" y1="${y0}" x2="${X(ex[0].maturity)}" y2="${y0}"/>`;
+        ex.forEach((e,i)=>{
+          const exx = X(e.maturity), exy = Y(k.scope + (i===0 ? 7 : -7));
+          nodes += `<g transform="translate(${exx},${exy})">
+            <rect class="chart-ex" x="-4" y="-4" width="8" height="8" transform="rotate(45)"/>
+            <text class="chart-sub" x="10" y="3">${esc(e.name)}</text>
+          </g>`;
+        });
+      }
+    });
+  }
+  const grid = [25,50,75].map(g =>
+    `<line class="chart-grid" x1="${X(g)}" y1="${padT}" x2="${X(g)}" y2="${padT+plotH}"/>` +
+    `<line class="chart-grid" x1="${padL}" y1="${Y(g)}" x2="${padL+plotW}" y2="${Y(g)}"/>`
+  ).join("");
+  return `<div class="chart-wrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Keywords by maturity and scope">
+    ${grid}
+    <line class="chart-spine" x1="${padL}" y1="${padT+plotH}" x2="${padL+plotW}" y2="${padT+plotH}"/>
+    <line class="chart-spine" x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT+plotH}"/>
+    <text class="chart-axis" x="${padL+plotW/2}" y="${H-14}" text-anchor="middle">Maturity →</text>
+    <text class="chart-axis" x="18" y="${padT+plotH/2}" text-anchor="middle" transform="rotate(-90 18 ${padT+plotH/2})">Scope →</text>
+    <text class="chart-axis" x="${padL}" y="${H-14}">Emerging</text>
+    <text class="chart-axis" x="${padL+plotW}" y="${H-14}" text-anchor="end">Established</text>
+    ${nodes}
+  </svg></div>
+  <p class="chart-note">${showTools
+    ? "Tools and named practices on the same axes. Click one to open its keyword’s pattern / anti-pattern pairs."
+    : "Keywords from the glossary. Diamonds are exemplars (Cursor vs Conductor under Harnesses: same scope, different maturity). Toggle Show tools for the product map."}</p>`;
+}
+function patternsChartHTML(){
   return `<div class="tips-head"><div class="head">
       <div class="eyebrow-row"><span class="eyebrow-pill">Now</span></div>
-      <h2>Practical patterns for today</h2>
-      <p class="lede">What to do, and what to watch for, when you build with agents this week.</p></div>
-    <div class="filters" role="group" aria-label="Filter tips">${opts.map(([v,l])=>`<button type="button" class="filter" data-tf="${v}" aria-pressed="${v===tipsFilter}">${l}</button>`).join("")}</div>
+      <h2>Patterns for today</h2>
+      <p class="lede">What to do, and what to watch for — by keyword or by where you are in the lifecycle.</p></div>
+    <button type="button" class="filter" data-tools="1" aria-pressed="${showTools}">${showTools ? "Show categories" : "Show tools"}</button>
   </div>
-  ${columns(pats, antis, locs)}
+  ${browseBar()}
+  ${stageFilters(patternsStage)}
+  ${chartSVG()}
   <div class="actions"><button type="button" class="btn-ghost" data-home="1"><span aria-hidden="true">←</span> Back to the lifecycle</button></div>`;
 }
+function patternsKeywordHTML(id){
+  const k = KEYWORDS.find(x => x.id === id) || KEYWORDS[0];
+  return `<div class="tips-head"><div class="head">
+      <div class="eyebrow-row"><span class="eyebrow-pill">Now</span></div>
+      <h2>${esc(k.name)}</h2>
+      <p class="lede">${esc(k.blurb)}</p></div>
+    <button type="button" class="btn-ghost" data-patterns-chart="1"><span aria-hidden="true">←</span> Chart</button>
+  </div>
+  ${browseBar()}
+  ${keywordFilters(k.id)}
+  <div class="kw-meta">
+    <button type="button" class="mini link" data-gloss="${k.term}">Glossary · ${esc(TERMS[k.term]?.name || k.name)}</button>
+    ${k.stages.map(s => `<button type="button" class="mini" data-phase="${PHASES.findIndex(p=>p.id===s)}">${stageName(s)}</button>`).join("")}
+  </div>
+  ${keywordPairsBlock(k.id)}
+  <div class="actions"><button type="button" class="btn-ghost" data-home="1"><span aria-hidden="true">←</span> Back to the lifecycle</button></div>`;
+}
+function patternsStageHTML(){
+  const list = kwByStage(patternsStage);
+  return `<div class="tips-head"><div class="head">
+      <div class="eyebrow-row"><span class="eyebrow-pill">Now</span></div>
+      <h2>${patternsStage === "all" ? "All stages" : stageName(patternsStage)}</h2>
+      <p class="lede">Keywords that show up here. Open one for paired anti-patterns and patterns.</p></div>
+  </div>
+  ${browseBar()}
+  ${stageFilters(patternsStage)}
+  <div class="kw-grid">${list.map(k => `<button type="button" class="kw-card" data-kw="${k.id}">
+      <h4>${esc(k.name)}</h4><p>${esc(k.blurb)}</p>
+    </button>`).join("")}</div>
+  <div class="actions"><button type="button" class="btn-ghost" data-home="1"><span aria-hidden="true">←</span> Back to the lifecycle</button></div>`;
+}
+function tipsHTML(){
+  if (patternsBrowse === "stage") return patternsStageHTML();
+  if (patternsKeyword) return patternsKeywordHTML(patternsKeyword);
+  return patternsChartHTML();
+}
 
+function patternsHash(){
+  if (patternsBrowse === "stage") return patternsStage === "all" ? "#patterns/stage" : `#patterns/stage/${patternsStage}`;
+  if (patternsKeyword) return `#patterns/${patternsKeyword}`;
+  return showTools ? "#patterns?tools=1" : "#patterns";
+}
 function render(){
   closePop();
   main.dataset.view = view;
@@ -1046,14 +1312,30 @@ function render(){
   panel.innerHTML = view === "overview" ? overviewHTML() : view === "tips" ? tipsHTML() : view === "phase" ? phaseHTML(ph) : subHTML(ph, sb);
   panel.classList.remove("swap"); void panel.offsetWidth; panel.classList.add("swap");
   main.scrollTop = 0;
-  const hash = view === "overview" ? "" : view === "tips" ? "#tips" : view === "phase" ? "#" + PHASES[ph].id : `#${PHASES[ph].id}-${sb+1}`;
+  const hash = view === "overview" ? "" : view === "tips" ? patternsHash() : view === "phase" ? "#" + PHASES[ph].id : `#${PHASES[ph].id}-${sb+1}`;
   try { history.replaceState(null, "", location.pathname + location.search + hash); } catch(e){}
 }
 function goPhase(i){ view = "phase"; ph = ((i % 4) + 4) % 4; render(); }
 function goSub(i,k){ view = "sub"; ph = i; sb = k; render(); }
 function stepSub(d){ const n = SUBS.length, [i,k] = SUBS[(subIndex(ph,sb) + d + n) % n]; goSub(i,k); }
 function goOverview(){ view = "overview"; render(); }
-function goTips(){ view = "tips"; if (mode !== "now"){ mode = "now"; initDots(); } render(); }
+function goTips(opts){
+  view = "tips";
+  if (mode !== "now"){ mode = "now"; initDots(); }
+  if (opts && opts.browse) patternsBrowse = opts.browse;
+  if (opts && "keyword" in opts) patternsKeyword = opts.keyword;
+  if (opts && opts.stage) patternsStage = opts.stage;
+  if (opts && "tools" in opts) showTools = !!opts.tools;
+  if (!opts){ patternsBrowse = "keyword"; patternsKeyword = null; patternsStage = "all"; }
+  render();
+}
+function openKeyword(id){
+  if (!KEYWORDS.some(k => k.id === id)) return;
+  patternsBrowse = "keyword";
+  patternsKeyword = id;
+  if (view !== "tips"){ view = "tips"; if (mode !== "now"){ mode = "now"; initDots(); } }
+  render();
+}
 function setMode(m){
   if (!MODES[m] || m === mode) return;
   mode = m;
@@ -1192,8 +1474,17 @@ document.addEventListener("click", e=>{
   if (era){ setMode(era.dataset.mode); return; }
   if (e.target.closest("[data-tips]")){ goTips(); return; }
   if (e.target.closest("[data-home]")){ goOverview(); return; }
+  if (e.target.closest("[data-patterns-chart]")){ patternsKeyword = null; patternsBrowse = "keyword"; render(); return; }
+  const pb = e.target.closest("[data-pb]");
+  if (pb){ patternsBrowse = pb.dataset.pb; if (patternsBrowse === "keyword") patternsKeyword = null; render(); return; }
+  const toolsBtn = e.target.closest("[data-tools]");
+  if (toolsBtn){ showTools = !showTools; render(); return; }
+  const kw = e.target.closest("[data-kw]");
+  if (kw){ openKeyword(kw.dataset.kw); return; }
+  const gloss = e.target.closest("[data-gloss]");
+  if (gloss){ openGlossary(gloss.dataset.gloss); return; }
   const tf = e.target.closest("[data-tf]");
-  if (tf){ tipsFilter = tf.dataset.tf; render(); return; }
+  if (tf){ patternsStage = tf.dataset.tf; if (patternsBrowse === "keyword") patternsKeyword = null; render(); return; }
   if (e.target.closest("#pop-open")){ openGlossary($("#pop-open").dataset.term); return; }
   const gf = e.target.closest("[data-gf]");
   if (gf){ gFilter = gf.dataset.gf; renderGlossary(); return; }
@@ -1224,8 +1515,12 @@ document.addEventListener("keydown", e=>{
   if (e.key === "Escape"){
     if (current){ closePop(); return; }
     if (glossaryOpen()){ closeGlossary(); return; }
+    if (view === "tips" && patternsKeyword){ patternsKeyword = null; render(); return; }
     if (view === "sub") goPhase(ph); else if (view !== "overview") goOverview();
     return;
+  }
+  if ((e.key === "Enter" || e.key === " ") && e.target.closest("[data-kw]")){
+    e.preventDefault(); openKeyword(e.target.closest("[data-kw]").dataset.kw); return;
   }
   if (e.target.matches("input, textarea") || e.metaKey || e.ctrlKey || e.altKey) return;
   const k = e.key, kl = k.toLowerCase();
@@ -1245,12 +1540,23 @@ document.addEventListener("keydown", e=>{
 });
 
 /* =================== START =================== */
-const h = location.hash.slice(1), mm = h.match(/^([a-z]+)-(\d)$/);
-const pi = PHASES.findIndex(p=>p.id === (mm ? mm[1] : h));
-if (h === "tips") goTips();
-else if (mm && pi >= 0 && +mm[2] >= 1 && +mm[2] <= PHASES[pi].subs.length) goSub(pi, +mm[2] - 1);
-else if (pi >= 0) goPhase(pi);
-else render();
+const h = location.hash.slice(1);
+if (h === "tips" || h === "patterns" || h.startsWith("patterns/") || h.startsWith("patterns?")){
+  const bare = h === "tips" ? "" : h.replace(/^patterns\/?/, "");
+  const tools = /(?:^|[?&])tools=1\b/.test(h) || bare.includes("tools=1");
+  const path = bare.split("?")[0];
+  const parts = path ? path.split("/").filter(Boolean) : [];
+  let browse = "keyword", kw = null, stage = "all";
+  if (parts[0] === "stage"){ browse = "stage"; stage = parts[1] && PHASES.some(p=>p.id===parts[1]) ? parts[1] : "all"; }
+  else if (parts[0] && KEYWORDS.some(k=>k.id===parts[0])) kw = parts[0];
+  goTips({ browse, keyword: kw, stage, tools });
+} else {
+  const mm = h.match(/^([a-z]+)-(\d)$/);
+  const pi = PHASES.findIndex(p=>p.id === (mm ? mm[1] : h));
+  if (mm && pi >= 0 && +mm[2] >= 1 && +mm[2] <= PHASES[pi].subs.length) goSub(pi, +mm[2] - 1);
+  else if (pi >= 0) goPhase(pi);
+  else render();
+}
 })();
 
 </script>
