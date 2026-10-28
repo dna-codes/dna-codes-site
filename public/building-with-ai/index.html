@@ -245,21 +245,28 @@ h2{font-size:clamp(28px,2.8vw,42px);line-height:1.08;font-weight:700;letter-spac
 .pairs-head{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .pair-side{min-width:0;display:flex;flex-direction:column;gap:12px}
-.chart-wrap{position:relative;width:100%;max-width:920px;margin:8px 0 12px;border:1px solid var(--line-strong);border-radius:16px;background:var(--surface);padding:12px 12px 8px;overflow:hidden}
+.chart-wrap{position:relative;width:100%;max-width:1100px;margin:8px 0 12px;border:1px solid var(--line-strong);border-radius:16px;background:var(--surface);padding:12px 12px 8px;overflow:hidden}
 .chart-wrap svg{display:block;width:100%;height:auto}
 .chart-dot{cursor:pointer}
-.chart-dot:focus-visible .chart-node{outline:2px solid var(--accent);outline-offset:3px}
+.chart-tool{cursor:pointer}
+.chart-dot:focus-visible .chart-node,.chart-tool:focus-visible .chart-node{outline:2px solid var(--accent);outline-offset:3px}
 .chart-node{fill:var(--accent-soft);stroke:var(--accent-line);stroke-width:1.5}
-.chart-dot[aria-current="true"] .chart-node{fill:var(--accent);stroke:var(--accent-strong)}
+.chart-dot[aria-current="true"] .chart-node,.chart-tool[aria-current="true"] .chart-node{fill:var(--accent);stroke:var(--accent-strong)}
 .chart-label{fill:var(--heading);font-size:12px;font-weight:600;font-family:var(--font-sans)}
 .chart-axis{fill:var(--muted);font-size:11px;font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
 .chart-grid{stroke:var(--line);stroke-dasharray:3 4}
 .chart-spine{stroke:var(--line-strong)}
+.chart-leader{stroke:var(--line-strong);stroke-width:1;fill:none;opacity:.55}
 .patterns-detail{display:flex;flex-direction:column;gap:16px;margin:4px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
 .patterns-detail .detail-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px}
 .patterns-detail .detail-head h3{margin:0;font-size:clamp(22px,2.2vw,28px);line-height:1.15;font-weight:700;color:var(--heading)}
 .patterns-detail .detail-head .lede{margin:6px 0 0;max-width:52ch}
 .patterns-detail .chip{cursor:default}
+.tool-groups{display:flex;flex-direction:column;gap:10px}
+.tool-group{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.tool-group-label{flex:0 0 auto;min-width:5.5rem;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chips-sm{gap:6px}
+.chip-sm{min-height:26px;padding:0 10px;font-size:12px;border-radius:999px}
 .kw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
 .kw-card{text-align:left;padding:16px 18px;border-radius:14px;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer;display:flex;flex-direction:column;gap:6px;color:inherit}
 .kw-card:hover,.kw-card[aria-current="true"]{border-color:var(--accent-line);background:var(--accent-soft)}
@@ -813,90 +820,89 @@ const KEYWORD_ALIASES = {
   context:"skills", parallel:"orchestration"
 };
 
-/* Exemplars listed under a selected category. Positions unused on the chart (categories only). */
+/* Exemplars for Show tools + the selected-category chip list. Teaching placements. */
 const TOOLS = [
-  /* Models */
-  { id:"claude-opus", name:"Claude Opus", keyword:"models", maturity:94, scope:88, note:"Frontier general" },
-  { id:"gpt-astra", name:"GPT Astra-class", keyword:"models", maturity:90, scope:78, note:"Frontier general" },
-  { id:"claude-sonnet", name:"Claude Sonnet", keyword:"models", maturity:86, scope:66, note:"Workhorse general" },
-  { id:"gemini", name:"Gemini-class", keyword:"models", maturity:82, scope:54, note:"Long-context general" },
-  { id:"grok", name:"Grok-class", keyword:"models", maturity:78, scope:72, note:"Frontier general" },
-  { id:"gpt-sol", name:"GPT Sol-class", keyword:"models", maturity:74, scope:42, note:"Cost-efficient" },
-  { id:"deepseek", name:"DeepSeek V4.x", keyword:"models", maturity:66, scope:58, note:"Open coding" },
-  { id:"kimi", name:"Kimi K3", keyword:"models", maturity:58, scope:48, note:"Open-weight scale" },
+  /* Models — grouped by provider */
+  { id:"claude-opus", name:"Claude Opus", keyword:"models", group:"Claude", maturity:94, scope:88, note:"Frontier general" },
+  { id:"claude-sonnet", name:"Claude Sonnet", keyword:"models", group:"Claude", maturity:86, scope:66, note:"Workhorse general" },
+  { id:"gpt-astra", name:"GPT Astra-class", keyword:"models", group:"OpenAI", maturity:90, scope:78, note:"Frontier general" },
+  { id:"gpt-sol", name:"GPT Sol-class", keyword:"models", group:"OpenAI", maturity:74, scope:42, note:"Cost-efficient" },
+  { id:"gemini", name:"Gemini-class", keyword:"models", group:"Gemini", maturity:82, scope:54, note:"Long-context general" },
+  { id:"grok", name:"Grok-class", keyword:"models", group:"Grok", maturity:78, scope:72, note:"Frontier general" },
+  { id:"deepseek", name:"DeepSeek V4.x", keyword:"models", group:"Open-weight", maturity:66, scope:58, note:"Open coding" },
+  { id:"kimi", name:"Kimi K3", keyword:"models", group:"Open-weight", maturity:58, scope:48, note:"Open-weight scale" },
   /* Skills */
-  { id:"find-skills", name:"find-skills", keyword:"skills", maturity:70, scope:50, note:"skills.sh" },
-  { id:"grill-me", name:"grill-me", keyword:"skills", maturity:66, scope:48, note:"Spec grilling" },
-  { id:"agent-browser", name:"agent-browser", keyword:"skills", maturity:64, scope:46, note:"Browser skill" },
-  { id:"frontend-design", name:"frontend-design", keyword:"skills", maturity:68, scope:44, note:"anthropics/skills" },
-  { id:"tdd-skill", name:"tdd", keyword:"skills", maturity:62, scope:42, note:"Test-first skill" },
-  { id:"skill-creator", name:"skill-creator", keyword:"skills", maturity:60, scope:52, note:"Authoring skills" },
-  { id:"vercel-react", name:"vercel-react-best-practices", keyword:"skills", maturity:58, scope:40, note:"Framework skill" },
-  { id:"superpowers", name:"superpowers / brainstorming", keyword:"skills", maturity:56, scope:54, note:"Workflow pack" },
+  { id:"find-skills", name:"find-skills", keyword:"skills", group:"Discovery", maturity:70, scope:50, note:"skills.sh" },
+  { id:"grill-me", name:"grill-me", keyword:"skills", group:"Workflow", maturity:66, scope:48, note:"Spec grilling" },
+  { id:"agent-browser", name:"agent-browser", keyword:"skills", group:"Workflow", maturity:64, scope:46, note:"Browser skill" },
+  { id:"frontend-design", name:"frontend-design", keyword:"skills", group:"Design", maturity:68, scope:44, note:"anthropics/skills" },
+  { id:"tdd-skill", name:"tdd", keyword:"skills", group:"Workflow", maturity:62, scope:42, note:"Test-first skill" },
+  { id:"skill-creator", name:"skill-creator", keyword:"skills", group:"Authoring", maturity:60, scope:52, note:"Authoring skills" },
+  { id:"vercel-react", name:"vercel-react-best-practices", keyword:"skills", group:"Design", maturity:58, scope:40, note:"Framework skill" },
+  { id:"superpowers", name:"superpowers / brainstorming", keyword:"skills", group:"Workflow", maturity:56, scope:54, note:"Workflow pack" },
   /* Harnesses */
-  { id:"claude-code", name:"Claude Code", keyword:"harnesses", maturity:92, scope:86, note:"CLI agent harness" },
-  { id:"codex", name:"Codex", keyword:"harnesses", maturity:86, scope:74, note:"Sandboxed terminal" },
-  { id:"cursor", name:"Cursor", keyword:"harnesses", maturity:82, scope:62, note:"Agentic IDE" },
-  { id:"copilot", name:"GitHub Copilot", keyword:"harnesses", maturity:76, scope:50, note:"IDE + cloud agent" },
-  { id:"devin", name:"Devin / Fusion CLI", keyword:"harnesses", maturity:70, scope:80, note:"Delegated tasks" },
-  { id:"opencode", name:"OpenCode", keyword:"harnesses", maturity:64, scope:68, note:"Open harness" },
-  { id:"gemini-cli", name:"Gemini CLI", keyword:"harnesses", maturity:58, scope:56, note:"Free-tier CLI" },
-  { id:"cline", name:"Cline", keyword:"harnesses", maturity:52, scope:44, note:"Open IDE agent" },
-  { id:"aider", name:"Aider", keyword:"harnesses", maturity:46, scope:34, note:"Git-native CLI" },
-  { id:"conductor", name:"Conductor", keyword:"harnesses", maturity:36, scope:70, note:"Parallel manager" },
-  /* App builders (vibe-coding surfaces) */
-  { id:"v0", name:"v0", keyword:"harnesses", maturity:68, scope:30, note:"Prompt-to-UI" },
-  { id:"lovable", name:"Lovable", keyword:"harnesses", maturity:62, scope:38, note:"Prompt-to-app" },
-  { id:"replit-agent", name:"Replit Agent", keyword:"harnesses", maturity:56, scope:28, note:"Cloud IDE agent" },
-  { id:"bolt", name:"Bolt", keyword:"harnesses", maturity:50, scope:22, note:"Prompt-to-app" },
+  { id:"claude-code", name:"Claude Code", keyword:"harnesses", group:"Claude", maturity:92, scope:86, note:"CLI agent harness" },
+  { id:"codex", name:"Codex", keyword:"harnesses", group:"OpenAI", maturity:86, scope:74, note:"Sandboxed terminal" },
+  { id:"gemini-cli", name:"Gemini CLI", keyword:"harnesses", group:"Gemini", maturity:58, scope:56, note:"Free-tier CLI" },
+  { id:"cursor", name:"Cursor", keyword:"harnesses", group:"Agents & IDEs", maturity:82, scope:62, note:"Agentic IDE" },
+  { id:"copilot", name:"GitHub Copilot", keyword:"harnesses", group:"Agents & IDEs", maturity:76, scope:50, note:"IDE + cloud agent" },
+  { id:"devin", name:"Devin / Fusion CLI", keyword:"harnesses", group:"Agents & IDEs", maturity:70, scope:80, note:"Delegated tasks" },
+  { id:"opencode", name:"OpenCode", keyword:"harnesses", group:"Agents & IDEs", maturity:64, scope:68, note:"Open harness" },
+  { id:"cline", name:"Cline", keyword:"harnesses", group:"Agents & IDEs", maturity:52, scope:44, note:"Open IDE agent" },
+  { id:"aider", name:"Aider", keyword:"harnesses", group:"Agents & IDEs", maturity:46, scope:34, note:"Git-native CLI" },
+  { id:"conductor", name:"Conductor", keyword:"harnesses", group:"Agents & IDEs", maturity:36, scope:70, note:"Parallel manager" },
+  { id:"v0", name:"v0", keyword:"harnesses", group:"App builders", maturity:68, scope:30, note:"Prompt-to-UI" },
+  { id:"lovable", name:"Lovable", keyword:"harnesses", group:"App builders", maturity:62, scope:38, note:"Prompt-to-app" },
+  { id:"replit-agent", name:"Replit Agent", keyword:"harnesses", group:"App builders", maturity:56, scope:28, note:"Cloud IDE agent" },
+  { id:"bolt", name:"Bolt", keyword:"harnesses", group:"App builders", maturity:50, scope:22, note:"Prompt-to-app" },
   /* Frameworks */
-  { id:"langchain", name:"LangChain", keyword:"frameworks", maturity:86, scope:64, note:"Agent platform" },
-  { id:"langgraph", name:"LangGraph", keyword:"frameworks", maturity:80, scope:66, note:"Durable graphs" },
-  { id:"crewai", name:"CrewAI", keyword:"frameworks", maturity:76, scope:60, note:"Role crews" },
-  { id:"autogen", name:"AutoGen", keyword:"frameworks", maturity:74, scope:62, note:"Multi-agent chat" },
-  { id:"agno", name:"Agno", keyword:"frameworks", maturity:68, scope:56, note:"Lightweight runtime" },
-  { id:"claude-sdk", name:"Claude Agent SDK", keyword:"frameworks", maturity:72, scope:58, note:"Agentic loop SDK" },
-  { id:"strands", name:"AWS Strands", keyword:"frameworks", maturity:64, scope:54, note:"Cloud agent SDK" },
-  { id:"google-adk", name:"Google ADK", keyword:"frameworks", maturity:62, scope:54, note:"Agent kit" },
+  { id:"langchain", name:"LangChain", keyword:"frameworks", group:"LangChain", maturity:86, scope:64, note:"Agent platform" },
+  { id:"langgraph", name:"LangGraph", keyword:"frameworks", group:"LangChain", maturity:80, scope:66, note:"Durable graphs" },
+  { id:"crewai", name:"CrewAI", keyword:"frameworks", group:"Multi-agent", maturity:76, scope:60, note:"Role crews" },
+  { id:"autogen", name:"AutoGen", keyword:"frameworks", group:"Multi-agent", maturity:74, scope:62, note:"Multi-agent chat" },
+  { id:"agno", name:"Agno", keyword:"frameworks", group:"Runtimes", maturity:68, scope:56, note:"Lightweight runtime" },
+  { id:"claude-sdk", name:"Claude Agent SDK", keyword:"frameworks", group:"Claude", maturity:72, scope:58, note:"Agentic loop SDK" },
+  { id:"strands", name:"AWS Strands", keyword:"frameworks", group:"Cloud", maturity:64, scope:54, note:"Cloud agent SDK" },
+  { id:"google-adk", name:"Google ADK", keyword:"frameworks", group:"Cloud", maturity:62, scope:54, note:"Agent kit" },
   /* MCP & tools */
-  { id:"chrome-devtools", name:"Chrome DevTools MCP", keyword:"mcp-tools", maturity:78, scope:46, note:"Browser tooling" },
-  { id:"playwright-mcp", name:"Playwright MCP", keyword:"mcp-tools", maturity:80, scope:48, note:"Browser automation" },
-  { id:"firecrawl", name:"Firecrawl", keyword:"mcp-tools", maturity:72, scope:44, note:"Web → markdown" },
-  { id:"github-mcp", name:"GitHub MCP", keyword:"mcp-tools", maturity:76, scope:50, note:"Repos + PRs" },
-  { id:"context7", name:"Context7", keyword:"mcp-tools", maturity:70, scope:42, note:"Live docs" },
-  { id:"filesystem-mcp", name:"Filesystem MCP", keyword:"mcp-tools", maturity:74, scope:40, note:"Local files" },
-  { id:"supabase-mcp", name:"Supabase MCP", keyword:"mcp-tools", maturity:66, scope:46, note:"App backend" },
-  { id:"sentry-mcp", name:"Sentry MCP", keyword:"mcp-tools", maturity:64, scope:48, note:"Errors & traces" },
-  { id:"exa", name:"Exa", keyword:"mcp-tools", maturity:62, scope:44, note:"Agent search" },
-  { id:"notion-mcp", name:"Notion MCP", keyword:"mcp-tools", maturity:58, scope:42, note:"Docs & DBs" },
+  { id:"chrome-devtools", name:"Chrome DevTools MCP", keyword:"mcp-tools", group:"Browser", maturity:78, scope:46, note:"Browser tooling" },
+  { id:"playwright-mcp", name:"Playwright MCP", keyword:"mcp-tools", group:"Browser", maturity:80, scope:48, note:"Browser automation" },
+  { id:"firecrawl", name:"Firecrawl", keyword:"mcp-tools", group:"Web", maturity:72, scope:44, note:"Web → markdown" },
+  { id:"exa", name:"Exa", keyword:"mcp-tools", group:"Web", maturity:62, scope:44, note:"Agent search" },
+  { id:"github-mcp", name:"GitHub MCP", keyword:"mcp-tools", group:"Dev", maturity:76, scope:50, note:"Repos + PRs" },
+  { id:"filesystem-mcp", name:"Filesystem MCP", keyword:"mcp-tools", group:"Dev", maturity:74, scope:40, note:"Local files" },
+  { id:"context7", name:"Context7", keyword:"mcp-tools", group:"Dev", maturity:70, scope:42, note:"Live docs" },
+  { id:"supabase-mcp", name:"Supabase MCP", keyword:"mcp-tools", group:"Data", maturity:66, scope:46, note:"App backend" },
+  { id:"sentry-mcp", name:"Sentry MCP", keyword:"mcp-tools", group:"Data", maturity:64, scope:48, note:"Errors & traces" },
+  { id:"notion-mcp", name:"Notion MCP", keyword:"mcp-tools", group:"Data", maturity:58, scope:42, note:"Docs & DBs" },
   /* Memory */
-  { id:"mem0", name:"Mem0", keyword:"memory", maturity:72, scope:56, note:"Fact memory" },
-  { id:"zep", name:"Zep / Graphiti", keyword:"memory", maturity:68, scope:58, note:"Temporal graph" },
-  { id:"letta", name:"Letta", keyword:"memory", maturity:64, scope:60, note:"Agent-managed" },
-  { id:"cognee", name:"Cognee", keyword:"memory", maturity:52, scope:54, note:"Local graph+vec" },
-  { id:"supermemory", name:"Supermemory", keyword:"memory", maturity:56, scope:52, note:"Vector-graph" },
-  { id:"cf-agents", name:"Cloudflare Agents", keyword:"memory", maturity:50, scope:48, note:"Edge state" },
-  { id:"langmem", name:"LangMem / Mastra Memory", keyword:"memory", maturity:54, scope:50, note:"Framework memory" },
-  { id:"hindsight", name:"Hindsight", keyword:"memory", maturity:48, scope:46, note:"Eval-led memory" },
+  { id:"mem0", name:"Mem0", keyword:"memory", group:"Memory", maturity:72, scope:56, note:"Fact memory" },
+  { id:"zep", name:"Zep / Graphiti", keyword:"memory", group:"Memory", maturity:68, scope:58, note:"Temporal graph" },
+  { id:"letta", name:"Letta", keyword:"memory", group:"Memory", maturity:64, scope:60, note:"Agent-managed" },
+  { id:"cognee", name:"Cognee", keyword:"memory", group:"Memory", maturity:52, scope:54, note:"Local graph+vec" },
+  { id:"supermemory", name:"Supermemory", keyword:"memory", group:"Memory", maturity:56, scope:52, note:"Vector-graph" },
+  { id:"cf-agents", name:"Cloudflare Agents", keyword:"memory", group:"Platform", maturity:50, scope:48, note:"Edge state" },
+  { id:"langmem", name:"LangMem / Mastra Memory", keyword:"memory", group:"Platform", maturity:54, scope:50, note:"Framework memory" },
+  { id:"hindsight", name:"Hindsight", keyword:"memory", group:"Platform", maturity:48, scope:46, note:"Eval-led memory" },
   /* Orchestration */
-  { id:"langgraph-orch", name:"LangGraph", keyword:"orchestration", maturity:78, scope:76, note:"Durable multi-step" },
-  { id:"crewai-orch", name:"CrewAI", keyword:"orchestration", maturity:70, scope:70, note:"Crew handoffs" },
-  { id:"autogen-orch", name:"AutoGen", keyword:"orchestration", maturity:68, scope:72, note:"Agent dialogue" },
-  { id:"temporal", name:"Temporal + agents", keyword:"orchestration", maturity:74, scope:80, note:"Durable workflows" },
-  { id:"n8n", name:"n8n / Zapier agents", keyword:"orchestration", maturity:66, scope:68, note:"No-code workflows" },
-  { id:"subagents", name:"Harness subagents", keyword:"orchestration", maturity:60, scope:58, note:"In-harness parallel" },
-  { id:"conductor-orch", name:"Conductor", keyword:"orchestration", maturity:42, scope:66, note:"Parallel manager" },
-  { id:"camel", name:"CAMEL / swarm sims", keyword:"orchestration", maturity:40, scope:72, note:"Multi-agent research" },
+  { id:"langgraph-orch", name:"LangGraph", keyword:"orchestration", group:"Graphs", maturity:78, scope:76, note:"Durable multi-step" },
+  { id:"crewai-orch", name:"CrewAI", keyword:"orchestration", group:"Crews", maturity:70, scope:70, note:"Crew handoffs" },
+  { id:"autogen-orch", name:"AutoGen", keyword:"orchestration", group:"Crews", maturity:68, scope:72, note:"Agent dialogue" },
+  { id:"temporal", name:"Temporal + agents", keyword:"orchestration", group:"Workflows", maturity:74, scope:80, note:"Durable workflows" },
+  { id:"n8n", name:"n8n / Zapier agents", keyword:"orchestration", group:"Workflows", maturity:66, scope:68, note:"No-code workflows" },
+  { id:"subagents", name:"Harness subagents", keyword:"orchestration", group:"In-harness", maturity:60, scope:58, note:"In-harness parallel" },
+  { id:"conductor-orch", name:"Conductor", keyword:"orchestration", group:"In-harness", maturity:42, scope:66, note:"Parallel manager" },
+  { id:"camel", name:"CAMEL / swarm sims", keyword:"orchestration", group:"Research", maturity:40, scope:72, note:"Multi-agent research" },
   /* Assurance */
-  { id:"braintrust", name:"Braintrust", keyword:"assurance", maturity:74, scope:72, note:"Evals + traces" },
-  { id:"langsmith", name:"LangSmith", keyword:"assurance", maturity:76, scope:70, note:"Trace + eval" },
-  { id:"langfuse", name:"Langfuse", keyword:"assurance", maturity:72, scope:68, note:"OSS observability" },
-  { id:"patronus", name:"Patronus", keyword:"assurance", maturity:64, scope:66, note:"Evaluators" },
-  { id:"lakera", name:"Lakera Guard", keyword:"assurance", maturity:68, scope:62, note:"Runtime guardrails" },
-  { id:"nemo-guard", name:"NeMo Guardrails", keyword:"assurance", maturity:60, scope:60, note:"Policy rails" },
-  { id:"snyk-agent", name:"Snyk Agent Scan", keyword:"assurance", maturity:58, scope:64, note:"MCP/skill risks" },
-  { id:"phoenix", name:"Phoenix / Arize", keyword:"assurance", maturity:66, scope:66, note:"LLM observability" },
-  { id:"agentops", name:"AgentOps", keyword:"assurance", maturity:54, scope:58, note:"Agent sessions" }
+  { id:"braintrust", name:"Braintrust", keyword:"assurance", group:"Evals", maturity:74, scope:72, note:"Evals + traces" },
+  { id:"langsmith", name:"LangSmith", keyword:"assurance", group:"Evals", maturity:76, scope:70, note:"Trace + eval" },
+  { id:"langfuse", name:"Langfuse", keyword:"assurance", group:"Evals", maturity:72, scope:68, note:"OSS observability" },
+  { id:"patronus", name:"Patronus", keyword:"assurance", group:"Evals", maturity:64, scope:66, note:"Evaluators" },
+  { id:"phoenix", name:"Phoenix / Arize", keyword:"assurance", group:"Evals", maturity:66, scope:66, note:"LLM observability" },
+  { id:"agentops", name:"AgentOps", keyword:"assurance", group:"Evals", maturity:54, scope:58, note:"Agent sessions" },
+  { id:"lakera", name:"Lakera Guard", keyword:"assurance", group:"Guardrails", maturity:68, scope:62, note:"Runtime guardrails" },
+  { id:"nemo-guard", name:"NeMo Guardrails", keyword:"assurance", group:"Guardrails", maturity:60, scope:60, note:"Policy rails" },
+  { id:"snyk-agent", name:"Snyk Agent Scan", keyword:"assurance", group:"Guardrails", maturity:58, scope:64, note:"MCP/skill risks" }
 ];
 
 /* 1–3 anti/pattern pairs per category. Techniques fold in under the right layer. */
@@ -960,7 +966,7 @@ const KEYWORD_PAIRS = {
 
 /* =================== STATE & HELPERS =================== */
 let mode = "now", view = "overview", ph = 0, sb = 0;
-let patternsKeyword = null;
+let patternsKeyword = null, showTools = false, toolsCat = "harnesses";
 const $ = (s,el=document)=>el.querySelector(s);
 const root = document.documentElement;
 const main = $("#main"), panel = $("#panel"), ringWrap = $("#ring-wrap");
@@ -1270,26 +1276,114 @@ function resolveKeyword(id){
   if (KEYWORDS.some(k => k.id === id)) return id;
   return KEYWORD_ALIASES[id] || null;
 }
+function toolsForChart(){
+  return TOOLS.filter(t => toolsCat === "all" || t.keyword === toolsCat);
+}
+function toolsCatFilters(){
+  const opts = [["all","All categories"], ...KEYWORDS.map(k=>[k.id,k.name])];
+  return `<div class="filters" role="group" aria-label="Filter tools by category">${opts.map(([v,l])=>`<button type="button" class="filter" data-tc="${v}" aria-pressed="${v===toolsCat}">${esc(l)}</button>`).join("")}</div>`;
+}
+function groupTools(tools){
+  const order = [], map = new Map();
+  for (const t of tools){
+    const g = t.group || "Other";
+    if (!map.has(g)){ map.set(g, []); order.push(g); }
+    map.get(g).push(t);
+  }
+  return order.map(g => ({ group:g, tools:map.get(g) }));
+}
+function toolsChipsHTML(tools){
+  if (!tools.length) return "";
+  const groups = groupTools(tools);
+  return `<div class="tool-groups">${groups.map(({group, tools: ts}) =>
+    `<div class="tool-group"><span class="tool-group-label">${esc(group)}</span>
+      <div class="chips chips-sm">${ts.map(t=>`<span class="chip chip-sm" title="${esc(t.note || "")}">${esc(t.name)}</span>`).join("")}</div></div>`
+  ).join("")}</div>`;
+}
+/* Separate tool dots, then park labels in a right gutter so names never stack. */
+function layoutToolPoints(tools, X, Y, padL, padT, padB, H, gutterX){
+  const minGap = 38;
+  const pts = tools.map(t => ({
+    t, x: X(t.maturity), y: Y(t.scope), label: t.name
+  })).sort((a,b)=> a.y - b.y || a.x - b.x);
+  for (let iter = 0; iter < 60; iter++){
+    for (let i = 0; i < pts.length; i++){
+      for (let j = i + 1; j < pts.length; j++){
+        const a = pts[i], b = pts[j];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        let dist = Math.hypot(dx, dy) || 0.01;
+        if (dist >= minGap) continue;
+        const push = (minGap - dist) / 2;
+        const ux = dx / dist, uy = dy / dist;
+        a.x -= ux * push; a.y -= uy * push;
+        b.x += ux * push; b.y += uy * push;
+      }
+    }
+    for (const p of pts){
+      p.x = Math.min(gutterX - 18, Math.max(padL + 8, p.x));
+      p.y = Math.min(H - padB - 8, Math.max(padT + 8, p.y));
+    }
+  }
+  const row = 22;
+  const labelH = pts.length * row;
+  let y0 = padT + Math.max(0, (H - padT - padB - labelH) / 2) + 12;
+  pts.sort((a,b)=> a.y - b.y || a.x - b.x);
+  pts.forEach((p, i)=>{ p.lx = gutterX; p.ly = y0 + i * row; p.anchor = "start"; });
+  return pts;
+}
 function chartSVG(){
-  const W = 900, H = 420;
-  const padL = 64, padR = 140, padT = 28, padB = 52;
-  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const tools = showTools ? toolsForChart() : null;
+  const allTools = showTools && toolsCat === "all";
+  const n = showTools ? tools.length : 0;
+  const W = showTools ? 1040 : 900;
+  const H = showTools ? Math.max(480, 120 + n * (allTools ? 28 : 26)) : 420;
+  const padL = 64, padT = 28, padB = 52;
+  const gutterX = showTools ? W - 210 : W - 28;
+  const plotW = (showTools ? gutterX - 24 : W - 140) - padL, plotH = H - padT - padB;
   const X = m => padL + (m / 100) * plotW, Y = s => padT + plotH - (s / 100) * plotH;
   let nodes = "";
-  KEYWORDS.forEach(k=>{
-    const cx = X(k.maturity), cy = Y(k.scope);
-    const cur = patternsKeyword === k.id ? ' aria-current="true"' : "";
-    nodes += `<g class="chart-dot" tabindex="0" role="button" data-kw="${k.id}"${cur} aria-pressed="${patternsKeyword === k.id}">
-      <title>${esc(k.name)}: ${esc(k.blurb)}</title>
-      <circle class="chart-node" cx="${cx}" cy="${cy}" r="8"/>
-      <text class="chart-label" x="${cx+12}" y="${cy+4}">${esc(k.name)}</text>
-    </g>`;
-  });
+  if (showTools){
+    if (allTools){
+      tools.forEach(t=>{
+        const cx = X(t.maturity), cy = Y(t.scope);
+        const cur = patternsKeyword === t.keyword ? ' aria-current="true"' : "";
+        const cat = KEYWORDS.find(k => k.id === t.keyword)?.name || "";
+        nodes += `<g class="chart-tool" tabindex="0" role="button" data-select-kw="${t.keyword}"${cur}>
+          <title>${esc(t.name)} · ${esc(cat)}${t.note ? ": " + esc(t.note) : ""}</title>
+          <circle class="chart-node" cx="${cx}" cy="${cy}" r="5"/>
+        </g>`;
+      });
+    } else {
+      const pts = layoutToolPoints(tools, X, Y, padL, padT, padB, H, gutterX);
+      pts.forEach(p=>{
+        const cur = patternsKeyword === p.t.keyword ? ' aria-current="true"' : "";
+        nodes += `<g class="chart-tool" tabindex="0" role="button" data-select-kw="${p.t.keyword}"${cur}>
+          <title>${esc(p.t.name)}${p.t.note ? ": " + esc(p.t.note) : ""}</title>
+          <path class="chart-leader" d="M${p.x} ${p.y}L${gutterX - 10} ${p.ly - 3}"/>
+          <circle class="chart-node" cx="${p.x}" cy="${p.y}" r="6"/>
+          <text class="chart-label" x="${p.lx}" y="${p.ly}" text-anchor="${p.anchor}">${esc(p.label)}</text>
+        </g>`;
+      });
+    }
+  } else {
+    KEYWORDS.forEach(k=>{
+      const cx = X(k.maturity), cy = Y(k.scope);
+      const cur = patternsKeyword === k.id ? ' aria-current="true"' : "";
+      nodes += `<g class="chart-dot" tabindex="0" role="button" data-kw="${k.id}"${cur} aria-pressed="${patternsKeyword === k.id}">
+        <title>${esc(k.name)}: ${esc(k.blurb)}</title>
+        <circle class="chart-node" cx="${cx}" cy="${cy}" r="8"/>
+        <text class="chart-label" x="${cx+12}" y="${cy+4}">${esc(k.name)}</text>
+      </g>`;
+    });
+  }
   const grid = [25,50,75].map(g =>
     `<line class="chart-grid" x1="${X(g)}" y1="${padT}" x2="${X(g)}" y2="${padT+plotH}"/>` +
     `<line class="chart-grid" x1="${padL}" y1="${Y(g)}" x2="${padL+plotW}" y2="${Y(g)}"/>`
   ).join("");
-  return `<div class="chart-wrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Agent stack categories by maturity and scope. Click a category for tools and patterns.">
+  const aria = showTools
+    ? "Tools by maturity and scope. Click a tool to open its category below."
+    : "Agent stack categories by maturity and scope. Click a category for tools and patterns.";
+  return `<div class="chart-wrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">
     ${grid}
     <line class="chart-spine" x1="${padL}" y1="${padT+plotH}" x2="${padL+plotW}" y2="${padT+plotH}"/>
     <line class="chart-spine" x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT+plotH}"/>
@@ -1315,8 +1409,7 @@ function patternsDetailHTML(id){
         <button type="button" class="mini" data-patterns-clear="1">Clear</button>
       </div>
     </div>
-    ${exemplars.length ? `<div class="block"><span class="label">Tools in this layer</span>
-      <div class="chips">${exemplars.map(t=>`<span class="chip" title="${esc(t.note || "")}">${esc(t.name)}</span>`).join("")}</div></div>` : ""}
+    ${exemplars.length ? `<div class="block"><span class="label">Tools in this layer</span>${toolsChipsHTML(exemplars)}</div>` : ""}
     ${keywordPairsBlock(k.id)}
   </section>`;
 }
@@ -1324,15 +1417,20 @@ function tipsHTML(){
   return `<div class="tips-head"><div class="head">
       <div class="eyebrow-row"><span class="eyebrow-pill">Now</span></div>
       <h2>Patterns for today</h2>
-      <p class="lede">Click a category on the chart for tools, anti-patterns and patterns.</p></div>
+      <p class="lede">Click a category for tools, anti-patterns and patterns below. Or show tools on the chart.</p></div>
+    <button type="button" class="filter" data-tools="1" aria-pressed="${showTools}">${showTools ? "Show categories" : "Show tools"}</button>
   </div>
+  ${showTools ? toolsCatFilters() : ""}
   ${chartSVG()}
-  ${patternsKeyword ? patternsDetailHTML(patternsKeyword) : `<p class="none">Select a category above to see its tools and paired anti-patterns / patterns.</p>`}
+  ${patternsKeyword ? patternsDetailHTML(patternsKeyword) : `<p class="none">Select a category${showTools ? " (or a tool)" : " above"} to see its tools and paired anti-patterns / patterns.</p>`}
   <div class="actions"><button type="button" class="btn-ghost" data-home="1"><span aria-hidden="true">←</span> Back to the lifecycle</button></div>`;
 }
 
 function patternsHash(){
-  return patternsKeyword ? `#patterns/${patternsKeyword}` : "#patterns";
+  const base = patternsKeyword ? `#patterns/${patternsKeyword}` : "#patterns";
+  if (!showTools) return base;
+  const q = toolsCat === "all" ? "tools=1" : `tools=1&cat=${toolsCat}`;
+  return patternsKeyword ? `${base}?${q}` : `#patterns?${q}`;
 }
 function render(){
   closePop();
@@ -1362,14 +1460,18 @@ function goTips(opts){
   view = "tips";
   if (mode !== "now"){ mode = "now"; initDots(); }
   if (opts && "keyword" in opts) patternsKeyword = resolveKeyword(opts.keyword);
-  if (!opts) patternsKeyword = null;
+  if (opts && "tools" in opts) showTools = !!opts.tools;
+  if (opts && opts.toolsCat) toolsCat = opts.toolsCat;
+  if (!opts){ patternsKeyword = null; showTools = false; toolsCat = "harnesses"; }
   render();
 }
-function openKeyword(id){
+function openKeyword(id, opts){
   const resolved = resolveKeyword(id);
   if (!resolved) return;
-  // Toggle off if the same category is clicked again; otherwise select inline below the chart.
-  patternsKeyword = patternsKeyword === resolved ? null : resolved;
+  const toggle = !(opts && opts.force);
+  // Category dots toggle; tool clicks force-select the parent category for the panel below.
+  patternsKeyword = toggle && patternsKeyword === resolved ? null : resolved;
+  if (showTools && patternsKeyword) toolsCat = patternsKeyword;
   if (view !== "tips"){ view = "tips"; if (mode !== "now"){ mode = "now"; initDots(); } }
   render();
 }
@@ -1514,6 +1616,24 @@ document.addEventListener("click", e=>{
   if (e.target.closest("[data-patterns-clear]") || e.target.closest("[data-patterns-chart]")){
     patternsKeyword = null; render(); return;
   }
+  const toolsBtn = e.target.closest("[data-tools]");
+  if (toolsBtn){
+    showTools = !showTools;
+    if (showTools && toolsCat === "all") toolsCat = "harnesses";
+    render();
+    return;
+  }
+  const tc = e.target.closest("[data-tc]");
+  if (tc){
+    toolsCat = tc.dataset.tc;
+    showTools = true;
+    // Sync the below-chart panel to the filtered category (clear for All).
+    patternsKeyword = toolsCat === "all" ? null : resolveKeyword(toolsCat);
+    render();
+    return;
+  }
+  const sel = e.target.closest("[data-select-kw]");
+  if (sel){ openKeyword(sel.dataset.selectKw, { force:true }); return; }
   const kw = e.target.closest("[data-kw]");
   if (kw){ openKeyword(kw.dataset.kw); return; }
   const gloss = e.target.closest("[data-gloss]");
@@ -1552,6 +1672,9 @@ document.addEventListener("keydown", e=>{
     if (view === "sub") goPhase(ph); else if (view !== "overview") goOverview();
     return;
   }
+  if ((e.key === "Enter" || e.key === " ") && e.target.closest("[data-select-kw]")){
+    e.preventDefault(); openKeyword(e.target.closest("[data-select-kw]").dataset.selectKw, { force:true }); return;
+  }
   if ((e.key === "Enter" || e.key === " ") && e.target.closest("[data-kw]")){
     e.preventDefault(); openKeyword(e.target.closest("[data-kw]").dataset.kw); return;
   }
@@ -1576,11 +1699,14 @@ document.addEventListener("keydown", e=>{
 const h = location.hash.slice(1);
 if (h === "tips" || h === "patterns" || h.startsWith("patterns/") || h.startsWith("patterns?")){
   const bare = h === "tips" ? "" : h.replace(/^patterns\/?/, "");
+  const tools = /(?:^|[?&])tools=1\b/.test(h) || bare.includes("tools=1");
+  const catMatch = h.match(/[?&]cat=([a-z0-9-]+)/);
+  const toolsCatOpt = catMatch && (catMatch[1] === "all" || KEYWORDS.some(k=>k.id===catMatch[1])) ? catMatch[1] : "harnesses";
   const path = bare.split("?")[0];
   const parts = path ? path.split("/").filter(Boolean) : [];
-  // Old #patterns/stage/... and ?tools= hashes fall through to the chart.
-  const kw = parts[0] && parts[0] !== "stage" && parts[0] !== "tools=1" ? resolveKeyword(parts[0]) : null;
-  goTips({ keyword: kw });
+  // Old #patterns/stage/... hashes fall through to the chart.
+  const kw = parts[0] && parts[0] !== "stage" ? resolveKeyword(parts[0]) : null;
+  goTips({ keyword: kw, tools, toolsCat: toolsCatOpt });
 } else {
   const mm = h.match(/^([a-z]+)-(\d)$/);
   const pi = PHASES.findIndex(p=>p.id === (mm ? mm[1] : h));
