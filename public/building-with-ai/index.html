@@ -245,7 +245,7 @@ h2{font-size:clamp(28px,2.8vw,42px);line-height:1.08;font-weight:700;letter-spac
 .pairs-head{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .pair-side{min-width:0;display:flex;flex-direction:column;gap:12px}
-.chart-wrap{position:relative;width:100%;max-width:920px;margin:8px 0 12px;border:1px solid var(--line-strong);border-radius:16px;background:var(--surface);padding:12px 12px 8px;overflow:hidden}
+.chart-wrap{position:relative;width:100%;max-width:1100px;margin:8px 0 12px;border:1px solid var(--line-strong);border-radius:16px;background:var(--surface);padding:12px 12px 8px;overflow:hidden}
 .chart-wrap svg{display:block;width:100%;height:auto}
 .chart-dot,.chart-tool{cursor:pointer}
 .chart-dot:focus-visible .chart-node,.chart-tool:focus-visible .chart-node{outline:2px solid var(--accent);outline-offset:3px}
@@ -256,6 +256,7 @@ h2{font-size:clamp(28px,2.8vw,42px);line-height:1.08;font-weight:700;letter-spac
 .chart-axis{fill:var(--muted);font-size:11px;font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
 .chart-grid{stroke:var(--line);stroke-dasharray:3 4}
 .chart-spine{stroke:var(--line-strong)}
+.chart-leader{stroke:var(--line-strong);stroke-width:1;fill:none}
 .kw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
 .kw-card{text-align:left;padding:16px 18px;border-radius:14px;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer;display:flex;flex-direction:column;gap:6px;color:inherit}
 .kw-card:hover,.kw-card[aria-current="true"]{border-color:var(--accent-line);background:var(--accent-soft)}
@@ -812,14 +813,14 @@ const KEYWORD_ALIASES = {
 /* Exemplars for Show tools. Click opens the parent category. Positions are teaching placements. */
 const TOOLS = [
   /* Models */
-  { id:"claude-opus", name:"Claude Opus", keyword:"models", maturity:92, scope:80, note:"Frontier general" },
-  { id:"claude-sonnet", name:"Claude Sonnet", keyword:"models", maturity:86, scope:70, note:"Workhorse general" },
+  { id:"claude-opus", name:"Claude Opus", keyword:"models", maturity:94, scope:88, note:"Frontier general" },
   { id:"gpt-astra", name:"GPT Astra-class", keyword:"models", maturity:90, scope:78, note:"Frontier general" },
-  { id:"gpt-sol", name:"GPT Sol-class", keyword:"models", maturity:84, scope:74, note:"Cost-efficient" },
-  { id:"gemini", name:"Gemini-class", keyword:"models", maturity:85, scope:64, note:"Long-context general" },
-  { id:"grok", name:"Grok-class", keyword:"models", maturity:82, scope:72, note:"Frontier general" },
-  { id:"deepseek", name:"DeepSeek V4.x", keyword:"models", maturity:76, scope:70, note:"Open coding" },
-  { id:"kimi", name:"Kimi K3", keyword:"models", maturity:74, scope:68, note:"Open-weight scale" },
+  { id:"claude-sonnet", name:"Claude Sonnet", keyword:"models", maturity:86, scope:66, note:"Workhorse general" },
+  { id:"gemini", name:"Gemini-class", keyword:"models", maturity:82, scope:54, note:"Long-context general" },
+  { id:"grok", name:"Grok-class", keyword:"models", maturity:78, scope:72, note:"Frontier general" },
+  { id:"gpt-sol", name:"GPT Sol-class", keyword:"models", maturity:74, scope:42, note:"Cost-efficient" },
+  { id:"deepseek", name:"DeepSeek V4.x", keyword:"models", maturity:66, scope:58, note:"Open coding" },
+  { id:"kimi", name:"Kimi K3", keyword:"models", maturity:58, scope:48, note:"Open-weight scale" },
   /* Skills */
   { id:"find-skills", name:"find-skills", keyword:"skills", maturity:70, scope:50, note:"skills.sh" },
   { id:"grill-me", name:"grill-me", keyword:"skills", maturity:66, scope:48, note:"Spec grilling" },
@@ -830,16 +831,21 @@ const TOOLS = [
   { id:"vercel-react", name:"vercel-react-best-practices", keyword:"skills", maturity:58, scope:40, note:"Framework skill" },
   { id:"superpowers", name:"superpowers / brainstorming", keyword:"skills", maturity:56, scope:54, note:"Workflow pack" },
   /* Harnesses */
-  { id:"claude-code", name:"Claude Code", keyword:"harnesses", maturity:88, scope:72, note:"CLI agent harness" },
-  { id:"codex", name:"Codex", keyword:"harnesses", maturity:84, scope:74, note:"Sandboxed terminal" },
-  { id:"cursor", name:"Cursor", keyword:"harnesses", maturity:82, scope:66, note:"Agentic IDE" },
-  { id:"opencode", name:"OpenCode", keyword:"harnesses", maturity:70, scope:66, note:"Open harness" },
-  { id:"copilot", name:"GitHub Copilot", keyword:"harnesses", maturity:78, scope:62, note:"IDE + cloud agent" },
-  { id:"devin", name:"Devin / Fusion CLI", keyword:"harnesses", maturity:74, scope:72, note:"Delegated tasks" },
-  { id:"gemini-cli", name:"Gemini CLI", keyword:"harnesses", maturity:66, scope:64, note:"Free-tier CLI" },
-  { id:"cline", name:"Cline", keyword:"harnesses", maturity:62, scope:60, note:"Open IDE agent" },
-  { id:"conductor", name:"Conductor", keyword:"harnesses", maturity:40, scope:68, note:"Parallel manager" },
-  { id:"aider", name:"Aider", keyword:"harnesses", maturity:55, scope:52, note:"Git-native CLI" },
+  { id:"claude-code", name:"Claude Code", keyword:"harnesses", maturity:92, scope:86, note:"CLI agent harness" },
+  { id:"codex", name:"Codex", keyword:"harnesses", maturity:86, scope:74, note:"Sandboxed terminal" },
+  { id:"cursor", name:"Cursor", keyword:"harnesses", maturity:82, scope:62, note:"Agentic IDE" },
+  { id:"copilot", name:"GitHub Copilot", keyword:"harnesses", maturity:76, scope:50, note:"IDE + cloud agent" },
+  { id:"devin", name:"Devin / Fusion CLI", keyword:"harnesses", maturity:70, scope:80, note:"Delegated tasks" },
+  { id:"opencode", name:"OpenCode", keyword:"harnesses", maturity:64, scope:68, note:"Open harness" },
+  { id:"gemini-cli", name:"Gemini CLI", keyword:"harnesses", maturity:58, scope:56, note:"Free-tier CLI" },
+  { id:"cline", name:"Cline", keyword:"harnesses", maturity:52, scope:44, note:"Open IDE agent" },
+  { id:"aider", name:"Aider", keyword:"harnesses", maturity:46, scope:34, note:"Git-native CLI" },
+  { id:"conductor", name:"Conductor", keyword:"harnesses", maturity:36, scope:70, note:"Parallel manager" },
+  /* App builders (vibe-coding surfaces) */
+  { id:"v0", name:"v0", keyword:"harnesses", maturity:68, scope:30, note:"Prompt-to-UI" },
+  { id:"lovable", name:"Lovable", keyword:"harnesses", maturity:62, scope:38, note:"Prompt-to-app" },
+  { id:"replit-agent", name:"Replit Agent", keyword:"harnesses", maturity:56, scope:28, note:"Cloud IDE agent" },
+  { id:"bolt", name:"Bolt", keyword:"harnesses", maturity:50, scope:22, note:"Prompt-to-app" },
   /* Frameworks */
   { id:"langchain", name:"LangChain", keyword:"frameworks", maturity:86, scope:64, note:"Agent platform" },
   { id:"langgraph", name:"LangGraph", keyword:"frameworks", maturity:80, scope:66, note:"Durable graphs" },
@@ -1271,17 +1277,16 @@ function toolsCatFilters(){
   const opts = [["all","All categories"], ...KEYWORDS.map(k=>[k.id,k.name])];
   return `<div class="filters" role="group" aria-label="Filter tools by category">${opts.map(([v,l])=>`<button type="button" class="filter" data-tc="${v}" aria-pressed="${v===toolsCat}">${esc(l)}</button>`).join("")}</div>`;
 }
-/* Nudge tool dots/labels apart so Show tools stays readable. */
-function layoutToolPoints(tools, X, Y, padL, padR, padT, padB, W, H){
+/* Separate tool dots, then park labels in a right gutter so names never stack. */
+function layoutToolPoints(tools, X, Y, padL, padT, padB, W, H, gutterX){
   const showSub = toolsCat === "all";
-  const minGap = showSub ? 34 : 30;
+  const minGap = 38;
   const pts = tools.map(t => ({
     t, x: X(t.maturity), y: Y(t.scope),
     label: t.name,
-    sub: showSub ? (KEYWORDS.find(k => k.id === t.keyword)?.name || "") : "",
-    lw: Math.min(200, 8 + t.name.length * 6.4)
-  })).sort((a,b)=> a.x - b.x || a.y - b.y);
-  for (let iter = 0; iter < 48; iter++){
+    sub: showSub ? (KEYWORDS.find(k => k.id === t.keyword)?.name || "") : ""
+  })).sort((a,b)=> a.y - b.y || a.x - b.x);
+  for (let iter = 0; iter < 60; iter++){
     for (let i = 0; i < pts.length; i++){
       for (let j = i + 1; j < pts.length; j++){
         const a = pts[i], b = pts[j];
@@ -1295,60 +1300,58 @@ function layoutToolPoints(tools, X, Y, padL, padR, padT, padB, W, H){
       }
     }
     for (const p of pts){
-      p.x = Math.min(W - padR - 8, Math.max(padL + 8, p.x));
+      p.x = Math.min(gutterX - 18, Math.max(padL + 8, p.x));
       p.y = Math.min(H - padB - 8, Math.max(padT + 8, p.y));
     }
   }
-  // Place labels to the right when there is room; otherwise left. Stagger vertical offsets on collisions.
-  for (const p of pts){
-    const right = p.x + 12 + p.lw < W - 8;
-    p.lx = right ? p.x + 12 : p.x - 12;
-    p.anchor = right ? "start" : "end";
-    p.ly = p.y + 4;
-  }
-  for (let iter = 0; iter < 24; iter++){
-    for (let i = 0; i < pts.length; i++){
-      for (let j = i + 1; j < pts.length; j++){
-        const a = pts[i], b = pts[j];
-        if (a.anchor !== b.anchor) continue;
-        const sameSide = Math.abs(a.lx - b.lx) < Math.max(a.lw, b.lw) * 0.85;
-        if (!sameSide) continue;
-        const dy = b.ly - a.ly;
-        if (Math.abs(dy) >= 16) continue;
-        const push = (16 - Math.abs(dy || 0.01)) / 2;
-        const dir = dy >= 0 ? 1 : -1;
-        a.ly -= dir * push;
-        b.ly += dir * push;
-      }
-    }
-    for (const p of pts){
-      p.ly = Math.min(H - 10, Math.max(padT + 10, p.ly));
-    }
-  }
+  // Right-gutter labels, one row each, ordered by dot Y — guarantees no overlap.
+  const row = showSub ? 28 : 22;
+  const labelH = pts.length * row;
+  let y0 = padT + Math.max(0, (H - padT - padB - labelH) / 2) + 12;
+  pts.sort((a,b)=> a.y - b.y || a.x - b.x);
+  pts.forEach((p, i)=>{
+    p.lx = gutterX;
+    p.ly = y0 + i * row;
+    p.anchor = "start";
+  });
   return pts;
 }
 function chartSVG(){
   const tools = showTools ? toolsForChart() : null;
-  const crowded = showTools && toolsCat === "all";
-  const W = crowded ? 980 : 900;
-  const H = crowded ? Math.min(720, 360 + tools.length * 7) : showTools ? Math.max(460, 300 + tools.length * 22) : 420;
-  const padL = 64, padR = crowded ? 120 : 140, padT = 28, padB = 52;
-  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const allTools = showTools && toolsCat === "all";
+  const n = showTools ? tools.length : 0;
+  const W = showTools ? 1040 : 900;
+  const H = showTools ? Math.max(480, 120 + n * (allTools ? 28 : 26)) : 420;
+  const padL = 64, padT = 28, padB = 52;
+  const gutterX = showTools ? W - 210 : W - 28;
+  const padR = showTools ? W - gutterX + 8 : 28;
+  const plotW = gutterX - padL - 24, plotH = H - padT - padB;
   const X = m => padL + (m / 100) * plotW, Y = s => padT + plotH - (s / 100) * plotH;
   let nodes = "";
   if (showTools){
-    const pts = layoutToolPoints(tools, X, Y, padL, padR, padT, padB, W, H);
-    pts.forEach(p=>{
-      const cur = patternsKeyword === p.t.keyword ? ' aria-current="true"' : "";
-      const sub = p.sub ? `<text class="chart-sub" x="${p.lx}" y="${p.ly+12}" text-anchor="${p.anchor}">${esc(p.sub)}</text>` : "";
-      nodes += `<g class="chart-tool" tabindex="0" role="button" data-kw="${p.t.keyword}"${cur}>
-        <title>${esc(p.t.name)}${p.t.note ? " — " + esc(p.t.note) : ""}</title>
-        <line class="chart-grid" x1="${p.x}" y1="${p.y}" x2="${p.lx}" y2="${p.ly-2}" opacity=".35"/>
-        <circle class="chart-node" cx="${p.x}" cy="${p.y}" r="6"/>
-        <text class="chart-label" x="${p.lx}" y="${p.ly}" text-anchor="${p.anchor}">${esc(p.label)}</text>
-        ${sub}
-      </g>`;
-    });
+    // All-categories: dots + tooltips only (too many labels). One category: gutter labels.
+    if (allTools){
+      tools.forEach(t=>{
+        const cx = X(t.maturity), cy = Y(t.scope);
+        const cur = patternsKeyword === t.keyword ? ' aria-current="true"' : "";
+        const cat = KEYWORDS.find(k => k.id === t.keyword)?.name || "";
+        nodes += `<g class="chart-tool" tabindex="0" role="button" data-kw="${t.keyword}"${cur}>
+          <title>${esc(t.name)} · ${esc(cat)}${t.note ? " — " + esc(t.note) : ""}</title>
+          <circle class="chart-node" cx="${cx}" cy="${cy}" r="5"/>
+        </g>`;
+      });
+    } else {
+      const pts = layoutToolPoints(tools, X, Y, padL, padT, padB, W, H, gutterX);
+      pts.forEach(p=>{
+        const cur = patternsKeyword === p.t.keyword ? ' aria-current="true"' : "";
+        nodes += `<g class="chart-tool" tabindex="0" role="button" data-kw="${p.t.keyword}"${cur}>
+          <title>${esc(p.t.name)}${p.t.note ? " — " + esc(p.t.note) : ""}</title>
+          <path class="chart-leader" d="M${p.x} ${p.y}L${gutterX - 10} ${p.ly - 3}"/>
+          <circle class="chart-node" cx="${p.x}" cy="${p.y}" r="6"/>
+          <text class="chart-label" x="${p.lx}" y="${p.ly}" text-anchor="${p.anchor}">${esc(p.label)}</text>
+        </g>`;
+      });
+    }
   } else {
     KEYWORDS.forEach(k=>{
       const cx = X(k.maturity), cy = Y(k.scope);
