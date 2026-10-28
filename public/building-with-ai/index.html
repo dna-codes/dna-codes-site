@@ -966,7 +966,7 @@ const TOOLS = [
 const KEYWORD_PAIRS = {
   models:[
     { anti:{ title:"One model for everything", desc:"The same [[models|model]] for architecture, bulk renames and release notes. Cost and judgment get flattened.", warn:"The cheap path and the careful path are identical" },
-      pattern:{ title:"Model to the job", desc:"Pick stronger [[models|models]] for judgment-heavy work and smaller ones for bulk, reversible chores.", old:"Right tool for the job" } },
+      pattern:{ title:"Model to the job", desc:"Pick stronger [[models|models]] for judgment-heavy work and smaller ones for bulk, reversible chores. Match modality too: an image, audio or video input wants a model that can see or hear it, not a text-only path.", old:"Right tool for the job" } },
     { anti:{ title:"Model as oracle", desc:"Treating the model’s first answer as truth. No independent check, no second source.", warn:"Nobody verified the claim" },
       pattern:{ title:"Model as draft", desc:"Use the model to draft; people, tests and [[assurance|evals]] decide what ships.", old:"Pair programming" } }
   ],
