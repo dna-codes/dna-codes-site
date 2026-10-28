@@ -262,6 +262,16 @@ h2{font-size:clamp(28px,2.8vw,42px);line-height:1.08;font-weight:700;letter-spac
 .patterns-detail .detail-head h3{margin:0;font-size:clamp(22px,2.2vw,28px);line-height:1.15;font-weight:700;color:var(--heading)}
 .patterns-detail .detail-head .lede{margin:6px 0 0;max-width:52ch}
 .patterns-detail .chip{cursor:default}
+.patterns-all{gap:22px}
+.patterns-cat{display:flex;flex-direction:column;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
+.patterns-cat:first-of-type{border-top:0;padding-top:0}
+.patterns-cat-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:10px 16px}
+.patterns-cat-btn{appearance:none;border:0;background:none;padding:0;margin:0;text-align:left;cursor:pointer;color:inherit;min-width:0;flex:1 1 16rem}
+.patterns-cat-btn:hover h3,.patterns-cat-btn:focus-visible h3{color:var(--accent-text)}
+.patterns-cat-btn h3{margin:0;font-size:clamp(18px,1.8vw,22px);line-height:1.2;font-weight:700;color:var(--heading)}
+.patterns-cat-btn .lede{margin:4px 0 0;max-width:48ch;font-size:14px;color:var(--muted)}
+.patterns-cat-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;flex:0 0 auto}
+.patterns-cat-meta .count{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
 .tool-groups{display:flex;flex-direction:column;gap:10px}
 .tool-group{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
 .tool-group-label{flex:0 0 auto;min-width:5.5rem;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -274,9 +284,10 @@ h2{font-size:clamp(28px,2.8vw,42px);line-height:1.08;font-weight:700;letter-spac
 .kw-card:hover,.kw-card[aria-current="true"]{border-color:var(--accent-line);background:var(--accent-soft)}
 .kw-card h4{margin:0;font-size:16px;font-weight:600;color:var(--heading)}
 .kw-card p{margin:0;font-size:14px;color:var(--muted);line-height:1.45}
-.kw-meta{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px}
+.kw-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0 10px}
 .kw-meta .mini{min-height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--line-strong);background:none;color:var(--fg);font-size:12px;cursor:pointer}
 .kw-meta .mini.link{border-color:var(--accent-line);color:var(--accent-text);font-weight:600}
+.kw-meta .count{font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;color:var(--muted)}
 
 /* Footer — shortcuts for the lifecycle graph only (hidden on Patterns). */
 .foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;min-height:56px;padding-inline:clamp(0px,2vw,32px);padding-block:8px;border-top:1px solid var(--line)}
@@ -834,19 +845,22 @@ const TOOL_SOURCES = {
   memory:{ label:"awesome-ai-memory", href:"https://github.com/topoteretes/awesome-ai-memory" }
 };
 const TOOLS = [
-  /* Models — llm-stats.com (≤15), grouped by provider */
-  { id:"claude-opus", name:"Claude Opus 5.5", keyword:"models", group:"Claude", maturity:96, scope:90, note:"LLM Stats #1 · coding arena" },
-  { id:"claude-sonnet", name:"Claude Sonnet 5.5", keyword:"models", group:"Claude", maturity:90, scope:72, note:"LLM Stats #2 · workhorse" },
-  { id:"gpt-astra", name:"GPT-6 Astra", keyword:"models", group:"OpenAI", maturity:92, scope:82, note:"LLM Stats #3 · GPQA lead" },
-  { id:"gpt-sol", name:"GPT-6.1 Sol", keyword:"models", group:"OpenAI", maturity:78, scope:48, note:"Cost-efficient Sol-class" },
-  { id:"gemini-argon", name:"Gemini 4 Argon", keyword:"models", group:"Gemini", maturity:86, scope:64, note:"LLM Stats #4" },
-  { id:"gemini-flash", name:"Gemini 3 Flash", keyword:"models", group:"Gemini", maturity:70, scope:36, note:"Highest throughput" },
-  { id:"grok", name:"Grok 4.1 Fast", keyword:"models", group:"Grok", maturity:74, scope:70, note:"Large context · xAI" },
-  { id:"muse", name:"Muse Wonder Full", keyword:"models", group:"Meta", maturity:80, scope:58, note:"Meta frontier" },
-  { id:"kimi", name:"Kimi K3", keyword:"models", group:"Open-weight", maturity:68, scope:54, note:"Top open GPQA" },
-  { id:"deepseek", name:"DeepSeek V4.1 Flash", keyword:"models", group:"Open-weight", maturity:62, scope:44, note:"Open coding · cheap" },
-  { id:"qwen", name:"Qwen 3.8 Max", keyword:"models", group:"Open-weight", maturity:56, scope:40, note:"Alibaba open frontier" },
-  { id:"glm", name:"GLM-5.3", keyword:"models", group:"Open-weight", maturity:50, scope:34, note:"Open reasoning" },
+  /* Models — llm-stats / LLMBenchmark Oct 2026 (≤15), grouped by provider */
+  { id:"claude-opus", name:"Claude Opus 5.5", keyword:"models", group:"Claude", maturity:96, scope:90, note:"Coding arena #1" },
+  { id:"claude-fable", name:"Claude Fable 5.1", keyword:"models", group:"Claude", maturity:94, scope:86, note:"SWE-Bench lead · #2 aggregate" },
+  { id:"claude-sonnet", name:"Claude Sonnet 5.5", keyword:"models", group:"Claude", maturity:88, scope:72, note:"Workhorse · fast frontier" },
+  { id:"gpt-astra", name:"GPT-6 Astra", keyword:"models", group:"OpenAI", maturity:92, scope:82, note:"GPQA lead" },
+  { id:"gpt-sol", name:"GPT-6.1 Sol", keyword:"models", group:"OpenAI", maturity:84, scope:58, note:"Sol-class · strong $/quality" },
+  { id:"gpt-terra", name:"GPT-6.1 Terra", keyword:"models", group:"OpenAI", maturity:76, scope:44, note:"Best value in top tier" },
+  { id:"gemini-argon", name:"Gemini 4 Argon", keyword:"models", group:"Gemini", maturity:90, scope:68, note:"Google frontier" },
+  { id:"gemini-flash", name:"Gemini 3.8 Flash", keyword:"models", group:"Gemini", maturity:66, scope:34, note:"High throughput Flash" },
+  { id:"grok", name:"Grok 4.7", keyword:"models", group:"Grok", maturity:70, scope:62, note:"xAI latest" },
+  { id:"muse", name:"Muse Wonder Full", keyword:"models", group:"Meta", maturity:82, scope:74, note:"Meta agent frontier" },
+  { id:"muse-spark", name:"Muse Spark 1.3", keyword:"models", group:"Meta", maturity:64, scope:48, note:"Meta · high throughput" },
+  { id:"kimi", name:"Kimi K3.1 Pro", keyword:"models", group:"Open-weight", maturity:78, scope:56, note:"Top open-weight" },
+  { id:"deepseek", name:"DeepSeek V4.1 Flash", keyword:"models", group:"Open-weight", maturity:60, scope:40, note:"Open coding · cheap" },
+  { id:"qwen", name:"Qwen 3.8 Max", keyword:"models", group:"Open-weight", maturity:54, scope:38, note:"Alibaba open frontier" },
+  { id:"mimo", name:"MiMo-V2.6-Pro", keyword:"models", group:"Open-weight", maturity:48, scope:32, note:"Xiaomi emerging open" },
   /* Skills — skills.sh leaderboard (≤15) */
   { id:"find-skills", name:"find-skills", keyword:"skills", group:"Discovery", maturity:92, scope:58, note:"skills.sh #1" },
   { id:"grill-me", name:"grill-me", keyword:"skills", group:"Workflow", maturity:86, scope:54, note:"skills.sh #2 · specs" },
@@ -1219,26 +1233,63 @@ function zipPairs(pats, antis, locs){
   }
   return out;
 }
-function pairsBlock(pairList, opts){
-  const bet = isBet() && !(opts && opts.locs) ? " (bets)" : "";
-  if (!pairList.length) return `<p class="none">No patterns or anti-patterns specific to this step in this era.</p>`;
-  return `<div class="pairs">
-    <div class="pairs-head">
-      <h3 class="col-head bad">${icon.warn}Anti-pattern${bet} <span class="count">${pairList.filter(x=>x.anti).length}</span></h3>
-      <h3 class="col-head good">${icon.check}Pattern${bet} <span class="count">${pairList.filter(x=>x.pattern).length}</span></h3>
-    </div>
-    ${pairList.map(row => `<div class="pair">
+function pairsRowsHTML(pairList){
+  return pairList.map(row => `<div class="pair">
       <div class="pair-side">${row.anti ? card(row.anti, true, row.locA) : `<p class="none">No paired anti-pattern.</p>`}</div>
       <div class="pair-side">${row.pattern ? card(row.pattern, false, row.locP) : `<p class="none">No paired pattern.</p>`}</div>
-    </div>`).join("")}
+    </div>`).join("");
+}
+function pairsHeadHTML(pairList, opts){
+  const bet = isBet() && !(opts && opts.locs) ? " (bets)" : "";
+  return `<div class="pairs-head">
+      <h3 class="col-head bad">${icon.warn}Anti-pattern${bet} <span class="count">${pairList.filter(x=>x.anti).length}</span></h3>
+      <h3 class="col-head good">${icon.check}Pattern${bet} <span class="count">${pairList.filter(x=>x.pattern).length}</span></h3>
+    </div>`;
+}
+function pairsBlock(pairList, opts){
+  if (!pairList.length) return `<p class="none">No patterns or anti-patterns specific to this step in this era.</p>`;
+  return `<div class="pairs">
+    ${opts && opts.hideHead ? "" : pairsHeadHTML(pairList, opts)}
+    ${pairsRowsHTML(pairList)}
   </div>`;
 }
 function columns(pats, antis, locs){
   return pairsBlock(zipPairs(pats, antis, locs), { locs });
 }
-function keywordPairsBlock(id){
+function keywordPairsBlock(id, opts){
   const pairs = KEYWORD_PAIRS[id] || [];
-  return pairsBlock(pairs.map(p => ({ anti:p.anti, pattern:p.pattern })));
+  return pairsBlock(pairs.map(p => ({ anti:p.anti, pattern:p.pattern })), opts);
+}
+function allPatternsHTML(){
+  const total = KEYWORDS.reduce((n,k)=> n + ((KEYWORD_PAIRS[k.id]||[]).length), 0);
+  const sections = KEYWORDS.map(k=>{
+    const pairs = (KEYWORD_PAIRS[k.id] || []).map(p => ({ anti:p.anti, pattern:p.pattern }));
+    if (!pairs.length) return "";
+    return `<section class="patterns-cat" id="patterns-cat-${k.id}" aria-labelledby="patterns-cat-title-${k.id}">
+      <div class="patterns-cat-head">
+        <button type="button" class="patterns-cat-btn" data-kw="${k.id}" id="patterns-cat-title-${k.id}">
+          <h3>${esc(k.name)}</h3>
+          <p class="lede">${esc(k.blurb)}</p>
+        </button>
+        <div class="patterns-cat-meta">
+          <span class="count">${pairs.length} pair${pairs.length === 1 ? "" : "s"}</span>
+          <button type="button" class="mini link" data-kw="${k.id}">Tools &amp; focus</button>
+        </div>
+      </div>
+      <div class="pairs">${pairsRowsHTML(pairs)}</div>
+    </section>`;
+  }).join("");
+  return `<section class="patterns-detail patterns-all" id="patterns-detail" aria-live="polite">
+    <div class="detail-head">
+      <div>
+        <h3>All patterns by category</h3>
+        <p class="lede">Every anti-pattern / pattern pair, grouped by layer. Click a category on the chart (or Tools &amp; focus) for that layer’s tools.</p>
+      </div>
+      <div class="kw-meta"><span class="count">${total} pairs · ${KEYWORDS.length} categories</span></div>
+    </div>
+    ${pairsHeadHTML(KEYWORDS.flatMap(k => (KEYWORD_PAIRS[k.id]||[]).map(p => ({ anti:p.anti, pattern:p.pattern }))))}
+    ${sections}
+  </section>`;
 }
 function chip(t){ return TERMS[t] ? `<button type="button" class="chip term" data-term="${t}" aria-expanded="false"><span>${TERMS[t].name}</span></button>` : `<span class="chip">${esc(t)}</span>`; }
 function eraPills(b){
@@ -1462,7 +1513,7 @@ function patternsDetailHTML(id){
       </div>
       <div class="kw-meta">
         <button type="button" class="mini link" data-gloss="${k.term}">Glossary · ${esc(TERMS[k.term]?.name || k.name)}</button>
-        <button type="button" class="mini" data-patterns-clear="1">Clear</button>
+        <button type="button" class="mini" data-patterns-clear="1">All patterns</button>
       </div>
     </div>
     ${exemplars.length ? `<div class="block"><span class="label">Tools in this layer</span>${toolsChipsHTML(exemplars)}${toolSourceNote(k.id)}</div>` : ""}
@@ -1473,12 +1524,13 @@ function tipsHTML(){
   return `<div class="tips-head"><div class="head">
       <div class="eyebrow-row"><span class="eyebrow-pill">Now</span></div>
       <h2>Patterns for today</h2>
-      <p class="lede">Click a category for tools, anti-patterns and patterns below. Or show tools on the chart.</p></div>
+      <p class="lede">All anti-pattern / pattern pairs below by category. Click a category for its tools, or show tools on the chart.</p></div>
     <button type="button" class="filter" data-tools="1" aria-pressed="${showTools}">${showTools ? "Show categories" : "Show tools"}</button>
   </div>
   ${showTools ? toolsCatFilters() : ""}
   ${chartSVG()}
-  ${patternsKeyword ? patternsDetailHTML(patternsKeyword) : `<p class="none">Select a category${showTools ? " (or a tool)" : " above"} to see its tools and paired anti-patterns / patterns.</p>`}
+  ${showTools && toolsCat === "all" ? `<p class="tool-sources">All categories: compact scatter (hover for names). Pick a category filter for labeled dots.</p>` : ""}
+  ${patternsKeyword ? patternsDetailHTML(patternsKeyword) : allPatternsHTML()}
   <div class="actions"><button type="button" class="btn-ghost" data-home="1"><span aria-hidden="true">←</span> Back to the lifecycle</button></div>`;
 }
 
