@@ -265,11 +265,13 @@ h2{font-size:clamp(28px,2.8vw,42px);line-height:1.08;font-weight:700;letter-spac
 .patterns-all{gap:22px}
 .patterns-cat{display:flex;flex-direction:column;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
 .patterns-cat:first-of-type{border-top:0;padding-top:0}
-.patterns-cat-head{display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px 16px}
+.patterns-cat-head{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .patterns-cat-btn{appearance:none;border:0;background:none;padding:0;margin:0;text-align:left;cursor:pointer;color:inherit;min-width:0;max-width:52ch}
 .patterns-cat-btn:hover h3,.patterns-cat-btn:focus-visible h3{color:var(--accent-text)}
 .patterns-cat-btn h3{margin:0;font-size:clamp(18px,1.8vw,22px);line-height:1.2;font-weight:700;color:var(--heading)}
 .patterns-cat-btn .lede{margin:4px 0 0;font-size:14px;color:var(--muted)}
+.patterns-cat-sample{max-width:100%}
+.patterns-cat-sample .chip{cursor:default}
 .tool-groups{display:flex;flex-direction:column;gap:10px}
 .tool-group{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
 .tool-group-label{flex:0 0 auto;min-width:5.5rem;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -1262,12 +1264,16 @@ function allPatternsHTML(){
   const sections = KEYWORDS.map(k=>{
     const pairs = (KEYWORD_PAIRS[k.id] || []).map(p => ({ anti:p.anti, pattern:p.pattern }));
     if (!pairs.length) return "";
+    const sample = sampleTools(k.id);
     return `<section class="patterns-cat" id="patterns-cat-${k.id}" aria-labelledby="patterns-cat-title-${k.id}">
       <div class="patterns-cat-head">
         <button type="button" class="patterns-cat-btn" data-kw="${k.id}" id="patterns-cat-title-${k.id}">
           <h3>${esc(k.name)}</h3>
           <p class="lede">${esc(k.blurb)}</p>
         </button>
+        ${sample.length ? `<div class="chips chips-sm patterns-cat-sample" aria-label="Sample ${esc(k.name)}">${sample.map(t =>
+          `<span class="chip chip-sm" title="${esc(t.note || "")}">${esc(t.name)}</span>`
+        ).join("")}</div>` : ""}
       </div>
       <div class="pairs">
         ${pairsHeadHTML(pairs)}
@@ -1360,6 +1366,21 @@ function resolveKeyword(id){
 }
 function toolsForKeyword(id){
   return TOOLS.filter(t => t.keyword === id).slice(0, TOOLS_CAP);
+}
+const SAMPLE_CAP = 6;
+/* Round-robin across provider/family groups so the catalog sample stays diverse. */
+function sampleTools(id, n = SAMPLE_CAP){
+  const groups = groupTools(toolsForKeyword(id));
+  const out = [];
+  for (let i = 0; out.length < n; i++){
+    let added = false;
+    for (const g of groups){
+      if (out.length >= n) break;
+      if (i < g.tools.length){ out.push(g.tools[i]); added = true; }
+    }
+    if (!added) break;
+  }
+  return out;
 }
 function toolsForChart(){
   if (toolsCat === "all") return TOOLS;
