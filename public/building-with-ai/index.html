@@ -17,7 +17,7 @@ img{max-width:100%}
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
 <style>
-/* Layout: header (brand · Lifecycle/Stack/Patterns/Glossary · theme) / era bar on Lifecycle / ring + panel / footer. The ring carries phases, handoff gates, sub-stage effort ticks and a flow of work that piles up at the bottleneck for the selected mode. dna.codes look, dark-first, high contrast in both themes. */
+/* Layout: header (brand · Lifecycle/Stack/Patterns/Glossary · theme) / ring (era toggle above) + panel / footer. The ring carries phases, handoff gates, sub-stage effort ticks and a flow of work that piles up at the bottleneck for the selected mode. dna.codes look, dark-first, high contrast in both themes. */
 :root{
   --bg:#0A0F1E; --surface:#0F1729; --surface-2:#121C33;
   --fg:#EEF3FA; --heading:#FFFFFF; --muted:#BAC4D4; --soft:#DCE4EF;
@@ -162,7 +162,6 @@ button{font:inherit;color:inherit}
 .panel.swap{animation:rise .35s cubic-bezier(.2,.7,.2,1)}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .eyebrow-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
-.eyebrow-pill{padding:5px 13px;border-radius:999px;border:1px solid var(--accent-line);color:var(--accent-text);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
 .bn-pill{padding:5px 13px;border-radius:999px;border:1px solid var(--warn-line);background:var(--warn-soft);color:var(--warn);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
 .bet-pill{padding:5px 13px;border-radius:999px;border:1px dashed var(--line-strong);color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
 .eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;color:var(--accent-text);text-transform:uppercase}
@@ -366,7 +365,7 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
 <div class="app">
   <header class="top">
     <div class="brand">
-      <a class="brand-logo" href="https://dna.codes"><img class="brand-mark" src="data:image/webp;base64,UklGRmwEAABXRUJQVlA4WAoAAAAQAAAAFwAAHwAAQUxQSNMBAAABkHPbtrG94te594tt27Zt20ln2zZfdLFtG6X9oYttO3lxigeJiAlAqLBqbOqqDfC0JbMiIOR8oLqqTK3Grk1rBfRyJgRDzejvv+o3HtcGWIRMN1SnZSpcwLVQjmGfdqdCQMgxoAF+01bPiuDIHt5SGHERclzX67kQSGCGRj89e+H68sV7/acjsI4RqkeXhgKBQCAUnL9Lo9rLAaZ7v9R4CrPvLRB8Zs2CGCre/noqC+KVitx3kseNmzD8mv7TdaTxMtSM6Z8/f3/HIr/0CAa/A4eCZarGdADWl6H5uZ2l6LGwKYJfQ+Pfqk/KYjD4lVSM1T+/9RLW4tdg6a8xjQ/GGCteQt5KhnD0y2DSpBK8DJ0+6aHUpLYgFGiSyk1If19jenHb5q17du7c8UxnY92yvdCIPryTkpSYmJj4TUOkcmAZono3OwIItYdlx4gjfccyJVqmw2eaVsUQhCP6s2veipUruVcrt1ffVsZQ+JNG9T//6UwShEP6o3/JiuU9KxdYq28qYSBtu9IInkKR1q3zIYCh1dgsiIuhR0TPZnAYyvzVJ0kp7onf9K8Ow4JQ4K2e2rB1i3Prusca0QEOhOJNEnA31Lgf2WgRABFsKs/UpC+EAABWUDggcgIAANANAJ0BKhgAIAA+bSqRRaQioZgEAEAGxLYATplCOrvGvxyqS7sBz5PoA3gD9Vemp9h/9ov2Z9q6luPZrea2seKx/TfAGje/yvqAZmPoz/re4L+n3owerP9gPYP/Ycdhk5p4K72zu+R99mh13jzOvQs/+lkMT2CgAP7xpxVRzzCWOG2nF2DdfvloUZgfvUxs7a2BZSPWD5ucSnXTP2/Qv4X4wPFGZ/axZAcV8hKlCnfmvRWTQwQrXvaYqK/Wbhc9FNU4e8ey1uMlkpuPKd/iPlV8i3b6XeYHlK7//NLhfh//mB0+O3PzoKU+B11nbKfx5EVP2MqOzdgn63Hpr9a9uIJgy/59tMc/q9UDfU9EDf6q/qniD8sCITXNYA/TPvi+mv32dHarOVUUxtHj7sCcZvoKP0b/j/+/NaD9/EqGfF/bm21NPTX2lW8e4sUAN8u0PBgGxbR4xaqMX5O8q8tI1UDM57WgutHx3Gu+Te7j/5OsjjJZvP6nDHAWWW7iBilSPifyV0Z1CShnkFdAlUNV6F6W2b1kEMD7LK1dGcYo7iGM2w6FSKfPA8XQN80VCiMXm4TmQXd8hs/SiAIz5rdatmwwfB0ChB8j8I3P5ju6r/Vw3Pjw8SbeWCHnGefyOZJP5lKHBQM/9WU0TWFEvoRqm94xZfh6yjLvi+9nnAQ7IwD235zDtkYv9UrLk04CvXJZy7By+GXe4AqPcZtO6K3/Pm7NEtCdfRN0P/KHe8KVjUB/9I9+Sy8zv79ae98TIAAA" width="24" height="32" alt="dna.codes"></a>
+      <a class="brand-logo" href="https://dna.codes"><img class="brand-mark" src="data:image/png;base64,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" width="24" height="32" alt="dna.codes"></a>
       <span class="brand-sep" aria-hidden="true"></span>
       <button type="button" class="brand-talk" id="home-btn" title="Back to Lifecycle">Building With AI: Patterns and Anti-patterns</button>
     </div>
@@ -1289,10 +1288,10 @@ function allPatternsHTML(){
 }
 function chip(t){ return TERMS[t] ? `<button type="button" class="chip term" data-term="${t}" aria-expanded="false"><span>${TERMS[t].name}</span></button>` : `<span class="chip">${esc(t)}</span>`; }
 function eraPills(b){
-  let h = `<span class="eyebrow-pill">${MODES[mode].label}</span>`;
+  let h = "";
   if (b) h += `<span class="bn-pill">${bnWord(b)}</span>`;
   if (isBet()) h += `<span class="bet-pill">Bets, not predictions</span>`;
-  return `<div class="eyebrow-row">${h}</div>`;
+  return h ? `<div class="eyebrow-row">${h}</div>` : "";
 }
 
 function overviewHTML(){
