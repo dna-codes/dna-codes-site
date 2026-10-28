@@ -64,6 +64,7 @@ ${GENOME_SOURCES.map((g) => `- [${g.orgName} genome](${url(`/genome/${g.key}.jso
 - [About](${url('/about')}): Who DNA Codes is and what it is building.
 - [Contact](${url('/contact')}): How to reach the team.
 - [Blog](${url('/blog')}): Essays on the abstraction layers between intent and execution.
+- [Building With AI](${url('/building-with-ai')}): Interactive companion on lifecycle, agent-stack and patterns for building with AI.
 - [RSS](${url('/rss.xml')})
 `;
 
