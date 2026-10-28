@@ -265,13 +265,11 @@ h2{font-size:clamp(28px,2.8vw,42px);line-height:1.08;font-weight:700;letter-spac
 .patterns-all{gap:22px}
 .patterns-cat{display:flex;flex-direction:column;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
 .patterns-cat:first-of-type{border-top:0;padding-top:0}
-.patterns-cat-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:10px 16px}
-.patterns-cat-btn{appearance:none;border:0;background:none;padding:0;margin:0;text-align:left;cursor:pointer;color:inherit;min-width:0;flex:1 1 16rem}
+.patterns-cat-head{display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px 16px}
+.patterns-cat-btn{appearance:none;border:0;background:none;padding:0;margin:0;text-align:left;cursor:pointer;color:inherit;min-width:0;max-width:52ch}
 .patterns-cat-btn:hover h3,.patterns-cat-btn:focus-visible h3{color:var(--accent-text)}
 .patterns-cat-btn h3{margin:0;font-size:clamp(18px,1.8vw,22px);line-height:1.2;font-weight:700;color:var(--heading)}
-.patterns-cat-btn .lede{margin:4px 0 0;max-width:48ch;font-size:14px;color:var(--muted)}
-.patterns-cat-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;flex:0 0 auto}
-.patterns-cat-meta .count{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.patterns-cat-btn .lede{margin:4px 0 0;font-size:14px;color:var(--muted)}
 .tool-groups{display:flex;flex-direction:column;gap:10px}
 .tool-group{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
 .tool-group-label{flex:0 0 auto;min-width:5.5rem;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -1261,7 +1259,6 @@ function keywordPairsBlock(id, opts){
   return pairsBlock(pairs.map(p => ({ anti:p.anti, pattern:p.pattern })), opts);
 }
 function allPatternsHTML(){
-  const total = KEYWORDS.reduce((n,k)=> n + ((KEYWORD_PAIRS[k.id]||[]).length), 0);
   const sections = KEYWORDS.map(k=>{
     const pairs = (KEYWORD_PAIRS[k.id] || []).map(p => ({ anti:p.anti, pattern:p.pattern }));
     if (!pairs.length) return "";
@@ -1271,23 +1268,20 @@ function allPatternsHTML(){
           <h3>${esc(k.name)}</h3>
           <p class="lede">${esc(k.blurb)}</p>
         </button>
-        <div class="patterns-cat-meta">
-          <span class="count">${pairs.length} pair${pairs.length === 1 ? "" : "s"}</span>
-          <button type="button" class="mini link" data-kw="${k.id}">Tools &amp; focus</button>
-        </div>
       </div>
-      <div class="pairs">${pairsRowsHTML(pairs)}</div>
+      <div class="pairs">
+        ${pairsHeadHTML(pairs)}
+        ${pairsRowsHTML(pairs)}
+      </div>
     </section>`;
   }).join("");
   return `<section class="patterns-detail patterns-all" id="patterns-detail" aria-live="polite">
     <div class="detail-head">
       <div>
-        <h3>All patterns by category</h3>
-        <p class="lede">Every anti-pattern / pattern pair, grouped by layer. Click a category on the chart (or Tools &amp; focus) for that layer’s tools.</p>
+        <h3>All Patterns</h3>
+        <p class="lede">Every anti-pattern / pattern pair, grouped by layer. Click a category heading or chart dot for that layer’s tools.</p>
       </div>
-      <div class="kw-meta"><span class="count">${total} pairs · ${KEYWORDS.length} categories</span></div>
     </div>
-    ${pairsHeadHTML(KEYWORDS.flatMap(k => (KEYWORD_PAIRS[k.id]||[]).map(p => ({ anti:p.anti, pattern:p.pattern }))))}
     ${sections}
   </section>`;
 }
