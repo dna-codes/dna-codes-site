@@ -267,6 +267,8 @@ h2{font-size:clamp(28px,2.8vw,42px);line-height:1.08;font-weight:700;letter-spac
 .tool-group-label{flex:0 0 auto;min-width:5.5rem;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .chips-sm{gap:6px}
 .chip-sm{min-height:26px;padding:0 10px;font-size:12px;border-radius:999px}
+.tool-sources{margin:6px 0 0;font-size:12px;line-height:1.45;color:var(--muted)}
+.tool-sources a{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
 .kw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
 .kw-card{text-align:left;padding:16px 18px;border-radius:14px;border:1px solid var(--line-strong);background:var(--surface);cursor:pointer;display:flex;flex-direction:column;gap:6px;color:inherit}
 .kw-card:hover,.kw-card[aria-current="true"]{border-color:var(--accent-line);background:var(--accent-soft)}
@@ -820,89 +822,132 @@ const KEYWORD_ALIASES = {
   context:"skills", parallel:"orchestration"
 };
 
-/* Exemplars for Show tools + the selected-category chip list. Teaching placements. */
+/* Exemplars for Show tools + selected-category chips. Cap: 15 dots per category.
+   Curated from skills.sh, llm-stats.com, Artificial Analysis coding agents,
+   awesome-mcp-servers, awesome-ai-memory. Teaching placements, not rankings. */
+const TOOLS_CAP = 15;
+const TOOL_SOURCES = {
+  models:{ label:"llm-stats.com", href:"https://llm-stats.com/leaderboards/llm-leaderboard" },
+  skills:{ label:"skills.sh", href:"https://www.skills.sh/" },
+  harnesses:{ label:"Artificial Analysis", href:"https://artificialanalysis.ai/agents/coding-agents" },
+  "mcp-tools":{ label:"awesome-mcp-servers", href:"https://github.com/wong2/awesome-mcp-servers" },
+  memory:{ label:"awesome-ai-memory", href:"https://github.com/topoteretes/awesome-ai-memory" }
+};
 const TOOLS = [
-  /* Models — grouped by provider */
-  { id:"claude-opus", name:"Claude Opus", keyword:"models", group:"Claude", maturity:94, scope:88, note:"Frontier general" },
-  { id:"claude-sonnet", name:"Claude Sonnet", keyword:"models", group:"Claude", maturity:86, scope:66, note:"Workhorse general" },
-  { id:"gpt-astra", name:"GPT Astra-class", keyword:"models", group:"OpenAI", maturity:90, scope:78, note:"Frontier general" },
-  { id:"gpt-sol", name:"GPT Sol-class", keyword:"models", group:"OpenAI", maturity:74, scope:42, note:"Cost-efficient" },
-  { id:"gemini", name:"Gemini-class", keyword:"models", group:"Gemini", maturity:82, scope:54, note:"Long-context general" },
-  { id:"grok", name:"Grok-class", keyword:"models", group:"Grok", maturity:78, scope:72, note:"Frontier general" },
-  { id:"deepseek", name:"DeepSeek V4.x", keyword:"models", group:"Open-weight", maturity:66, scope:58, note:"Open coding" },
-  { id:"kimi", name:"Kimi K3", keyword:"models", group:"Open-weight", maturity:58, scope:48, note:"Open-weight scale" },
-  /* Skills */
-  { id:"find-skills", name:"find-skills", keyword:"skills", group:"Discovery", maturity:70, scope:50, note:"skills.sh" },
-  { id:"grill-me", name:"grill-me", keyword:"skills", group:"Workflow", maturity:66, scope:48, note:"Spec grilling" },
-  { id:"agent-browser", name:"agent-browser", keyword:"skills", group:"Workflow", maturity:64, scope:46, note:"Browser skill" },
-  { id:"frontend-design", name:"frontend-design", keyword:"skills", group:"Design", maturity:68, scope:44, note:"anthropics/skills" },
-  { id:"tdd-skill", name:"tdd", keyword:"skills", group:"Workflow", maturity:62, scope:42, note:"Test-first skill" },
-  { id:"skill-creator", name:"skill-creator", keyword:"skills", group:"Authoring", maturity:60, scope:52, note:"Authoring skills" },
-  { id:"vercel-react", name:"vercel-react-best-practices", keyword:"skills", group:"Design", maturity:58, scope:40, note:"Framework skill" },
-  { id:"superpowers", name:"superpowers / brainstorming", keyword:"skills", group:"Workflow", maturity:56, scope:54, note:"Workflow pack" },
-  /* Harnesses */
-  { id:"claude-code", name:"Claude Code", keyword:"harnesses", group:"Claude", maturity:92, scope:86, note:"CLI agent harness" },
-  { id:"codex", name:"Codex", keyword:"harnesses", group:"OpenAI", maturity:86, scope:74, note:"Sandboxed terminal" },
-  { id:"gemini-cli", name:"Gemini CLI", keyword:"harnesses", group:"Gemini", maturity:58, scope:56, note:"Free-tier CLI" },
-  { id:"cursor", name:"Cursor", keyword:"harnesses", group:"Agents & IDEs", maturity:82, scope:62, note:"Agentic IDE" },
-  { id:"copilot", name:"GitHub Copilot", keyword:"harnesses", group:"Agents & IDEs", maturity:76, scope:50, note:"IDE + cloud agent" },
-  { id:"devin", name:"Devin / Fusion CLI", keyword:"harnesses", group:"Agents & IDEs", maturity:70, scope:80, note:"Delegated tasks" },
-  { id:"opencode", name:"OpenCode", keyword:"harnesses", group:"Agents & IDEs", maturity:64, scope:68, note:"Open harness" },
-  { id:"cline", name:"Cline", keyword:"harnesses", group:"Agents & IDEs", maturity:52, scope:44, note:"Open IDE agent" },
-  { id:"aider", name:"Aider", keyword:"harnesses", group:"Agents & IDEs", maturity:46, scope:34, note:"Git-native CLI" },
-  { id:"conductor", name:"Conductor", keyword:"harnesses", group:"Agents & IDEs", maturity:36, scope:70, note:"Parallel manager" },
-  { id:"v0", name:"v0", keyword:"harnesses", group:"App builders", maturity:68, scope:30, note:"Prompt-to-UI" },
-  { id:"lovable", name:"Lovable", keyword:"harnesses", group:"App builders", maturity:62, scope:38, note:"Prompt-to-app" },
-  { id:"replit-agent", name:"Replit Agent", keyword:"harnesses", group:"App builders", maturity:56, scope:28, note:"Cloud IDE agent" },
-  { id:"bolt", name:"Bolt", keyword:"harnesses", group:"App builders", maturity:50, scope:22, note:"Prompt-to-app" },
-  /* Frameworks */
-  { id:"langchain", name:"LangChain", keyword:"frameworks", group:"LangChain", maturity:86, scope:64, note:"Agent platform" },
-  { id:"langgraph", name:"LangGraph", keyword:"frameworks", group:"LangChain", maturity:80, scope:66, note:"Durable graphs" },
-  { id:"crewai", name:"CrewAI", keyword:"frameworks", group:"Multi-agent", maturity:76, scope:60, note:"Role crews" },
-  { id:"autogen", name:"AutoGen", keyword:"frameworks", group:"Multi-agent", maturity:74, scope:62, note:"Multi-agent chat" },
-  { id:"agno", name:"Agno", keyword:"frameworks", group:"Runtimes", maturity:68, scope:56, note:"Lightweight runtime" },
-  { id:"claude-sdk", name:"Claude Agent SDK", keyword:"frameworks", group:"Claude", maturity:72, scope:58, note:"Agentic loop SDK" },
-  { id:"strands", name:"AWS Strands", keyword:"frameworks", group:"Cloud", maturity:64, scope:54, note:"Cloud agent SDK" },
-  { id:"google-adk", name:"Google ADK", keyword:"frameworks", group:"Cloud", maturity:62, scope:54, note:"Agent kit" },
-  /* MCP & tools */
-  { id:"chrome-devtools", name:"Chrome DevTools MCP", keyword:"mcp-tools", group:"Browser", maturity:78, scope:46, note:"Browser tooling" },
-  { id:"playwright-mcp", name:"Playwright MCP", keyword:"mcp-tools", group:"Browser", maturity:80, scope:48, note:"Browser automation" },
-  { id:"firecrawl", name:"Firecrawl", keyword:"mcp-tools", group:"Web", maturity:72, scope:44, note:"Web → markdown" },
-  { id:"exa", name:"Exa", keyword:"mcp-tools", group:"Web", maturity:62, scope:44, note:"Agent search" },
-  { id:"github-mcp", name:"GitHub MCP", keyword:"mcp-tools", group:"Dev", maturity:76, scope:50, note:"Repos + PRs" },
-  { id:"filesystem-mcp", name:"Filesystem MCP", keyword:"mcp-tools", group:"Dev", maturity:74, scope:40, note:"Local files" },
-  { id:"context7", name:"Context7", keyword:"mcp-tools", group:"Dev", maturity:70, scope:42, note:"Live docs" },
-  { id:"supabase-mcp", name:"Supabase MCP", keyword:"mcp-tools", group:"Data", maturity:66, scope:46, note:"App backend" },
-  { id:"sentry-mcp", name:"Sentry MCP", keyword:"mcp-tools", group:"Data", maturity:64, scope:48, note:"Errors & traces" },
-  { id:"notion-mcp", name:"Notion MCP", keyword:"mcp-tools", group:"Data", maturity:58, scope:42, note:"Docs & DBs" },
-  /* Memory */
-  { id:"mem0", name:"Mem0", keyword:"memory", group:"Memory", maturity:72, scope:56, note:"Fact memory" },
-  { id:"zep", name:"Zep / Graphiti", keyword:"memory", group:"Memory", maturity:68, scope:58, note:"Temporal graph" },
-  { id:"letta", name:"Letta", keyword:"memory", group:"Memory", maturity:64, scope:60, note:"Agent-managed" },
-  { id:"cognee", name:"Cognee", keyword:"memory", group:"Memory", maturity:52, scope:54, note:"Local graph+vec" },
-  { id:"supermemory", name:"Supermemory", keyword:"memory", group:"Memory", maturity:56, scope:52, note:"Vector-graph" },
-  { id:"cf-agents", name:"Cloudflare Agents", keyword:"memory", group:"Platform", maturity:50, scope:48, note:"Edge state" },
-  { id:"langmem", name:"LangMem / Mastra Memory", keyword:"memory", group:"Platform", maturity:54, scope:50, note:"Framework memory" },
-  { id:"hindsight", name:"Hindsight", keyword:"memory", group:"Platform", maturity:48, scope:46, note:"Eval-led memory" },
-  /* Orchestration */
-  { id:"langgraph-orch", name:"LangGraph", keyword:"orchestration", group:"Graphs", maturity:78, scope:76, note:"Durable multi-step" },
-  { id:"crewai-orch", name:"CrewAI", keyword:"orchestration", group:"Crews", maturity:70, scope:70, note:"Crew handoffs" },
-  { id:"autogen-orch", name:"AutoGen", keyword:"orchestration", group:"Crews", maturity:68, scope:72, note:"Agent dialogue" },
-  { id:"temporal", name:"Temporal + agents", keyword:"orchestration", group:"Workflows", maturity:74, scope:80, note:"Durable workflows" },
-  { id:"n8n", name:"n8n / Zapier agents", keyword:"orchestration", group:"Workflows", maturity:66, scope:68, note:"No-code workflows" },
-  { id:"subagents", name:"Harness subagents", keyword:"orchestration", group:"In-harness", maturity:60, scope:58, note:"In-harness parallel" },
-  { id:"conductor-orch", name:"Conductor", keyword:"orchestration", group:"In-harness", maturity:42, scope:66, note:"Parallel manager" },
+  /* Models — llm-stats.com (≤15), grouped by provider */
+  { id:"claude-opus", name:"Claude Opus 5.5", keyword:"models", group:"Claude", maturity:96, scope:90, note:"LLM Stats #1 · coding arena" },
+  { id:"claude-sonnet", name:"Claude Sonnet 5.5", keyword:"models", group:"Claude", maturity:90, scope:72, note:"LLM Stats #2 · workhorse" },
+  { id:"gpt-astra", name:"GPT-6 Astra", keyword:"models", group:"OpenAI", maturity:92, scope:82, note:"LLM Stats #3 · GPQA lead" },
+  { id:"gpt-sol", name:"GPT-6.1 Sol", keyword:"models", group:"OpenAI", maturity:78, scope:48, note:"Cost-efficient Sol-class" },
+  { id:"gemini-argon", name:"Gemini 4 Argon", keyword:"models", group:"Gemini", maturity:86, scope:64, note:"LLM Stats #4" },
+  { id:"gemini-flash", name:"Gemini 3 Flash", keyword:"models", group:"Gemini", maturity:70, scope:36, note:"Highest throughput" },
+  { id:"grok", name:"Grok 4.1 Fast", keyword:"models", group:"Grok", maturity:74, scope:70, note:"Large context · xAI" },
+  { id:"muse", name:"Muse Wonder Full", keyword:"models", group:"Meta", maturity:80, scope:58, note:"Meta frontier" },
+  { id:"kimi", name:"Kimi K3", keyword:"models", group:"Open-weight", maturity:68, scope:54, note:"Top open GPQA" },
+  { id:"deepseek", name:"DeepSeek V4.1 Flash", keyword:"models", group:"Open-weight", maturity:62, scope:44, note:"Open coding · cheap" },
+  { id:"qwen", name:"Qwen 3.8 Max", keyword:"models", group:"Open-weight", maturity:56, scope:40, note:"Alibaba open frontier" },
+  { id:"glm", name:"GLM-5.3", keyword:"models", group:"Open-weight", maturity:50, scope:34, note:"Open reasoning" },
+  /* Skills — skills.sh leaderboard (≤15) */
+  { id:"find-skills", name:"find-skills", keyword:"skills", group:"Discovery", maturity:92, scope:58, note:"skills.sh #1" },
+  { id:"grill-me", name:"grill-me", keyword:"skills", group:"Workflow", maturity:86, scope:54, note:"skills.sh #2 · specs" },
+  { id:"agent-browser", name:"agent-browser", keyword:"skills", group:"Workflow", maturity:80, scope:48, note:"Browser skill" },
+  { id:"frontend-design", name:"frontend-design", keyword:"skills", group:"Design", maturity:76, scope:44, note:"anthropics/skills" },
+  { id:"tdd-skill", name:"tdd", keyword:"skills", group:"Workflow", maturity:72, scope:42, note:"Test-first skill" },
+  { id:"improve-arch", name:"improve-codebase-architecture", keyword:"skills", group:"Workflow", maturity:68, scope:50, note:"mattpocock/skills" },
+  { id:"handoff", name:"handoff", keyword:"skills", group:"Workflow", maturity:64, scope:46, note:"Agent handoff" },
+  { id:"skill-creator", name:"skill-creator", keyword:"skills", group:"Authoring", maturity:60, scope:52, note:"anthropics/skills" },
+  { id:"vercel-react", name:"vercel-react-best-practices", keyword:"skills", group:"Design", maturity:58, scope:38, note:"vercel-labs" },
+  { id:"web-design", name:"web-design-guidelines", keyword:"skills", group:"Design", maturity:54, scope:36, note:"vercel-labs" },
+  { id:"brainstorming", name:"brainstorming", keyword:"skills", group:"Workflow", maturity:52, scope:56, note:"obra/superpowers" },
+  { id:"systematic-debug", name:"systematic-debugging", keyword:"skills", group:"Workflow", maturity:48, scope:44, note:"obra/superpowers" },
+  { id:"writing-plans", name:"writing-plans", keyword:"skills", group:"Workflow", maturity:46, scope:48, note:"obra/superpowers" },
+  { id:"supabase-skill", name:"supabase-postgres-best-practices", keyword:"skills", group:"Data", maturity:44, scope:34, note:"supabase/agent-skills" },
+  { id:"remotion", name:"remotion-best-practices", keyword:"skills", group:"Design", maturity:40, scope:30, note:"remotion-dev/skills" },
+  /* Harnesses — Artificial Analysis coding agents + app builders (≤15) */
+  { id:"claude-code", name:"Claude Code", keyword:"harnesses", group:"Claude", maturity:96, scope:88, note:"AA Index leader" },
+  { id:"devin", name:"Devin / Fusion CLI", keyword:"harnesses", group:"Agents & IDEs", maturity:92, scope:84, note:"AA Index · Cognition" },
+  { id:"muse-code", name:"Muse Code", keyword:"harnesses", group:"Meta", maturity:88, scope:76, note:"AA Index · Meta" },
+  { id:"codex", name:"Codex", keyword:"harnesses", group:"OpenAI", maturity:84, scope:72, note:"AA Index · OpenAI" },
+  { id:"cursor", name:"Cursor", keyword:"harnesses", group:"Agents & IDEs", maturity:80, scope:64, note:"Agentic IDE" },
+  { id:"copilot", name:"GitHub Copilot", keyword:"harnesses", group:"Agents & IDEs", maturity:74, scope:52, note:"IDE + coding agent" },
+  { id:"openhands", name:"OpenHands", keyword:"harnesses", group:"Agents & IDEs", maturity:68, scope:60, note:"Open autonomous agent" },
+  { id:"gemini-cli", name:"Gemini CLI", keyword:"harnesses", group:"Gemini", maturity:62, scope:48, note:"Google CLI harness" },
+  { id:"cline", name:"Cline", keyword:"harnesses", group:"Agents & IDEs", maturity:58, scope:42, note:"Open IDE agent" },
+  { id:"opencode", name:"OpenCode", keyword:"harnesses", group:"Agents & IDEs", maturity:54, scope:56, note:"Open harness" },
+  { id:"aider", name:"Aider", keyword:"harnesses", group:"Agents & IDEs", maturity:48, scope:34, note:"Git-native CLI" },
+  { id:"v0", name:"v0", keyword:"harnesses", group:"App builders", maturity:66, scope:28, note:"Prompt-to-UI" },
+  { id:"lovable", name:"Lovable", keyword:"harnesses", group:"App builders", maturity:60, scope:32, note:"Prompt-to-app" },
+  { id:"replit-agent", name:"Replit Agent", keyword:"harnesses", group:"App builders", maturity:52, scope:26, note:"Cloud IDE agent" },
+  { id:"bolt", name:"Bolt", keyword:"harnesses", group:"App builders", maturity:44, scope:22, note:"Prompt-to-app" },
+  /* Frameworks (≤15) */
+  { id:"langchain", name:"LangChain", keyword:"frameworks", group:"LangChain", maturity:90, scope:68, note:"Agent platform" },
+  { id:"langgraph", name:"LangGraph", keyword:"frameworks", group:"LangChain", maturity:84, scope:70, note:"Durable graphs" },
+  { id:"claude-sdk", name:"Claude Agent SDK", keyword:"frameworks", group:"Claude", maturity:78, scope:60, note:"Agentic loop SDK" },
+  { id:"crewai", name:"CrewAI", keyword:"frameworks", group:"Multi-agent", maturity:74, scope:58, note:"Role crews" },
+  { id:"autogen", name:"AutoGen", keyword:"frameworks", group:"Multi-agent", maturity:70, scope:56, note:"Multi-agent chat" },
+  { id:"llamaindex", name:"LlamaIndex", keyword:"frameworks", group:"RAG", maturity:72, scope:52, note:"Data agents" },
+  { id:"mastra", name:"Mastra", keyword:"frameworks", group:"Runtimes", maturity:64, scope:48, note:"TS agent framework" },
+  { id:"agno", name:"Agno", keyword:"frameworks", group:"Runtimes", maturity:60, scope:46, note:"Lightweight runtime" },
+  { id:"strands", name:"AWS Strands", keyword:"frameworks", group:"Cloud", maturity:58, scope:50, note:"Cloud agent SDK" },
+  { id:"google-adk", name:"Google ADK", keyword:"frameworks", group:"Cloud", maturity:56, scope:48, note:"Agent kit" },
+  { id:"pydantic-ai", name:"PydanticAI", keyword:"frameworks", group:"Runtimes", maturity:54, scope:42, note:"Typed Python agents" },
+  { id:"haystack", name:"Haystack", keyword:"frameworks", group:"RAG", maturity:50, scope:40, note:"RAG pipelines" },
+  /* MCP & tools — reference + official (awesome-mcp-servers, ≤15) */
+  { id:"filesystem-mcp", name:"Filesystem", keyword:"mcp-tools", group:"Reference", maturity:90, scope:42, note:"MCP reference server" },
+  { id:"fetch-mcp", name:"Fetch", keyword:"mcp-tools", group:"Reference", maturity:86, scope:40, note:"Web → LLM text" },
+  { id:"git-mcp", name:"Git", keyword:"mcp-tools", group:"Reference", maturity:82, scope:44, note:"Repo tools" },
+  { id:"memory-mcp", name:"Memory", keyword:"mcp-tools", group:"Reference", maturity:70, scope:48, note:"KG memory server" },
+  { id:"github-mcp", name:"GitHub", keyword:"mcp-tools", group:"Dev", maturity:88, scope:56, note:"Repos + PRs" },
+  { id:"playwright-mcp", name:"Playwright", keyword:"mcp-tools", group:"Browser", maturity:84, scope:52, note:"Browser automation" },
+  { id:"browserbase", name:"Browserbase", keyword:"mcp-tools", group:"Browser", maturity:76, scope:46, note:"Cloud browser" },
+  { id:"context7", name:"Context7", keyword:"mcp-tools", group:"Dev", maturity:80, scope:44, note:"Live framework docs" },
+  { id:"cloudflare-mcp", name:"Cloudflare", keyword:"mcp-tools", group:"Cloud", maturity:74, scope:50, note:"Workers / KV / R2" },
+  { id:"supabase-mcp", name:"Supabase", keyword:"mcp-tools", group:"Data", maturity:72, scope:48, note:"App backend" },
+  { id:"postgres-mcp", name:"Postgres", keyword:"mcp-tools", group:"Data", maturity:68, scope:46, note:"SQL tools" },
+  { id:"sentry-mcp", name:"Sentry", keyword:"mcp-tools", group:"Observability", maturity:66, scope:54, note:"Errors & traces" },
+  { id:"notion-mcp", name:"Notion", keyword:"mcp-tools", group:"Data", maturity:58, scope:40, note:"Docs & DBs" },
+  { id:"slack-mcp", name:"Slack", keyword:"mcp-tools", group:"Collab", maturity:60, scope:42, note:"Channels & messages" },
+  { id:"bright-data", name:"Bright Data", keyword:"mcp-tools", group:"Web", maturity:64, scope:38, note:"Web unlock / scrape" },
+  /* Memory — awesome-ai-memory Memory Tools (≤15) */
+  { id:"mem0", name:"Mem0", keyword:"memory", group:"Memory tools", maturity:90, scope:62, note:"Self-improving memory" },
+  { id:"zep", name:"Zep / Graphiti", keyword:"memory", group:"Memory tools", maturity:84, scope:66, note:"Temporal knowledge graph" },
+  { id:"letta", name:"Letta (MemGPT)", keyword:"memory", group:"Memory tools", maturity:80, scope:70, note:"OS-style memory" },
+  { id:"cognee", name:"Cognee", keyword:"memory", group:"Memory tools", maturity:76, scope:58, note:"Graph + vector ECL" },
+  { id:"memclaw", name:"MemClaw", keyword:"memory", group:"Memory tools", maturity:68, scope:52, note:"Shared agent memory" },
+  { id:"graphrag", name:"GraphRAG", keyword:"memory", group:"Memory tools", maturity:74, scope:56, note:"Microsoft graph RAG" },
+  { id:"memary", name:"Memary", keyword:"memory", group:"Memory tools", maturity:58, scope:48, note:"KG long-term memory" },
+  { id:"mengram", name:"Mengram", keyword:"memory", group:"Memory tools", maturity:54, scope:50, note:"Episodic / semantic / procedural" },
+  { id:"txtai", name:"txtai", keyword:"memory", group:"Memory tools", maturity:62, scope:44, note:"Embeddings DB" },
+  { id:"baseai-mem", name:"BaseAI Memory", keyword:"memory", group:"Frameworks", maturity:56, scope:42, note:"Langbase memory" },
+  { id:"langmem", name:"LangMem", keyword:"memory", group:"Frameworks", maturity:60, scope:46, note:"LangChain memory" },
+  { id:"supermemory", name:"Supermemory", keyword:"memory", group:"Memory tools", maturity:52, scope:40, note:"Vector-graph" },
+  { id:"hindsight", name:"Hindsight", keyword:"memory", group:"Memory tools", maturity:48, scope:38, note:"Eval-led memory" },
+  { id:"graphlit", name:"Graphlit", keyword:"memory", group:"Managed", maturity:50, scope:44, note:"Managed knowledge API" },
+  { id:"memonto", name:"memonto", keyword:"memory", group:"Memory tools", maturity:42, scope:36, note:"Ontology memory" },
+  /* Orchestration (≤15) */
+  { id:"langgraph-orch", name:"LangGraph", keyword:"orchestration", group:"Graphs", maturity:88, scope:78, note:"Durable multi-step" },
+  { id:"temporal", name:"Temporal + agents", keyword:"orchestration", group:"Workflows", maturity:82, scope:84, note:"Durable workflows" },
+  { id:"crewai-orch", name:"CrewAI", keyword:"orchestration", group:"Crews", maturity:74, scope:68, note:"Crew handoffs" },
+  { id:"autogen-orch", name:"AutoGen", keyword:"orchestration", group:"Crews", maturity:70, scope:70, note:"Agent dialogue" },
+  { id:"n8n", name:"n8n / Zapier agents", keyword:"orchestration", group:"Workflows", maturity:68, scope:64, note:"No-code workflows" },
+  { id:"subagents", name:"Harness subagents", keyword:"orchestration", group:"In-harness", maturity:64, scope:56, note:"In-harness parallel" },
+  { id:"conductor-orch", name:"Conductor", keyword:"orchestration", group:"In-harness", maturity:46, scope:62, note:"Parallel manager" },
   { id:"camel", name:"CAMEL / swarm sims", keyword:"orchestration", group:"Research", maturity:40, scope:72, note:"Multi-agent research" },
-  /* Assurance */
-  { id:"braintrust", name:"Braintrust", keyword:"assurance", group:"Evals", maturity:74, scope:72, note:"Evals + traces" },
-  { id:"langsmith", name:"LangSmith", keyword:"assurance", group:"Evals", maturity:76, scope:70, note:"Trace + eval" },
-  { id:"langfuse", name:"Langfuse", keyword:"assurance", group:"Evals", maturity:72, scope:68, note:"OSS observability" },
-  { id:"patronus", name:"Patronus", keyword:"assurance", group:"Evals", maturity:64, scope:66, note:"Evaluators" },
-  { id:"phoenix", name:"Phoenix / Arize", keyword:"assurance", group:"Evals", maturity:66, scope:66, note:"LLM observability" },
-  { id:"agentops", name:"AgentOps", keyword:"assurance", group:"Evals", maturity:54, scope:58, note:"Agent sessions" },
-  { id:"lakera", name:"Lakera Guard", keyword:"assurance", group:"Guardrails", maturity:68, scope:62, note:"Runtime guardrails" },
-  { id:"nemo-guard", name:"NeMo Guardrails", keyword:"assurance", group:"Guardrails", maturity:60, scope:60, note:"Policy rails" },
-  { id:"snyk-agent", name:"Snyk Agent Scan", keyword:"assurance", group:"Guardrails", maturity:58, scope:64, note:"MCP/skill risks" }
+  { id:"prefect", name:"Prefect + agents", keyword:"orchestration", group:"Workflows", maturity:60, scope:58, note:"Workflow orchestration" },
+  { id:"airflow-agents", name:"Airflow DAGs + LLMs", keyword:"orchestration", group:"Workflows", maturity:54, scope:66, note:"Batch agent jobs" },
+  /* Assurance (≤15) */
+  { id:"braintrust", name:"Braintrust", keyword:"assurance", group:"Evals", maturity:86, scope:74, note:"Evals + traces" },
+  { id:"langsmith", name:"LangSmith", keyword:"assurance", group:"Evals", maturity:84, scope:72, note:"Trace + eval" },
+  { id:"langfuse", name:"Langfuse", keyword:"assurance", group:"Evals", maturity:80, scope:68, note:"OSS observability" },
+  { id:"phoenix", name:"Phoenix / Arize", keyword:"assurance", group:"Evals", maturity:74, scope:66, note:"LLM observability" },
+  { id:"patronus", name:"Patronus", keyword:"assurance", group:"Evals", maturity:68, scope:62, note:"Evaluators" },
+  { id:"agentops", name:"AgentOps", keyword:"assurance", group:"Evals", maturity:58, scope:54, note:"Agent sessions" },
+  { id:"lakera", name:"Lakera Guard", keyword:"assurance", group:"Guardrails", maturity:72, scope:58, note:"Runtime guardrails" },
+  { id:"nemo-guard", name:"NeMo Guardrails", keyword:"assurance", group:"Guardrails", maturity:64, scope:56, note:"Policy rails" },
+  { id:"snyk-agent", name:"Snyk Agent Scan", keyword:"assurance", group:"Guardrails", maturity:60, scope:60, note:"MCP/skill risks" },
+  { id:"opik", name:"Opik", keyword:"assurance", group:"Evals", maturity:66, scope:52, note:"Comet LLM telemetry" },
+  { id:"ragas", name:"Ragas", keyword:"assurance", group:"Evals", maturity:62, scope:48, note:"RAG evaluation" },
+  { id:"deepeval", name:"DeepEval", keyword:"assurance", group:"Evals", maturity:56, scope:46, note:"Unit tests for LLMs" }
 ];
 
 /* 1–3 anti/pattern pairs per category. Techniques fold in under the right layer. */
@@ -1276,8 +1321,17 @@ function resolveKeyword(id){
   if (KEYWORDS.some(k => k.id === id)) return id;
   return KEYWORD_ALIASES[id] || null;
 }
+function toolsForKeyword(id){
+  return TOOLS.filter(t => t.keyword === id).slice(0, TOOLS_CAP);
+}
 function toolsForChart(){
-  return TOOLS.filter(t => toolsCat === "all" || t.keyword === toolsCat);
+  if (toolsCat === "all") return TOOLS;
+  return toolsForKeyword(toolsCat);
+}
+function toolSourceNote(id){
+  const s = TOOL_SOURCES[id];
+  if (!s) return `<p class="tool-sources">Up to ${TOOLS_CAP} exemplars · teaching placements, not rankings.</p>`;
+  return `<p class="tool-sources">Up to ${TOOLS_CAP} exemplars from <a href="${s.href}" target="_blank" rel="noopener">${esc(s.label)}</a> · teaching placements, not rankings.</p>`;
 }
 function toolsCatFilters(){
   const opts = [["all","All categories"], ...KEYWORDS.map(k=>[k.id,k.name])];
@@ -1397,7 +1451,7 @@ function chartSVG(){
 function patternsDetailHTML(id){
   const k = KEYWORDS.find(x => x.id === id);
   if (!k) return "";
-  const exemplars = TOOLS.filter(t => t.keyword === k.id);
+  const exemplars = toolsForKeyword(k.id);
   return `<section class="patterns-detail" id="patterns-detail" aria-live="polite">
     <div class="detail-head">
       <div>
@@ -1409,7 +1463,7 @@ function patternsDetailHTML(id){
         <button type="button" class="mini" data-patterns-clear="1">Clear</button>
       </div>
     </div>
-    ${exemplars.length ? `<div class="block"><span class="label">Tools in this layer</span>${toolsChipsHTML(exemplars)}</div>` : ""}
+    ${exemplars.length ? `<div class="block"><span class="label">Tools in this layer</span>${toolsChipsHTML(exemplars)}${toolSourceNote(k.id)}</div>` : ""}
     ${keywordPairsBlock(k.id)}
   </section>`;
 }
