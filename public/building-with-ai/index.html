@@ -979,7 +979,7 @@ const KEYWORD_PAIRS = {
       pattern:{ title:"Task-shaped context", desc:"Hand the model the spec, the failing test and the skill that applies — not the whole wiki.", old:"Just enough documentation" } }
   ],
   harnesses:[
-    { anti:{ title:"Chat box as IDE", desc:"A bare prompt window with no tools, tests or permissions. The “[[harnesses|harness]]” is copy-paste.", warn:"Every step needs a human to move files" },
+    { anti:{ title:"Chat box as IDE", desc:"Treating a bare chat window as the [[harnesses|harness]]: no tools, tests or file access. Every change is pasted between the chat and the editor by hand.", warn:"Every step needs a human to move files" },
       pattern:{ title:"Loop with checks", desc:"A [[harnesses|harness]] that can edit, run checks and stop when gates fail — an agentic IDE or CLI with a real loop.", old:"IDE + CI" } },
     { anti:{ title:"Ship the vibe", desc:"[[vibe-coding|Vibe-coding]] an app and tossing it into production. Nobody designed it to be maintained, secured or owned.", warn:"“We’ll clean it up later,” with no ticket" },
       pattern:{ title:"Prototype to learn", desc:"[[vibe-coding|Vibe-coding]] a throwaway prototype for exploration and feedback. The prototype is a question, not a product.", old:"Rapid prototyping, spikes" } },
