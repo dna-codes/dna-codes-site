@@ -1240,8 +1240,8 @@ function pairsRowsHTML(pairList){
 function pairsHeadHTML(pairList, opts){
   const bet = isBet() && !(opts && opts.locs) ? " (bets)" : "";
   return `<div class="pairs-head">
-      <h3 class="col-head bad">${icon.warn}Anti-pattern${bet} <span class="count">${pairList.filter(x=>x.anti).length}</span></h3>
-      <h3 class="col-head good">${icon.check}Pattern${bet} <span class="count">${pairList.filter(x=>x.pattern).length}</span></h3>
+      <h3 class="col-head bad">${icon.warn}Anti-pattern${bet}</h3>
+      <h3 class="col-head good">${icon.check}Pattern${bet}</h3>
     </div>`;
 }
 function pairsBlock(pairList, opts){
