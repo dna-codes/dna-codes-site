@@ -829,7 +829,7 @@ const KEYWORD_ALIASES = {
   context:"skills", parallel:"orchestration"
 };
 
-/* Exemplars for Show tools + selected-category chips. Cap: 15 dots per category.
+/* Exemplars for selected-category chart + chips. Cap: 15 dots per category.
    Curated from skills.sh, llm-stats.com, Artificial Analysis coding agents,
    awesome-mcp-servers, awesome-ai-memory. Teaching placements, not rankings. */
 const TOOLS_CAP = 15;
@@ -1021,7 +1021,7 @@ const KEYWORD_PAIRS = {
 
 /* =================== STATE & HELPERS =================== */
 let mode = "now", view = "overview", ph = 0, sb = 0;
-let stackKeyword = null, patternsKeyword = null, showTools = true, toolsCat = "all";
+let stackKeyword = null, patternsKeyword = null, toolsCat = "all";
 const $ = (s,el=document)=>el.querySelector(s);
 const root = document.documentElement;
 const main = $("#main"), panel = $("#panel"), ringWrap = $("#ring-wrap");
@@ -1406,7 +1406,7 @@ function toolSourceNote(id){
 }
 function toolsCatFilters(){
   const opts = [["all","All categories"], ...KEYWORDS.map(k=>[k.id,k.name])];
-  return `<div class="filters" role="group" aria-label="Filter tools by category">${opts.map(([v,l])=>`<button type="button" class="filter" data-tc="${v}" aria-pressed="${v===toolsCat}">${esc(l)}</button>`).join("")}</div>`;
+  return `<div class="filters" role="group" aria-label="Stack category">${opts.map(([v,l])=>`<button type="button" class="filter" data-tc="${v}" aria-pressed="${v===toolsCat}">${esc(l)}</button>`).join("")}</div>`;
 }
 function groupTools(tools){
   const order = [], map = new Map();
@@ -1457,42 +1457,18 @@ function layoutToolPoints(tools, X, Y, padL, padT, padB, H, gutterX){
   return pts;
 }
 function chartSVG(){
-  const tools = showTools ? toolsForChart() : null;
-  const allTools = showTools && toolsCat === "all";
-  const n = showTools && !allTools ? tools.length : 0;
-  // All-categories is dots+tooltips only: keep a fixed square-ish plot.
-  // One category: grow just enough for the right-gutter labels (≤15).
-  const W = showTools ? (allTools ? 920 : 1040) : 900;
-  const H = !showTools ? 420 : allTools ? 460 : Math.max(420, 120 + n * 26);
+  // All categories → category-level graph. One category → labeled tool dots.
+  const catLevel = toolsCat === "all";
+  const tools = catLevel ? null : toolsForChart();
+  const n = catLevel ? 0 : tools.length;
+  const W = catLevel ? 900 : 1040;
+  const H = catLevel ? 420 : Math.max(420, 120 + n * 26);
   const padL = 64, padT = 28, padB = 52;
-  const gutterX = showTools && !allTools ? W - 210 : W - 28;
-  const plotW = (showTools && !allTools ? gutterX - 24 : W - 140) - padL, plotH = H - padT - padB;
+  const gutterX = catLevel ? W - 28 : W - 210;
+  const plotW = (catLevel ? W - 140 : gutterX - 24) - padL, plotH = H - padT - padB;
   const X = m => padL + (m / 100) * plotW, Y = s => padT + plotH - (s / 100) * plotH;
   let nodes = "";
-  if (showTools){
-    if (allTools){
-      tools.forEach(t=>{
-        const cx = X(t.maturity), cy = Y(t.scope);
-        const cur = stackKeyword === t.keyword ? ' aria-current="true"' : "";
-        const cat = KEYWORDS.find(k => k.id === t.keyword)?.name || "";
-        nodes += `<g class="chart-tool" tabindex="0" role="button" data-select-kw="${t.keyword}"${cur}>
-          <title>${esc(t.name)} · ${esc(cat)}${t.note ? ": " + esc(t.note) : ""}</title>
-          <circle class="chart-node" cx="${cx}" cy="${cy}" r="4.5"/>
-        </g>`;
-      });
-    } else {
-      const pts = layoutToolPoints(tools, X, Y, padL, padT, padB, H, gutterX);
-      pts.forEach(p=>{
-        const cur = stackKeyword === p.t.keyword ? ' aria-current="true"' : "";
-        nodes += `<g class="chart-tool" tabindex="0" role="button" data-select-kw="${p.t.keyword}"${cur}>
-          <title>${esc(p.t.name)}${p.t.note ? ": " + esc(p.t.note) : ""}</title>
-          <path class="chart-leader" d="M${p.x} ${p.y}L${gutterX - 10} ${p.ly - 3}"/>
-          <circle class="chart-node" cx="${p.x}" cy="${p.y}" r="6"/>
-          <text class="chart-label" x="${p.lx}" y="${p.ly}" text-anchor="${p.anchor}">${esc(p.label)}</text>
-        </g>`;
-      });
-    }
-  } else {
+  if (catLevel){
     KEYWORDS.forEach(k=>{
       const cx = X(k.maturity), cy = Y(k.scope);
       const cur = stackKeyword === k.id ? ' aria-current="true"' : "";
@@ -1502,14 +1478,25 @@ function chartSVG(){
         <text class="chart-label" x="${cx+12}" y="${cy+4}">${esc(k.name)}</text>
       </g>`;
     });
+  } else {
+    const pts = layoutToolPoints(tools, X, Y, padL, padT, padB, H, gutterX);
+    pts.forEach(p=>{
+      const cur = stackKeyword === p.t.keyword ? ' aria-current="true"' : "";
+      nodes += `<g class="chart-tool" tabindex="0" role="button" data-select-kw="${p.t.keyword}"${cur}>
+        <title>${esc(p.t.name)}${p.t.note ? ": " + esc(p.t.note) : ""}</title>
+        <path class="chart-leader" d="M${p.x} ${p.y}L${gutterX - 10} ${p.ly - 3}"/>
+        <circle class="chart-node" cx="${p.x}" cy="${p.y}" r="6"/>
+        <text class="chart-label" x="${p.lx}" y="${p.ly}" text-anchor="${p.anchor}">${esc(p.label)}</text>
+      </g>`;
+    });
   }
   const grid = [25,50,75].map(g =>
     `<line class="chart-grid" x1="${X(g)}" y1="${padT}" x2="${X(g)}" y2="${padT+plotH}"/>` +
     `<line class="chart-grid" x1="${padL}" y1="${Y(g)}" x2="${padL+plotW}" y2="${Y(g)}"/>`
   ).join("");
-  const aria = showTools
-    ? "Tools by maturity and scope. Click a tool to open its category below."
-    : "Agent stack categories by maturity and scope. Click a category for its tools.";
+  const aria = catLevel
+    ? "Agent stack categories by maturity and scope. Click a category for its tools."
+    : "Tools by maturity and scope in this category.";
   return `<div class="chart-wrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">
     ${grid}
     <line class="chart-spine" x1="${padL}" y1="${padT+plotH}" x2="${padL+plotW}" y2="${padT+plotH}"/>
@@ -1559,12 +1546,11 @@ function patternsDetailHTML(id){
 function stackHTML(){
   return `<div class="tips-head"><div class="head">
       <h2>Stack</h2>
-      <p class="lede">Agent-stack categories and the tools that live in each layer.</p></div>
-    <button type="button" class="filter" data-tools="1" aria-pressed="${showTools}">${showTools ? "Show categories" : "Show tools"}</button>
+      <p class="lede">Categories by maturity and scope; pick one to see the tools in that layer.</p></div>
   </div>
-  ${showTools ? toolsCatFilters() : ""}
+  ${toolsCatFilters()}
   ${chartSVG()}
-  ${showTools && toolsCat === "all" ? `<p class="tool-sources">All categories: compact scatter (hover for names). Pick a category filter for labeled dots.</p>` : ""}
+  ${toolsCat === "all" ? `<p class="tool-sources">All categories: one point per layer. Pick a category for labeled tools.</p>` : ""}
   ${stackKeyword ? stackDetailHTML(stackKeyword) : ""}`;
 }
 function patternsHTML(){
@@ -1576,10 +1562,9 @@ function patternsHTML(){
 }
 
 function stackHash(){
-  const base = stackKeyword ? `#stack/${stackKeyword}` : "#stack";
-  if (!showTools) return base;
-  const q = toolsCat === "all" ? "tools=1" : `tools=1&cat=${toolsCat}`;
-  return stackKeyword ? `${base}?${q}` : `#stack?${q}`;
+  if (stackKeyword) return `#stack/${stackKeyword}`;
+  if (toolsCat !== "all") return `#stack?cat=${toolsCat}`;
+  return "#stack";
 }
 function patternsHash(){
   return patternsKeyword ? `#patterns/${patternsKeyword}` : "#patterns";
@@ -1621,10 +1606,11 @@ function goOverview(){ view = "overview"; render(); }
 function goLifecycle(){ closeGlossary(); goOverview(); }
 function goStack(opts){
   view = "stack";
-  if (opts && "keyword" in opts) stackKeyword = resolveKeyword(opts.keyword);
-  if (opts && "tools" in opts) showTools = !!opts.tools;
-  if (opts && opts.toolsCat) toolsCat = opts.toolsCat;
-  if (!opts){ stackKeyword = null; showTools = true; toolsCat = "all"; }
+  if (!opts){ stackKeyword = null; toolsCat = "all"; render(); return; }
+  if ("keyword" in opts) stackKeyword = resolveKeyword(opts.keyword);
+  if (opts.toolsCat) toolsCat = opts.toolsCat;
+  if (stackKeyword) toolsCat = stackKeyword;
+  else if (toolsCat !== "all") stackKeyword = resolveKeyword(toolsCat);
   render();
 }
 function goPatterns(opts){
@@ -1643,7 +1629,7 @@ function openKeyword(id, opts){
     // Stack chart (or jump from elsewhere into Stack).
     if (view !== "stack") view = "stack";
     stackKeyword = toggle && stackKeyword === resolved ? null : resolved;
-    if (showTools && stackKeyword) toolsCat = stackKeyword;
+    toolsCat = stackKeyword || "all";
   }
   render();
 }
@@ -1792,18 +1778,10 @@ document.addEventListener("click", e=>{
   if (nav){ navigate(nav.dataset.nav); return; }
   if (e.target.closest("[data-home]")){ goLifecycle(); return; }
   if (e.target.closest("[data-patterns-clear]")){ patternsKeyword = null; render(); return; }
-  if (e.target.closest("[data-stack-clear]")){ stackKeyword = null; if (showTools) toolsCat = "all"; render(); return; }
-  const toolsBtn = e.target.closest("[data-tools]");
-  if (toolsBtn){
-    showTools = !showTools;
-    if (showTools && toolsCat === "all") toolsCat = "harnesses";
-    render();
-    return;
-  }
+  if (e.target.closest("[data-stack-clear]")){ stackKeyword = null; toolsCat = "all"; render(); return; }
   const tc = e.target.closest("[data-tc]");
   if (tc){
     toolsCat = tc.dataset.tc;
-    showTools = true;
     stackKeyword = toolsCat === "all" ? null : resolveKeyword(toolsCat);
     if (view !== "stack") view = "stack";
     render();
@@ -1846,7 +1824,7 @@ document.addEventListener("keydown", e=>{
     if (current){ closePop(); return; }
     if (glossaryOpen()){ closeGlossary(); return; }
     if (view === "patterns" && patternsKeyword){ patternsKeyword = null; render(); return; }
-    if (view === "stack" && stackKeyword){ stackKeyword = null; if (showTools) toolsCat = "all"; render(); return; }
+    if (view === "stack" && stackKeyword){ stackKeyword = null; toolsCat = "all"; render(); return; }
     if (view === "stack" || view === "patterns"){ goLifecycle(); return; }
     if (view === "sub") goPhase(ph); else if (view !== "overview") goOverview();
     return;
@@ -1888,13 +1866,13 @@ function parseStackOrPatterns(kind, raw){
   return { kw, tools, toolsCatOpt };
 }
 if (h === "stack" || h.startsWith("stack/") || h.startsWith("stack?")){
-  const { kw, tools, toolsCatOpt } = parseStackOrPatterns("stack", h);
-  goStack({ keyword: kw, tools: tools || true, toolsCat: toolsCatOpt || (kw || "all") });
+  const { kw, toolsCatOpt } = parseStackOrPatterns("stack", h);
+  goStack({ keyword: kw, toolsCat: toolsCatOpt || (kw || "all") });
 } else if (h === "tips" || (h.startsWith("patterns") && /(?:^|[?&])tools=1\b/.test(h))){
   // Legacy Patterns+tools hashes land on Stack.
-  const raw = h === "tips" ? "stack?tools=1" : h.replace(/^patterns/, "stack");
-  const { kw, tools, toolsCatOpt } = parseStackOrPatterns("stack", raw);
-  goStack({ keyword: kw, tools: tools || true, toolsCat: toolsCatOpt || (kw || "all") });
+  const raw = h === "tips" ? "stack" : h.replace(/^patterns/, "stack");
+  const { kw, toolsCatOpt } = parseStackOrPatterns("stack", raw);
+  goStack({ keyword: kw, toolsCat: toolsCatOpt || (kw || "all") });
 } else if (h === "patterns" || h.startsWith("patterns/") || h.startsWith("patterns?")){
   const { kw } = parseStackOrPatterns("patterns", h);
   goPatterns({ keyword: kw });
