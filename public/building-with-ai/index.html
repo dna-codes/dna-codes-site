@@ -879,16 +879,16 @@ const TOOLS = [
   { id:"remotion", name:"remotion-best-practices", keyword:"skills", group:"Design", maturity:40, scope:30, note:"remotion-dev/skills" },
   /* Harnesses — Artificial Analysis coding agents + app builders (≤15) */
   { id:"claude-code", name:"Claude Code", keyword:"harnesses", group:"Claude", maturity:96, scope:88, note:"AA Index leader" },
+  { id:"cursor", name:"Cursor", keyword:"harnesses", group:"Agents & IDEs", maturity:90, scope:70, note:"Agentic IDE" },
   { id:"devin", name:"Devin / Fusion CLI", keyword:"harnesses", group:"Agents & IDEs", maturity:92, scope:84, note:"AA Index · Cognition" },
   { id:"muse-code", name:"Muse Code", keyword:"harnesses", group:"Meta", maturity:88, scope:76, note:"AA Index · Meta" },
   { id:"codex", name:"Codex", keyword:"harnesses", group:"OpenAI", maturity:84, scope:72, note:"AA Index · OpenAI" },
-  { id:"cursor", name:"Cursor", keyword:"harnesses", group:"Agents & IDEs", maturity:80, scope:64, note:"Agentic IDE" },
   { id:"copilot", name:"GitHub Copilot", keyword:"harnesses", group:"Agents & IDEs", maturity:74, scope:52, note:"IDE + coding agent" },
+  { id:"windsurf", name:"Windsurf", keyword:"harnesses", group:"Agents & IDEs", maturity:70, scope:50, note:"Agentic IDE" },
   { id:"openhands", name:"OpenHands", keyword:"harnesses", group:"Agents & IDEs", maturity:68, scope:60, note:"Open autonomous agent" },
   { id:"gemini-cli", name:"Gemini CLI", keyword:"harnesses", group:"Gemini", maturity:62, scope:48, note:"Google CLI harness" },
   { id:"cline", name:"Cline", keyword:"harnesses", group:"Agents & IDEs", maturity:58, scope:42, note:"Open IDE agent" },
   { id:"opencode", name:"OpenCode", keyword:"harnesses", group:"Agents & IDEs", maturity:54, scope:56, note:"Open harness" },
-  { id:"aider", name:"Aider", keyword:"harnesses", group:"Agents & IDEs", maturity:48, scope:34, note:"Git-native CLI" },
   { id:"v0", name:"v0", keyword:"harnesses", group:"App builders", maturity:66, scope:28, note:"Prompt-to-UI" },
   { id:"lovable", name:"Lovable", keyword:"harnesses", group:"App builders", maturity:60, scope:32, note:"Prompt-to-app" },
   { id:"replit-agent", name:"Replit Agent", keyword:"harnesses", group:"App builders", maturity:52, scope:26, note:"Cloud IDE agent" },
@@ -940,15 +940,15 @@ const TOOLS = [
   { id:"memonto", name:"memonto", keyword:"memory", group:"Memory tools", maturity:42, scope:36, note:"Ontology memory" },
   /* Orchestration (≤15) */
   { id:"langgraph-orch", name:"LangGraph", keyword:"orchestration", group:"Graphs", maturity:88, scope:78, note:"Durable multi-step" },
-  { id:"temporal", name:"Temporal + agents", keyword:"orchestration", group:"Workflows", maturity:82, scope:84, note:"Durable workflows" },
-  { id:"crewai-orch", name:"CrewAI", keyword:"orchestration", group:"Crews", maturity:74, scope:68, note:"Crew handoffs" },
-  { id:"autogen-orch", name:"AutoGen", keyword:"orchestration", group:"Crews", maturity:70, scope:70, note:"Agent dialogue" },
-  { id:"n8n", name:"n8n / Zapier agents", keyword:"orchestration", group:"Workflows", maturity:68, scope:64, note:"No-code workflows" },
-  { id:"subagents", name:"Harness subagents", keyword:"orchestration", group:"In-harness", maturity:64, scope:56, note:"In-harness parallel" },
-  { id:"conductor-orch", name:"Conductor", keyword:"orchestration", group:"In-harness", maturity:46, scope:62, note:"Parallel manager" },
+  { id:"conductor-orch", name:"Conductor", keyword:"orchestration", group:"In-harness", maturity:82, scope:66, note:"Cursor parallel agents" },
+  { id:"temporal", name:"Temporal + agents", keyword:"orchestration", group:"Workflows", maturity:80, scope:84, note:"Durable workflows" },
+  { id:"subagents", name:"Harness subagents", keyword:"orchestration", group:"In-harness", maturity:74, scope:56, note:"In-harness parallel" },
+  { id:"crewai-orch", name:"CrewAI", keyword:"orchestration", group:"Crews", maturity:70, scope:68, note:"Crew handoffs" },
+  { id:"autogen-orch", name:"AutoGen", keyword:"orchestration", group:"Crews", maturity:66, scope:70, note:"Agent dialogue" },
+  { id:"n8n", name:"n8n / Zapier agents", keyword:"orchestration", group:"Workflows", maturity:62, scope:64, note:"No-code workflows" },
   { id:"camel", name:"CAMEL / swarm sims", keyword:"orchestration", group:"Research", maturity:40, scope:72, note:"Multi-agent research" },
-  { id:"prefect", name:"Prefect + agents", keyword:"orchestration", group:"Workflows", maturity:60, scope:58, note:"Workflow orchestration" },
-  { id:"airflow-agents", name:"Airflow DAGs + LLMs", keyword:"orchestration", group:"Workflows", maturity:54, scope:66, note:"Batch agent jobs" },
+  { id:"prefect", name:"Prefect + agents", keyword:"orchestration", group:"Workflows", maturity:56, scope:58, note:"Workflow orchestration" },
+  { id:"airflow-agents", name:"Airflow DAGs + LLMs", keyword:"orchestration", group:"Workflows", maturity:50, scope:66, note:"Batch agent jobs" },
   /* Governance (≤15) */
   { id:"braintrust", name:"Braintrust", keyword:"governance", group:"Evals", maturity:86, scope:74, note:"Evals + traces" },
   { id:"langsmith", name:"LangSmith", keyword:"governance", group:"Evals", maturity:84, scope:72, note:"Trace + eval" },
@@ -1367,11 +1367,24 @@ function resolveKeyword(id){
 function toolsForKeyword(id){
   return TOOLS.filter(t => t.keyword === id).slice(0, TOOLS_CAP);
 }
-const SAMPLE_CAP = 6;
-/* Round-robin across provider/family groups so the catalog sample stays diverse. */
+const SAMPLE_CAP = 8;
+/* Prefer teaching exemplars (Cursor, Conductor, …), then fill by group round-robin. */
+const SAMPLE_IDS = new Set([
+  "claude-opus","gpt-astra","gemini-argon","grok","muse","kimi",
+  "find-skills","grill-me","frontend-design","agent-browser","tdd",
+  "claude-code","cursor","codex","copilot","muse-code","windsurf","v0","gemini-cli",
+  "langchain","claude-sdk","crewai","mastra","llamaindex",
+  "github-mcp","playwright-mcp","context7","filesystem-mcp","supabase-mcp",
+  "mem0","zep","letta","cognee",
+  "langgraph-orch","conductor-orch","temporal","subagents","crewai-orch",
+  "braintrust","lakera","langsmith","langfuse"
+]);
 function sampleTools(id, n = SAMPLE_CAP){
-  const groups = groupTools(toolsForKeyword(id));
-  const out = [];
+  const all = toolsForKeyword(id);
+  const out = all.filter(t => SAMPLE_IDS.has(t.id)).slice(0, n);
+  if (out.length >= n) return out;
+  const seen = new Set(out.map(t => t.id));
+  const groups = groupTools(all.filter(t => !seen.has(t.id)));
   for (let i = 0; out.length < n; i++){
     let added = false;
     for (const g of groups){
