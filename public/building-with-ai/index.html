@@ -764,42 +764,134 @@ const TERMS = {
   "harnesses":{ name:"Harnesses", type:"Concept", stages:["design","develop","deliver"], modes:["now","future"],
     def:"The runtime around a model: tools, loops, permissions and checks that turn a completion into work that can finish.",
     ex:"An agentic IDE that edits files, runs tests and opens a PR, versus a bare chat box.",
-    old:"IDEs, CLIs and orchestrators. The difference is how much of the loop is automated." }
+    old:"IDEs, CLIs and orchestrators. The difference is how much of the loop is automated." },
+  "frameworks":{ name:"Frameworks", type:"Concept", stages:["design","develop","deliver"], modes:["now","future"],
+    def:"SDKs and runtimes for composing agents: graphs, crews, tools and control flow you write once and run many times.",
+    ex:"A LangGraph or CrewAI app that encodes a research workflow, then swaps models underneath.",
+    old:"Application frameworks and workflow engines, for agents." },
+  "mcp-tools":{ name:"MCP & tools", type:"Concept", stages:["develop","deliver"], modes:["now","future"],
+    def:"Tool servers and connectors an agent calls to act on the world: browsers, repos, docs, databases, apps.",
+    ex:"A Playwright or GitHub MCP server the harness loads so the agent can click and open PRs.",
+    old:"APIs, plugins and integrations — standardized for agents." },
+  "memory":{ name:"Memory", type:"Concept", stages:["design","develop","deliver"], modes:["now","future"],
+    def:"Systems that persist facts, preferences and history across turns, sessions or agents.",
+    ex:"A memory store that recalls a customer’s prior decisions without pasting the whole transcript.",
+    old:"Databases, CRM notes and personal knowledge bases." },
+  "orchestration":{ name:"Orchestration", type:"Concept", stages:["design","develop","deliver"], modes:["now","future"],
+    def:"Coordination of multiple agents, steps or systems toward one outcome: handoffs, parallelism, recovery.",
+    ex:"A durable graph that assigns research, coding and review to separate agents and merges the result.",
+    old:"Workflow engines, job queues and multi-service choreography." },
+  "assurance":{ name:"Assurance", type:"Concept", stages:["design","develop","deliver"], modes:["now","future"],
+    def:"Evals, guardrails, observability and policy that decide whether agent work is good enough to keep or ship.",
+    ex:"An eval suite and tracing platform that blocks a prompt change when quality regresses.",
+    old:"QA, monitoring, change control and compliance — applied to agents." }
 };
 
-/* Keywords for the Patterns chart. maturity/scope are 0–100 teaching positions, not rankings. */
+/* Stack categories for the Patterns chart. maturity/scope are teaching positions, not rankings. */
 const KEYWORDS = [
-  { id:"vibe-coding", name:"Vibe coding", term:"vibe-coding", maturity:78, scope:28, stages:["discover","develop"],
-    blurb:"Prompt, accept, iterate — without reading the code closely." },
-  { id:"skills", name:"Skills", term:"agent-skills", maturity:62, scope:55, stages:["design","develop","deliver"],
-    blurb:"Packaged playbooks an agent loads for a recurring task." },
-  { id:"models", name:"Models", term:"models", maturity:88, scope:72, stages:ALLS,
+  { id:"models", name:"Models", term:"models", maturity:90, scope:78, stages:ALLS,
     blurb:"Foundation models that power agents and tools." },
-  { id:"harnesses", name:"Harnesses", term:"harnesses", maturity:48, scope:68, stages:["develop","deliver"],
-    blurb:"Runtime wrappers that loop, tool-call and gate agents." },
-  { id:"specs", name:"Specs", term:"spec-driven-development", maturity:70, scope:48, stages:["design","develop"],
-    blurb:"Specs as the source of truth agents implement against." },
-  { id:"evals", name:"Evals", term:"evals", maturity:58, scope:60, stages:["design","develop","deliver"],
-    blurb:"Repeatable checks that score model or agent output." },
-  { id:"context", name:"Context engineering", term:"context-engineering", maturity:66, scope:42, stages:["design","develop"],
-    blurb:"Shaping what the model sees so it can do the job." },
-  { id:"parallel", name:"Parallel agents", term:"parallel-agents", maturity:52, scope:38, stages:["develop"],
-    blurb:"Several agents on isolated tasks or branches at once." }
+  { id:"skills", name:"Skills", term:"agent-skills", maturity:64, scope:52, stages:["design","develop","deliver"],
+    blurb:"Packaged playbooks an agent loads for a recurring task." },
+  { id:"harnesses", name:"Harnesses", term:"harnesses", maturity:72, scope:68, stages:["design","develop","deliver"],
+    blurb:"Runtime loops that edit, tool-call and gate agents." },
+  { id:"frameworks", name:"Frameworks", term:"frameworks", maturity:70, scope:62, stages:["design","develop","deliver"],
+    blurb:"SDKs for composing agents, graphs and crews." },
+  { id:"mcp-tools", name:"MCP & tools", term:"mcp-tools", maturity:58, scope:48, stages:["develop","deliver"],
+    blurb:"Tool servers agents call to act on the world." },
+  { id:"memory", name:"Memory", term:"memory", maturity:48, scope:55, stages:["design","develop","deliver"],
+    blurb:"Persistent recall across turns, sessions and agents." },
+  { id:"orchestration", name:"Orchestration", term:"orchestration", maturity:46, scope:74, stages:["design","develop","deliver"],
+    blurb:"Coordinating multiple agents, steps and recoveries." },
+  { id:"assurance", name:"Assurance", term:"assurance", maturity:60, scope:70, stages:["design","develop","deliver"],
+    blurb:"Evals, guardrails, tracing and policy for agent work." }
 ];
 
-/* Exemplar tools for hybrid chart mode. Click opens the parent keyword. */
+/* Old chart hashes → current categories (techniques folded into pairs). */
+const KEYWORD_ALIASES = {
+  "vibe-coding":"harnesses", specs:"skills", evals:"assurance",
+  context:"skills", parallel:"orchestration"
+};
+
+/* Exemplars for Show tools. Click opens the parent category. Positions are teaching placements. */
 const TOOLS = [
+  /* Models */
+  { id:"claude-opus", name:"Claude Opus", keyword:"models", maturity:92, scope:80, note:"Frontier general" },
+  { id:"claude-sonnet", name:"Claude Sonnet", keyword:"models", maturity:88, scope:76, note:"Workhorse general" },
+  { id:"gpt-astra", name:"GPT Astra-class", keyword:"models", maturity:90, scope:78, note:"Frontier general" },
+  { id:"gpt-sol", name:"GPT Sol-class", keyword:"models", maturity:84, scope:74, note:"Cost-efficient" },
+  { id:"gemini", name:"Gemini-class", keyword:"models", maturity:86, scope:76, note:"Long-context general" },
+  { id:"grok", name:"Grok-class", keyword:"models", maturity:82, scope:72, note:"Frontier general" },
+  { id:"deepseek", name:"DeepSeek V4.x", keyword:"models", maturity:76, scope:70, note:"Open coding" },
+  { id:"kimi", name:"Kimi K3", keyword:"models", maturity:74, scope:68, note:"Open-weight scale" },
+  /* Skills */
+  { id:"find-skills", name:"find-skills", keyword:"skills", maturity:70, scope:50, note:"skills.sh" },
+  { id:"grill-me", name:"grill-me", keyword:"skills", maturity:66, scope:48, note:"Spec grilling" },
+  { id:"agent-browser", name:"agent-browser", keyword:"skills", maturity:64, scope:46, note:"Browser skill" },
+  { id:"frontend-design", name:"frontend-design", keyword:"skills", maturity:68, scope:44, note:"anthropics/skills" },
+  { id:"tdd-skill", name:"tdd", keyword:"skills", maturity:62, scope:42, note:"Test-first skill" },
+  { id:"skill-creator", name:"skill-creator", keyword:"skills", maturity:60, scope:52, note:"Authoring skills" },
+  { id:"vercel-react", name:"vercel-react-best-practices", keyword:"skills", maturity:58, scope:40, note:"Framework skill" },
+  { id:"superpowers", name:"superpowers / brainstorming", keyword:"skills", maturity:56, scope:54, note:"Workflow pack" },
+  /* Harnesses */
+  { id:"claude-code", name:"Claude Code", keyword:"harnesses", maturity:88, scope:72, note:"CLI agent harness" },
+  { id:"codex", name:"Codex", keyword:"harnesses", maturity:84, scope:70, note:"Sandboxed terminal" },
   { id:"cursor", name:"Cursor", keyword:"harnesses", maturity:82, scope:70, note:"Agentic IDE" },
-  { id:"conductor", name:"Conductor", keyword:"harnesses", maturity:40, scope:68, note:"Earlier harness" },
-  { id:"claude-code", name:"Claude Code", keyword:"harnesses", maturity:72, scope:62, note:"CLI agent harness" },
-  { id:"gpt-class", name:"GPT-class", keyword:"models", maturity:90, scope:74, note:"General model" },
-  { id:"claude-class", name:"Claude-class", keyword:"models", maturity:88, scope:72, note:"General model" },
-  { id:"skill-packages", name:"Skill packages", keyword:"skills", maturity:60, scope:54, note:"Team playbooks" },
-  { id:"vibe-tech", name:"Vibe coding", keyword:"vibe-coding", maturity:78, scope:28, note:"Technique" },
-  { id:"eval-suites", name:"Eval suites", keyword:"evals", maturity:55, scope:58, note:"Release gates" },
-  { id:"spec-files", name:"Spec files", keyword:"specs", maturity:68, scope:46, note:"Executable intent" },
-  { id:"context-packs", name:"Context packs", keyword:"context", maturity:64, scope:40, note:"Task-shaped context" },
-  { id:"parallel-runs", name:"Parallel runs", keyword:"parallel", maturity:50, scope:36, note:"Isolated branches" }
+  { id:"opencode", name:"OpenCode", keyword:"harnesses", maturity:70, scope:66, note:"Open harness" },
+  { id:"copilot", name:"GitHub Copilot", keyword:"harnesses", maturity:78, scope:68, note:"IDE + cloud agent" },
+  { id:"devin", name:"Devin / Fusion CLI", keyword:"harnesses", maturity:74, scope:72, note:"Delegated tasks" },
+  { id:"gemini-cli", name:"Gemini CLI", keyword:"harnesses", maturity:66, scope:64, note:"Free-tier CLI" },
+  { id:"cline", name:"Cline", keyword:"harnesses", maturity:62, scope:60, note:"Open IDE agent" },
+  { id:"conductor", name:"Conductor", keyword:"harnesses", maturity:40, scope:68, note:"Parallel manager" },
+  { id:"aider", name:"Aider", keyword:"harnesses", maturity:55, scope:52, note:"Git-native CLI" },
+  /* Frameworks */
+  { id:"langchain", name:"LangChain", keyword:"frameworks", maturity:86, scope:64, note:"Agent platform" },
+  { id:"langgraph", name:"LangGraph", keyword:"frameworks", maturity:80, scope:66, note:"Durable graphs" },
+  { id:"crewai", name:"CrewAI", keyword:"frameworks", maturity:76, scope:60, note:"Role crews" },
+  { id:"autogen", name:"AutoGen", keyword:"frameworks", maturity:74, scope:62, note:"Multi-agent chat" },
+  { id:"agno", name:"Agno", keyword:"frameworks", maturity:68, scope:56, note:"Lightweight runtime" },
+  { id:"claude-sdk", name:"Claude Agent SDK", keyword:"frameworks", maturity:72, scope:58, note:"Agentic loop SDK" },
+  { id:"strands", name:"AWS Strands", keyword:"frameworks", maturity:64, scope:54, note:"Cloud agent SDK" },
+  { id:"google-adk", name:"Google ADK", keyword:"frameworks", maturity:62, scope:54, note:"Agent kit" },
+  /* MCP & tools */
+  { id:"chrome-devtools", name:"Chrome DevTools MCP", keyword:"mcp-tools", maturity:78, scope:46, note:"Browser tooling" },
+  { id:"playwright-mcp", name:"Playwright MCP", keyword:"mcp-tools", maturity:80, scope:48, note:"Browser automation" },
+  { id:"firecrawl", name:"Firecrawl", keyword:"mcp-tools", maturity:72, scope:44, note:"Web → markdown" },
+  { id:"github-mcp", name:"GitHub MCP", keyword:"mcp-tools", maturity:76, scope:50, note:"Repos + PRs" },
+  { id:"context7", name:"Context7", keyword:"mcp-tools", maturity:70, scope:42, note:"Live docs" },
+  { id:"filesystem-mcp", name:"Filesystem MCP", keyword:"mcp-tools", maturity:74, scope:40, note:"Local files" },
+  { id:"supabase-mcp", name:"Supabase MCP", keyword:"mcp-tools", maturity:66, scope:46, note:"App backend" },
+  { id:"sentry-mcp", name:"Sentry MCP", keyword:"mcp-tools", maturity:64, scope:48, note:"Errors & traces" },
+  { id:"exa", name:"Exa", keyword:"mcp-tools", maturity:62, scope:44, note:"Agent search" },
+  { id:"notion-mcp", name:"Notion MCP", keyword:"mcp-tools", maturity:58, scope:42, note:"Docs & DBs" },
+  /* Memory */
+  { id:"mem0", name:"Mem0", keyword:"memory", maturity:72, scope:56, note:"Fact memory" },
+  { id:"zep", name:"Zep / Graphiti", keyword:"memory", maturity:68, scope:58, note:"Temporal graph" },
+  { id:"letta", name:"Letta", keyword:"memory", maturity:64, scope:60, note:"Agent-managed" },
+  { id:"cognee", name:"Cognee", keyword:"memory", maturity:52, scope:54, note:"Local graph+vec" },
+  { id:"supermemory", name:"Supermemory", keyword:"memory", maturity:56, scope:52, note:"Vector-graph" },
+  { id:"cf-agents", name:"Cloudflare Agents", keyword:"memory", maturity:50, scope:48, note:"Edge state" },
+  { id:"langmem", name:"LangMem / Mastra Memory", keyword:"memory", maturity:54, scope:50, note:"Framework memory" },
+  { id:"hindsight", name:"Hindsight", keyword:"memory", maturity:48, scope:46, note:"Eval-led memory" },
+  /* Orchestration */
+  { id:"langgraph-orch", name:"LangGraph", keyword:"orchestration", maturity:78, scope:76, note:"Durable multi-step" },
+  { id:"crewai-orch", name:"CrewAI", keyword:"orchestration", maturity:70, scope:70, note:"Crew handoffs" },
+  { id:"autogen-orch", name:"AutoGen", keyword:"orchestration", maturity:68, scope:72, note:"Agent dialogue" },
+  { id:"temporal", name:"Temporal + agents", keyword:"orchestration", maturity:74, scope:80, note:"Durable workflows" },
+  { id:"n8n", name:"n8n / Zapier agents", keyword:"orchestration", maturity:66, scope:68, note:"No-code workflows" },
+  { id:"subagents", name:"Harness subagents", keyword:"orchestration", maturity:60, scope:58, note:"In-harness parallel" },
+  { id:"conductor-orch", name:"Conductor", keyword:"orchestration", maturity:42, scope:66, note:"Parallel manager" },
+  { id:"camel", name:"CAMEL / swarm sims", keyword:"orchestration", maturity:40, scope:72, note:"Multi-agent research" },
+  /* Assurance */
+  { id:"braintrust", name:"Braintrust", keyword:"assurance", maturity:74, scope:72, note:"Evals + traces" },
+  { id:"langsmith", name:"LangSmith", keyword:"assurance", maturity:76, scope:70, note:"Trace + eval" },
+  { id:"langfuse", name:"Langfuse", keyword:"assurance", maturity:72, scope:68, note:"OSS observability" },
+  { id:"patronus", name:"Patronus", keyword:"assurance", maturity:64, scope:66, note:"Evaluators" },
+  { id:"lakera", name:"Lakera Guard", keyword:"assurance", maturity:68, scope:62, note:"Runtime guardrails" },
+  { id:"nemo-guard", name:"NeMo Guardrails", keyword:"assurance", maturity:60, scope:60, note:"Policy rails" },
+  { id:"snyk-agent", name:"Snyk Agent Scan", keyword:"assurance", maturity:58, scope:64, note:"MCP/skill risks" },
+  { id:"phoenix", name:"Phoenix / Arize", keyword:"assurance", maturity:66, scope:66, note:"LLM observability" },
+  { id:"agentops", name:"AgentOps", keyword:"assurance", maturity:54, scope:58, note:"Agent sessions" }
 ];
 
 const KEYWORD_EXEMPLARS = {
@@ -809,64 +901,68 @@ const KEYWORD_EXEMPLARS = {
   ]
 };
 
-/* 1–3 anti/pattern pairs per keyword. Same move, opposite intent. */
+/* 1–3 anti/pattern pairs per category. Techniques fold in under the right layer. */
 const KEYWORD_PAIRS = {
-  "vibe-coding":[
-    { anti:{ title:"Ship the vibe", desc:"[[vibe-coding|Vibe-coding]] an app and tossing it into production. Nobody designed it to be maintained, secured or owned.", warn:"“We’ll clean it up later,” with no ticket" },
-      pattern:{ title:"Prototype to learn", desc:"[[vibe-coding|Vibe-coding]] a throwaway prototype for exploration and feedback. The prototype is a question, not a product.", old:"Rapid prototyping, spikes" } },
-    { anti:{ title:"Vibe past the bottleneck", desc:"Generating volume while review capacity stays flat. The PR queue becomes the new constraint.", warn:"The PR queue grows faster than merges" },
-      pattern:{ title:"Vibe inside a gate", desc:"Use vibe coding only where the next check is cheap: a usability session, a spike behind a flag, a disposable branch.", old:"Time-boxed spikes" } },
-    { anti:{ title:"Nobody owns the code", desc:"“The agent wrote it” becomes the answer to every why. No human can explain or change it safely.", warn:"“The agent wrote it” answers “why does it do this?”" },
-      pattern:{ title:"Read before you keep", desc:"Keep vibe-coded output only after a person can narrate the change and the tests that hold it.", old:"Code ownership" } }
+  models:[
+    { anti:{ title:"One model for everything", desc:"The same [[models|model]] for architecture, bulk renames and release notes. Cost and judgment get flattened.", warn:"The cheap path and the careful path are identical" },
+      pattern:{ title:"Model to the job", desc:"Pick stronger [[models|models]] for judgment-heavy work and smaller ones for bulk, reversible chores.", old:"Right tool for the job" } },
+    { anti:{ title:"Model as oracle", desc:"Treating the model’s first answer as truth. No independent check, no second source.", warn:"Nobody verified the claim" },
+      pattern:{ title:"Model as draft", desc:"Use the model to draft; people, tests and [[assurance|evals]] decide what ships.", old:"Pair programming" } }
   ],
   skills:[
     { anti:{ title:"Skills as wallpaper", desc:"A folder of [[agent-skills|skills]] nobody loads. The playbook exists; agents still improvise.", warn:"The skill was merged and never referenced" },
       pattern:{ title:"Encode the playbook", desc:"Package how your team does recurring work as [[agent-skills|agent skills]], so every agent follows the same steps.", old:"Runbooks, SOPs" } },
     { anti:{ title:"One mega-skill", desc:"Everything the team knows in a single skill. The agent drowns in rules it does not need.", warn:"The skill is longer than the task" },
-      pattern:{ title:"One job, one skill", desc:"A skill covers one recurring job with the template, scripts and rules that job needs — nothing else.", old:"Single-purpose runbooks" } }
-  ],
-  models:[
-    { anti:{ title:"One model for everything", desc:"The same [[models|model]] for architecture, bulk renames and release notes. Cost and judgment get flattened.", warn:"The cheap path and the careful path are identical" },
-      pattern:{ title:"Model to the job", desc:"Pick stronger [[models|models]] for judgment-heavy work and smaller ones for bulk, reversible chores.", old:"Right tool for the job" } },
-    { anti:{ title:"Model as oracle", desc:"Treating the model’s first answer as truth. No independent check, no second source.", warn:"Nobody verified the claim" },
-      pattern:{ title:"Model as draft", desc:"Use the model to draft; people and tests decide what ships.", old:"Pair programming" } }
+      pattern:{ title:"One job, one skill", desc:"A skill covers one recurring job with the template, scripts and rules that job needs — nothing else.", old:"Single-purpose runbooks" } },
+    { anti:{ title:"Context dumping", desc:"Everything gets pasted instead of [[context-engineering|task-shaped context]] and the one skill that applies.", warn:"The agent ignored the one rule that mattered" },
+      pattern:{ title:"Task-shaped context", desc:"Hand the model the spec, the failing test and the skill that applies — not the whole wiki.", old:"Just enough documentation" } }
   ],
   harnesses:[
     { anti:{ title:"Chat box as IDE", desc:"A bare prompt window with no tools, tests or permissions. The “[[harnesses|harness]]” is copy-paste.", warn:"Every step needs a human to move files" },
       pattern:{ title:"Loop with checks", desc:"A [[harnesses|harness]] that can edit, run checks and stop when gates fail — an agentic IDE or CLI with a real loop.", old:"IDE + CI" } },
+    { anti:{ title:"Ship the vibe", desc:"[[vibe-coding|Vibe-coding]] an app and tossing it into production. Nobody designed it to be maintained, secured or owned.", warn:"“We’ll clean it up later,” with no ticket" },
+      pattern:{ title:"Prototype to learn", desc:"[[vibe-coding|Vibe-coding]] a throwaway prototype for exploration and feedback. The prototype is a question, not a product.", old:"Rapid prototyping, spikes" } },
     { anti:{ title:"Unbounded agency", desc:"The harness can touch anything, deploy anywhere, with no blast-radius limit.", warn:"An agent pushed to production unsupervised" },
       pattern:{ title:"Scoped agency", desc:"Permissions and tools match the task. Production and secrets stay behind an explicit gate.", old:"Least privilege" } }
   ],
-  specs:[
-    { anti:{ title:"Spec theater", desc:"Long generated specs that nobody reads. Volume stands in for decisions.", warn:"The spec is longer than the code" },
-      pattern:{ title:"Specs as context", desc:"A short, testable spec feeds the model directly. [[spec-driven-development|Spec-driven development]] keeps intent as the source of truth.", old:"Design by contract" } },
-    { anti:{ title:"Transcript as spec", desc:"A raw, rambling transcript goes straight to an agent, contradictions included.", warn:"The agent built what you said, not what you meant" },
-      pattern:{ title:"Talk, then tighten", desc:"Voice-dump the idea, then turn it into a reviewed spec before implementation.", old:"Whiteboarding, then writing it down" } }
+  frameworks:[
+    { anti:{ title:"Framework as the product", desc:"Months of scaffolding before any user-visible outcome. The stack becomes the roadmap.", warn:"The demo is the framework tour" },
+      pattern:{ title:"Thin framework, thick outcome", desc:"Use a [[frameworks|framework]] only where control flow, retries or tool wiring would otherwise be bespoke glue.", old:"Buy vs build" } },
+    { anti:{ title:"Prompt-only when structure is needed", desc:"A free-form loop for a multi-step, durable process that needs checkpoints and recovery.", warn:"Every failure starts from scratch" },
+      pattern:{ title:"Graph the durable path", desc:"Encode long-running or branching work as an explicit graph or crew with durable state.", old:"Workflow engines" } }
   ],
-  evals:[
+  "mcp-tools":[
+    { anti:{ title:"Tool sprawl", desc:"Every [[mcp-tools|MCP server]] in the registry wired in. The agent picks the wrong one and burns the context.", warn:"Forty tools, none used well" },
+      pattern:{ title:"Few tools, clear jobs", desc:"Expose a small set of tools matched to the task. Prefer official or reviewed servers for secrets and writes.", old:"Least privilege APIs" } },
+    { anti:{ title:"Trust the directory", desc:"Installing a popular MCP server without checking permissions, exfiltration paths or ownership.", warn:"Stars substituted for a security review" },
+      pattern:{ title:"Review before connect", desc:"Treat MCP installs like dependencies: pin versions, scan, and limit scopes.", old:"Dependency review" } }
+  ],
+  memory:[
+    { anti:{ title:"Paste the past", desc:"Dumping whole transcripts into every prompt instead of a [[memory|memory]] system that stores what matters.", warn:"The context window is the archive" },
+      pattern:{ title:"Store decisions, not dumps", desc:"Persist facts, preferences and outcomes; retrieve only what the current task needs.", old:"CRM notes, knowledge bases" } },
+    { anti:{ title:"Stale memory as truth", desc:"Acting on remembered facts that were superseded, with no invalidation.", warn:"Last month’s policy still “remembered”" },
+      pattern:{ title:"Memory with expiry", desc:"Prefer systems that track when a fact became true and when it was replaced.", old:"Temporal data, effective dating" } }
+  ],
+  orchestration:[
+    { anti:{ title:"More agents than supervision", desc:"[[parallel-agents|Agents]] run in parallel with nobody watching their output.", warn:"Five branches, none ready to merge" },
+      pattern:{ title:"One agent, one task, one branch", desc:"[[orchestration|Orchestrate]] parallel work only on isolated, reviewable tasks with clear merge points.", old:"Work breakdown" } },
+    { anti:{ title:"Chat forever", desc:"Multi-agent debate with no owner, no deadline and no durable handoff.", warn:"The transcript grew; the ticket did not" },
+      pattern:{ title:"Owned handoffs", desc:"Name who decides, what gets handed off, and what “done” means between agents.", old:"RACI, workflow states" } }
+  ],
+  assurance:[
     { anti:{ title:"Vibes as the gate", desc:"Shipping an AI change because a few hand-tried prompts “looked fine.”", warn:"No failing case in the suite" },
-      pattern:{ title:"Evals as release gates", desc:"A repeatable [[evals|eval suite]] decides whether a change ships.", old:"Regression testing" } },
+      pattern:{ title:"Evals as release gates", desc:"A repeatable [[evals|eval suite]] — part of [[assurance|assurance]] — decides whether a change ships.", old:"Regression testing" } },
+    { anti:{ title:"Logs without judgment", desc:"Tracing everything but never scoring it. Observability as wallpaper.", warn:"Dashboards nobody uses to block a release" },
+      pattern:{ title:"Trace and score", desc:"Pair tracing with scorers and thresholds that can fail CI or roll back.", old:"SLOs, error budgets" } },
     { anti:{ title:"Evals that grade the writer", desc:"The same model writes the output and scores it, with no independent check.", warn:"The build is green and the assertion count went down" },
       pattern:{ title:"Independent scoring", desc:"Evals use fixed cases, rubrics or a separate checker the generator cannot edit.", old:"Separate test authors" } }
-  ],
-  context:[
-    { anti:{ title:"Context dumping", desc:"Everything gets pasted into the context instead of what the task needs.", warn:"The agent ignored the one rule that mattered" },
-      pattern:{ title:"Task-shaped context", desc:"[[context-engineering|Context engineering]]: hand the model the spec, the failing test and the conventions that apply — not the whole wiki.", old:"Just enough documentation" } },
-    { anti:{ title:"Hidden conventions", desc:"Rules live in people’s heads. Agents rediscover them wrong every time.", warn:"Every PR re-litigates the style guide" },
-      pattern:{ title:"Conventions in-repo", desc:"Instruction files and skills carry the rules agents must follow.", old:"CONTRIBUTING.md" } }
-  ],
-  parallel:[
-    { anti:{ title:"More agents than supervision", desc:"[[parallel-agents|Agents]] run in parallel with nobody watching their output.", warn:"Five branches, none ready to merge" },
-      pattern:{ title:"One agent, one task, one branch", desc:"Run [[parallel-agents|parallel agents]] only on isolated, well-scoped tasks a person can review.", old:"Work breakdown" } },
-    { anti:{ title:"Drifting parallel branches", desc:"Agents work on separate branches for days, then everything collides.", warn:"Every merge needs a manual fix" },
-      pattern:{ title:"Integrate agent work daily", desc:"Merge agent branches often so conflicts show up while they are small.", old:"Continuous integration" } }
   ]
 };
 
 
 /* =================== STATE & HELPERS =================== */
 let mode = "now", view = "overview", ph = 0, sb = 0;
-let patternsBrowse = "keyword", patternsStage = "all", patternsKeyword = null, showTools = false;
+let patternsBrowse = "keyword", patternsStage = "all", patternsKeyword = null, showTools = false, toolsCat = "harnesses";
 const $ = (s,el=document)=>el.querySelector(s);
 const root = document.documentElement;
 const main = $("#main"), panel = $("#panel"), ringWrap = $("#ring-wrap");
@@ -1171,18 +1267,23 @@ function subHTML(i,k){
   </nav>`;
 }
 
+function resolveKeyword(id){
+  if (!id) return null;
+  if (KEYWORDS.some(k => k.id === id)) return id;
+  return KEYWORD_ALIASES[id] || null;
+}
 function kwByStage(stage){
   if (stage === "all") return KEYWORDS.slice();
   return KEYWORDS.filter(k => k.stages.includes(stage));
 }
-function toolsByStage(stage){
-  const ids = new Set(kwByStage(stage).map(k => k.id));
-  return TOOLS.filter(t => ids.has(t.keyword));
+function toolsForChart(){
+  const stageIds = new Set(kwByStage(patternsStage).map(k => k.id));
+  return TOOLS.filter(t => stageIds.has(t.keyword) && (toolsCat === "all" || t.keyword === toolsCat));
 }
 function browseBar(){
   return `<div class="browse-row">
     <span class="lbl">Browse by</span>
-    <button type="button" class="filter" data-pb="keyword" aria-pressed="${patternsBrowse==="keyword"}">Keyword / category</button>
+    <button type="button" class="filter" data-pb="keyword" aria-pressed="${patternsBrowse==="keyword"}">Stack category</button>
     <button type="button" class="filter" data-pb="stage" aria-pressed="${patternsBrowse==="stage"}">Lifecycle stage</button>
   </div>`;
 }
@@ -1191,16 +1292,19 @@ function stageFilters(active){
   return `<div class="filters" role="group" aria-label="Filter by stage">${opts.map(([v,l])=>`<button type="button" class="filter" data-tf="${v}" aria-pressed="${v===active}">${l}</button>`).join("")}</div>`;
 }
 function keywordFilters(active){
-  return `<div class="filters" role="group" aria-label="Keywords">${KEYWORDS.map(k=>`<button type="button" class="filter" data-kw="${k.id}" aria-pressed="${k.id===active}">${esc(k.name)}</button>`).join("")}</div>`;
+  return `<div class="filters" role="group" aria-label="Stack categories">${KEYWORDS.map(k=>`<button type="button" class="filter" data-kw="${k.id}" aria-pressed="${k.id===active}">${esc(k.name)}</button>`).join("")}</div>`;
+}
+function toolsCatFilters(){
+  const opts = [["all","All categories"], ...KEYWORDS.map(k=>[k.id,k.name])];
+  return `<div class="filters" role="group" aria-label="Filter tools by category">${opts.map(([v,l])=>`<button type="button" class="filter" data-tc="${v}" aria-pressed="${v===toolsCat}">${esc(l)}</button>`).join("")}</div>`;
 }
 function chartSVG(){
   const W = 860, H = 420, padL = 64, padR = 28, padT = 28, padB = 52;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   const X = m => padL + (m / 100) * plotW, Y = s => padT + plotH - (s / 100) * plotH;
-  const stage = patternsStage;
   let nodes = "";
   if (showTools){
-    toolsByStage(stage).forEach(t=>{
+    toolsForChart().forEach(t=>{
       const cx = X(t.maturity), cy = Y(t.scope);
       const cur = patternsKeyword === t.keyword ? ' aria-current="true"' : "";
       nodes += `<g class="chart-tool" tabindex="0" role="button" data-kw="${t.keyword}"${cur}>
@@ -1210,7 +1314,7 @@ function chartSVG(){
       </g>`;
     });
   } else {
-    kwByStage(stage).forEach(k=>{
+    kwByStage(patternsStage).forEach(k=>{
       const cx = X(k.maturity), cy = Y(k.scope);
       const cur = patternsKeyword === k.id ? ' aria-current="true"' : "";
       nodes += `<g class="chart-dot" tabindex="0" role="button" data-kw="${k.id}"${cur}>
@@ -1235,7 +1339,7 @@ function chartSVG(){
     `<line class="chart-grid" x1="${X(g)}" y1="${padT}" x2="${X(g)}" y2="${padT+plotH}"/>` +
     `<line class="chart-grid" x1="${padL}" y1="${Y(g)}" x2="${padL+plotW}" y2="${Y(g)}"/>`
   ).join("");
-  return `<div class="chart-wrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Keywords by maturity and scope">
+  return `<div class="chart-wrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Agent stack categories by maturity and scope">
     ${grid}
     <line class="chart-spine" x1="${padL}" y1="${padT+plotH}" x2="${padL+plotW}" y2="${padT+plotH}"/>
     <line class="chart-spine" x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT+plotH}"/>
@@ -1246,23 +1350,26 @@ function chartSVG(){
     ${nodes}
   </svg></div>
   <p class="chart-note">${showTools
-    ? "Tools and named practices on the same axes. Click one to open its keyword’s pattern / anti-pattern pairs."
-    : "Keywords from the glossary. Diamonds are exemplars (Cursor vs Conductor under Harnesses: same scope, different maturity). Toggle Show tools for the product map."}</p>`;
+    ? "Exemplars on the same axes. Click one to open its category’s pattern / anti-pattern pairs. Filter by category to keep the map readable."
+    : "Eight stack categories from the glossary. Diamonds are teaching exemplars (Cursor vs Conductor under Harnesses). Toggle Show tools for the product map."}</p>
+  <p class="chart-note">Positions are teaching placements. Exemplars drawn from skills.sh, harness scorecards, MCP popularity indexes and memory/governance roundups — not a quality ranking.</p>`;
 }
 function patternsChartHTML(){
   return `<div class="tips-head"><div class="head">
       <div class="eyebrow-row"><span class="eyebrow-pill">Now</span></div>
       <h2>Patterns for today</h2>
-      <p class="lede">What to do, and what to watch for — by keyword or by where you are in the lifecycle.</p></div>
+      <p class="lede">What to do, and what to watch for — across the agent stack, or by lifecycle stage.</p></div>
     <button type="button" class="filter" data-tools="1" aria-pressed="${showTools}">${showTools ? "Show categories" : "Show tools"}</button>
   </div>
   ${browseBar()}
   ${stageFilters(patternsStage)}
+  ${showTools ? toolsCatFilters() : ""}
   ${chartSVG()}
   <div class="actions"><button type="button" class="btn-ghost" data-home="1"><span aria-hidden="true">←</span> Back to the lifecycle</button></div>`;
 }
 function patternsKeywordHTML(id){
   const k = KEYWORDS.find(x => x.id === id) || KEYWORDS[0];
+  const exemplars = TOOLS.filter(t => t.keyword === k.id);
   return `<div class="tips-head"><div class="head">
       <div class="eyebrow-row"><span class="eyebrow-pill">Now</span></div>
       <h2>${esc(k.name)}</h2>
@@ -1275,6 +1382,8 @@ function patternsKeywordHTML(id){
     <button type="button" class="mini link" data-gloss="${k.term}">Glossary · ${esc(TERMS[k.term]?.name || k.name)}</button>
     ${k.stages.map(s => `<button type="button" class="mini" data-phase="${PHASES.findIndex(p=>p.id===s)}">${stageName(s)}</button>`).join("")}
   </div>
+  ${exemplars.length ? `<div class="block"><span class="label">Exemplars · click opens this category</span>
+    <div class="chips">${exemplars.map(t=>`<button type="button" class="chip" data-kw="${k.id}" title="${esc(t.note)}">${esc(t.name)}</button>`).join("")}</div></div>` : ""}
   ${keywordPairsBlock(k.id)}
   <div class="actions"><button type="button" class="btn-ghost" data-home="1"><span aria-hidden="true">←</span> Back to the lifecycle</button></div>`;
 }
@@ -1283,7 +1392,7 @@ function patternsStageHTML(){
   return `<div class="tips-head"><div class="head">
       <div class="eyebrow-row"><span class="eyebrow-pill">Now</span></div>
       <h2>${patternsStage === "all" ? "All stages" : stageName(patternsStage)}</h2>
-      <p class="lede">Keywords that show up here. Open one for paired anti-patterns and patterns.</p></div>
+      <p class="lede">Stack categories that show up here. Open one for paired anti-patterns and patterns.</p></div>
   </div>
   ${browseBar()}
   ${stageFilters(patternsStage)}
@@ -1301,7 +1410,8 @@ function tipsHTML(){
 function patternsHash(){
   if (patternsBrowse === "stage") return patternsStage === "all" ? "#patterns/stage" : `#patterns/stage/${patternsStage}`;
   if (patternsKeyword) return `#patterns/${patternsKeyword}`;
-  return showTools ? "#patterns?tools=1" : "#patterns";
+  if (showTools) return toolsCat === "all" ? "#patterns?tools=1" : `#patterns?tools=1&cat=${toolsCat}`;
+  return "#patterns";
 }
 function render(){
   closePop();
@@ -1323,16 +1433,18 @@ function goTips(opts){
   view = "tips";
   if (mode !== "now"){ mode = "now"; initDots(); }
   if (opts && opts.browse) patternsBrowse = opts.browse;
-  if (opts && "keyword" in opts) patternsKeyword = opts.keyword;
+  if (opts && "keyword" in opts) patternsKeyword = resolveKeyword(opts.keyword);
   if (opts && opts.stage) patternsStage = opts.stage;
   if (opts && "tools" in opts) showTools = !!opts.tools;
-  if (!opts){ patternsBrowse = "keyword"; patternsKeyword = null; patternsStage = "all"; }
+  if (opts && opts.toolsCat) toolsCat = opts.toolsCat;
+  if (!opts){ patternsBrowse = "keyword"; patternsKeyword = null; patternsStage = "all"; showTools = false; toolsCat = "harnesses"; }
   render();
 }
 function openKeyword(id){
-  if (!KEYWORDS.some(k => k.id === id)) return;
+  const resolved = resolveKeyword(id);
+  if (!resolved) return;
   patternsBrowse = "keyword";
-  patternsKeyword = id;
+  patternsKeyword = resolved;
   if (view !== "tips"){ view = "tips"; if (mode !== "now"){ mode = "now"; initDots(); } }
   render();
 }
@@ -1478,7 +1590,14 @@ document.addEventListener("click", e=>{
   const pb = e.target.closest("[data-pb]");
   if (pb){ patternsBrowse = pb.dataset.pb; if (patternsBrowse === "keyword") patternsKeyword = null; render(); return; }
   const toolsBtn = e.target.closest("[data-tools]");
-  if (toolsBtn){ showTools = !showTools; render(); return; }
+  if (toolsBtn){
+    showTools = !showTools;
+    if (showTools && toolsCat === "all") toolsCat = "harnesses";
+    render();
+    return;
+  }
+  const tc = e.target.closest("[data-tc]");
+  if (tc){ toolsCat = tc.dataset.tc; showTools = true; render(); return; }
   const kw = e.target.closest("[data-kw]");
   if (kw){ openKeyword(kw.dataset.kw); return; }
   const gloss = e.target.closest("[data-gloss]");
@@ -1544,12 +1663,14 @@ const h = location.hash.slice(1);
 if (h === "tips" || h === "patterns" || h.startsWith("patterns/") || h.startsWith("patterns?")){
   const bare = h === "tips" ? "" : h.replace(/^patterns\/?/, "");
   const tools = /(?:^|[?&])tools=1\b/.test(h) || bare.includes("tools=1");
+  const catMatch = h.match(/[?&]cat=([a-z0-9-]+)/);
+  const toolsCatOpt = catMatch && (catMatch[1] === "all" || KEYWORDS.some(k=>k.id===catMatch[1])) ? catMatch[1] : (tools ? "harnesses" : "harnesses");
   const path = bare.split("?")[0];
   const parts = path ? path.split("/").filter(Boolean) : [];
   let browse = "keyword", kw = null, stage = "all";
   if (parts[0] === "stage"){ browse = "stage"; stage = parts[1] && PHASES.some(p=>p.id===parts[1]) ? parts[1] : "all"; }
-  else if (parts[0] && KEYWORDS.some(k=>k.id===parts[0])) kw = parts[0];
-  goTips({ browse, keyword: kw, stage, tools });
+  else if (parts[0]) kw = resolveKeyword(parts[0]);
+  goTips({ browse, keyword: kw, stage, tools, toolsCat: toolsCatOpt });
 } else {
   const mm = h.match(/^([a-z]+)-(\d)$/);
   const pi = PHASES.findIndex(p=>p.id === (mm ? mm[1] : h));
