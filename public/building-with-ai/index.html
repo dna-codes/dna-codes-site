@@ -1443,12 +1443,6 @@ function render(){
   panel.innerHTML = view === "overview" ? overviewHTML() : view === "tips" ? tipsHTML() : view === "phase" ? phaseHTML(ph) : subHTML(ph, sb);
   panel.classList.remove("swap"); void panel.offsetWidth; panel.classList.add("swap");
   main.scrollTop = 0;
-  if (view === "tips" && patternsKeyword){
-    requestAnimationFrame(()=>{
-      const el = document.getElementById("patterns-detail");
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    });
-  }
   const hash = view === "overview" ? "" : view === "tips" ? patternsHash() : view === "phase" ? "#" + PHASES[ph].id : `#${PHASES[ph].id}-${sb+1}`;
   try { history.replaceState(null, "", location.pathname + location.search + hash); } catch(e){}
 }
