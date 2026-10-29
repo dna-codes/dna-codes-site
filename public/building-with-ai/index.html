@@ -523,7 +523,7 @@ const PHASES = [
       patterns:[{k:2,title:"Small batches, continuous integration", desc:"Merge daily and keep the build green.", old:"Extreme Programming"}],
       anti:[{k:0,title:"Hero coding", desc:"One person writes and understands the critical module.", warn:"Everyone waits for the same developer"}] },
     now:{ thesis:"Generation is cheap. Review isn’t.",
-      tools:["coding-agents","agent-skills","agentic-loops","vibe-coding","test-generation","ai-code-review","parallel-agents","voice-prompting"],
+      tools:["coding-agents","agentic-ides","agent-skills","agentic-loops","vibe-coding","test-generation","ai-code-review","parallel-agents","voice-prompting"],
       patterns:[
        {k:1,title:"Loops with verification", desc:"[[agentic-loops|Agents iterate]] against tests, types and linters. The loop ends when checks pass, not when code exists.", old:"TDD, CI"},
        {k:1,title:"Tests first, then generate", desc:"Write or approve the tests before asking for the code, so the agent has a target it can’t argue with.", old:"Test-driven development"},
@@ -653,7 +653,7 @@ const TERMS = {
     def:"Everyone merges small changes into the main branch at least daily.",
     ex:"Branches that live for hours, not weeks, with unfinished work behind feature flags.",
     old:"Continuous integration as originally meant." },
-  "stacked-prs":{ name:"Stacked PRs", type:"Practice", cats:["harnesses"],
+  "stacked-prs":{ name:"Stacked PRs", type:"Practice", cats:["harnesses","agentic-ides"],
     def:"A large change split into a chain of small pull requests, each reviewable on its own.",
     ex:"Schema change, then API, then UI: three PRs reviewed in order.",
     old:"Patch series on mailing lists." },
@@ -733,11 +733,11 @@ const TERMS = {
     def:"AI-generated screens and flows to react to before anyone builds.",
     ex:"Five dashboard layouts generated from one paragraph, critiqued in ten minutes.",
     old:"Wireframes." },
-  "coding-agents":{ name:"Coding agents", type:"Tool", cats:["harnesses"],
+  "coding-agents":{ name:"Coding agents", type:"Tool", cats:["harnesses","agentic-ides"],
     def:"AI that reads a codebase, edits files and runs commands to finish a task.",
     ex:"Asking an agent to add pagination to an API endpoint and update its tests.",
     old:"Pair programming with a very fast partner." },
-  "agentic-loops":{ name:"Agentic loops", type:"Technique", cats:["harnesses"],
+  "agentic-loops":{ name:"Agentic loops", type:"Technique", cats:["harnesses","agentic-ides"],
     def:"A model acts, checks the result, and tries again until a goal or test is met.",
     ex:"Run the tests, read the failure, fix, and repeat until everything passes.",
     old:"TDD’s red-green-refactor, automated." },
@@ -783,8 +783,12 @@ const TERMS = {
     old:"The model behind autocomplete and chat, now the engine of agent work." },
   "harnesses":{ name:"Harnesses", type:"Concept", cats:["harnesses"],
     def:"The runtime around a model: tools, loops, permissions and checks that turn a completion into work that can finish.",
-    ex:"An agentic IDE that edits files, runs tests and opens a PR, versus a bare chat box.",
-    old:"IDEs, CLIs and orchestrators. The difference is how much of the loop is automated." },
+    ex:"A CLI coding agent that edits files, runs tests and opens a PR, versus a bare chat box.",
+    old:"Shell scripts, IDEs and orchestrators. The difference is how much of the loop is automated." },
+  "agentic-ides":{ name:"Agentic IDEs", type:"Concept", cats:["agentic-ides"],
+    def:"Editors and agent workspaces where a model can edit code, run commands and finish tasks inside a development environment, not only suggest text in a chat pane.",
+    ex:"Cursor, Kiro or Conductor running an agent that changes files, runs tests and opens a PR while you review.",
+    old:"IDEs with plugins. The agent now drives the loop, not only the autocomplete." },
   "frameworks":{ name:"Frameworks", type:"Concept", cats:["frameworks"],
     def:"SDKs and runtimes for composing agents: graphs, crews, tools and control flow you write once and run many times.",
     ex:"A LangGraph or CrewAI app that encodes a research workflow, then swaps models underneath.",
@@ -815,6 +819,8 @@ const KEYWORDS = [
     blurb:"Packaged playbooks an agent loads for a recurring task." },
   { id:"harnesses", name:"Harnesses", term:"harnesses", maturity:72, scope:68, stages:["design","develop","deliver"],
     blurb:"Runtime loops that edit, tool-call and gate agents." },
+  { id:"agentic-ides", name:"Agentic IDEs", term:"agentic-ides", maturity:76, scope:58, stages:["design","develop","deliver"],
+    blurb:"Editors and workspaces where agents edit, run and finish tasks." },
   { id:"frameworks", name:"Frameworks", term:"frameworks", maturity:70, scope:62, stages:["design","develop","deliver"],
     blurb:"SDKs for composing agents, graphs and crews." },
   { id:"mcp-tools", name:"MCP & tools", term:"mcp-tools", maturity:58, scope:48, stages:["develop","deliver"],
@@ -830,7 +836,7 @@ const KEYWORDS = [
 /* Old chart hashes → current categories (techniques folded into pairs). */
 const KEYWORD_ALIASES = {
   "vibe-coding":"harnesses", specs:"skills", evals:"governance", assurance:"governance",
-  context:"skills", parallel:"orchestration"
+  context:"skills", parallel:"orchestration", ides:"agentic-ides", "agentic-ide":"agentic-ides"
 };
 
 /* Exemplars for selected-category chart + chips. Cap: 15 dots per category.
@@ -841,6 +847,7 @@ const TOOL_SOURCES = {
   models:{ label:"llm-stats.com", href:"https://llm-stats.com/leaderboards/llm-leaderboard" },
   skills:{ label:"skills.sh", href:"https://www.skills.sh/" },
   harnesses:{ label:"Artificial Analysis", href:"https://artificialanalysis.ai/agents/coding-agents" },
+  "agentic-ides":{ label:"agentastic.dev", href:"https://www.agentastic.dev/compare/best-agentic-ide" },
   "mcp-tools":{ label:"awesome-mcp-servers", href:"https://github.com/wong2/awesome-mcp-servers" },
   memory:{ label:"awesome-ai-memory", href:"https://github.com/topoteretes/awesome-ai-memory" }
 };
@@ -877,22 +884,35 @@ const TOOLS = [
   { id:"writing-plans", name:"writing-plans", keyword:"skills", group:"Workflow", maturity:46, scope:48, note:"obra/superpowers" },
   { id:"supabase-skill", name:"supabase-postgres-best-practices", keyword:"skills", group:"Data", maturity:44, scope:34, note:"supabase/agent-skills" },
   { id:"remotion", name:"remotion-best-practices", keyword:"skills", group:"Design", maturity:40, scope:30, note:"remotion-dev/skills" },
-  /* Harnesses — Artificial Analysis coding agents + app builders (≤15) */
-  { id:"claude-code", name:"Claude Code", keyword:"harnesses", group:"Claude", maturity:96, scope:88, note:"AA Index leader" },
-  { id:"cursor", name:"Cursor", keyword:"harnesses", group:"Agents & IDEs", maturity:90, scope:70, note:"Agentic IDE" },
-  { id:"devin", name:"Devin / Fusion CLI", keyword:"harnesses", group:"Agents & IDEs", maturity:92, scope:84, note:"AA Index · Cognition" },
-  { id:"muse-code", name:"Muse Code", keyword:"harnesses", group:"Meta", maturity:88, scope:76, note:"AA Index · Meta" },
-  { id:"codex", name:"Codex", keyword:"harnesses", group:"OpenAI", maturity:84, scope:72, note:"AA Index · OpenAI" },
-  { id:"copilot", name:"GitHub Copilot", keyword:"harnesses", group:"Agents & IDEs", maturity:74, scope:52, note:"IDE + coding agent" },
-  { id:"windsurf", name:"Windsurf", keyword:"harnesses", group:"Agents & IDEs", maturity:70, scope:50, note:"Agentic IDE" },
-  { id:"openhands", name:"OpenHands", keyword:"harnesses", group:"Agents & IDEs", maturity:68, scope:60, note:"Open autonomous agent" },
-  { id:"gemini-cli", name:"Gemini CLI", keyword:"harnesses", group:"Gemini", maturity:62, scope:48, note:"Google CLI harness" },
-  { id:"cline", name:"Cline", keyword:"harnesses", group:"Agents & IDEs", maturity:58, scope:42, note:"Open IDE agent" },
-  { id:"opencode", name:"OpenCode", keyword:"harnesses", group:"Agents & IDEs", maturity:54, scope:56, note:"Open harness" },
+  /* Harnesses — CLI / autonomous agents + app builders (≤15) */
+  { id:"claude-code", name:"Claude Code", keyword:"harnesses", group:"CLI agents", maturity:96, scope:88, note:"AA Index leader" },
+  { id:"devin", name:"Devin / Fusion CLI", keyword:"harnesses", group:"CLI agents", maturity:92, scope:84, note:"AA Index · Cognition" },
+  { id:"muse-code", name:"Muse Code", keyword:"harnesses", group:"CLI agents", maturity:88, scope:76, note:"AA Index · Meta" },
+  { id:"codex", name:"Codex", keyword:"harnesses", group:"CLI agents", maturity:84, scope:72, note:"AA Index · OpenAI" },
+  { id:"openhands", name:"OpenHands", keyword:"harnesses", group:"CLI agents", maturity:68, scope:60, note:"Open autonomous agent" },
+  { id:"gemini-cli", name:"Gemini CLI", keyword:"harnesses", group:"CLI agents", maturity:62, scope:48, note:"Google CLI harness" },
+  { id:"opencode", name:"OpenCode", keyword:"harnesses", group:"CLI agents", maturity:54, scope:56, note:"Open harness" },
+  { id:"aider", name:"Aider", keyword:"harnesses", group:"CLI agents", maturity:50, scope:40, note:"Git-native CLI pair" },
   { id:"v0", name:"v0", keyword:"harnesses", group:"App builders", maturity:66, scope:28, note:"Prompt-to-UI" },
   { id:"lovable", name:"Lovable", keyword:"harnesses", group:"App builders", maturity:60, scope:32, note:"Prompt-to-app" },
-  { id:"replit-agent", name:"Replit Agent", keyword:"harnesses", group:"App builders", maturity:52, scope:26, note:"Cloud IDE agent" },
+  { id:"replit-agent", name:"Replit Agent", keyword:"harnesses", group:"App builders", maturity:52, scope:26, note:"Cloud app agent" },
   { id:"bolt", name:"Bolt", keyword:"harnesses", group:"App builders", maturity:44, scope:22, note:"Prompt-to-app" },
+  /* Agentic IDEs — editors + agent workspaces (≤15); Cursor, Conductor, Kiro as teaching exemplars */
+  { id:"cursor", name:"Cursor", keyword:"agentic-ides", group:"Editors", maturity:92, scope:72, note:"Editor-first agentic IDE" },
+  { id:"kiro", name:"Kiro", keyword:"agentic-ides", group:"Editors", maturity:80, scope:66, note:"Spec-driven · AWS" },
+  { id:"antigravity", name:"Antigravity", keyword:"agentic-ides", group:"Editors", maturity:84, scope:70, note:"Google agent IDE" },
+  { id:"devin-desktop", name:"Devin Desktop", keyword:"agentic-ides", group:"Editors", maturity:76, scope:60, note:"formerly Windsurf" },
+  { id:"copilot", name:"GitHub Copilot", keyword:"agentic-ides", group:"Editors", maturity:78, scope:50, note:"IDE + coding agent" },
+  { id:"zed", name:"Zed", keyword:"agentic-ides", group:"Editors", maturity:70, scope:54, note:"Fast OSS · ACP agents" },
+  { id:"jetbrains-air", name:"JetBrains Air", keyword:"agentic-ides", group:"Editors", maturity:62, scope:52, note:"JetBrains agent workspace" },
+  { id:"trae", name:"Trae", keyword:"agentic-ides", group:"Editors", maturity:56, scope:42, note:"ByteDance agent IDE" },
+  { id:"cline", name:"Cline", keyword:"agentic-ides", group:"Editors", maturity:54, scope:40, note:"Open VS Code agent" },
+  { id:"conductor", name:"Conductor", keyword:"agentic-ides", group:"Workspaces", maturity:86, scope:64, note:"Mac parallel agents" },
+  { id:"claude-code-desktop", name:"Claude Code Desktop", keyword:"agentic-ides", group:"Workspaces", maturity:88, scope:58, note:"First-party Claude workspace" },
+  { id:"agentastic", name:"Agentastic", keyword:"agentic-ides", group:"Workspaces", maturity:74, scope:68, note:"Mixed CLI agents · Mac" },
+  { id:"codex-desktop", name:"Codex Desktop", keyword:"agentic-ides", group:"Workspaces", maturity:72, scope:56, note:"ChatGPT desktop Codex" },
+  { id:"nimbalyst", name:"Nimbalyst", keyword:"agentic-ides", group:"Workspaces", maturity:52, scope:48, note:"Visual planning + agents" },
+  { id:"orca", name:"Orca", keyword:"agentic-ides", group:"Workspaces", maturity:48, scope:46, note:"OSS multi-OS workspace" },
   /* Frameworks (≤15) */
   { id:"langchain", name:"LangChain", keyword:"frameworks", group:"LangChain", maturity:90, scope:68, note:"Agent platform" },
   { id:"langgraph", name:"LangGraph", keyword:"frameworks", group:"LangChain", maturity:84, scope:70, note:"Durable graphs" },
@@ -940,7 +960,6 @@ const TOOLS = [
   { id:"memonto", name:"memonto", keyword:"memory", group:"Memory tools", maturity:42, scope:36, note:"Ontology memory" },
   /* Orchestration (≤15) */
   { id:"langgraph-orch", name:"LangGraph", keyword:"orchestration", group:"Graphs", maturity:88, scope:78, note:"Durable multi-step" },
-  { id:"conductor-orch", name:"Conductor", keyword:"orchestration", group:"In-harness", maturity:82, scope:66, note:"Cursor parallel agents" },
   { id:"temporal", name:"Temporal + agents", keyword:"orchestration", group:"Workflows", maturity:80, scope:84, note:"Durable workflows" },
   { id:"subagents", name:"Harness subagents", keyword:"orchestration", group:"In-harness", maturity:74, scope:56, note:"In-harness parallel" },
   { id:"crewai-orch", name:"CrewAI", keyword:"orchestration", group:"Crews", maturity:70, scope:68, note:"Crew handoffs" },
@@ -949,6 +968,8 @@ const TOOLS = [
   { id:"camel", name:"CAMEL / swarm sims", keyword:"orchestration", group:"Research", maturity:40, scope:72, note:"Multi-agent research" },
   { id:"prefect", name:"Prefect + agents", keyword:"orchestration", group:"Workflows", maturity:56, scope:58, note:"Workflow orchestration" },
   { id:"airflow-agents", name:"Airflow DAGs + LLMs", keyword:"orchestration", group:"Workflows", maturity:50, scope:66, note:"Batch agent jobs" },
+  { id:"inngest-agents", name:"Inngest + agents", keyword:"orchestration", group:"Workflows", maturity:54, scope:52, note:"Event-driven steps" },
+  { id:"hatchet", name:"Hatchet", keyword:"orchestration", group:"Workflows", maturity:48, scope:50, note:"Durable task queues" },
   /* Governance (≤15) */
   { id:"braintrust", name:"Braintrust", keyword:"governance", group:"Evals", maturity:86, scope:74, note:"Evals + traces" },
   { id:"langsmith", name:"LangSmith", keyword:"governance", group:"Evals", maturity:84, scope:72, note:"Trace + eval" },
@@ -982,11 +1003,19 @@ const KEYWORD_PAIRS = {
   ],
   harnesses:[
     { anti:{ title:"Chat box as harness", desc:"Treating a chat window as the [[harnesses|harness]] when it only offers suggestions. It cannot call tools, run tests or touch files; a human still does every step.", warn:"Every step needs a human to move files" },
-      pattern:{ title:"Loop with checks", desc:"A [[harnesses|harness]] that can edit, run checks and stop when gates fail — an agentic IDE or CLI with a real loop.", old:"IDE + CI" } },
+      pattern:{ title:"Loop with checks", desc:"A [[harnesses|harness]] that can edit, run checks and stop when gates fail — an [[agentic-ides|agentic IDE]] or CLI with a real loop.", old:"IDE + CI" } },
     { anti:{ title:"Ship the vibe", desc:"[[vibe-coding|Vibe-coding]] an app and tossing it into production. Nobody designed it to be maintained, secured or owned.", warn:"“We’ll clean it up later,” with no ticket" },
       pattern:{ title:"Prototype to learn", desc:"[[vibe-coding|Vibe-coding]] a throwaway prototype for exploration and feedback. The prototype is a question, not a product.", old:"Rapid prototyping, spikes" } },
     { anti:{ title:"Unbounded agency", desc:"The harness can touch anything, deploy anywhere, with no blast-radius limit.", warn:"An agent pushed to production unsupervised" },
       pattern:{ title:"Scoped agency", desc:"Permissions and tools match the task. Production and secrets stay behind an explicit gate.", old:"Least privilege" } }
+  ],
+  "agentic-ides":[
+    { anti:{ title:"Chat pane as the product", desc:"Buying an “AI IDE” that only suggests text in a sidebar. Files, tests and PRs still move by hand.", warn:"The editor chat cannot touch the tree" },
+      pattern:{ title:"Edit, run, verify", desc:"An [[agentic-ides|agentic IDE]] that changes files, runs checks and shows evidence, not only autocomplete.", old:"IDE + terminal + CI" } },
+    { anti:{ title:"Shared checkout, many agents", desc:"Several long-running agents edit the same working tree and overwrite each other.", warn:"Two agents fought over the same file" },
+      pattern:{ title:"Isolated agent worktrees", desc:"Each agent task gets its own branch or worktree, with a clear review and merge path: the Conductor / Cursor pattern.", old:"Feature branches" } },
+    { anti:{ title:"IDE-only agency", desc:"The loop only exists inside one editor window. Headless, CI and teammates cannot reuse it.", warn:"Nobody can run the agent without opening the GUI" },
+      pattern:{ title:"Same loop, many surfaces", desc:"Prefer tools where the agent works in the IDE, a CLI and a remote session. Kiro’s multi-surface model, not a chat-only plugin.", old:"Remote development" } }
   ],
   frameworks:[
     { anti:{ title:"Framework as the product", desc:"Months of scaffolding before any user-visible outcome. The stack becomes the roadmap.", warn:"The demo is the framework tour" },
@@ -1372,15 +1401,16 @@ function toolsForKeyword(id){
   return TOOLS.filter(t => t.keyword === id).slice(0, TOOLS_CAP);
 }
 const SAMPLE_CAP = 8;
-/* Prefer teaching exemplars (Cursor, Conductor, …), then fill by group round-robin. */
+/* Prefer teaching exemplars (Cursor, Conductor, Kiro, …), then fill by group round-robin. */
 const SAMPLE_IDS = new Set([
   "claude-opus","gpt-astra","gemini-argon","grok","muse","kimi",
   "find-skills","grill-me","frontend-design","agent-browser","tdd",
-  "claude-code","cursor","codex","copilot","muse-code","windsurf","v0","gemini-cli",
+  "claude-code","codex","muse-code","openhands","gemini-cli","v0",
+  "cursor","kiro","conductor","antigravity","zed","copilot","claude-code-desktop","agentastic",
   "langchain","claude-sdk","crewai","mastra","llamaindex",
   "github-mcp","playwright-mcp","context7","filesystem-mcp","supabase-mcp",
   "mem0","zep","letta","cognee",
-  "langgraph-orch","conductor-orch","temporal","subagents","crewai-orch",
+  "langgraph-orch","temporal","subagents","crewai-orch",
   "braintrust","lakera","langsmith","langfuse"
 ]);
 function sampleTools(id, n = SAMPLE_CAP){
