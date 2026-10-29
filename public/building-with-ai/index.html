@@ -371,6 +371,14 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+
+/* TEMP localhost title overlay — delete this block (and the matching HTML/JS) to remove. */
+.dev-title-overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px;box-sizing:border-box;background:rgba(5,10,22,.72);backdrop-filter:blur(6px);cursor:pointer}
+.dev-title-overlay[hidden]{display:none!important}
+.dev-title-card{pointer-events:none;max-width:min(720px,100%);padding:clamp(28px,5vw,48px) clamp(24px,4vw,40px);border-radius:20px;border:1px solid var(--accent-line);background:var(--surface-2);box-shadow:0 28px 80px var(--shadow);text-align:center;cursor:default}
+.dev-title-card .dev-title-kicker{display:block;margin:0 0 12px;font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-text)}
+.dev-title-card h1{margin:0;font-size:clamp(28px,5vw,44px);line-height:1.15;letter-spacing:-.03em;color:var(--heading);font-weight:700}
+.dev-title-card .dev-title-hint{margin:18px 0 0;font-size:14px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -438,6 +446,15 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
   <span class="g-count" id="g-count"></span>
   <div class="g-list" id="g-list"></div>
 </aside>
+
+<!-- TEMP localhost title overlay — delete this block (and the matching CSS/JS) to remove. -->
+<div class="dev-title-overlay" id="dev-title-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="dev-title-heading">
+  <div class="dev-title-card">
+    <span class="dev-title-kicker">Talk title</span>
+    <h1 id="dev-title-heading">Building With AI: Patterns and Anti-patterns</h1>
+    <p class="dev-title-hint">Click outside to continue to Stack · localhost only</p>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -1836,6 +1853,13 @@ function toggleFull(){
 /* =================== KEYBOARD =================== */
 document.addEventListener("keydown", e=>{
   if (e.key === "Escape"){
+    // TEMP localhost title overlay — remove with the overlay block below.
+    const titleOverlay = $("#dev-title-overlay");
+    if (titleOverlay && !titleOverlay.hidden){
+      titleOverlay.hidden = true;
+      navigate("stack");
+      return;
+    }
     if (current){ closePop(); return; }
     if (glossaryOpen()){ closeGlossary(); return; }
     if (view === "patterns" && patternsKeyword){ patternsKeyword = null; render(); return; }
@@ -1898,6 +1922,26 @@ if (h === "stack" || h.startsWith("stack/") || h.startsWith("stack?")){
   else if (pi >= 0) goPhase(pi);
   else render();
 }
+
+/* TEMP localhost title overlay — flip SHOW_DEV_TITLE_OVERLAY to false, or delete CSS/HTML/Esc branch. */
+const SHOW_DEV_TITLE_OVERLAY = true;
+(function initDevTitleOverlay(){
+  const host = location.hostname;
+  const isLocal = host === "localhost" || host === "127.0.0.1" || host === "[::1]";
+  const params = new URLSearchParams(location.search);
+  const forcedOff = params.get("titleOverlay") === "0" || params.get("titleOverlay") === "off";
+  const forcedOn = params.get("titleOverlay") === "1" || params.get("titleOverlay") === "on";
+  if ((!SHOW_DEV_TITLE_OVERLAY && !forcedOn) || forcedOff || (!isLocal && !forcedOn)) return;
+  const overlay = $("#dev-title-overlay");
+  if (!overlay) return;
+  overlay.hidden = false;
+  overlay.addEventListener("click", e=>{
+    // Outside the title card (the dimmed backdrop) dismisses and jumps to Stack.
+    if (e.target !== overlay) return;
+    overlay.hidden = true;
+    navigate("stack");
+  });
+})();
 })();
 
 </script>
