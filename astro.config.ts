@@ -126,7 +126,26 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss(),
+      // public/building-with-ai/index.html is the talk companion. GitHub Pages already
+      // maps /building-with-ai → /building-with-ai/; Vite's static middleware does not,
+      // so rewrite the pretty path in dev (hash like #overlay stays client-side).
+      {
+        name: 'building-with-ai-pretty-url',
+        configureServer(server) {
+          server.middlewares.use((req, _res, next) => {
+            const raw = req.url || '';
+            const pathOnly = raw.split('?', 1)[0];
+            if (pathOnly === '/building-with-ai' || pathOnly === '/building-with-ai/') {
+              const qs = raw.includes('?') ? raw.slice(raw.indexOf('?')) : '';
+              req.url = '/building-with-ai/index.html' + qs;
+            }
+            next();
+          });
+        },
+      },
+    ],
     resolve: {
       alias: {
         '~': path.resolve(__dirname, './src'),
