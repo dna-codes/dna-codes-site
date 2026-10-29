@@ -351,13 +351,24 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
   .panel{width:100%}
   .cols,.handed,.pair,.pairs-head{grid-template-columns:minmax(0,1fr)}
   .foot{display:none}
-  /* Logo left, theme right; primary nav on its own row underneath. */
-  .top{display:grid;grid-template-columns:1fr auto;grid-template-areas:"brand actions" "nav nav";align-items:center;gap:10px 12px;justify-content:unset}
-  .brand{grid-area:brand;justify-self:start}
-  .top-actions{grid-area:actions;justify-self:end}
-  .primary-nav{grid-area:nav;justify-self:center;max-width:100%}
+  /* One header row: logo, the four nav labels, and the theme control. */
+  .top{display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;gap:6px;min-height:52px;padding-inline:0}
+  .brand{flex:none}
+  .brand-logo{width:32px;height:32px}
+  .brand-mark{width:18px;height:24px}
+  .primary-nav{flex:1 1 auto;min-width:0;flex-wrap:nowrap;justify-content:center;gap:0;padding:2px}
+  .nav-btn{min-height:30px;padding:0 7px;font-size:12px;letter-spacing:-.02em}
+  .top-actions{flex:none}
+  .icon-btn{width:32px;height:32px}
 }
-@media (max-width:520px){ .mode-btn small{display:none} .mode-btn{padding:0 12px} .nav-btn{padding:0 10px;font-size:13px} }
+@media (max-width:420px){
+  .top{gap:4px}
+  .brand-logo{width:28px;height:28px}
+  .brand-mark{width:16px;height:21px}
+  .nav-btn{padding:0 4px;font-size:10.5px}
+  .icon-btn{width:28px;height:28px}
+}
+@media (max-width:520px){ .mode-btn small{display:none} .mode-btn{padding:0 12px} }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
