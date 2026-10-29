@@ -371,6 +371,14 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+
+/* TEMP #overlay title overlay — delete this block (and the matching HTML/JS) to remove. */
+.dev-title-overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px;box-sizing:border-box;background:rgba(5,10,22,.72);backdrop-filter:blur(6px);cursor:pointer}
+.dev-title-overlay[hidden]{display:none!important}
+.dev-title-card{pointer-events:none;max-width:min(720px,100%);padding:clamp(28px,5vw,48px) clamp(24px,4vw,40px);border-radius:20px;border:1px solid var(--accent-line);background:var(--surface-2);box-shadow:0 28px 80px var(--shadow);text-align:center;cursor:default}
+.dev-title-card h1{margin:0;font-size:clamp(28px,5vw,44px);line-height:1.2;letter-spacing:-.03em;color:var(--heading);font-weight:700}
+.dev-title-card h1 .dev-title-brand{display:block;color:var(--accent-text)}
+.dev-title-card h1 .dev-title-rest{display:block}
 </style>
 </head>
 <body>
@@ -438,6 +446,13 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
   <span class="g-count" id="g-count"></span>
   <div class="g-list" id="g-list"></div>
 </aside>
+
+<!-- TEMP #overlay title overlay — delete this block (and the matching CSS/JS) to remove. -->
+<div class="dev-title-overlay" id="dev-title-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="dev-title-heading">
+  <div class="dev-title-card">
+    <h1 id="dev-title-heading"><span class="dev-title-brand">Building With AI</span><span class="dev-title-rest">Patterns and Anti-patterns</span></h1>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -1836,6 +1851,13 @@ function toggleFull(){
 /* =================== KEYBOARD =================== */
 document.addEventListener("keydown", e=>{
   if (e.key === "Escape"){
+    // TEMP #overlay title overlay — remove with the overlay block below.
+    const titleOverlay = $("#dev-title-overlay");
+    if (titleOverlay && !titleOverlay.hidden){
+      titleOverlay.hidden = true;
+      navigate("stack");
+      return;
+    }
     if (current){ closePop(); return; }
     if (glossaryOpen()){ closeGlossary(); return; }
     if (view === "patterns" && patternsKeyword){ patternsKeyword = null; render(); return; }
@@ -1880,7 +1902,12 @@ function parseStackOrPatterns(kind, raw){
   const kw = parts[0] && parts[0] !== "stage" ? resolveKeyword(parts[0]) : null;
   return { kw, tools, toolsCatOpt };
 }
-if (h === "stack" || h.startsWith("stack/") || h.startsWith("stack?")){
+const showTitleOverlay = h === "overlay";
+if (showTitleOverlay){
+  // TEMP title overlay entry — Lifecycle behind the card; keep #overlay until dismiss.
+  render();
+  try { history.replaceState(null, "", location.pathname + location.search + "#overlay"); } catch(e){}
+} else if (h === "stack" || h.startsWith("stack/") || h.startsWith("stack?")){
   const { kw, toolsCatOpt } = parseStackOrPatterns("stack", h);
   goStack({ keyword: kw, toolsCat: toolsCatOpt || (kw || "all") });
 } else if (h === "tips" || (h.startsWith("patterns") && /(?:^|[?&])tools=1\b/.test(h))){
@@ -1898,6 +1925,20 @@ if (h === "stack" || h.startsWith("stack/") || h.startsWith("stack?")){
   else if (pi >= 0) goPhase(pi);
   else render();
 }
+
+/* TEMP #overlay title overlay — open with #overlay; delete CSS/HTML/Esc branch to remove. */
+(function initDevTitleOverlay(){
+  if (!showTitleOverlay) return;
+  const overlay = $("#dev-title-overlay");
+  if (!overlay) return;
+  overlay.hidden = false;
+  overlay.addEventListener("click", e=>{
+    // Outside the title card (the dimmed backdrop) dismisses and jumps to Stack.
+    if (e.target !== overlay) return;
+    overlay.hidden = true;
+    navigate("stack");
+  });
+})();
 })();
 
 </script>
