@@ -5,3 +5,5 @@ node_modules
 .claude/settings.local.json
 # Self-contained talk companion app, kept byte-for-byte as authored
 public/building-with-ai
+# Agent documents, generated and published by dna-codes-platform; never edited here
+public/agents
