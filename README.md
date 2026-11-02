@@ -84,7 +84,6 @@ Inside **AstroWind** template, you'll see the following folders and files:
 ```
 /
 ├── public/
-│   ├── _headers
 │   └── robots.txt
 ├── src/
 │   ├── assets/
