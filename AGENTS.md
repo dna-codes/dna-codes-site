@@ -151,6 +151,14 @@ after every build:
   It needs a `## When to use` section, and every dna.codes link in it must exist in the build.
   When you add a product, doc page or genome, check that it reads right there.
 - **Trust pages:** `/about`, `/contact` and `/privacy`, each with at least 500 characters of copy.
+- **`/agents/`:** the agent documents (`llms.txt`, `llms-full.txt`, `auth.md`, `discovery.json`,
+  the profile, refusal codes, schemas). They are generated in `dna-codes-platform` from the agent
+  host's route table and configuration, and its `agent-documents` workflow commits them to
+  `public/agents/` on each deploy of the agent host. Never edit them here; Prettier ignores them so
+  they stay as generated. `llms.txt.ts` embeds their `apex-llms-section.md` as the apex's first
+  section, and only when it exists. The check requires that section and every link of the agent
+  `llms.txt` to resolve when `public/agents/` exists, and no `/agents/` link when it does not.
+  Nothing is published there until the platform's Phase 0a gate (stable structural definitions).
 
 Markdown content negotiation and Markdown 404 bodies need a server and can't pass on GitHub
 Pages. The API, OpenAPI and CLI checks only apply once those products exist.

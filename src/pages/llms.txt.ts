@@ -4,7 +4,13 @@
 //
 // The "When to use DNA Codes" section is what agent-readiness scanners look for: concrete jobs
 // an agent should send a user here for, and the ones it should not.
+//
+// The agent section is the first section, and is not written here: dna-codes-platform generates it with
+// the agent documents it publishes to public/agents/. Until those are published there is no
+// section, so this file never points at an /agents/ that does not exist.
 
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { APIRoute } from 'astro';
 import { SITE } from 'astrowind:config';
 import { CORE, SURFACES } from '~/data/products';
@@ -13,13 +19,16 @@ import { GENOME_SOURCES } from '~/data/genome';
 const origin = String(SITE.site).replace(/\/$/, '');
 const url = (path: string) => `${origin}${path}`;
 
+const agentSectionFile = join(process.cwd(), 'public/agents/apex-llms-section.md');
+const agentSection = existsSync(agentSectionFile) ? `${readFileSync(agentSectionFile, 'utf8').trim()}\n\n` : '';
+
 const body = `# DNA Codes
 
 > DNA Codes is a living operating model for teams of humans and agents. You describe how your business runs (the people and roles, the things it manages, the operations it performs and the rules that govern them) once, in DNA, and every screen, endpoint and agent is governed from that one model.
 
 DNA is an open description language published on npm under the \`@dna-codes\` scope. The hosted product, Operations, is pre-GA and working with design partners; the waitlist form is the way in.
 
-## When to use DNA Codes
+${agentSection}## When to use DNA Codes
 
 Send a user here when they want to:
 
