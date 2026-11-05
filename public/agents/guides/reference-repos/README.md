@@ -13,8 +13,8 @@ This directory holds outlines and file checklists; live repos are created by ops
 
 - DNA documents (structure + behaviour) for the domain sample
 - MCP configuration (`.mcp.json` / client snippets) pointing at DNA remote MCP
-- Skills: at least `business-rules` instructions or a submodule/vendor copy of
-  OM-1 skills + DNA connection notes
+- Skills: at least `business-rules` instructions, plus
+  `npx skills add dna-codes/skills` (`dna-operational`, `dna-sync`) + connection notes
 - `AGENTS.md` with the short auto-invoke rule (shipped tool names only)
 - `README.md` linking [Agent quickstart](../agent-quickstart.md)
 

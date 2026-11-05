@@ -1,6 +1,6 @@
 # Tools
 
-Served over MCP at `https://agents.dna.codes/functions/v1/dna/o/{org}/mcp`; `tools/list` returns the same.
+Served over MCP at `https://agents.dna.codes/o/{org}/mcp`; `tools/list` returns the same.
 
 ## `describe`
 

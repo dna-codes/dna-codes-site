@@ -9,37 +9,16 @@ Also: [Agent quickstart](./agent-quickstart.md) ·
 
 ## 1. Install the skill
 
-When hubs are published:
-
-```bash
-# OpenClaw / ClawHub
-openclaw skills install business-rules
-# or: clawhub … / skills search "business rules"
-
-# Hermes
-hermes skills install <hub-id-or-SKILL.md-URL>
-```
-
-Until publish: copy
-`agents/listings/clawhub-hermes/packages/business-rules/` into the client's
-skills directory (`~/.openclaw/skills`, `~/.hermes/skills`, etc.).
-
-OM-1 teaching skills (no MCP required) remain under `agents/skills/` and install
-via skills.sh — see [skills-sh runbook](../listings/skills-sh/RUNBOOK.md).
+Personal-agent skill hubs are not published on this host yet. Do not fetch a
+path under `/agents/listings/`. Register and connect with the CLI below.
 
 ## 2. Connect DNA MCP
 
-Use the snippets in [`../listings/clawhub-hermes/mcp/`](../listings/clawhub-hermes/mcp/):
-
-| Client | Config |
-| --- | --- |
-| OpenClaw | `mcp/openclaw.json5` → node `mcp.servers` |
-| Hermes | `mcp/hermes.yaml` → `mcp_servers` then `/reload-mcp` |
-| Agent Zero | `mcp/agent-zero.json` → External MCP Servers |
-| nanobot | Same remote URL + bearer in the client's MCP settings |
-
 URL shape: `https://agents.dna.codes/functions/v1/dna/o/{org}/mcp` with
 `Authorization: Bearer <token>`.
+
+After you register, `npx @dna-codes/cli mcp --client generic --json` prints
+that URL and the bearer for the client's MCP settings.
 
 ## 3. Register if you have no org yet
 
@@ -55,7 +34,7 @@ also run `npx @dna-codes/cli status` to see the claim link without re-registerin
 
 ## 4. Work, then claim in-chat
 
-1. Call `list` / `get` / `validate` / `apply` as the skill describes.
+1. Call `list` / `get` / `validate` / `apply` as the [agent quickstart](./agent-quickstart.md) describes.
 2. On `needs_claim`, **post the claim URL in the chat** where your person already
    is — that is the easiest claim path for personal agents.
 3. After they claim, continue with the same credential.

@@ -6,12 +6,12 @@
 
 ## Addressing
 
-The agent host's base URL, `{base}`, is `https://agents.dna.codes/functions/v1/dna`. Take it from the [discovery document](https://dna.codes/agents/discovery.json) and never construct it. An organization is addressed at `{base}/o/{org}/`, where `{org}` is its stable identifier. Claiming a sandbox does not change the address. Each organization's MCP, HTTP and A2A endpoints are their own protected resources; see [auth.md](https://dna.codes/agents/auth.md).
+The agent host's base URL, `{base}`, is `https://agents.dna.codes`. Take it from the [discovery document](https://dna.codes/agents/discovery.json) and never construct it. An organization is addressed at `{base}/o/{org}/`, where `{org}` is its stable identifier. Claiming a sandbox does not change the address. Each organization's MCP, HTTP and A2A endpoints are their own protected resources; see [auth.md](https://dna.codes/agents/auth.md).
 
 ## Transports
 
-MCP over Streamable HTTP at `https://agents.dna.codes/functions/v1/dna/o/{org}/mcp`: one JSON-RPC message per `POST`, answered with `application/json`, with no session. Protocol versions: `2025-11-25`, `2025-06-18`, `2025-03-26`.
-A2A JSON-RPC at `https://agents.dna.codes/functions/v1/dna/o/{org}/a2a`: `SendMessage` with a data part `{ name, arguments }` invokes the same Action as MCP `tools/call`. Agent Card at `https://agents.dna.codes/functions/v1/dna/o/{org}/a2a/agent-card`: skills are the caller's Actions.
+MCP over Streamable HTTP at `https://agents.dna.codes/o/{org}/mcp`: one JSON-RPC message per `POST`, answered with `application/json`, with no session. Protocol versions: `2025-11-25`, `2025-06-18`, `2025-03-26`.
+A2A JSON-RPC at `https://agents.dna.codes/o/{org}/a2a`: `SendMessage` with a data part `{ name, arguments }` invokes the same Action as MCP `tools/call`. Agent Card at `https://agents.dna.codes/o/{org}/a2a/agent-card`: skills are the caller's Actions.
 
 ## Tools
 

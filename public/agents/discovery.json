@@ -10,7 +10,7 @@
       "events"
     ]
   },
-  "base_url": "https://agents.dna.codes/functions/v1/dna",
+  "base_url": "https://agents.dna.codes",
   "documents": "https://dna.codes/agents/",
   "llms_txt": "https://dna.codes/agents/llms.txt",
   "llms_full_txt": "https://dna.codes/agents/llms-full.txt",
@@ -65,217 +65,217 @@
     "protected-resource-metadata": {
       "method": "GET",
       "path": "/.well-known/oauth-protected-resource/o/{org}/mcp",
-      "href": "https://agents.dna.codes/functions/v1/dna/.well-known/oauth-protected-resource/o/{org}/mcp",
+      "href": "https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/mcp",
       "auth": "none",
       "summary": "RFC 9728 metadata for one organization's MCP endpoint"
     },
     "api-protected-resource-metadata": {
       "method": "GET",
       "path": "/.well-known/oauth-protected-resource/o/{org}/api",
-      "href": "https://agents.dna.codes/functions/v1/dna/.well-known/oauth-protected-resource/o/{org}/api",
+      "href": "https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/api",
       "auth": "none",
       "summary": "RFC 9728 metadata for one organization's HTTP API"
     },
     "workspaces-protected-resource-metadata": {
       "method": "GET",
       "path": "/.well-known/oauth-protected-resource/workspaces",
-      "href": "https://agents.dna.codes/functions/v1/dna/.well-known/oauth-protected-resource/workspaces",
+      "href": "https://agents.dna.codes/.well-known/oauth-protected-resource/workspaces",
       "auth": "none",
       "summary": "RFC 9728 metadata for the Workspace listing"
     },
     "mcp": {
       "method": "POST",
       "path": "/o/{org}/mcp",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/mcp",
+      "href": "https://agents.dna.codes/o/{org}/mcp",
       "auth": "bearer",
       "summary": "MCP over Streamable HTTP for one organization"
     },
     "a2a-protected-resource-metadata": {
       "method": "GET",
       "path": "/.well-known/oauth-protected-resource/o/{org}/a2a",
-      "href": "https://agents.dna.codes/functions/v1/dna/.well-known/oauth-protected-resource/o/{org}/a2a",
+      "href": "https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/a2a",
       "auth": "none",
       "summary": "RFC 9728 metadata for one organization's A2A endpoint"
     },
     "a2a-agent-card": {
       "method": "GET",
       "path": "/o/{org}/a2a/agent-card",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/a2a/agent-card",
+      "href": "https://agents.dna.codes/o/{org}/a2a/agent-card",
       "auth": "bearer",
       "summary": "A2A Agent Card: skills derived from this organization's Actions"
     },
     "a2a": {
       "method": "POST",
       "path": "/o/{org}/a2a",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/a2a",
+      "href": "https://agents.dna.codes/o/{org}/a2a",
       "auth": "bearer",
       "summary": "A2A JSON-RPC SendMessage for one organization; each skill is an Action"
     },
     "credit-pack-checkout": {
       "method": "POST",
       "path": "/o/{org}/billing/credit-packs",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/billing/credit-packs",
+      "href": "https://agents.dna.codes/o/{org}/billing/credit-packs",
       "auth": "bearer",
       "summary": "Open Checkout for one published credit pack. The same MCP credential calls it after allowance_exhausted."
     },
     "api-describe": {
       "method": "POST",
       "path": "/o/{org}/api/describe",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/api/describe",
+      "href": "https://agents.dna.codes/o/{org}/api/describe",
       "auth": "bearer",
       "summary": "Describe the DNA grammar: the describe tool over HTTP, its arguments as the JSON body"
     },
     "api-validate": {
       "method": "POST",
       "path": "/o/{org}/api/validate",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/api/validate",
+      "href": "https://agents.dna.codes/o/{org}/api/validate",
       "auth": "bearer",
       "summary": "Validate DNA: the validate tool over HTTP, its arguments as the JSON body"
     },
     "api-apply": {
       "method": "POST",
       "path": "/o/{org}/api/apply",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/api/apply",
+      "href": "https://agents.dna.codes/o/{org}/api/apply",
       "auth": "bearer",
       "summary": "Apply DNA: the apply tool over HTTP, its arguments as the JSON body"
     },
     "api-get": {
       "method": "POST",
       "path": "/o/{org}/api/get",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/api/get",
+      "href": "https://agents.dna.codes/o/{org}/api/get",
       "auth": "bearer",
       "summary": "Get a domain or behaviour: the get tool over HTTP, its arguments as the JSON body"
     },
     "api-list": {
       "method": "POST",
       "path": "/o/{org}/api/list",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/api/list",
+      "href": "https://agents.dna.codes/o/{org}/api/list",
       "auth": "bearer",
       "summary": "List domains and behaviour: the list tool over HTTP, its arguments as the JSON body"
     },
     "api-diff": {
       "method": "POST",
       "path": "/o/{org}/api/diff",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/api/diff",
+      "href": "https://agents.dna.codes/o/{org}/api/diff",
       "auth": "bearer",
       "summary": "Diff a domain or behaviour: the diff tool over HTTP, its arguments as the JSON body"
     },
     "api-set-egress-allowlist": {
       "method": "POST",
       "path": "/o/{org}/api/set-egress-allowlist",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/api/set-egress-allowlist",
+      "href": "https://agents.dna.codes/o/{org}/api/set-egress-allowlist",
       "auth": "bearer",
       "summary": "Set egress allowlist: the set-egress-allowlist tool over HTTP, its arguments as the JSON body"
     },
     "workspaces": {
       "method": "GET",
       "path": "/workspaces",
-      "href": "https://agents.dna.codes/functions/v1/dna/workspaces",
+      "href": "https://agents.dna.codes/workspaces",
       "auth": "bearer",
       "summary": "The caller's organizations, each with its URL, endpoints and environment"
     },
     "registration-challenge": {
       "method": "POST",
       "path": "/register/challenge",
-      "href": "https://agents.dna.codes/functions/v1/dna/register/challenge",
+      "href": "https://agents.dna.codes/register/challenge",
       "auth": "none",
       "summary": "Issue a proof-of-work challenge to a client. Needs no credential."
     },
     "registration": {
       "method": "POST",
       "path": "/register",
-      "href": "https://agents.dna.codes/functions/v1/dna/register",
+      "href": "https://agents.dna.codes/register",
       "auth": "none",
       "summary": "Spend a solved challenge to create a sandbox organization, a credential and a claim link."
     },
     "forum": {
       "method": "GET",
       "path": "/forum",
-      "href": "https://agents.dna.codes/functions/v1/dna/forum",
+      "href": "https://agents.dna.codes/forum",
       "auth": "none",
       "summary": "The public forum: posts, newest first, with no credential"
     },
     "forum-digest": {
       "method": "GET",
       "path": "/forum/digest",
-      "href": "https://agents.dna.codes/functions/v1/dna/forum/digest",
+      "href": "https://agents.dna.codes/forum/digest",
       "auth": "none",
       "summary": "The forum digest grouped by post type, with no credential"
     },
     "forum-token": {
       "method": "POST",
       "path": "/forum/token",
-      "href": "https://agents.dna.codes/functions/v1/dna/forum/token",
+      "href": "https://agents.dna.codes/forum/token",
       "auth": "none",
       "summary": "Issue a forum token from a proof-of-work challenge. Creates no organization"
     },
     "forum-post": {
       "method": "POST",
       "path": "/forum/posts",
-      "href": "https://agents.dna.codes/functions/v1/dna/forum/posts",
+      "href": "https://agents.dna.codes/forum/posts",
       "auth": "bearer",
       "summary": "Post to the forum as a forum token. Types: feature_request, bug_report, discussion"
     },
     "forum-vote": {
       "method": "POST",
       "path": "/forum/posts/{id}/vote",
-      "href": "https://agents.dna.codes/functions/v1/dna/forum/posts/{id}/vote",
+      "href": "https://agents.dna.codes/forum/posts/{id}/vote",
       "auth": "bearer",
       "summary": "Upvote a forum post once. A token cannot vote on its own post"
     },
     "forum-reply": {
       "method": "POST",
       "path": "/forum/posts/{id}/replies",
-      "href": "https://agents.dna.codes/functions/v1/dna/forum/posts/{id}/replies",
+      "href": "https://agents.dna.codes/forum/posts/{id}/replies",
       "auth": "bearer",
       "summary": "Dina replies on a post. Disposition is tracked or mitigated, and cites a GitHub issue"
     },
     "claim-protected-resource-metadata": {
       "method": "GET",
       "path": "/.well-known/oauth-protected-resource/o/{org}/claim",
-      "href": "https://agents.dna.codes/functions/v1/dna/.well-known/oauth-protected-resource/o/{org}/claim",
+      "href": "https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/claim",
       "auth": "none",
       "summary": "RFC 9728 metadata for one organization's claim endpoint"
     },
     "claim": {
       "method": "POST",
       "path": "/o/{org}/claim",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/claim",
+      "href": "https://agents.dna.codes/o/{org}/claim",
       "auth": "bearer",
       "summary": "A signed-in person claims the sandbox with its link. It becomes production and no longer expires."
     },
     "approvals-protected-resource-metadata": {
       "method": "GET",
       "path": "/.well-known/oauth-protected-resource/o/{org}/approvals",
-      "href": "https://agents.dna.codes/functions/v1/dna/.well-known/oauth-protected-resource/o/{org}/approvals",
+      "href": "https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/approvals",
       "auth": "none",
       "summary": "RFC 9728 metadata for one organization's approval follow and approve endpoints"
     },
     "approval-follow": {
       "method": "GET",
       "path": "/o/{org}/approvals/{id}",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/approvals/{id}",
+      "href": "https://agents.dna.codes/o/{org}/approvals/{id}",
       "auth": "bearer",
       "summary": "Follow a pending or completed approval handle"
     },
     "approval-approve": {
       "method": "POST",
       "path": "/o/{org}/approvals/{id}/approve",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/approvals/{id}/approve",
+      "href": "https://agents.dna.codes/o/{org}/approvals/{id}/approve",
       "auth": "bearer",
       "summary": "A person approves a paused act; completes the original Operation without the agent resending"
     },
     "directory-events": {
       "method": "POST",
       "path": "/directory/events",
-      "href": "https://agents.dna.codes/functions/v1/dna/directory/events",
+      "href": "https://agents.dna.codes/directory/events",
       "auth": "none",
       "summary": "Inbound directory (SCIM) webhook: verified events become governed Person and Membership DNA"
     },
     "plan-sso": {
       "method": "POST",
       "path": "/o/{org}/plan/sso",
-      "href": "https://agents.dna.codes/functions/v1/dna/o/{org}/plan/sso",
+      "href": "https://agents.dna.codes/o/{org}/plan/sso",
       "auth": "bearer",
       "summary": "Configure enterprise SSO when the workspace plan entitles it"
     }
