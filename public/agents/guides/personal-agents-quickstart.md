@@ -38,7 +38,7 @@ Use the snippets in [`../listings/clawhub-hermes/mcp/`](../listings/clawhub-herm
 | Agent Zero | `mcp/agent-zero.json` → External MCP Servers |
 | nanobot | Same remote URL + bearer in the client's MCP settings |
 
-URL shape: `https://agents.dna.codes/o/{org}/mcp` with
+URL shape: `https://agents.dna.codes/functions/v1/dna/o/{org}/mcp` with
 `Authorization: Bearer <token>`.
 
 ## 3. Register if you have no org yet

@@ -30,7 +30,7 @@ import { /* MCP helper */ } from "@openrouter/mcp";
 // 2. Attach remote MCP
 const dnaMcp = {
   type: "http", // streamable-http
-  url: `https://agents.dna.codes/o/${org}/mcp`,
+  url: `https://agents.dna.codes/functions/v1/dna/o/${org}/mcp`,
   headers: { Authorization: `Bearer ${token}` },
 };
 

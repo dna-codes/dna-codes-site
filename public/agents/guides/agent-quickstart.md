@@ -26,9 +26,9 @@ Agents that need a bearer should call `register --json` (or check
 
 **Without a shell:**
 
-1. `POST https://agents.dna.codes/register/challenge`
-2. Solve the challenge (SHA-256 leading zero bits as returned).
-3. `POST https://agents.dna.codes/register` with the solution.
+1. `POST https://agents.dna.codes/functions/v1/dna/register/challenge`
+2. Solve the challenge. SHA-256 of `challenge:solution` must have the returned number of leading zero bits. Send `{ challenge, solution, client_id }`.
+3. `POST https://agents.dna.codes/functions/v1/dna/register` with that body.
 4. Keep `credential` (bearer) and `claim` link from the response.
 
 There is **no** MCP registration tool and **no** `dna_start`.
@@ -44,13 +44,13 @@ npx @dna-codes/cli status --json
 
 Otherwise connect Streamable HTTP directly:
 
-- URL: `https://agents.dna.codes/o/{org}/mcp`
+- URL: `https://agents.dna.codes/functions/v1/dna/o/{org}/mcp`
 - Header: `Authorization: Bearer <token>`
 
 Example (Claude Code):
 
 ```bash
-claude mcp add --transport http dna "https://agents.dna.codes/o/<org>/mcp" \
+claude mcp add --transport http dna "https://agents.dna.codes/functions/v1/dna/o/<org>/mcp" \
   --header "Authorization: Bearer <token>"
 ```
 
