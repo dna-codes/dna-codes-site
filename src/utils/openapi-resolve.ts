@@ -2,7 +2,7 @@
 //
 // This is the whole of API Operations' rung zero: a customer's spec is already a manifest of
 // every address in their system, so the reading a visitor gets before they have an account is
-// computable from the document alone. See openspec/changes/add-api-operations/design.md §1.
+// computable from the document alone.
 //
 // The one rule that governs every decision below: **unresolved is a first-class result and is
 // never guessed into a plausible name.** A resolver that filed everything ambiguous under its
