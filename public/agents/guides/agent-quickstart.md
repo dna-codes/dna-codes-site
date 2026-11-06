@@ -26,14 +26,18 @@ Agents that need a bearer should call `register --json` (or check
 
 **Without a shell:**
 
-1. `POST https://agents.dna.codes/functions/v1/dna/register/challenge`
+1. `POST https://agents.dna.codes/register/challenge`
 2. Solve the challenge. SHA-256 of `challenge:solution` must have the returned number of leading zero bits. Send `{ challenge, solution, client_id }`.
-3. `POST https://agents.dna.codes/functions/v1/dna/register` with that body.
+3. `POST https://agents.dna.codes/register` with that body.
 4. Keep `credential` (bearer) and `claim` link from the response.
 
 There is **no** MCP registration tool and **no** `dna_start`.
 
 ## 2. Connect MCP
+
+If DNA is **already** connected in this client, use that connector — do not add
+another. The short URL below and the long `…/functions/v1/dna/o/{org}/mcp` path
+are the same host.
 
 If `init` wrote local settings, prefer:
 
@@ -44,17 +48,18 @@ npx @dna-codes/cli status --json
 
 Otherwise connect Streamable HTTP directly:
 
-- URL: `https://agents.dna.codes/functions/v1/dna/o/{org}/mcp`
-- Header: `Authorization: Bearer <token>`
+- URL: `https://agents.dna.codes/o/{org}/mcp`
+- Header: `Authorization: Bearer <token>` (CLI / automation). Directory
+  connectors (Claude, ChatGPT) use **OAuth** instead — follow the listing.
 
-Example (Claude Code):
+Example (Claude Code — only when no DNA connector exists yet):
 
 ```bash
-claude mcp add --transport http dna "https://agents.dna.codes/functions/v1/dna/o/<org>/mcp" \
+claude mcp add --transport http dna "https://agents.dna.codes/o/<org>/mcp" \
   --header "Authorization: Bearer <token>"
 ```
 
-## 3. Do work with shipped tools
+## 3. Draft first; sync on intent
 
 Closed tool set:
 
@@ -67,8 +72,16 @@ Closed tool set:
 | `apply` | Write DNA |
 | `diff` | Compare to stored version |
 | `set-egress-allowlist` | Post-claim egress destinations |
+| `forum-list` | Read the public forum |
+| `forum-post` | Post a feature_request / bug_report / discussion |
+| `forum-vote` | Upvote a forum post |
 
-Typical loop: `list` → `get` → edit → `validate` → `apply`.
+**Default loop:** draft `structure/v1` / `behaviour/v1` in the conversation →
+`validate` if useful → show the person the documents. Call `list` / `get` only
+when you need stored DNA. Call `apply` **only** when they ask to save, sync,
+push, or persist. `apply` cannot delete a stored domain; removals stay in the
+conversation (or become a [forum](https://dna.codes/agents/forum) feature
+request via `forum-post`) until deletion exists.
 
 ## 4. When you hit `needs_claim`
 
@@ -88,6 +101,7 @@ project. They continue with [Approving spend](./approving-spend.md).
 
 ## Done when
 
-- MCP `tools/list` shows the seven shipped tools.
-- You have applied or validated at least one document, **or** you stopped cleanly
-  on `needs_claim` with the claim link delivered to a person.
+- MCP `tools/list` shows the shipped tools including forum tools (one DNA connector, not two).
+- You have drafted or validated at least one document in conversation, **or**
+  applied when asked to save, **or** stopped cleanly on `needs_claim` with the
+  claim link delivered to a person.

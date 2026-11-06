@@ -29,14 +29,17 @@
         "validate",
         "get",
         "list",
-        "diff"
+        "diff",
+        "forum-list"
       ]
     },
     {
       "slug": "dna:write",
       "tools": [
         "apply",
-        "set-egress-allowlist"
+        "set-egress-allowlist",
+        "forum-post",
+        "forum-vote"
       ]
     }
   ],
@@ -166,6 +169,27 @@
       "href": "https://agents.dna.codes/o/{org}/api/set-egress-allowlist",
       "auth": "bearer",
       "summary": "Set egress allowlist: the set-egress-allowlist tool over HTTP, its arguments as the JSON body"
+    },
+    "api-forum-list": {
+      "method": "POST",
+      "path": "/o/{org}/api/forum-list",
+      "href": "https://agents.dna.codes/o/{org}/api/forum-list",
+      "auth": "bearer",
+      "summary": "List forum posts: the forum-list tool over HTTP, its arguments as the JSON body"
+    },
+    "api-forum-post": {
+      "method": "POST",
+      "path": "/o/{org}/api/forum-post",
+      "href": "https://agents.dna.codes/o/{org}/api/forum-post",
+      "auth": "bearer",
+      "summary": "Post to the forum: the forum-post tool over HTTP, its arguments as the JSON body"
+    },
+    "api-forum-vote": {
+      "method": "POST",
+      "path": "/o/{org}/api/forum-vote",
+      "href": "https://agents.dna.codes/o/{org}/api/forum-vote",
+      "auth": "bearer",
+      "summary": "Upvote a forum post: the forum-vote tool over HTTP, its arguments as the JSON body"
     },
     "workspaces": {
       "method": "GET",
