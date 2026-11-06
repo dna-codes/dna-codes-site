@@ -1,0 +1,17 @@
+{
+  "id": "large-cancellation-approval",
+  "description": "Cancelling an order above 500 needs a position's approval.",
+  "actions": [
+    "cancel"
+  ],
+  "when": {
+    "subject": "target",
+    "path": "amount",
+    "op": "gt",
+    "value": 500
+  },
+  "effect": {
+    "effect": "require_approval",
+    "performer": "position"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "subject": "input",
+  "path": "amount",
+  "op": "gt",
+  "value": 10000
+}

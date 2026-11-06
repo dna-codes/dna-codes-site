@@ -1,0 +1,87 @@
+{
+  "dna": "structure/v1",
+  "id": "platform",
+  "name": "Platform",
+  "description": "The platform's own DNA: who operates it, the people it knows, and the roles it grants. A tenant organization is a record the host creates at registration, not an instance written here; the operator and its roles are.",
+  "entities": [
+    {
+      "id": "organization",
+      "name": "Organization",
+      "description": "A tenant of the platform, or the platform's operator.",
+      "attributes": [{ "name": "name", "type": "string" }],
+      "instances": [
+        {
+          "id": "dna-codes",
+          "name": "DNA.codes",
+          "description": "The platform's operator.",
+          "values": { "name": "DNA.codes" }
+        }
+      ]
+    },
+    {
+      "id": "person",
+      "name": "Person",
+      "description": "A person the identity port resolves. The agent acts for one; a claim is made by one.",
+      "attributes": [
+        {
+          "name": "subject",
+          "type": "string",
+          "description": "The identity port's subject for the person."
+        }
+      ]
+    },
+    {
+      "id": "role",
+      "name": "Role",
+      "description": "A role the platform grants. What it permits is policy, not code.",
+      "attributes": [{ "name": "name", "type": "string" }],
+      "instances": [
+        {
+          "id": "dna-admin",
+          "name": "DNA admin",
+          "description": "Operates the platform. Reads registration and activity across organizations, never another organization's DNA documents.",
+          "values": { "name": "DNA admin" }
+        }
+      ]
+    },
+    {
+      "id": "membership",
+      "name": "Membership",
+      "description": "A membership is an entity because the connection between a person and an organization carries a role.",
+      "attributes": [
+        { "name": "person", "type": "reference", "entity": "person" },
+        { "name": "organization", "type": "reference", "entity": "organization" },
+        { "name": "role", "type": "reference", "entity": "role" }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "membership-of-person",
+      "name": "of",
+      "description": "The person the membership is for.",
+      "from": "membership",
+      "to": "person",
+      "cardinality": "many-to-one",
+      "attribute": "membership.person"
+    },
+    {
+      "id": "membership-in-organization",
+      "name": "in",
+      "description": "The organization the membership is in.",
+      "from": "membership",
+      "to": "organization",
+      "cardinality": "many-to-one",
+      "attribute": "membership.organization"
+    },
+    {
+      "id": "membership-grants-role",
+      "name": "grants",
+      "description": "The role the membership grants.",
+      "from": "membership",
+      "to": "role",
+      "cardinality": "many-to-one",
+      "attribute": "membership.role"
+    }
+  ]
+}

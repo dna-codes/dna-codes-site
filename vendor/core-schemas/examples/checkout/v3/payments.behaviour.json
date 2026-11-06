@@ -1,0 +1,93 @@
+{
+  "dna": "behaviour/v1",
+  "id": "payments-behaviour",
+  "name": "Payments behaviour",
+  "description": "Authorizing, capturing, voiding and refunding a payment. Every one of these reaches the processor, so each is external.",
+  "domain": "payments",
+  "actions": [
+    {
+      "id": "authorize",
+      "entity": "payment",
+      "name": "Authorize",
+      "description": "Ask the processor to hold an amount against an order. A declined authorization creates no payment, so the Action moves no state; the answer is its output.",
+      "external": true,
+      "input": [
+        { "name": "order", "type": "reference", "entity": "commerce/order" },
+        { "name": "amount", "type": "number" },
+        { "name": "currency", "type": "string" }
+      ],
+      "output": [{ "name": "approved", "type": "boolean" }]
+    },
+    {
+      "id": "capture",
+      "entity": "payment",
+      "name": "Capture",
+      "description": "Collect the authorized amount from the processor.",
+      "external": true,
+      "input": [{ "name": "amount", "type": "number" }],
+      "transition": { "from": ["authorized"], "to": "captured" }
+    },
+    {
+      "id": "void",
+      "entity": "payment",
+      "name": "Void",
+      "description": "Release an authorization that will not be captured.",
+      "external": true,
+      "input": [{ "name": "reason", "type": "string", "required": false }],
+      "transition": { "from": ["authorized"], "to": "voided" }
+    },
+    {
+      "id": "refund",
+      "entity": "payment",
+      "name": "Refund",
+      "description": "Return a captured payment to the shopper in full.",
+      "external": true,
+      "input": [
+        { "name": "amount", "type": "number" },
+        { "name": "reason", "type": "string", "required": false }
+      ],
+      "transition": { "from": ["captured"], "to": "refunded" }
+    }
+  ],
+  "operations": [
+    {
+      "id": "merchant-refunds",
+      "name": "Merchant refunds",
+      "description": "Juniper & Pine refunds a captured payment.",
+      "action": "refund",
+      "actor": { "entity": "parties/organization", "instance": "juniper-and-pine" }
+    }
+  ],
+  "workflows": [
+    {
+      "id": "refund",
+      "name": "Refund",
+      "description": "A captured payment returned to the shopper, run on its own after the purchase has ended.",
+      "initial": "captured",
+      "states": [
+        {
+          "id": "captured",
+          "operations": ["merchant-refunds"],
+          "transitions": [{ "on": "merchant-refunds", "to": "refunded" }]
+        },
+        { "id": "refunded", "final": true }
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "id": "capture-limit",
+      "description": "A capture above 10000 is routed to an agent for review rather than performed.",
+      "actions": ["capture"],
+      "when": { "subject": "input", "path": "amount", "op": "gt", "value": 10000 },
+      "effect": { "effect": "route", "performer": "agent" }
+    },
+    {
+      "id": "refund-approval",
+      "description": "A refund above 200 needs a position's approval.",
+      "actions": ["refund"],
+      "when": { "subject": "input", "path": "amount", "op": "gt", "value": 200 },
+      "effect": { "effect": "require_approval", "performer": "position" }
+    }
+  ]
+}

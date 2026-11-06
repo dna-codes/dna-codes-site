@@ -9,8 +9,6 @@ import { lensAnchor, type LensDoc } from '~/utils/lens-doc';
 // content stays in sync with the package; if a lens gains/loses a slot or
 // edge, the next build picks it up automatically.
 import operational from '~lenses/operational.json';
-import product from '~lenses/product.json';
-import technical from '~lenses/technical.json';
 import people from '~lenses/people.json';
 import accessControl from '~lenses/access-control.json';
 import execution from '~lenses/execution.json';
@@ -26,8 +24,9 @@ type Group = { label: string; description: string; lenses: Entry[] };
 const groups: Group[] = [
   {
     label: 'Layer lenses',
-    description: 'Each layer lens groups all the resource types in one DNA layer — nodes, no edges.',
-    lenses: [{ lens: operational }, { lens: product }, { lens: technical }],
+    description:
+      'A layer lens groups the resource types of one DNA layer, nodes and no edges. Product and Technical lenses are parked until those layers are documented.',
+    lenses: [{ lens: operational }],
   },
   {
     label: 'Subgraph & traversal lenses',
@@ -98,8 +97,9 @@ const anchors = groups.flatMap((g) =>
 
   <p>
     The lenses below ship with <code>@dna-codes/dna-core</code> and fall into two shapes: <strong>layer lenses</strong>,
-    which group a whole layer's resource types with no edges, and <strong>subgraph &amp; traversal lenses</strong>,
-    which wire a few slots together along named relationships.
+    which group a layer's resource types with no edges, and <strong>subgraph &amp; traversal lenses</strong>, which wire
+    a few slots together along named relationships. The Product and Technical layer lenses are parked: those layers are
+    not in the live reference yet, so this page no longer presents them as current.
   </p>
 
   {

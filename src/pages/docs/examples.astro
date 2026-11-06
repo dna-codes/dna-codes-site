@@ -1,148 +1,140 @@
 ---
 import DocsLayout from '~/layouts/DocsLayout.astro';
+import { coreSchemasRoot, latestCorpusVersion, loadCorpusExcerpt } from '~/utils/core-schemas';
 import { slugify } from '~/utils/schema-doc';
 
 const metadata = {
   title: 'Examples — DNA Codes',
-  description:
-    'DNA modeled across seven business domains: lending, mass tort, healthcare, education, manufacturing, marketplace, registry.',
+  description: 'Reference domains for Operational DNA: checkout, origination, diligence, and agent registration.',
 };
 
-type Example = {
-  name: string;
+type Domain = {
+  id: string;
   title: string;
   description: string;
   demonstrates: string[];
+  structureFile: string;
+  behaviourFile: string;
 };
 
-const examples: Example[] = [
+const domains: Domain[] = [
   {
-    name: 'lending',
-    title: 'Lending',
+    id: 'checkout',
+    title: 'Checkout',
     description:
-      'A bank approves and disburses loans. The canonical first example — small, complete, and exercises the operational triangle of Person, Role, and Operation.',
+      'A shop sells through a cart and an order. Commerce, fulfilment, payments, and parties are separate vocabularies. From v3 the same versions carry behaviour: checkout, payment, shipment, and the policies that decide them.',
     demonstrates: [
-      'Operations, Tasks, Process',
-      'Operation-level and Process-level Triggers',
-      'A system Role (scheduled delinquency sweep)',
-      'A scoped Role (Underwriter within BankDepartment)',
-      'Person-as-actor (Borrower) and Role-as-actor (Underwriter)',
-      'Memberships',
+      'structure/v1 domains that use each other (commerce uses parties)',
+      'A cart line as an entity, because the connection carries quantity and price',
+      'behaviour/v1 actions with transitions, and policies over them',
     ],
+    structureFile: 'commerce.json',
+    behaviourFile: 'commerce.behaviour.json',
   },
   {
-    name: 'mass-tort',
-    title: 'Mass Tort',
+    id: 'origination',
+    title: 'Origination',
     description:
-      'A law firm runs many parallel plaintiff cases. Group-heavy modeling — each Case is a Group with multiple lawyers attached via Memberships.',
+      'A lender takes an application through credit, appraisal, and closing to a funded loan. Later versions add refinance, a payoff, and the behaviour that clears conditions.',
     demonstrates: [
-      'Case as Group',
-      'Multiple Person→Role Memberships (Partner → LeadCounsel / CoCounsel)',
-      'Multiple Processes',
-      'Process triggered by an Operation completion',
+      'An application entity whose state attribute behaviour moves',
+      'A relationship from a loan back to a later application',
+      'A workflow from received to funded, with policies on credit and approval',
     ],
+    structureFile: 'origination.json',
+    behaviourFile: 'origination.behaviour.json',
   },
   {
-    name: 'marketplace',
-    title: 'Marketplace',
+    id: 'diligence',
+    title: 'Diligence',
     description:
-      'A two-sided rental marketplace. A single Member can be both Host and Guest — the same Person template eligible for two peer Roles via Memberships.',
+      'A buyer, a target, and their advisors share a data room. Buyer, target, and advisor are instances of one organization entity, not three domains. Later versions add delegation and the review that follows a finding.',
     demonstrates: [
-      'Same Person template eligible for two peer Roles via Memberships (Member → Host AND Member → Guest)',
-      'Two Groups (Listing, Booking)',
-      'A global (unscoped) Role',
-      'Step.else routing',
+      'Parties as instances of organization, named by a domain that uses parties',
+      'A finding and a delegation as entities that carry their own facts',
+      "Policies that allow an advisor to act only under the target's delegation",
     ],
+    structureFile: 'diligence.json',
+    behaviourFile: 'diligence.behaviour.json',
   },
   {
-    name: 'healthcare',
-    title: 'Healthcare',
+    id: 'agent-registration',
+    title: 'Agent registration',
     description:
-      'A hospital admits and discharges patients. Patient as a Person template with its own lifecycle, and per-Patient scope for the attending physician.',
+      "The agent host's own model. Platform holds the operator and the people who administer it. Agent registration holds the challenge, the agent, the credential, and the documents the agent authors. Behaviour is there from the first version, because the host's tools are derived from those actions.",
     demonstrates: [
-      'Patient as Person template (structure and lifecycle)',
-      'Per-Person Role.scope (AttendingPhysician.scope = Patient)',
-      'Mixed scope targets (Person + Group)',
-      'Multi-predicate condition Rule',
+      "A registration whose states are the organization's own (sandbox, production, expired)",
+      'Authoring actions whose input and output fields are the tool contract',
+      "Policies that state the host's limits over context",
     ],
-  },
-  {
-    name: 'manufacturing',
-    title: 'Manufacturing',
-    description:
-      'A factory floor with multiple system Roles (CNC, press, paint robot, scheduler) coordinating parallel and sequential Steps.',
-    demonstrates: [
-      'Multiple system Roles with `system: true` and `resource:` link',
-      'Parallel fan-out and fan-in via Step.depends_on',
-      'Schedule-source Trigger on a system Operation',
-    ],
-  },
-  {
-    name: 'education',
-    title: 'Education',
-    description:
-      'A university models Courses (Resource catalog) separately from CourseOfferings (Group instances). Faculty teach; UniversityMembers enroll.',
-    demonstrates: [
-      'Course (Resource catalog) vs CourseOffering (Group)',
-      'Two Person templates eligible for distinct Roles (Faculty → Instructor, UniversityMember → Student)',
-      'Three scope tiers',
-      'Calendar-aligned schedule Triggers',
-    ],
-  },
-  {
-    name: 'registry',
-    title: 'Registry',
-    description:
-      'A meta-pattern: a platform that lets users define their own types at runtime. TypeDefinition / Instance / Link triad, with category-driven dispatching.',
-    demonstrates: [
-      'Type-driven platform meta-pattern (TypeDefinition / Instance / Link triad)',
-      '`category` enum dispatching condition Rules (TypeIsNotRole, TypeIsPublished)',
-      'A system Role on a Resource template (ValidationEngine)',
-      'Process-level Trigger off a config-primitive lifecycle Operation',
-    ],
+    structureFile: 'agent-registration.json',
+    behaviourFile: 'agent-registration.behaviour.json',
   },
 ];
 
-const githubBase = 'https://github.com/dna-codes/dna/tree/main/examples';
+const root = coreSchemasRoot();
+const examples = domains.map((domain) => {
+  const version = latestCorpusVersion(root, domain.id);
+  return {
+    ...domain,
+    version,
+    excerpts: [
+      loadCorpusExcerpt(root, `examples/${domain.id}/${version}/${domain.structureFile}`),
+      loadCorpusExcerpt(root, `examples/${domain.id}/${version}/${domain.behaviourFile}`),
+    ],
+  };
+});
 
-const anchors = examples.map((e) => ({ id: slugify(e.name), label: e.title }));
+const anchors = examples.map((example) => ({ id: slugify(example.id), label: example.title }));
 ---
 
 <DocsLayout
   metadata={metadata}
   title="Examples"
-  description="DNA modeled across seven business domains. Each example validates against the schemas and exercises specific parts of the model — start here when you want to see how a real domain looks."
+  description="Four reference domains. Each version is a complete set of structure documents, and from the version that introduces behaviour, a behaviour document beside them."
   anchors={anchors}
 >
   <p>
-    Each example is a complete, validating DNA document. They are organized to exercise different parts of the language:
-    Memberships, scoping, system Roles, parallel Processes, scope-narrow inheritance, and the registry meta-pattern.
-    Pick whichever one is closest to the system you're modeling.
+    Checkout, origination, diligence, and agent registration are the corpus the core schemas are held to. A version
+    folder is the full set of documents for that version, not a diff. The excerpts below are taken from the latest
+    version of each domain at build time.
   </p>
 
   {
-    examples.map((ex) => (
-      <section id={slugify(ex.name)} class="scroll-mt-24 mt-12">
+    examples.map((example) => (
+      <section id={slugify(example.id)} class="scroll-mt-24 mt-12">
         <h2>
-          <a href={`#${slugify(ex.name)}`} class="no-underline hover:underline">
-            {ex.title}
+          <a href={`#${slugify(example.id)}`} class="no-underline hover:underline">
+            {example.title}
           </a>
         </h2>
 
-        <p>{ex.description}</p>
+        <p>{example.description}</p>
+
+        <p class="text-sm text-gray-500 dark:text-slate-500">
+          Latest in this build:{' '}
+          <code>
+            {example.id}/{example.version}
+          </code>
+        </p>
 
         <p class="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-slate-400">Demonstrates</p>
         <ul>
-          {ex.demonstrates.map((d) => (
-            <li>{d}</li>
+          {example.demonstrates.map((item) => (
+            <li>{item}</li>
           ))}
         </ul>
 
-        <p>
-          <a class="text-primary hover:underline" href={`${githubBase}/${ex.name}`}>
-            View source on GitHub →
-          </a>
-        </p>
+        {example.excerpts.map((excerpt) => (
+          <>
+            <p class="text-xs text-gray-500 dark:text-slate-500">
+              From <code>{excerpt.source}</code>
+            </p>
+            <pre>
+              <code class="language-json">{excerpt.json}</code>
+            </pre>
+          </>
+        ))}
       </section>
     ))
   }

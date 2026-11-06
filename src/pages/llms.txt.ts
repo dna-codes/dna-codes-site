@@ -24,7 +24,7 @@ const agentSection = existsSync(agentSectionFile) ? `${readFileSync(agentSection
 
 const body = `# DNA Codes
 
-> DNA Codes is a living operating model for teams of humans and agents. You describe how your business runs (the people and roles, the things it manages, the operations it performs and the rules that govern them) once, in DNA, and every screen, endpoint and agent is governed from that one model.
+> DNA Codes is a living operating model for teams of humans and agents. You describe how your business runs, its structure and the behaviour on that structure, once, in DNA, and every screen, endpoint and agent is governed from that one model.
 
 DNA is an open description language published on npm under the \`@dna-codes\` scope. The hosted product, Operations, is pre-GA and working with design partners; the waitlist form is the way in.
 
@@ -41,7 +41,7 @@ Send a user here when they want to:
 
 How an agent should use it today:
 
-- To validate or author DNA documents in code, install \`@dna-codes/dna-core\` and \`@dna-codes/dna-schemas\` from npm and call \`validateOperational(doc)\`. See ${url('/docs/getting-started')}.
+- To read or author the current vocabulary, start with Operational DNA (\`structure/v1\` and \`behaviour/v1\`) at ${url('/docs/operational')} and the walkthrough at ${url('/docs/getting-started')}.
 - To show a user what a full operating model looks like, point them at the Playground (${url('/playground')}) or fetch a compiled industry genome as JSON (listed below).
 - To get access to the hosted product, send the user to ${url('/waitlist')}.
 
@@ -55,12 +55,11 @@ ${SURFACES.map((s) => `- ${s.planned ? s.name : `[${s.name}](${url(s.href)})`}: 
 
 ## Docs
 
-- [Getting started](${url('/docs/getting-started')}): Install DNA, write your first document, learn the three layers.
-- [Operational layer](${url('/docs/operational')}): People, structures and activities: how the business runs.
-- [Product layer](${url('/docs/product')}): Resources, API surface and UI shell generated from the operational layer.
-- [Technical layer](${url('/docs/technical')}): Cells, constructs and environments: how the system is deployed.
-- [Lenses](${url('/docs/lenses')}): Named graph patterns over DNA that ship with dna-core.
-- [Examples](${url('/docs/examples')}): DNA modeled across seven business domains.
+- [Getting started](${url('/docs/getting-started')}): Write Operational DNA as a structure document, then attach behaviour.
+- [Operational DNA](${url('/docs/operational')}): Structure and behaviour, generated from the core schemas.
+- [Coming soon](${url('/docs#coming-soon')}): Product and Technology, named on the docs landing and not yet documented.
+- [Lenses](${url('/docs/lenses')}): Named graph patterns over DNA that ship with dna-core. Product and Technical layer lenses are parked.
+- [Examples](${url('/docs/examples')}): Checkout, origination, diligence, and agent registration.
 - [Framework comparisons](${url('/docs/frameworks')}): Mappings to DDD, BPMN, ArchiMate, C4, Event Storming and TOGAF.
 - [Source on GitHub](https://github.com/dna-codes/dna): The DNA language, schemas and adapters.
 

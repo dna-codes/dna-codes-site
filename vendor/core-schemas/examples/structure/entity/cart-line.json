@@ -1,0 +1,13 @@
+{
+  "id": "cart-line",
+  "name": "Cart line",
+  "description": "A cart line is an entity because the connection between a cart and a product carries a variant, a quantity, and a price. A relationship has no place to hold those.",
+  "attributes": [
+    { "name": "variant", "type": "string", "description": "The chosen variant, such as size or colour." },
+    { "name": "quantity", "type": "integer", "description": "How many of that variant." },
+    { "name": "unitAmount", "type": "number", "description": "The price of one unit." },
+    { "name": "currency", "type": "string", "description": "The currency of unitAmount." },
+    { "name": "cart", "type": "reference", "entity": "cart", "description": "The cart that holds this line." },
+    { "name": "product", "type": "reference", "entity": "product", "description": "The product this line is for." }
+  ]
+}

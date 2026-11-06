@@ -1,0 +1,106 @@
+{
+  "dna": "behaviour/v1",
+  "id": "payments-behaviour",
+  "name": "Payments behaviour",
+  "description": "Authorizing, capturing and refunding a payment through the processor, against checkout v2's payments domain.",
+  "domain": "payments",
+  "uses": ["commerce-behaviour"],
+  "actions": [
+    {
+      "id": "authorize",
+      "entity": "payment",
+      "name": "Authorize",
+      "description": "Ask the processor to hold an amount against an order.",
+      "external": true,
+      "input": [
+        { "name": "order", "type": "reference", "entity": "commerce/order" },
+        { "name": "amount", "type": "number" },
+        { "name": "currency", "type": "string" }
+      ],
+      "output": [{ "name": "approved", "type": "boolean" }],
+      "transition": { "to": "authorized" }
+    },
+    {
+      "id": "capture",
+      "entity": "payment",
+      "name": "Capture",
+      "description": "Collect an authorized amount from the processor.",
+      "external": true,
+      "input": [{ "name": "amount", "type": "number" }],
+      "transition": { "from": ["authorized"], "to": "captured" }
+    },
+    {
+      "id": "refund",
+      "entity": "payment",
+      "name": "Refund",
+      "description": "Return a captured amount to the shopper.",
+      "external": true,
+      "input": [{ "name": "amount", "type": "number" }],
+      "transition": { "from": ["captured"], "to": "refunded" }
+    }
+  ],
+  "operations": [
+    {
+      "id": "processor-authorizes",
+      "name": "Processor authorizes",
+      "description": "Northwind Pay authorizes the payment.",
+      "action": "authorize",
+      "actor": { "entity": "parties/organization", "instance": "northwind-pay" }
+    },
+    {
+      "id": "merchant-captures",
+      "name": "Merchant captures",
+      "description": "Juniper & Pine captures the authorized amount.",
+      "action": "capture",
+      "actor": { "entity": "parties/organization", "instance": "juniper-and-pine" }
+    },
+    {
+      "id": "merchant-accepts-order",
+      "name": "Merchant accepts the order",
+      "description": "Accepting the order once its payment is authorized.",
+      "action": "commerce-behaviour/accept",
+      "actor": { "entity": "parties/organization", "instance": "juniper-and-pine" },
+      "target": { "entity": "commerce/order" }
+    }
+  ],
+  "workflows": [
+    {
+      "id": "pay-and-accept",
+      "name": "Pay and accept",
+      "description": "Authorize, accept the order when approved, then capture.",
+      "initial": "authorizing",
+      "states": [
+        {
+          "id": "authorizing",
+          "operations": ["processor-authorizes"],
+          "transitions": [
+            { "on": "processor-authorizes", "when": { "field": "approved", "equals": true }, "to": "accepting" },
+            { "on": "processor-authorizes", "when": { "field": "approved", "equals": false }, "to": "declined" },
+            { "on": "processor-authorizes", "status": "failed", "to": "declined" }
+          ]
+        },
+        {
+          "id": "accepting",
+          "operations": ["merchant-accepts-order"],
+          "transitions": [{ "on": "merchant-accepts-order", "to": "capturing" }]
+        },
+        {
+          "id": "capturing",
+          "operations": ["merchant-captures"],
+          "transitions": [{ "on": "merchant-captures", "to": "paid" }]
+        },
+        { "id": "paid", "final": true },
+        { "id": "declined", "final": true }
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "id": "capture-limit",
+      "description": "A capture above 10000 is routed to an agent for review rather than performed.",
+      "actions": ["capture"],
+      "when": { "subject": "input", "path": "amount", "op": "gt", "value": 10000 },
+      "effect": { "effect": "route", "performer": "agent" }
+    }
+  ]
+}

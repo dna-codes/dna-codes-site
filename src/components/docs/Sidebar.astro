@@ -3,6 +3,8 @@
 // Pattern: top-level buckets collapsed; the current bucket/layer expands inline
 // to show per-section anchors (derived from the page's H3 headings).
 
+import { vocabularyAnchor } from '~/utils/schema-doc';
+
 export interface Anchor {
   id: string;
   label: string;
@@ -24,11 +26,7 @@ const sections: Section[] = [
   {
     label: 'Reference',
     href: '/docs/operational',
-    children: [
-      { label: 'Operational', href: '/docs/operational' },
-      { label: 'Product', href: '/docs/product' },
-      { label: 'Technical', href: '/docs/technical' },
-    ],
+    children: [{ label: 'Operational', href: '/docs/operational' }],
   },
   { label: 'Lenses', href: '/docs/lenses' },
   { label: 'Examples', href: '/docs/examples' },
@@ -36,9 +34,7 @@ const sections: Section[] = [
 ];
 
 const isActive = (href: string) => currentPath === href || currentPath.startsWith(href + '/');
-const isInReference = ['/docs/operational', '/docs/product', '/docs/technical'].some(
-  (p) => currentPath === p || currentPath.startsWith(p + '/')
-);
+const isInReference = currentPath === '/docs/operational' || currentPath.startsWith('/docs/operational/');
 
 // Group anchors by their optional `group` field so the reference pages can
 // surface People / Structures / Activities (Operational) or Core / API / UI (Product).
@@ -81,9 +77,12 @@ const groupKeys = Object.keys(groupedAnchors);
                 {groupKeys.map((g) => (
                   <li>
                     {g && (
-                      <div class="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-500">
+                      <a
+                        href={`#${vocabularyAnchor(g)}`}
+                        class="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500 hover:text-primary dark:text-slate-500"
+                      >
                         {g}
-                      </div>
+                      </a>
                     )}
                     <ul class="space-y-0.5">
                       {groupedAnchors[g].map((a) => (
@@ -125,9 +124,12 @@ const groupKeys = Object.keys(groupedAnchors);
                           {groupKeys.map((g) => (
                             <li>
                               {g && (
-                                <div class="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-500">
+                                <a
+                                  href={`#${vocabularyAnchor(g)}`}
+                                  class="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500 hover:text-primary dark:text-slate-500"
+                                >
                                   {g}
-                                </div>
+                                </a>
                               )}
                               <ul class="space-y-0.5">
                                 {groupedAnchors[g].map((a) => (

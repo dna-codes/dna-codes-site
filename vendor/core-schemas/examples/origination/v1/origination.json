@@ -1,0 +1,137 @@
+{
+  "dna": "structure/v1",
+  "id": "origination",
+  "name": "Origination",
+  "description": "From an application to a loan. A condition is its own entity because it has wording and a status. A later application can name an existing loan, which is the refinance edge. Borrower and lender are parties, not two shapes of the application.",
+  "uses": ["parties", "property"],
+  "entities": [
+    {
+      "id": "application",
+      "name": "Application",
+      "description": "A request for a loan. Money is an amount plus a currency. The borrower and the home are references into other vocabularies.",
+      "attributes": [
+        { "name": "amount", "type": "number", "description": "The amount requested." },
+        { "name": "currency", "type": "string", "description": "The currency of amount." },
+        {
+          "name": "status",
+          "type": "state",
+          "description": "The states of an application. Guards that refuse a move are behavior.",
+          "states": ["received", "underwriting", "conditional", "clear-to-close", "funded", "declined"],
+          "initial": "received"
+        },
+        { "name": "borrower", "type": "reference", "entity": "parties/person" },
+        { "name": "home", "type": "reference", "entity": "property/home" },
+        {
+          "name": "existingLoan",
+          "type": "reference",
+          "entity": "loan",
+          "required": false,
+          "description": "The loan a refinance application is against. Absent on a first loan."
+        }
+      ]
+    },
+    {
+      "id": "condition",
+      "name": "Condition",
+      "description": "A condition is an entity because the connection between an application and what still must be done carries wording and a status. A relationship cannot hold those.",
+      "attributes": [
+        { "name": "wording", "type": "string", "description": "What must be satisfied." },
+        {
+          "name": "status",
+          "type": "state",
+          "states": ["open", "cleared"],
+          "initial": "open"
+        },
+        { "name": "application", "type": "reference", "entity": "application" }
+      ]
+    },
+    {
+      "id": "document",
+      "name": "Document",
+      "description": "Evidence filed with an application. Credit, appraisal, and disclosure are values of one enum, not three entities.",
+      "attributes": [
+        { "name": "title", "type": "string" },
+        {
+          "name": "kind",
+          "type": "enum",
+          "values": ["credit", "appraisal", "disclosure"],
+          "description": "Which kind of evidence this document is."
+        },
+        { "name": "application", "type": "reference", "entity": "application" }
+      ]
+    },
+    {
+      "id": "loan",
+      "name": "Loan",
+      "description": "The loan that exists once an application is funded.",
+      "attributes": [
+        { "name": "amount", "type": "number" },
+        { "name": "currency", "type": "string" },
+        {
+          "name": "status",
+          "type": "state",
+          "states": ["active", "repaid", "defaulted"],
+          "initial": "active"
+        },
+        { "name": "application", "type": "reference", "entity": "application" },
+        { "name": "borrower", "type": "reference", "entity": "parties/person" }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "borrower-applies",
+      "name": "applies",
+      "description": "A person applies.",
+      "from": "parties/person",
+      "to": "application",
+      "cardinality": "one-to-many",
+      "attribute": "application.borrower"
+    },
+    {
+      "id": "application-secured-by-home",
+      "name": "secured by",
+      "description": "The application is secured by a home in the property vocabulary.",
+      "from": "application",
+      "to": "property/home",
+      "cardinality": "many-to-one",
+      "attribute": "application.home"
+    },
+    {
+      "id": "application-has-condition",
+      "name": "has",
+      "description": "An application has conditions. The condition's wording stays on the condition entity.",
+      "from": "application",
+      "to": "condition",
+      "cardinality": "one-to-many",
+      "attribute": "condition.application"
+    },
+    {
+      "id": "document-supports-application",
+      "name": "supports",
+      "description": "A document supports an application.",
+      "from": "document",
+      "to": "application",
+      "cardinality": "many-to-one",
+      "attribute": "document.application"
+    },
+    {
+      "id": "application-becomes-loan",
+      "name": "becomes",
+      "description": "A funded application becomes a loan.",
+      "from": "application",
+      "to": "loan",
+      "cardinality": "one-to-one",
+      "attribute": "loan.application"
+    },
+    {
+      "id": "loan-refinanced-by",
+      "name": "refinanced by",
+      "description": "A loan is refinanced by a later application. The link is a reference on that application, not a new kind of loan.",
+      "from": "loan",
+      "to": "application",
+      "cardinality": "one-to-many",
+      "attribute": "application.existingLoan"
+    }
+  ]
+}

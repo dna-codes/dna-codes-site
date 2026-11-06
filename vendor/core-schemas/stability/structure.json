@@ -1,0 +1,34 @@
+{
+  "definitions": {
+    "attribute": {
+      "id": "https://dna.codes/schemas/structure/attribute/v1",
+      "status": "stable",
+      "fingerprint": "sha256:1702bf078acb0cb0000c4cd356177436b2e37666c5dd7a20bb1582ea5ceea5e4",
+      "edits": []
+    },
+    "entity": {
+      "id": "https://dna.codes/schemas/structure/entity/v1",
+      "status": "stable",
+      "fingerprint": "sha256:a7ec218891c8a7ab165b64625fbb0a12ae53028e9c8aa69aa97586b2774ddbf9",
+      "edits": []
+    },
+    "relationship": {
+      "id": "https://dna.codes/schemas/structure/relationship/v1",
+      "status": "stable",
+      "fingerprint": "sha256:868b600caf37cacf472f03a296d21f88af5ab32b5b48fddcf1b5536b8f505a79",
+      "edits": []
+    },
+    "domain": {
+      "id": "https://dna.codes/schemas/structure/domain/v1",
+      "status": "stable",
+      "fingerprint": "sha256:c34bc83a4bda4ebe046b4ce91398e78b742aef5d75b8b1566b4568da70003242",
+      "edits": []
+    }
+  },
+  "exempt": [
+    {
+      "feature": "domain.$schema",
+      "reason": "An editor annotation naming the JSON Schema dialect, not structure. No reference domain needs it, and an agent need not write it."
+    }
+  ]
+}

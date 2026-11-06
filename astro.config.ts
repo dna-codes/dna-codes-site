@@ -15,8 +15,10 @@ import type { AstroIntegration } from 'astro';
 import astrowind from './vendor/integration';
 
 import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin } from './src/utils/frontmatter';
+import { resolveCoreSchemasRoot } from './src/utils/resolve-core-schemas.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const coreSchemasRoot = resolveCoreSchemasRoot(__dirname);
 
 const hasExternalScripts = false;
 const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
@@ -50,6 +52,10 @@ export default defineConfig({
     // its three siblings. The old URL is public (the announcement bar, the homepage teaser
     // and anything anyone has bookmarked), so it keeps resolving.
     '/overlay': '/ui-operations',
+    // Product and Technology left the live reference. The URLs stay reachable and
+    // land on the Coming soon note rather than a removed layer page.
+    '/docs/product': '/docs#coming-soon',
+    '/docs/technical': '/docs#coming-soon',
   },
 
   integrations: [
@@ -151,6 +157,9 @@ export default defineConfig({
         '~': path.resolve(__dirname, './src'),
         // Resolves via the @dna-codes/dna-schemas package published to npm.
         '~schemas': path.resolve(__dirname, 'node_modules/@dna-codes/dna-schemas'),
+        // Core structure/v1 + behaviour/v1. Distinct from ~schemas, which genomes
+        // still read for the legacy operational package.
+        '~core-schemas': coreSchemasRoot,
         // Lens definitions ship in @dna-codes/dna-core under lenses/ (JSON only —
         // the page imports these files; dna-core's JS runtime is never loaded).
         '~lenses': path.resolve(__dirname, 'node_modules/@dna-codes/dna-core/lenses'),

@@ -12,24 +12,30 @@ export interface FieldRow {
   description: string;
 }
 
-interface JsonSchemaProperty {
+export interface SchemaNode {
   type?: string | string[];
   const?: string | number | boolean;
   enum?: (string | number | boolean)[];
   $ref?: string;
-  oneOf?: JsonSchemaProperty[];
-  items?: JsonSchemaProperty;
+  oneOf?: SchemaNode[];
+  allOf?: SchemaNode[];
+  items?: SchemaNode;
   description?: string;
-  default?: unknown;
-  pattern?: string;
+  properties?: Record<string, SchemaNode>;
+  required?: string[];
+  $defs?: Record<string, SchemaNode>;
+  examples?: unknown[];
+  title?: string;
 }
 
 interface JsonSchema {
   title?: string;
   description?: string;
   required?: string[];
-  properties?: Record<string, JsonSchemaProperty>;
+  properties?: Record<string, SchemaNode>;
   examples?: unknown[];
+  $defs?: Record<string, SchemaNode>;
+  oneOf?: SchemaNode[];
 }
 
 /**
@@ -48,40 +54,121 @@ export interface SchemaDoc {
   stability?: unknown;
 }
 
-const refName = (ref: string): string => {
-  const parts = ref.split('/');
-  return parts[parts.length - 1];
+const titleFromRef = (ref: string): string => {
+  const parts = ref.split('/').filter(Boolean);
+  let name = parts[parts.length - 1] ?? 'any';
+  if (/^v\d+$/.test(name) && parts.length >= 2) name = parts[parts.length - 2] ?? name;
+  return name.slice(0, 1).toUpperCase() + name.slice(1);
 };
 
-const formatType = (prop: JsonSchemaProperty): string => {
-  if (prop.const !== undefined) return JSON.stringify(prop.const);
-  if (prop.enum) return prop.enum.map((v) => JSON.stringify(v)).join(' | ');
-  if (prop.$ref) return refName(prop.$ref);
-  if (prop.oneOf) return prop.oneOf.map((p) => formatType(p)).join(' | ');
-  if (prop.type === 'array') {
-    const inner = prop.items ? formatType(prop.items) : 'any';
+const localDefName = (prop: SchemaNode): string | null => {
+  if (typeof prop.$ref === 'string' && prop.$ref.startsWith('#/$defs/')) return prop.$ref.slice('#/$defs/'.length);
+  return null;
+};
+
+/** Follow local `$ref` / `allOf` so a field's type and description survive `$defs`. */
+export function deref(node: SchemaNode, root: SchemaNode, depth = 0): SchemaNode {
+  if (!node || depth > 12) return node ?? {};
+  if (typeof node.$ref === 'string' && node.$ref.startsWith('#/$defs/')) {
+    const target = root.$defs?.[node.$ref.slice('#/$defs/'.length)];
+    if (!target) return node;
+    const overlay = { ...node };
+    delete overlay.$ref;
+    return deref({ ...deref(target, root, depth + 1), ...overlay }, root, depth + 1);
+  }
+  if (Array.isArray(node.allOf)) {
+    let merged: SchemaNode = {};
+    for (const part of node.allOf) merged = { ...merged, ...deref(part, root, depth + 1) };
+    const overlay = { ...node };
+    delete overlay.allOf;
+    return deref({ ...merged, ...overlay }, root, depth + 1);
+  }
+  return node;
+}
+
+const formatType = (prop: SchemaNode, root: SchemaNode): string => {
+  const resolved = deref(prop, root);
+  if (resolved.const !== undefined) return JSON.stringify(resolved.const);
+  if (resolved.enum) return resolved.enum.map((v) => JSON.stringify(v)).join(' | ');
+  if (typeof resolved.$ref === 'string' && !resolved.$ref.startsWith('#')) return titleFromRef(resolved.$ref);
+  if (resolved.oneOf) return resolved.oneOf.map((part) => formatType(part, root)).join(' | ');
+  if (resolved.type === 'array') {
+    const inner = resolved.items ? formatType(resolved.items, root) : 'any';
     return `${inner}[]`;
   }
-  if (Array.isArray(prop.type)) return prop.type.join(' | ');
-  if (prop.type) return prop.type;
+  if (resolved.type === 'object' && localDefName(prop)) return localDefName(prop) as string;
+  if (Array.isArray(resolved.type)) return resolved.type.join(' | ');
+  if (resolved.type) return resolved.type;
   return 'any';
 };
 
+/** Legacy operational schemas used `type: { const: "person" }` as a discriminator, not a field. */
+const isLegacyDiscriminator = (name: string, def: SchemaNode, root: SchemaNode): boolean => {
+  if (name !== 'type') return false;
+  const resolved = deref(def, root);
+  return resolved.const !== undefined && !resolved.enum;
+};
+
+interface FieldSource {
+  properties: Record<string, SchemaNode>;
+  required: string[];
+}
+
+const fieldSources = (schema: SchemaNode): FieldSource[] => {
+  if (schema.properties && Object.keys(schema.properties).length > 0) {
+    return [{ properties: schema.properties, required: schema.required ?? [] }];
+  }
+  const sources: FieldSource[] = [];
+  for (const branch of schema.oneOf ?? []) {
+    const resolved = deref(branch, schema);
+    if (resolved.properties && Object.keys(resolved.properties).length > 0) {
+      sources.push({ properties: resolved.properties, required: resolved.required ?? [] });
+    }
+  }
+  return sources;
+};
+
 /**
- * Extract the docs-friendly field list from a JSON Schema's `properties`.
- * Skips the internal `type` discriminator field.
+ * Extract the docs-friendly field list from a JSON Schema.
+ * Local `$ref` / `$defs` / `allOf` are resolved. A `oneOf` grammar (Condition)
+ * contributes the fields of each branch. A const `type` discriminator is skipped;
+ * an enum `type` field, such as Attribute's, is kept.
  */
 export function extractFields(schema: JsonSchema): FieldRow[] {
-  const required = new Set(schema.required ?? []);
-  const props = schema.properties ?? {};
-  return Object.entries(props)
-    .filter(([name]) => name !== 'type')
-    .map(([name, def]) => ({
+  const root = schema as SchemaNode;
+  const sources = fieldSources(root);
+  const names: string[] = [];
+  const byName = new Map<string, { def: SchemaNode; requiredIn: number; presentIn: number }>();
+
+  for (const source of sources) {
+    for (const [name, def] of Object.entries(source.properties)) {
+      if (isLegacyDiscriminator(name, def, root)) continue;
+      const row = byName.get(name);
+      if (!row) {
+        names.push(name);
+        byName.set(name, {
+          def,
+          presentIn: 1,
+          requiredIn: source.required.includes(name) ? 1 : 0,
+        });
+        continue;
+      }
+      row.presentIn += 1;
+      if (source.required.includes(name)) row.requiredIn += 1;
+      if (!row.def.description && def.description) row.def = def;
+    }
+  }
+
+  return names.map((name) => {
+    const row = byName.get(name)!;
+    const resolved = deref(row.def, root);
+    return {
       name,
-      type: formatType(def),
-      required: required.has(name),
-      description: def.description ?? '',
-    }));
+      type: formatType(row.def, root),
+      required: row.presentIn > 0 && row.requiredIn === row.presentIn,
+      description: row.def.description ?? resolved.description ?? '',
+    };
+  });
 }
 
 /**
@@ -97,7 +184,7 @@ export function splitDescription(description: string | undefined): string[] {
 }
 
 /**
- * Slugify a primitive name to a stable anchor id (e.g. "Person" -> "person").
+ * Slugify a primitive name to a stable anchor id (e.g. "Domain" -> "domain").
  */
 export function slugify(name: string): string {
   return name
@@ -106,6 +193,11 @@ export function slugify(name: string): string {
     .replace(/[^a-z0-9-]/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+/** Heading id for a vocabulary group, distinct from a primitive that shares the name (Behaviour). */
+export function vocabularyAnchor(label: string): string {
+  return `${slugify(label)}-vocabulary`;
 }
 
 /**
@@ -119,11 +211,10 @@ export function firstExample(schema: JsonSchema): string | null {
 // ---------------------------------------------------------------------------
 // Stability
 //
-// Each primitive carries a maturity signal — surfaced as a pill on the
-// reference pages. The source of truth is the optional top-level `stability`
-// field defined in the schemas' base (enum: experimental | beta | stable |
-// deprecated). When a schema declares it, we render that value; when it
-// doesn't, the primitive is treated as `stable`.
+// Each primitive carries a maturity signal, surfaced as a pill on the
+// reference pages. Operational DNA sets `stability` from
+// `stability/{structure,behaviour}.json` before render. A schema that still
+// declares its own `stability` is used when nothing was attached.
 // ---------------------------------------------------------------------------
 
 export type Stability = 'experimental' | 'beta' | 'stable' | 'deprecated';
@@ -137,9 +228,15 @@ const isStability = (v: unknown): v is Stability =>
   v === 'experimental' || v === 'beta' || v === 'stable' || v === 'deprecated';
 
 /**
- * Resolve a primitive's stability: the schema's own `stability` field when it
- * declares one, otherwise `stable`.
+ * Resolve a primitive's stability: the attached or declared value when it is
+ * one of the known levels, otherwise `stable`.
  */
 export function getStability(schema: { stability?: unknown }): Stability {
   return isStability(schema.stability) ? schema.stability : STABILITY_DEFAULT;
+}
+
+/** Ledger status for a discovered definition. Throws when the entry is missing or unknown. */
+export function requireStability(value: unknown, label: string): Stability {
+  if (isStability(value)) return value;
+  throw new Error(`No usable stability for ${label} (got ${JSON.stringify(value)}).`);
 }

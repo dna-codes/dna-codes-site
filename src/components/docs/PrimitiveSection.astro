@@ -17,17 +17,22 @@ export interface Props {
     properties?: Record<string, unknown>;
     examples?: unknown[];
     stability?: unknown;
+    $defs?: Record<string, unknown>;
+    oneOf?: unknown[];
   };
   related?: RelatedLink[];
+  /** Corpus excerpt. Pass null to force the example block off. Omit to use schema.examples. */
+  example?: string | null;
+  exampleSource?: string | null;
 }
 
-const { schema, related = [] } = Astro.props;
+const { schema, related = [], example: exampleProp, exampleSource = null } = Astro.props;
 
 const title = schema.title ?? 'Untitled';
 const id = slugify(title);
 const paragraphs = splitDescription(schema.description);
 const fields = extractFields(schema as Parameters<typeof extractFields>[0]);
-const example = firstExample(schema as Parameters<typeof firstExample>[0]);
+const example = exampleProp === undefined ? firstExample(schema as Parameters<typeof firstExample>[0]) : exampleProp;
 const stability = getStability(schema);
 ---
 
@@ -52,6 +57,11 @@ const stability = getStability(schema);
         <h4 class="mt-6 mb-2 text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-slate-400">
           Example
         </h4>
+        {exampleSource && (
+          <p class="text-xs text-gray-500 dark:text-slate-500">
+            From <code>{exampleSource}</code>
+          </p>
+        )}
         <pre>
           <code class="language-json">{example}</code>
         </pre>

@@ -1,0 +1,69 @@
+{
+  "id": "pay-and-accept",
+  "name": "Pay and accept",
+  "description": "Authorize, accept the order when approved, then capture.",
+  "initial": "authorizing",
+  "states": [
+    {
+      "id": "authorizing",
+      "operations": [
+        "processor-authorizes"
+      ],
+      "transitions": [
+        {
+          "on": "processor-authorizes",
+          "when": {
+            "field": "approved",
+            "equals": true
+          },
+          "to": "accepting"
+        },
+        {
+          "on": "processor-authorizes",
+          "when": {
+            "field": "approved",
+            "equals": false
+          },
+          "to": "declined"
+        },
+        {
+          "on": "processor-authorizes",
+          "status": "failed",
+          "to": "declined"
+        }
+      ]
+    },
+    {
+      "id": "accepting",
+      "operations": [
+        "merchant-accepts-order"
+      ],
+      "transitions": [
+        {
+          "on": "merchant-accepts-order",
+          "to": "capturing"
+        }
+      ]
+    },
+    {
+      "id": "capturing",
+      "operations": [
+        "merchant-captures"
+      ],
+      "transitions": [
+        {
+          "on": "merchant-captures",
+          "to": "paid"
+        }
+      ]
+    },
+    {
+      "id": "paid",
+      "final": true
+    },
+    {
+      "id": "declined",
+      "final": true
+    }
+  ]
+}

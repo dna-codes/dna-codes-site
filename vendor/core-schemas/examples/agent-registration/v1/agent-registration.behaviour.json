@@ -1,0 +1,327 @@
+{
+  "dna": "behaviour/v1",
+  "id": "agent-registration-behaviour",
+  "name": "Agent registration behaviour",
+  "description": "What the agent host lets an agent and its person do, as Actions: prove work, register, author, renew, claim, and expire. The host's route table is derived from these Actions once behaviour is stable; until then the two are held equal by conformance.",
+  "domain": "agent-registration",
+  "actions": [
+    {
+      "id": "issue-challenge",
+      "entity": "challenge",
+      "name": "Issue challenge",
+      "description": "Issue a proof-of-work challenge to a client. Needs no credential.",
+      "input": [{ "name": "clientId", "type": "string" }],
+      "output": [{ "name": "difficulty", "type": "integer" }, { "name": "expiresAt", "type": "datetime" }],
+      "transition": { "to": "issued" }
+    },
+    {
+      "id": "register",
+      "entity": "registration",
+      "name": "Register",
+      "description": "Spend a solved challenge to create a sandbox organization, a credential and a claim link.",
+      "input": [
+        { "name": "challenge", "type": "reference", "entity": "challenge" },
+        { "name": "solution", "type": "string" },
+        { "name": "clientId", "type": "string" }
+      ],
+      "output": [
+        { "name": "organization", "type": "reference", "entity": "platform/organization" },
+        { "name": "credential", "type": "reference", "entity": "credential" },
+        { "name": "claimUrl", "type": "string" }
+      ],
+      "transition": { "to": "sandbox" }
+    },
+    {
+      "id": "describe",
+      "entity": "document",
+      "name": "Describe",
+      "description": "Read the vocabularies the host accepts and what each tool does.",
+      "readOnly": true,
+      "output": [{ "name": "description", "type": "string" }]
+    },
+    {
+      "id": "validate",
+      "entity": "document",
+      "name": "Validate",
+      "description": "Check whole domain documents without writing them.",
+      "readOnly": true,
+      "input": [{ "name": "documents", "type": "reference", "entity": "document", "many": true }],
+      "output": [{ "name": "valid", "type": "boolean" }]
+    },
+    {
+      "id": "apply",
+      "entity": "document",
+      "name": "Apply",
+      "description": "Write whole domain documents as one act. Each changed domain becomes its next immutable version.",
+      "input": [
+        { "name": "documents", "type": "reference", "entity": "document", "many": true },
+        { "name": "intent", "type": "string" },
+        { "name": "idempotencyKey", "type": "string" }
+      ],
+      "output": [{ "name": "versions", "type": "integer", "many": true }]
+    },
+    {
+      "id": "get",
+      "entity": "document",
+      "name": "Get",
+      "description": "Read one document at its latest or a named version.",
+      "readOnly": true,
+      "input": [
+        { "name": "docId", "type": "string" },
+        { "name": "version", "type": "integer", "required": false }
+      ]
+    },
+    {
+      "id": "list",
+      "entity": "document",
+      "name": "List",
+      "description": "List the latest version of each document.",
+      "readOnly": true,
+      "input": [{ "name": "kind", "type": "string", "required": false }]
+    },
+    {
+      "id": "diff",
+      "entity": "document",
+      "name": "Diff",
+      "description": "Compare two versions of a document.",
+      "readOnly": true,
+      "input": [
+        { "name": "docId", "type": "string" },
+        { "name": "from", "type": "integer" },
+        { "name": "to", "type": "integer" }
+      ]
+    },
+    {
+      "id": "renew-credential",
+      "entity": "credential",
+      "name": "Renew credential",
+      "description": "Exchange the renewal grant for a fresh access token. The scopes do not widen.",
+      "transition": { "from": ["active"], "to": "active" }
+    },
+    {
+      "id": "claim",
+      "entity": "registration",
+      "name": "Claim",
+      "description": "A signed-in person claims the sandbox with its link. It becomes production and no longer expires.",
+      "input": [{ "name": "claim", "type": "reference", "entity": "claim" }],
+      "transition": { "from": ["sandbox"], "to": "production" }
+    },
+    {
+      "id": "expire",
+      "entity": "registration",
+      "name": "Expire",
+      "description": "An unclaimed sandbox reaches its expiry. Its DNA is deleted and its credentials resolve to nobody.",
+      "transition": { "from": ["sandbox"], "to": "expired" }
+    },
+    {
+      "id": "read-registrations",
+      "entity": "registration",
+      "name": "Read registrations",
+      "description": "Read every organization's registration and its history. Never another organization's DNA documents.",
+      "readOnly": true,
+      "input": [{ "name": "status", "type": "string", "required": false }]
+    }
+  ],
+  "operations": [
+    {
+      "id": "host-issues-challenge",
+      "name": "Host issues challenge",
+      "description": "The host answers a client's request for a challenge.",
+      "action": "issue-challenge",
+      "actor": { "entity": "platform/organization", "instance": "dna-codes" },
+      "target": { "entity": "agent" }
+    },
+    {
+      "id": "agent-registers",
+      "name": "Agent registers",
+      "description": "The agent spends its solution.",
+      "action": "register",
+      "actor": { "entity": "agent" }
+    },
+    {
+      "id": "agent-describe",
+      "name": "Agent calls describe",
+      "description": "The agent calls describe.",
+      "action": "describe",
+      "actor": { "entity": "agent" },
+      "target": { "entity": "document" }
+    },
+    {
+      "id": "agent-validate",
+      "name": "Agent calls validate",
+      "description": "The agent calls validate.",
+      "action": "validate",
+      "actor": { "entity": "agent" },
+      "target": { "entity": "document" }
+    },
+    {
+      "id": "agent-apply",
+      "name": "Agent calls apply",
+      "description": "The agent calls apply.",
+      "action": "apply",
+      "actor": { "entity": "agent" },
+      "target": { "entity": "document" }
+    },
+    {
+      "id": "agent-get",
+      "name": "Agent calls get",
+      "description": "The agent calls get.",
+      "action": "get",
+      "actor": { "entity": "agent" },
+      "target": { "entity": "document" }
+    },
+    {
+      "id": "agent-list",
+      "name": "Agent calls list",
+      "description": "The agent calls list.",
+      "action": "list",
+      "actor": { "entity": "agent" },
+      "target": { "entity": "document" }
+    },
+    {
+      "id": "agent-diff",
+      "name": "Agent calls diff",
+      "description": "The agent calls diff.",
+      "action": "diff",
+      "actor": { "entity": "agent" },
+      "target": { "entity": "document" }
+    },
+    {
+      "id": "agent-renews",
+      "name": "Agent renews",
+      "description": "The agent renews its credential.",
+      "action": "renew-credential",
+      "actor": { "entity": "agent" }
+    },
+    {
+      "id": "person-claims",
+      "name": "Person claims",
+      "description": "The agent's person follows the claim link.",
+      "action": "claim",
+      "actor": { "entity": "platform/person" }
+    },
+    {
+      "id": "host-expires",
+      "name": "Host expires",
+      "description": "The host's sweep, or the next request, expires the sandbox.",
+      "action": "expire",
+      "actor": { "entity": "platform/organization", "instance": "dna-codes" }
+    },
+    {
+      "id": "admin-reads",
+      "name": "Admin reads registrations",
+      "description": "A DNA admin reads registrations across organizations.",
+      "action": "read-registrations",
+      "actor": { "entity": "platform/person" }
+    }
+  ],
+  "workflows": [
+    {
+      "id": "registration",
+      "name": "Registration",
+      "description": "From a challenge to production or expired.",
+      "initial": "challenging",
+      "states": [
+        {
+          "id": "challenging",
+          "name": "Challenge issued",
+          "operations": ["host-issues-challenge"],
+          "transitions": [{ "on": "host-issues-challenge", "to": "registering" }]
+        },
+        {
+          "id": "registering",
+          "name": "Registering",
+          "description": "A refused solution sends the agent back for a new challenge.",
+          "operations": ["agent-registers"],
+          "transitions": [
+            { "on": "agent-registers", "to": "sandbox" },
+            { "on": "agent-registers", "status": "failed", "to": "challenging" }
+          ]
+        },
+        {
+          "id": "sandbox",
+          "name": "Sandbox",
+          "description": "The agent authors until its person claims or the sandbox expires.",
+          "operations": [
+            "agent-describe",
+            "agent-validate",
+            "agent-apply",
+            "agent-get",
+            "agent-list",
+            "agent-diff",
+            "agent-renews",
+            "person-claims",
+            "host-expires"
+          ],
+          "transitions": [
+            { "on": "agent-describe", "to": "sandbox" },
+            { "on": "agent-validate", "to": "sandbox" },
+            { "on": "agent-apply", "to": "sandbox" },
+            { "on": "agent-get", "to": "sandbox" },
+            { "on": "agent-list", "to": "sandbox" },
+            { "on": "agent-diff", "to": "sandbox" },
+            { "on": "agent-renews", "to": "sandbox" },
+            { "on": "person-claims", "to": "production" },
+            { "on": "host-expires", "to": "expired" }
+          ]
+        },
+        { "id": "production", "name": "Production", "final": true },
+        { "id": "expired", "name": "Expired", "final": true }
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "id": "per-client-registrations",
+      "description": "A client registers at most 30 times an hour. The evaluator supplies the count.",
+      "actions": ["register"],
+      "when": { "subject": "context", "path": "registrationsFromClientThisHour", "op": "gte", "value": 30 },
+      "effect": { "effect": "deny" }
+    },
+    {
+      "id": "per-network-registrations",
+      "description": "A source network registers at most 10 times an hour.",
+      "actions": ["register"],
+      "when": { "subject": "context", "path": "registrationsFromNetworkThisHour", "op": "gte", "value": 10 },
+      "effect": { "effect": "deny" }
+    },
+    {
+      "id": "sandbox-daily-cap",
+      "description": "An unclaimed sandbox performs at most 100 governed acts a UTC day.",
+      "actions": ["apply"],
+      "when": {
+        "allOf": [
+          { "subject": "context", "path": "environment", "op": "eq", "value": "sandbox" },
+          { "subject": "context", "path": "governedActsToday", "op": "gte", "value": 100 }
+        ]
+      },
+      "effect": { "effect": "deny" }
+    },
+    {
+      "id": "inactive-refused",
+      "description": "An expired organization's credentials resolve to nobody.",
+      "actions": ["describe", "validate", "apply", "get", "list", "diff", "renew-credential"],
+      "when": { "subject": "context", "path": "registrationStatus", "op": "eq", "value": "expired" },
+      "effect": { "effect": "deny" }
+    },
+    {
+      "id": "people-claim",
+      "description": "Only a signed-in person claims. An agent never claims its own sandbox.",
+      "actions": ["claim"],
+      "when": { "not": { "subject": "actor", "path": "kind", "op": "eq", "value": "person" } },
+      "effect": { "effect": "deny" }
+    },
+    {
+      "id": "dna-admin-reads-registrations",
+      "description": "The DNA admin role, granted by the platform's operator, reads registrations across organizations.",
+      "actions": ["read-registrations"],
+      "when": {
+        "allOf": [
+          { "subject": "actor", "path": "role", "op": "eq", "value": "dna-admin" },
+          { "subject": "actor", "path": "organization", "op": "eq", "value": "dna-codes" }
+        ]
+      },
+      "effect": { "effect": "allow" }
+    }
+  ]
+}

@@ -22,7 +22,9 @@ allowed-tools:
 
 # Generate-Docs Skill
 
-Bump the `@dna-codes/dna-schemas` package to a new published version and regenerate the docs from it. The docs site pulls schemas **only from the npm package** (never a local sibling checkout) — the reference pages import `~schemas/**/*.json`, which resolves to `node_modules/@dna-codes/dna-schemas` via the `~schemas` alias in `astro.config.ts` and the `~schemas/*` path in `tsconfig.json`.
+The public Operational reference (`/docs/operational`) is generated from core `structure/v1` and `behaviour/v1` schemas. Resolution lives in `src/utils/resolve-core-schemas.ts` (`DNA_CORE_SCHEMAS`, a published package that ships `definitions/structure`, a sibling platform checkout, then `vendor/core-schemas`). Do not point that page back at `operational/person.json`, and do not reintroduce `/docs/product` or `/docs/technical` as live reference. Industry genomes still read the legacy `@dna-codes/dna-schemas` package through the `~schemas` alias.
+
+Industry genomes still bump `@dna-codes/dna-schemas` from the npm registry. That package resolves through the `~schemas` alias (`node_modules/@dna-codes/dna-schemas`). It is the legacy operational/product/technical tree, not the source of `/docs/operational`.
 
 "Regenerating the docs" is just `npm run build`: the pages read the imported JSON at build time, so field and description changes flow through automatically. The one thing that does NOT flow automatically is the **set** of primitives — each reference page imports and lists its primitives by hand. Adding, removing, or renaming a schema therefore requires editing a page. This skill's real job is catching that.
 

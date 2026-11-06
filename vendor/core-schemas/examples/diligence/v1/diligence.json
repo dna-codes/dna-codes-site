@@ -1,0 +1,204 @@
+{
+  "dna": "structure/v1",
+  "id": "diligence",
+  "name": "Diligence",
+  "description": "A buyer's review of a target. The three firms are instances in the parties vocabulary this domain uses. The target's documents, the clean team, and the findings are entities and relationships here, not a separate schema per firm.",
+  "uses": ["parties"],
+  "entities": [
+    {
+      "id": "deal",
+      "name": "Deal",
+      "description": "The acquisition. Buyer and target are two relationships to the same organization entity.",
+      "attributes": [
+        { "name": "codename", "type": "string" },
+        {
+          "name": "status",
+          "type": "state",
+          "states": ["open", "signed-off", "declined"],
+          "initial": "open"
+        },
+        {
+          "name": "buyer",
+          "type": "reference",
+          "entity": "parties/organization",
+          "description": "The acquiring firm. An instance such as Harbor."
+        },
+        {
+          "name": "target",
+          "type": "reference",
+          "entity": "parties/organization",
+          "description": "The firm being acquired. An instance such as Northline."
+        }
+      ]
+    },
+    {
+      "id": "data-room",
+      "name": "Data room",
+      "description": "The target's room of documents. Owned by one organization instance.",
+      "attributes": [
+        { "name": "name", "type": "string" },
+        { "name": "owner", "type": "reference", "entity": "parties/organization" }
+      ]
+    },
+    {
+      "id": "document",
+      "name": "Document",
+      "description": "A file in the data room. Confidentiality is an enum on the document. Which team it is restricted to is a relationship.",
+      "attributes": [
+        { "name": "title", "type": "string" },
+        {
+          "name": "confidentiality",
+          "type": "enum",
+          "description": "A confidentiality tier is an enum. Who may read it is behavior.",
+          "values": ["public", "internal", "clean-team"]
+        },
+        { "name": "room", "type": "reference", "entity": "data-room" },
+        {
+          "name": "restrictedTo",
+          "type": "reference",
+          "entity": "parties/team",
+          "required": false,
+          "description": "The team a restricted document is limited to, such as the clean team."
+        }
+      ]
+    },
+    {
+      "id": "workstream",
+      "name": "Workstream",
+      "description": "A line of review over the data room. Its deadline is a datetime.",
+      "attributes": [
+        { "name": "name", "type": "string" },
+        {
+          "name": "due",
+          "type": "datetime",
+          "description": "When the workstream is due. A deadline is a datetime."
+        },
+        {
+          "name": "status",
+          "type": "state",
+          "states": ["open", "findings", "signed-off"],
+          "initial": "open"
+        },
+        { "name": "room", "type": "reference", "entity": "data-room" }
+      ]
+    },
+    {
+      "id": "finding",
+      "name": "Finding",
+      "description": "Something the review found. Materiality is an enum. The page it rests on lives on a citation, because that connection has a page.",
+      "attributes": [
+        { "name": "statement", "type": "string" },
+        {
+          "name": "materiality",
+          "type": "enum",
+          "values": ["minor", "material"],
+          "description": "How material the finding is."
+        },
+        { "name": "workstream", "type": "reference", "entity": "workstream" },
+        { "name": "author", "type": "reference", "entity": "parties/person" }
+      ]
+    },
+    {
+      "id": "citation",
+      "name": "Citation",
+      "description": "A citation is an entity because the connection between a finding and a document carries a page. A relationship cannot hold that page.",
+      "attributes": [
+        { "name": "page", "type": "integer", "description": "The page the finding cites." },
+        { "name": "finding", "type": "reference", "entity": "finding" },
+        { "name": "document", "type": "reference", "entity": "document" }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "deal-buys",
+      "name": "buys",
+      "description": "The deal's buyer. A second relationship joins this same pair of entities for the target.",
+      "from": "deal",
+      "to": "parties/organization",
+      "cardinality": "many-to-one",
+      "attribute": "deal.buyer"
+    },
+    {
+      "id": "deal-acquires",
+      "name": "acquires",
+      "description": "The deal's target. The same pair of entities as buys, a different edge.",
+      "from": "deal",
+      "to": "parties/organization",
+      "cardinality": "many-to-one",
+      "attribute": "deal.target"
+    },
+    {
+      "id": "organization-owns-room",
+      "name": "owns",
+      "description": "An organization owns the data room. For this deal that instance is the target.",
+      "from": "parties/organization",
+      "to": "data-room",
+      "cardinality": "one-to-many",
+      "attribute": "data-room.owner"
+    },
+    {
+      "id": "room-contains-document",
+      "name": "contains",
+      "description": "The data room contains documents.",
+      "from": "data-room",
+      "to": "document",
+      "cardinality": "one-to-many",
+      "attribute": "document.room"
+    },
+    {
+      "id": "document-restricted-to-team",
+      "name": "restricted to",
+      "description": "A document is restricted to a team. The clean team is an instance of team in the parties vocabulary.",
+      "from": "document",
+      "to": "parties/team",
+      "cardinality": "many-to-one",
+      "attribute": "document.restrictedTo"
+    },
+    {
+      "id": "workstream-reviews-room",
+      "name": "reviews",
+      "description": "A workstream reviews a data room.",
+      "from": "workstream",
+      "to": "data-room",
+      "cardinality": "many-to-one",
+      "attribute": "workstream.room"
+    },
+    {
+      "id": "finding-in-workstream",
+      "name": "in",
+      "description": "A finding is raised in a workstream.",
+      "from": "finding",
+      "to": "workstream",
+      "cardinality": "many-to-one",
+      "attribute": "finding.workstream"
+    },
+    {
+      "id": "finding-raised-by",
+      "name": "raised by",
+      "description": "A person raises the finding. Which firm they act for is their membership, in the parties vocabulary.",
+      "from": "parties/person",
+      "to": "finding",
+      "cardinality": "one-to-many",
+      "attribute": "finding.author"
+    },
+    {
+      "id": "citation-of-finding",
+      "name": "of",
+      "description": "The citation is of a finding. The page stays on the citation.",
+      "from": "citation",
+      "to": "finding",
+      "cardinality": "many-to-one",
+      "attribute": "citation.finding"
+    },
+    {
+      "id": "citation-cites-document",
+      "name": "cites",
+      "description": "The citation cites a document.",
+      "from": "citation",
+      "to": "document",
+      "cardinality": "many-to-one",
+      "attribute": "citation.document"
+    }
+  ]
+}
