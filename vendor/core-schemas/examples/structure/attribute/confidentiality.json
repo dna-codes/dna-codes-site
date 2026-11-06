@@ -1,0 +1,6 @@
+{
+  "name": "confidentiality",
+  "type": "enum",
+  "description": "A confidentiality tier is an enum. Who may read a value is behavior.",
+  "values": ["public", "internal", "clean-team"]
+}

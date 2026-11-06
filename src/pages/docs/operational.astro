@@ -2,119 +2,89 @@
 import DocsLayout from '~/layouts/DocsLayout.astro';
 import PrimitiveSection from '~/components/docs/PrimitiveSection.astro';
 import StabilityLegend from '~/components/docs/StabilityLegend.astro';
-import { slugify, type SchemaDoc } from '~/utils/schema-doc';
+import { loadOperationalGroups } from '~/utils/core-schemas';
+import { slugify, vocabularyAnchor } from '~/utils/schema-doc';
+// Alias canary: proves ~core-schemas resolves a structure definition, not the
+// legacy operational/person.json tree. The sections below are discovered.
+import domainProbe from '~core-schemas/definitions/structure/domain/v1/schema.json';
 
-// Schemas — imported directly from @dna-codes/dna-schemas (via the ~schemas
-// alias defined in astro.config.ts). Reference content stays in sync with
-// the canonical schemas; if a schema field is added or renamed, the next
-// build picks it up automatically.
-import action from '~schemas/operational/action.json';
-import attribute from '~schemas/operational/attribute.json';
-import domain from '~schemas/operational/domain.json';
-import group from '~schemas/operational/group.json';
-import membership from '~schemas/operational/membership.json';
-import operation from '~schemas/operational/operation.json';
-import person from '~schemas/operational/person.json';
-import process from '~schemas/operational/process.json';
-import relationship from '~schemas/operational/relationship.json';
-import resource from '~schemas/operational/resource.json';
-import role from '~schemas/operational/role.json';
-import rule from '~schemas/operational/rule.json';
-import task from '~schemas/operational/task.json';
-import trigger from '~schemas/operational/trigger.json';
+const probe = domainProbe as { $id?: string; title?: string };
+if (probe.$id !== 'https://dna.codes/schemas/structure/domain/v1' || probe.title !== 'Domain') {
+  throw new Error(`Core schema alias did not resolve structure/domain (got ${probe.$id ?? 'no $id'}).`);
+}
 
 const metadata = {
-  title: 'Operational Layer Reference — DNA Codes',
-  description: 'The People, Structures, and Activities that describe how your business runs.',
+  title: 'Operational DNA Reference — DNA Codes',
+  description: 'Structure and behaviour: the two vocabularies of Operational DNA.',
 };
 
-type Primitive = { schema: SchemaDoc; related?: string[] };
-type Group = { label: string; description: string; primitives: Primitive[] };
+const groups = loadOperationalGroups();
 
-const groups: Group[] = [
-  {
-    label: 'People',
-    description: 'Who the organization deals with, in what capacities.',
-    primitives: [
-      { schema: person, related: ['Role', 'Group', 'Membership'] },
-      { schema: role, related: ['Person', 'Group', 'Membership', 'Action'] },
-      { schema: group, related: ['Role', 'Domain', 'Resource'] },
-      { schema: membership, related: ['Person', 'Role', 'Group'] },
-    ],
-  },
-  {
-    label: 'Structures',
-    description: 'The objects and connections your business manages.',
-    primitives: [
-      { schema: resource, related: ['Attribute', 'Action', 'Operation', 'Relationship'] },
-      { schema: attribute, related: ['Resource', 'Person', 'Role', 'Group'] },
-      { schema: relationship, related: ['Resource', 'Person', 'Role', 'Group'] },
-      { schema: domain, related: ['Person', 'Role', 'Group', 'Resource', 'Process'] },
-    ],
-  },
-  {
-    label: 'Activities',
-    description: 'What actually happens — atomic operations, orchestrated processes, and the rules that govern them.',
-    primitives: [
-      { schema: operation, related: ['Resource', 'Action', 'Rule', 'Trigger'] },
-      { schema: action, related: ['Resource', 'Operation', 'Role'] },
-      { schema: process, related: ['Task', 'Operation', 'Trigger'] },
-      { schema: task, related: ['Role', 'Operation', 'Process'] },
-      { schema: trigger, related: ['Operation', 'Process'] },
-      { schema: rule, related: ['Operation', 'Role'] },
-    ],
-  },
-];
-
-// Sidebar anchors — flat list with group attribution so the sidebar can
-// render People / Structures / Activities sub-headings.
-const anchors = groups.flatMap((g) =>
-  g.primitives.map((p) => ({
-    id: slugify(p.schema.title ?? ''),
-    label: p.schema.title ?? '',
-    group: g.label,
+const anchors = groups.flatMap((group) =>
+  group.primitives.map((primitive) => ({
+    id: slugify(primitive.schema.title ?? primitive.name),
+    label: primitive.schema.title ?? primitive.name,
+    group: group.label,
   }))
 );
 
-const relatedHref = (name: string) => `#${slugify(name)}`;
+const relatedFor = (groupLabel: string, title: string) => {
+  const group = groups.find((candidate) => candidate.label === groupLabel);
+  return (group?.primitives ?? [])
+    .filter((primitive) => (primitive.schema.title ?? primitive.name) !== title)
+    .map((primitive) => ({
+      label: primitive.schema.title ?? primitive.name,
+      href: `#${slugify(primitive.schema.title ?? primitive.name)}`,
+    }));
+};
 ---
 
 <DocsLayout
   metadata={metadata}
   title="Operational"
-  description="The first DNA layer — Persons, Roles, Groups, Resources, and the Activities that bind them. Operational DNA captures organizational modeling: who deals with what, in what capacities."
+  description="What an organization is and what it does, written as structure and behaviour."
   anchors={anchors}
 >
   <p>
-    Operational DNA describes <strong>what an organization is and what it does</strong>, independent of UI, API, or
-    deployment technology. It is split into three categories of primitives:
+    Operational DNA describes <strong>what an organization is and what it does</strong>, independent of the product
+    built on it and the technology it runs on. It is one layer, written in two vocabularies.
   </p>
 
   <ul>
-    <li><strong>People</strong> — Person, Role, Group, Membership</li>
-    <li><strong>Structures</strong> — Resource, Attribute, Relationship, Domain</li>
-    <li><strong>Activities</strong> — Operation, Action, Process, Task, Trigger, Rule</li>
+    <li>
+      <strong>Structure</strong> (<code>structure/v1</code>): Domain, Entity, Attribute, Relationship.
+    </li>
+    <li>
+      <strong>Behaviour</strong> (<code>behaviour/v1</code>): Behaviour, Action, Operation, Workflow, Condition, Policy.
+      A behaviour document names the domain it describes and does not change that domain.
+    </li>
   </ul>
 
   <p>
-    The four noun primitives (<strong>Resource, Person, Role, Group</strong>) share a common shape: <code>name</code>,
-    optional <code>attributes[]</code>, optional <code>actions[]</code>, optional <code>parent</code>. They differ in
-    which collection of a Domain they live in and in the extra fields specific to their type.
+    Product and Technology are the layers that follow. Their reference is not published yet.
+    <a href="/docs#coming-soon">Coming soon</a> on the docs landing says what each one is.
+  </p>
+
+  <p>
+    Every section below is generated from the core schemas and the stability ledgers. A definition added under
+    <code>definitions/structure</code> or <code>definitions/behaviour</code> shows up on the next build.
   </p>
 
   <StabilityLegend />
 
   {
-    groups.map((g) => (
+    groups.map((group) => (
       <>
-        <h2 id={slugify(g.label)} class="scroll-mt-24 mt-12">
-          {g.label}
+        <h2 id={vocabularyAnchor(group.label)} class="scroll-mt-24 mt-12">
+          {group.label}
         </h2>
-        <p>{g.description}</p>
-        {g.primitives.map((p) => (
+        <p>{group.description}</p>
+        {group.primitives.map((primitive) => (
           <PrimitiveSection
-            schema={p.schema}
-            related={(p.related ?? []).map((r) => ({ label: r, href: relatedHref(r) }))}
+            schema={primitive.schema}
+            example={primitive.example}
+            exampleSource={primitive.exampleSource}
+            related={relatedFor(group.label, primitive.schema.title ?? primitive.name)}
           />
         ))}
       </>

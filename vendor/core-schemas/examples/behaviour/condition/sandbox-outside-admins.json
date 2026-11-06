@@ -1,0 +1,6 @@
+{
+  "allOf": [
+    { "subject": "context", "path": "environment", "op": "in", "value": ["sandbox"] },
+    { "not": { "subject": "actor", "path": "groups", "op": "in", "value": ["dna-admins"] } }
+  ]
+}

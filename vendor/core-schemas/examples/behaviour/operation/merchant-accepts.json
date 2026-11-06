@@ -1,0 +1,10 @@
+{
+  "id": "merchant-accepts",
+  "name": "Merchant accepts",
+  "description": "Juniper & Pine accepts the order.",
+  "action": "accept",
+  "actor": {
+    "entity": "parties/organization",
+    "instance": "juniper-and-pine"
+  }
+}

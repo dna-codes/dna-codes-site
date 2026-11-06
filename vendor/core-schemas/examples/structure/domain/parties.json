@@ -1,0 +1,42 @@
+{
+  "dna": "structure/v1",
+  "id": "parties",
+  "name": "Parties",
+  "description": "The vocabulary of organizations and people. Buyer, target, and advisor are instances of organization inside this one domain. The domain is the vocabulary they share. It is not any one of the firms.",
+  "entities": [
+    {
+      "id": "organization",
+      "name": "Organization",
+      "description": "A firm. Three instances cover the three sides of a deal.",
+      "attributes": [
+        { "name": "legalName", "type": "string", "description": "The firm's legal name." }
+      ],
+      "instances": [
+        { "id": "harbor-buyer", "name": "Harbor", "values": { "legalName": "Harbor Holdings" } },
+        { "id": "northline-target", "name": "Northline", "values": { "legalName": "Northline Inc." } },
+        { "id": "vale-advisors", "name": "Vale", "values": { "legalName": "Vale Advisors" } }
+      ]
+    },
+    {
+      "id": "person",
+      "name": "Person",
+      "description": "A person. An advisor and a shopper are instances, not kinds.",
+      "attributes": [
+        { "name": "fullName", "type": "string", "description": "The person's name." }
+      ],
+      "instances": [
+        { "id": "renee", "name": "Renee", "values": { "fullName": "Renee Cho" } }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "person-acts-for-organization",
+      "name": "acts for",
+      "description": "A person acts for an organization. The edge has no data of its own, so it stays a relationship. A role would make it an entity.",
+      "from": "person",
+      "to": "organization",
+      "cardinality": "many-to-many"
+    }
+  ]
+}

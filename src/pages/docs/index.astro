@@ -4,7 +4,7 @@ import Card from '~/components/docs/Card.astro';
 
 const metadata = {
   title: 'Documentation — DNA Codes',
-  description: 'Describe your business; generate documentation, workflows, and software.',
+  description: 'Operational DNA: structure and behaviour. Product and Technology are coming soon.',
 };
 ---
 
@@ -13,34 +13,34 @@ const metadata = {
     <div class="text-center">
       <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">DNA documentation</h1>
       <p class="mt-4 text-lg text-gray-600 dark:text-slate-400">
-        Describe your business at three layers — what it does, what gets built, how it gets built — then generate
-        documentation, workflows, and software from one source of truth.
+        Describe the business in Operational DNA: its structure, then the behaviour on that structure. Product and
+        Technology are the layers that follow. Their reference is still being written.
       </p>
     </div>
 
     <div class="mt-12 grid gap-6 sm:grid-cols-2">
       <Card
         title="Getting Started"
-        description="Install, write your first DNA document, learn the three layers."
-        contents="Quickstart · Your first DNA"
+        description="Write a structure document, then attach behaviour."
+        contents="Quickstart · structure/v1 · behaviour/v1"
         href="/docs/getting-started"
       />
       <Card
         title="Reference"
-        description="Every primitive in the language, sourced live from the schemas."
-        contents="Operational · Product · Technical"
+        description="Operational DNA, generated from the core schemas."
+        contents="Structure · Behaviour"
         href="/docs/operational"
       />
       <Card
         title="Lenses"
         description="Named graph patterns that turn one DNA model into many views."
-        contents="People · Access Control · Execution · Layer lenses"
+        contents="Operational · People · Access Control · Execution"
         href="/docs/lenses"
       />
       <Card
         title="Examples"
-        description="DNA modeled across real business domains."
-        contents="Lending · Mass Tort · Healthcare · Education · Manufacturing · Marketplace · Registry"
+        description="The reference domains the core schemas are held to."
+        contents="Checkout · Origination · Diligence · Agent registration"
         href="/docs/examples"
       />
       <Card
@@ -49,6 +49,24 @@ const metadata = {
         contents="DDD · BPMN · ArchiMate · C4 · Event Storming · TOGAF"
         href="/docs/frameworks"
       />
+    </div>
+
+    <div id="coming-soon" class="scroll-mt-24 mt-16">
+      <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Coming soon</h2>
+      <p class="mt-4 text-gray-600 dark:text-slate-400">
+        Operational DNA is the layer documented today. Two further layers are part of the model, and their reference is
+        not written yet.
+      </p>
+      <ul class="mt-4 space-y-3 text-gray-700 dark:text-slate-300">
+        <li>
+          <strong class="text-gray-900 dark:text-white">Product.</strong> What gets built from the model: the resources, APIs,
+          and interfaces a team ships.
+        </li>
+        <li>
+          <strong class="text-gray-900 dark:text-white">Technology.</strong> How that model is bound and deployed: the cells,
+          providers, and environments it runs in.
+        </li>
+      </ul>
     </div>
   </section>
 </PageLayout>

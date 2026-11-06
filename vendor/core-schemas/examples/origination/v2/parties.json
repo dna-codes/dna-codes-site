@@ -1,0 +1,43 @@
+{
+  "dna": "structure/v1",
+  "id": "parties",
+  "name": "Parties",
+  "description": "Who originates a loan. The lender, the appraiser, and the title company are instances of one organization. The borrower is an instance of person. This domain is the vocabulary, not the lender.",
+  "entities": [
+    {
+      "id": "organization",
+      "name": "Organization",
+      "description": "A firm in the origination. Three instances, one entity.",
+      "attributes": [
+        { "name": "legalName", "type": "string", "description": "The firm's legal name." }
+      ],
+      "instances": [
+        { "id": "harbor-lending", "name": "Harbor Lending", "values": { "legalName": "Harbor Lending" } },
+        { "id": "field-appraisal", "name": "Field Appraisal", "values": { "legalName": "Field Appraisal" } },
+        { "id": "clear-title", "name": "Clear Title", "values": { "legalName": "Clear Title" } }
+      ]
+    },
+    {
+      "id": "person",
+      "name": "Person",
+      "description": "A person. The borrower and a co-borrower are instances, not two kinds of person.",
+      "attributes": [
+        { "name": "fullName", "type": "string" }
+      ],
+      "instances": [
+        { "id": "sam", "name": "Sam", "values": { "fullName": "Sam Rivera" } },
+        { "id": "jo", "name": "Jo", "description": "Co-borrows with Sam on the refinance.", "values": { "fullName": "Jo Rivera" } }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "person-borrows-from-organization",
+      "name": "borrows from",
+      "description": "A person borrows from an organization. The edge has no terms of its own. Terms live on the application.",
+      "from": "person",
+      "to": "organization",
+      "cardinality": "many-to-many"
+    }
+  ]
+}
