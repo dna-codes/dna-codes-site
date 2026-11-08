@@ -138,9 +138,13 @@ sentences across three product pages before anyone opened it on a phone.
 
 ## Agent readiness
 
+Two scorers cover how an agent reads this site. CI runs both against `dist/` after `npm run build`.
+The live grades lag a deploy and are not the pull-request gate.
+
+### is-agentic.com
+
 The site is scored by [is-agentic.com](https://is-agentic.com/) (`npx is-agentic dna.codes`).
-`npm run check:agentic` checks the signals we control against the build in `dist/`, and CI runs it
-after every build:
+`npm run check:agentic` checks the signals we control against the build in `dist/`:
 
 - **Metadata on every page:** canonical, `<html lang>`, `og:image`, `og:type`. `Metadata.astro`
   drops every Open Graph tag when the default image (`src/assets/images/default.png`, generated
@@ -160,8 +164,34 @@ after every build:
   `llms.txt` to resolve when `public/agents/` exists, and no `/agents/` link when it does not.
   Nothing is published there until the platform's Phase 0a gate (stable structural definitions).
 
-Markdown content negotiation and Markdown 404 bodies need a server and can't pass on GitHub
-Pages. The API, OpenAPI and CLI checks only apply once those products exist.
+### AX Check
+
+[AX Check](https://www.ax-check.com/dna.codes) (Gauge) grades whether a coding agent can read the
+site and get started. The grade is provisional and technical only. Coding sessions are separate
+evidence and do not change it. `unassessed` means not measured.
+
+`npm run check:ax` is the pull-request gate for the signal this site owns: the homepage answers
+`Accept: text/markdown` with a Markdown representation of the same page.
+
+- The build writes `dist/index.md` from the homepage HTML (`scripts/emit-homepage-markdown.mjs`).
+  The page advertises it with `<link rel="alternate" type="text/markdown" href="/index.md">`.
+  Every content link in the HTML has to survive in that Markdown.
+- GitHub Pages serves `/index.md` as `text/markdown` and ignores `Accept` on `/`. Negotiation
+  runs at Cloudflare, which already proxies the apex. The worker in
+  `cloudflare/markdown-negotiation/` is routed only at `dna.codes/` so the rest of the site
+  never enters it. A client that prefers `text/markdown` gets `index.md` with
+  `Content-Type: text/markdown` and `Vary: Accept`. A browser, which asks for `text/html`
+  first, still gets the HTML page.
+- Deploy that worker with the `Markdown negotiation` workflow once `CLOUDFLARE_API_TOKEN` and
+  `CLOUDFLARE_ACCOUNT_ID` are set on the repository. The token needs Workers Scripts edit and
+  Workers Routes edit on the zone. The worker reads `/index.md` from GitHub Pages and, when
+  that file is not on the origin yet, falls through to the HTML page. The live check stays
+  red until both the worker and a site deploy that contains `index.md` are out.
+- Confirm production with `curl -sI -H "Accept: text/markdown" https://dna.codes/`. The response
+  should carry `content-type: text/markdown` and `vary: Accept`.
+
+Markdown 404 bodies still need a server behavior GitHub Pages does not offer. The API, OpenAPI
+and CLI checks only apply once those products exist.
 
 ## Verification Checklist
 
@@ -169,5 +199,6 @@ After changes, always verify:
 
 1. `npm run build` succeeds
 2. `npm run check` passes (astro check + ESLint + Prettier)
-3. `npm run check:agentic` passes (agent-readiness signals in `dist/`)
-4. Visual check in browser: homepage, blog, dark mode, mobile menu
+3. `npm run check:agentic` passes (is-agentic.com signals in `dist/`)
+4. `npm run check:ax` passes (homepage Markdown negotiation)
+5. Visual check in browser: homepage, blog, dark mode, mobile menu

@@ -10,9 +10,10 @@
 //   llms.txt                exists, llmstxt.org shape, a when-to-use section, links resolve
 //   trust anchor pages      /about, /contact and /privacy with at least 500 characters of copy
 //
-// The checks that need a server (Markdown content negotiation, Markdown 404 bodies) or an API
-// the site does not have are out of reach for a static site; `npx is-agentic dna.codes` shows
-// the full live report.
+// Homepage Markdown negotiation is the AX Check signal, gated separately by `npm run check:ax`
+// (the sibling file is static; Accept is answered by the Cloudflare worker). Markdown 404
+// bodies still need a server GitHub Pages does not offer. `npx is-agentic dna.codes` is the
+// live report for the signals below.
 
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname, resolve, relative, sep } from 'node:path';

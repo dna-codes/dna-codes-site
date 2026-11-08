@@ -20,6 +20,7 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
+  <link slot="head" rel="alternate" type="text/markdown" href="/index.md" title="Markdown version" />
   <Hero
     tagline="AI-native operations"
     actions={[
@@ -37,12 +38,12 @@ const metadata = {
     />
 
     <Fragment slot="title">
-      Your <span class="text-accent">living</span><br />
+      Your <span class="text-accent">living</span>&#32;<br />
       operating model
     </Fragment>
 
     <Fragment slot="subtitle">
-      The future of work is humans + agents.<br />
+      The future of work is humans + agents.&#32;<br />
       DNA is the structure and engine behind it.
     </Fragment>
   </Hero>
