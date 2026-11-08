@@ -235,7 +235,16 @@ export function homepageMarkdown(html) {
   const parts = [body.join('\n\n')];
   if (extras.length) parts.push(`## Also on this site\n\n${extras.join('\n')}`);
   parts.push(
-    `## For agents\n\n- [llms.txt](${ORIGIN}/llms.txt): index of docs, products, and machine-readable genomes.`
+    [
+      `## For agents`,
+      ``,
+      `- [llms.txt](${ORIGIN}/llms.txt): index of docs, products, genomes, and the pages below.`,
+      `- [SOP software](${ORIGIN}/sop-software): procedures that stay tied to the work, including a small team that has outgrown a wiki.`,
+      `- [Target operating model](${ORIGIN}/operating-model): roles, processes, rules, and systems, plus an ungated template.`,
+      `- [Business process software](${ORIGIN}/business-process-software): where a BPM suite is the right tool. DNA is not a BPM engine.`,
+      `- [Business process management](${ORIGIN}/blog/business-process-management): what a process is, with worked examples.`,
+      `- [Business process modeling notation](${ORIGIN}/blog/business-process-modeling): the same process drawn in BPMN and written as data.`,
+    ].join('\n')
   );
 
   const footerNote = clean(document.querySelector('footer .mr-4')?.textContent || '');
