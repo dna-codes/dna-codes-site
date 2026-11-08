@@ -10,10 +10,11 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "npm run check:genomes && astro build",
+    "build": "npm run check:genomes && astro build && node scripts/emit-homepage-markdown.mjs",
     "check:genomes": "node scripts/validate-genomes.mjs",
     "check:demo": "node scripts/demo-smoke.mjs",
     "check:agentic": "node scripts/agentic-check.mjs",
+    "check:ax": "node scripts/ax-check.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "check": "npm run check:astro && npm run check:eslint && npm run check:prettier",
