@@ -1,0 +1,141 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import { coreSchemasRoot, latestCorpusVersion, loadCorpusExcerpt } from '~/utils/core-schemas';
+import { slugify } from '~/utils/schema-doc';
+
+const metadata = {
+  title: 'Examples — DNA Codes',
+  description: 'Reference domains for Operational DNA: checkout, origination, diligence, and agent registration.',
+};
+
+type Domain = {
+  id: string;
+  title: string;
+  description: string;
+  demonstrates: string[];
+  structureFile: string;
+  behaviourFile: string;
+};
+
+const domains: Domain[] = [
+  {
+    id: 'checkout',
+    title: 'Checkout',
+    description:
+      'A shop sells through a cart and an order. Commerce, fulfilment, payments, and parties are separate vocabularies. From v3 the same versions carry behaviour: checkout, payment, shipment, and the policies that decide them.',
+    demonstrates: [
+      'structure/v1 domains that use each other (commerce uses parties)',
+      'A cart line as an entity, because the connection carries quantity and price',
+      'behaviour/v1 actions with transitions, and policies over them',
+    ],
+    structureFile: 'commerce.json',
+    behaviourFile: 'commerce.behaviour.json',
+  },
+  {
+    id: 'origination',
+    title: 'Origination',
+    description:
+      'A lender takes an application through credit, appraisal, and closing to a funded loan. Later versions add refinance, a payoff, and the behaviour that clears conditions.',
+    demonstrates: [
+      'An application entity whose state attribute behaviour moves',
+      'A relationship from a loan back to a later application',
+      'A workflow from received to funded, with policies on credit and approval',
+    ],
+    structureFile: 'origination.json',
+    behaviourFile: 'origination.behaviour.json',
+  },
+  {
+    id: 'diligence',
+    title: 'Diligence',
+    description:
+      'A buyer, a target, and their advisors share a data room. Buyer, target, and advisor are instances of one organization entity, not three domains. Later versions add delegation and the review that follows a finding.',
+    demonstrates: [
+      'Parties as instances of organization, named by a domain that uses parties',
+      'A finding and a delegation as entities that carry their own facts',
+      "Policies that allow an advisor to act only under the target's delegation",
+    ],
+    structureFile: 'diligence.json',
+    behaviourFile: 'diligence.behaviour.json',
+  },
+  {
+    id: 'agent-registration',
+    title: 'Agent registration',
+    description:
+      "The agent host's own model. Platform holds the operator and the people who administer it. Agent registration holds the challenge, the agent, the credential, and the documents the agent authors. Behaviour is there from the first version, because the host's tools are derived from those actions.",
+    demonstrates: [
+      "A registration whose states are the organization's own (sandbox, production, expired)",
+      'Authoring actions whose input and output fields are the tool contract',
+      "Policies that state the host's limits over context",
+    ],
+    structureFile: 'agent-registration.json',
+    behaviourFile: 'agent-registration.behaviour.json',
+  },
+];
+
+const root = coreSchemasRoot();
+const examples = domains.map((domain) => {
+  const version = latestCorpusVersion(root, domain.id);
+  return {
+    ...domain,
+    version,
+    excerpts: [
+      loadCorpusExcerpt(root, `examples/${domain.id}/${version}/${domain.structureFile}`),
+      loadCorpusExcerpt(root, `examples/${domain.id}/${version}/${domain.behaviourFile}`),
+    ],
+  };
+});
+
+const anchors = examples.map((example) => ({ id: slugify(example.id), label: example.title }));
+---
+
+<DocsLayout
+  metadata={metadata}
+  title="Examples"
+  description="Four reference domains. Each version is a complete set of structure documents, and from the version that introduces behaviour, a behaviour document beside them."
+  anchors={anchors}
+>
+  <p>
+    Checkout, origination, diligence, and agent registration are the corpus the core schemas are held to. A version
+    folder is the full set of documents for that version, not a diff. The excerpts below are taken from the latest
+    version of each domain at build time.
+  </p>
+
+  {
+    examples.map((example) => (
+      <section id={slugify(example.id)} class="scroll-mt-24 mt-12">
+        <h2>
+          <a href={`#${slugify(example.id)}`} class="no-underline hover:underline">
+            {example.title}
+          </a>
+        </h2>
+
+        <p>{example.description}</p>
+
+        <p class="text-sm text-gray-500 dark:text-slate-500">
+          Latest in this build:{' '}
+          <code>
+            {example.id}/{example.version}
+          </code>
+        </p>
+
+        <p class="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-slate-400">Demonstrates</p>
+        <ul>
+          {example.demonstrates.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+
+        {example.excerpts.map((excerpt) => (
+          <>
+            <p class="text-xs text-gray-500 dark:text-slate-500">
+              From <code>{excerpt.source}</code>
+            </p>
+            <pre>
+              <code class="language-json">{excerpt.json}</code>
+            </pre>
+          </>
+        ))}
+      </section>
+    ))
+  }
+</DocsLayout>

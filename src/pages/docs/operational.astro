@@ -1,0 +1,93 @@
+---
+import DocsLayout from '~/layouts/DocsLayout.astro';
+import PrimitiveSection from '~/components/docs/PrimitiveSection.astro';
+import StabilityLegend from '~/components/docs/StabilityLegend.astro';
+import { loadOperationalGroups } from '~/utils/core-schemas';
+import { slugify, vocabularyAnchor } from '~/utils/schema-doc';
+// Alias canary: proves ~core-schemas resolves a structure definition, not the
+// legacy operational/person.json tree. The sections below are discovered.
+import domainProbe from '~core-schemas/definitions/structure/domain/v1/schema.json';
+
+const probe = domainProbe as { $id?: string; title?: string };
+if (probe.$id !== 'https://dna.codes/schemas/structure/domain/v1' || probe.title !== 'Domain') {
+  throw new Error(`Core schema alias did not resolve structure/domain (got ${probe.$id ?? 'no $id'}).`);
+}
+
+const metadata = {
+  title: 'Operational DNA Reference — DNA Codes',
+  description: 'Structure and behaviour: the two vocabularies of Operational DNA.',
+};
+
+const groups = loadOperationalGroups();
+
+const anchors = groups.flatMap((group) =>
+  group.primitives.map((primitive) => ({
+    id: slugify(primitive.schema.title ?? primitive.name),
+    label: primitive.schema.title ?? primitive.name,
+    group: group.label,
+  }))
+);
+
+const relatedFor = (groupLabel: string, title: string) => {
+  const group = groups.find((candidate) => candidate.label === groupLabel);
+  return (group?.primitives ?? [])
+    .filter((primitive) => (primitive.schema.title ?? primitive.name) !== title)
+    .map((primitive) => ({
+      label: primitive.schema.title ?? primitive.name,
+      href: `#${slugify(primitive.schema.title ?? primitive.name)}`,
+    }));
+};
+---
+
+<DocsLayout
+  metadata={metadata}
+  title="Operational"
+  description="What an organization is and what it does, written as structure and behaviour."
+  anchors={anchors}
+>
+  <p>
+    Operational DNA describes <strong>what an organization is and what it does</strong>, independent of the product
+    built on it and the technology it runs on. It is one layer, written in two vocabularies.
+  </p>
+
+  <ul>
+    <li>
+      <strong>Structure</strong> (<code>structure/v1</code>): Domain, Entity, Attribute, Relationship.
+    </li>
+    <li>
+      <strong>Behaviour</strong> (<code>behaviour/v1</code>): Behaviour, Action, Operation, Workflow, Condition, Policy.
+      A behaviour document names the domain it describes and does not change that domain.
+    </li>
+  </ul>
+
+  <p>
+    Product and Technology are the layers that follow. Their reference is not published yet.
+    <a href="/docs#coming-soon">Coming soon</a> on the docs landing says what each one is.
+  </p>
+
+  <p>
+    Every section below is generated from the core schemas and the stability ledgers. A definition added under
+    <code>definitions/structure</code> or <code>definitions/behaviour</code> shows up on the next build.
+  </p>
+
+  <StabilityLegend />
+
+  {
+    groups.map((group) => (
+      <>
+        <h2 id={vocabularyAnchor(group.label)} class="scroll-mt-24 mt-12">
+          {group.label}
+        </h2>
+        <p>{group.description}</p>
+        {group.primitives.map((primitive) => (
+          <PrimitiveSection
+            schema={primitive.schema}
+            example={primitive.example}
+            exampleSource={primitive.exampleSource}
+            related={relatedFor(group.label, primitive.schema.title ?? primitive.name)}
+          />
+        ))}
+      </>
+    ))
+  }
+</DocsLayout>

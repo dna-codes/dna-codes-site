@@ -1,0 +1,133 @@
+{
+  "name": "brightbox-commerce",
+  "description": "An e-commerce operations team managing order fulfillment from placement through delivery.",
+  "resources": [
+    { "id": "company:brightbox", "type": "company", "name": "BrightBox Commerce" },
+
+    {
+      "id": "position:ops-director",
+      "type": "position",
+      "name": "Operations Director",
+      "description": "Owns end-to-end fulfillment performance, carrier relationships, and SLA commitments."
+    },
+    {
+      "id": "position:order-manager",
+      "type": "position",
+      "name": "Order Manager",
+      "description": "Processes incoming orders, validates payments, and coordinates with the warehouse on priority queues."
+    },
+    {
+      "id": "position:warehouse-lead",
+      "type": "position",
+      "name": "Warehouse Lead",
+      "description": "Directs pick-and-pack operations, manages inventory accuracy, and oversees outbound shipments."
+    },
+    {
+      "id": "position:support-lead",
+      "type": "position",
+      "name": "Customer Support Lead",
+      "description": "Handles delivery inquiries, manages returns, and resolves post-shipment exceptions."
+    },
+
+    { "id": "person:alex", "type": "person", "name": "Alex" },
+    { "id": "person:sam", "type": "person", "name": "Sam" },
+    { "id": "person:kai", "type": "person", "name": "Kai" },
+    { "id": "person:zoe", "type": "person", "name": "Zoe" },
+
+    {
+      "id": "process:order-fulfillment",
+      "type": "process",
+      "name": "Order Fulfillment",
+      "description": "Workflow from order placement through final delivery confirmation."
+    },
+    {
+      "id": "step:receive-order",
+      "type": "step",
+      "name": "Receive Order",
+      "description": "Ingest the order, validate line items, and confirm inventory availability."
+    },
+    {
+      "id": "step:pick-pack",
+      "type": "step",
+      "name": "Pick & Pack",
+      "description": "Retrieve items from warehouse locations, verify quantities, and package for shipment."
+    },
+    {
+      "id": "step:ship",
+      "type": "step",
+      "name": "Ship",
+      "description": "Generate shipping labels, hand off to the carrier, and update order status with tracking."
+    },
+    {
+      "id": "step:confirm-delivery",
+      "type": "step",
+      "name": "Confirm Delivery",
+      "description": "Verify carrier confirmation, close the order, and trigger the post-purchase follow-up."
+    },
+
+    {
+      "id": "step:payment-verify",
+      "type": "step",
+      "name": "Payment Verification",
+      "description": "Confirm payment authorization and flag held or declined transactions for review."
+    },
+    {
+      "id": "step:inventory-mgmt",
+      "type": "step",
+      "name": "Inventory Management",
+      "description": "Maintain real-time stock counts, trigger replenishment, and audit cycle counts."
+    },
+    {
+      "id": "step:returns",
+      "type": "step",
+      "name": "Returns Processing",
+      "description": "Receive returned items, inspect condition, issue refunds or exchanges, and restock."
+    },
+    {
+      "id": "step:sla-monitoring",
+      "type": "step",
+      "name": "SLA Monitoring",
+      "description": "Track fulfillment cycle times against committed service levels and escalate exceptions."
+    }
+  ],
+  "relationships": [
+    { "id": "rel:od-co", "type": "belongs_to", "from": "position:ops-director", "to": "company:brightbox" },
+    { "id": "rel:om-co", "type": "belongs_to", "from": "position:order-manager", "to": "company:brightbox" },
+    { "id": "rel:wl-co", "type": "belongs_to", "from": "position:warehouse-lead", "to": "company:brightbox" },
+    { "id": "rel:sl-co", "type": "belongs_to", "from": "position:support-lead", "to": "company:brightbox" },
+
+    { "id": "rel:om-od", "type": "reports_to", "from": "position:order-manager", "to": "position:ops-director" },
+    { "id": "rel:wl-od", "type": "reports_to", "from": "position:warehouse-lead", "to": "position:ops-director" },
+    { "id": "rel:sl-od", "type": "reports_to", "from": "position:support-lead", "to": "position:ops-director" },
+
+    { "id": "rel:alex-od", "type": "fills", "from": "person:alex", "to": "position:ops-director" },
+    { "id": "rel:sam-om", "type": "fills", "from": "person:sam", "to": "position:order-manager" },
+    { "id": "rel:kai-wl", "type": "fills", "from": "person:kai", "to": "position:warehouse-lead" },
+    { "id": "rel:zoe-sl", "type": "fills", "from": "person:zoe", "to": "position:support-lead" },
+
+    { "id": "rel:proc-co", "type": "belongs_to", "from": "process:order-fulfillment", "to": "company:brightbox" },
+    { "id": "rel:receive-proc", "type": "belongs_to", "from": "step:receive-order", "to": "process:order-fulfillment" },
+    { "id": "rel:pack-proc", "type": "belongs_to", "from": "step:pick-pack", "to": "process:order-fulfillment" },
+    { "id": "rel:ship-proc", "type": "belongs_to", "from": "step:ship", "to": "process:order-fulfillment" },
+    {
+      "id": "rel:deliver-proc",
+      "type": "belongs_to",
+      "from": "step:confirm-delivery",
+      "to": "process:order-fulfillment"
+    },
+
+    { "id": "rel:receive-pack", "type": "next_step", "from": "step:receive-order", "to": "step:pick-pack" },
+    { "id": "rel:pack-ship", "type": "next_step", "from": "step:pick-pack", "to": "step:ship" },
+    { "id": "rel:ship-deliver", "type": "next_step", "from": "step:ship", "to": "step:confirm-delivery" },
+
+    { "id": "rel:receive-om", "type": "assigned_to", "from": "step:receive-order", "to": "position:order-manager" },
+    { "id": "rel:pack-wl", "type": "assigned_to", "from": "step:pick-pack", "to": "position:warehouse-lead" },
+    { "id": "rel:ship-wl", "type": "assigned_to", "from": "step:ship", "to": "position:warehouse-lead" },
+    { "id": "rel:deliver-sl", "type": "assigned_to", "from": "step:confirm-delivery", "to": "position:support-lead" },
+
+    { "id": "rel:payment-om", "type": "assigned_to", "from": "step:payment-verify", "to": "position:order-manager" },
+    { "id": "rel:inventory-wl", "type": "assigned_to", "from": "step:inventory-mgmt", "to": "position:warehouse-lead" },
+    { "id": "rel:returns-sl", "type": "assigned_to", "from": "step:returns", "to": "position:support-lead" },
+    { "id": "rel:sla-od", "type": "assigned_to", "from": "step:sla-monitoring", "to": "position:ops-director" }
+  ]
+}

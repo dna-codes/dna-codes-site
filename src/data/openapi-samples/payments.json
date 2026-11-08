@@ -1,0 +1,148 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Northwind Payments API",
+    "version": "2026-04-01"
+  },
+  "paths": {
+    "/v1/customers": {
+      "get": {
+        "operationId": "listCustomers",
+        "summary": "List customers"
+      },
+      "post": {
+        "operationId": "createCustomer",
+        "summary": "Create a customer"
+      }
+    },
+    "/v1/customers/{id}": {
+      "get": {
+        "operationId": "getCustomer",
+        "summary": "Retrieve a customer"
+      },
+      "patch": {
+        "operationId": "updateCustomer",
+        "summary": "Update a customer"
+      },
+      "delete": {
+        "operationId": "deleteCustomer",
+        "summary": "Delete a customer"
+      }
+    },
+    "/v1/customers/{id}/payment-methods": {
+      "get": {
+        "operationId": "listPaymentMethods",
+        "summary": "List a customer’s payment methods"
+      },
+      "post": {
+        "operationId": "addPaymentMethod",
+        "summary": "Attach a payment method"
+      }
+    },
+    "/v1/payments": {
+      "get": {
+        "operationId": "listPayments",
+        "summary": "List payments"
+      },
+      "post": {
+        "operationId": "createPayment",
+        "summary": "Create a payment"
+      }
+    },
+    "/v1/payments/{id}": {
+      "get": {
+        "operationId": "getPayment",
+        "summary": "Retrieve a payment"
+      }
+    },
+    "/v1/payments/{id}/capture": {
+      "post": {
+        "operationId": "capturePayment",
+        "summary": "Capture an authorised payment"
+      }
+    },
+    "/v1/payments/{id}/refund": {
+      "post": {
+        "operationId": "refundPayment",
+        "summary": "Refund a payment"
+      }
+    },
+    "/v1/payments/{id}/void": {
+      "post": {
+        "operationId": "voidPayment",
+        "summary": "Void a payment"
+      }
+    },
+    "/v1/invoices": {
+      "get": {
+        "operationId": "listInvoices",
+        "summary": "List invoices"
+      },
+      "post": {
+        "operationId": "createInvoice",
+        "summary": "Draft an invoice"
+      }
+    },
+    "/v1/invoices/{id}": {
+      "get": {
+        "operationId": "getInvoice",
+        "summary": "Retrieve an invoice"
+      },
+      "patch": {
+        "operationId": "updateInvoice",
+        "summary": "Update a draft invoice"
+      }
+    },
+    "/v1/invoices/{id}/pay": {
+      "post": {
+        "operationId": "payInvoice",
+        "summary": "Pay an invoice"
+      }
+    },
+    "/v1/invoices/{id}/send": {
+      "post": {
+        "operationId": "sendInvoice",
+        "summary": "Email an invoice"
+      }
+    },
+    "/v1/payouts": {
+      "get": {
+        "operationId": "listPayouts",
+        "summary": "List payouts"
+      },
+      "post": {
+        "operationId": "createPayout",
+        "summary": "Create a payout"
+      }
+    },
+    "/v1/payouts/{id}": {
+      "get": {
+        "operationId": "getPayout",
+        "summary": "Retrieve a payout"
+      }
+    },
+    "/v1/disputes": {
+      "get": {
+        "operationId": "listDisputes",
+        "summary": "List disputes"
+      }
+    },
+    "/v1/disputes/{id}": {
+      "get": {
+        "operationId": "getDispute",
+        "summary": "Retrieve a dispute"
+      }
+    },
+    "/v1/disputes/{id}/evidence": {
+      "post": {
+        "operationId": "submitEvidence",
+        "summary": "Submit dispute evidence"
+      }
+    },
+    "/v1/reports/latest": {
+      "get": {
+        "summary": "The most recent settlement report"
+      }
+    }
+  }
+}

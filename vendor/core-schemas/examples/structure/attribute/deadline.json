@@ -1,0 +1,5 @@
+{
+  "name": "due",
+  "type": "datetime",
+  "description": "A deadline is a datetime."
+}

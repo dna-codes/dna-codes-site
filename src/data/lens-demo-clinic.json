@@ -1,0 +1,152 @@
+{
+  "name": "riverside-clinic",
+  "description": "A primary care clinic from patient check-in through treatment and checkout.",
+  "resources": [
+    { "id": "company:clinic", "type": "company", "name": "Riverside Clinic" },
+
+    {
+      "id": "position:practice-manager",
+      "type": "position",
+      "name": "Practice Manager",
+      "description": "Oversees daily clinic operations, staff scheduling, compliance, and billing performance."
+    },
+    {
+      "id": "position:physician",
+      "type": "position",
+      "name": "Physician",
+      "description": "Diagnoses and treats patients, reviews medical histories, and prescribes treatments."
+    },
+    {
+      "id": "position:nurse",
+      "type": "position",
+      "name": "Nurse",
+      "description": "Triages patients, records vitals, and coordinates care between physician and front desk."
+    },
+    {
+      "id": "position:front-desk",
+      "type": "position",
+      "name": "Front Desk Coordinator",
+      "description": "Manages scheduling, check-in, insurance verification, and patient checkout."
+    },
+
+    { "id": "person:patricia", "type": "person", "name": "Patricia" },
+    { "id": "person:dr-sarah", "type": "person", "name": "Dr. Sarah" },
+    { "id": "person:marcus", "type": "person", "name": "Marcus" },
+    { "id": "person:linda", "type": "person", "name": "Linda" },
+
+    {
+      "id": "process:patient-visit",
+      "type": "process",
+      "name": "Patient Visit",
+      "description": "End-to-end workflow from patient arrival through diagnosis and checkout."
+    },
+    {
+      "id": "step:check-in",
+      "type": "step",
+      "name": "Check In",
+      "description": "Verify patient identity, confirm insurance, and collect co-pay at the front desk."
+    },
+    {
+      "id": "step:triage",
+      "type": "step",
+      "name": "Triage",
+      "description": "Record vitals, note chief complaint, and assess urgency before the physician encounter."
+    },
+    {
+      "id": "step:examination",
+      "type": "step",
+      "name": "Examination",
+      "description": "Conduct the clinical assessment, review history, and form a working diagnosis."
+    },
+    {
+      "id": "step:checkout",
+      "type": "step",
+      "name": "Checkout",
+      "description": "Collect payment, schedule follow-ups, and provide after-visit instructions."
+    },
+
+    {
+      "id": "step:schedule-appt",
+      "type": "step",
+      "name": "Schedule Appointments",
+      "description": "Manage the appointment calendar and send confirmation reminders."
+    },
+    {
+      "id": "step:insurance-verify",
+      "type": "step",
+      "name": "Insurance Verification",
+      "description": "Confirm active coverage and benefits prior to the visit."
+    },
+    {
+      "id": "step:medical-history",
+      "type": "step",
+      "name": "Medical History Review",
+      "description": "Pull and review prior records to inform the current encounter."
+    },
+    {
+      "id": "step:prescription",
+      "type": "step",
+      "name": "Write Prescription",
+      "description": "Issue prescriptions and log medication changes in the patient record."
+    },
+    {
+      "id": "step:staff-scheduling",
+      "type": "step",
+      "name": "Staff Scheduling",
+      "description": "Set weekly shifts and ensure coverage for all clinic hours."
+    },
+    {
+      "id": "step:billing-oversight",
+      "type": "step",
+      "name": "Billing Oversight",
+      "description": "Review claim submissions, denials, and collections to maintain revenue cycle health."
+    }
+  ],
+  "relationships": [
+    { "id": "rel:pm-co", "type": "belongs_to", "from": "position:practice-manager", "to": "company:clinic" },
+    { "id": "rel:ph-co", "type": "belongs_to", "from": "position:physician", "to": "company:clinic" },
+    { "id": "rel:nu-co", "type": "belongs_to", "from": "position:nurse", "to": "company:clinic" },
+    { "id": "rel:fd-co", "type": "belongs_to", "from": "position:front-desk", "to": "company:clinic" },
+
+    { "id": "rel:ph-pm", "type": "reports_to", "from": "position:physician", "to": "position:practice-manager" },
+    { "id": "rel:nu-pm", "type": "reports_to", "from": "position:nurse", "to": "position:practice-manager" },
+    { "id": "rel:fd-pm", "type": "reports_to", "from": "position:front-desk", "to": "position:practice-manager" },
+
+    { "id": "rel:patricia-pm", "type": "fills", "from": "person:patricia", "to": "position:practice-manager" },
+    { "id": "rel:sarah-ph", "type": "fills", "from": "person:dr-sarah", "to": "position:physician" },
+    { "id": "rel:marcus-nu", "type": "fills", "from": "person:marcus", "to": "position:nurse" },
+    { "id": "rel:linda-fd", "type": "fills", "from": "person:linda", "to": "position:front-desk" },
+
+    { "id": "rel:proc-co", "type": "belongs_to", "from": "process:patient-visit", "to": "company:clinic" },
+    { "id": "rel:checkin-proc", "type": "belongs_to", "from": "step:check-in", "to": "process:patient-visit" },
+    { "id": "rel:triage-proc", "type": "belongs_to", "from": "step:triage", "to": "process:patient-visit" },
+    { "id": "rel:exam-proc", "type": "belongs_to", "from": "step:examination", "to": "process:patient-visit" },
+    { "id": "rel:checkout-proc", "type": "belongs_to", "from": "step:checkout", "to": "process:patient-visit" },
+
+    { "id": "rel:checkin-triage", "type": "next_step", "from": "step:check-in", "to": "step:triage" },
+    { "id": "rel:triage-exam", "type": "next_step", "from": "step:triage", "to": "step:examination" },
+    { "id": "rel:exam-checkout", "type": "next_step", "from": "step:examination", "to": "step:checkout" },
+
+    { "id": "rel:checkin-fd", "type": "assigned_to", "from": "step:check-in", "to": "position:front-desk" },
+    { "id": "rel:triage-nu", "type": "assigned_to", "from": "step:triage", "to": "position:nurse" },
+    { "id": "rel:exam-ph", "type": "assigned_to", "from": "step:examination", "to": "position:physician" },
+    { "id": "rel:checkout-fd", "type": "assigned_to", "from": "step:checkout", "to": "position:front-desk" },
+
+    { "id": "rel:schedule-fd", "type": "assigned_to", "from": "step:schedule-appt", "to": "position:front-desk" },
+    { "id": "rel:insurance-fd", "type": "assigned_to", "from": "step:insurance-verify", "to": "position:front-desk" },
+    { "id": "rel:history-nu", "type": "assigned_to", "from": "step:medical-history", "to": "position:nurse" },
+    { "id": "rel:prescription-ph", "type": "assigned_to", "from": "step:prescription", "to": "position:physician" },
+    {
+      "id": "rel:staffsched-pm",
+      "type": "assigned_to",
+      "from": "step:staff-scheduling",
+      "to": "position:practice-manager"
+    },
+    {
+      "id": "rel:billing-pm",
+      "type": "assigned_to",
+      "from": "step:billing-oversight",
+      "to": "position:practice-manager"
+    }
+  ]
+}

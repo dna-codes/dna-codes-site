@@ -1,0 +1,108 @@
+---
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import { Icon } from 'astro-icon/components';
+import { rowStyle, pillStyle } from '~/utils/openapi-ui';
+
+// §2 — the bind. Visual left, prose right.
+//
+// The visual is a Swagger operation block, expanded, with its real sections greyed and one more
+// section added. That is the whole integration argument in a picture: DNA is not chrome painted over
+// Swagger, it is another section of the operation, sitting where Parameters and Responses sit. It is
+// also the shape the source conversation landed on after rejecting a literal overlay.
+//
+// The heading names the picture: **Parameters. Responses. Authority.** An earlier one read "Another
+// section of the operation", which only parses for somebody who already knows that a Swagger
+// operation *has* sections — insider phrasing doing the reader's work for them and failing. Borrowing
+// two words the reader already owns and putting the new one third makes the claim without a
+// preamble, and the accent lands on `Authority` because teal is the governed colour everywhere else
+// on this page.
+//
+// x-dna carries `operation` and `target` and nothing else. Authorization, scope, audit and flags are
+// facts the model holds — a second copy in a spec file is a copy that can disagree, under a
+// developer's commit rather than a ratifier's decision. Design §2 has the argument.
+//
+// The four reconciliation outcomes — created, corroborated, disagreed, unresolved — were listed here
+// and are not any more. They were most of the section's height and all of its detail, and a reader
+// beside a picture does not need the taxonomy; they need to know that nothing moves on its own. One
+// line carries that, and the outcomes still live in design.md §2 where somebody evaluating the
+// mechanism will look for them.
+
+const dna = [
+  { label: 'Operation', value: 'Payment.Create' },
+  { label: 'Resource', value: 'Payment' },
+  { label: 'Required', value: 'Finance.Admin' },
+  { label: 'Scope', value: 'Organization' },
+  { label: 'Feature', value: 'payments_v2' },
+  { label: 'Audit', value: 'Required' },
+];
+---
+
+<WidgetWrapper containerClass="max-w-6xl mx-auto">
+  <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+    <div class="space-y-3">
+      <!-- A Swagger operation, expanded. Familiar chrome, one new section. -->
+      <div class="rounded-lg overflow-hidden" style={rowStyle()}>
+        <div class="flex items-center gap-3 px-3 py-2.5">
+          <span
+            class="rounded px-2 py-1 text-[12px] font-bold text-white w-16 text-center flex-shrink-0"
+            style={pillStyle()}
+          >
+            POST
+          </span>
+          <span class="font-mono text-[15px] text-white">/v1/payments</span>
+          <span class="text-[13px] text-slate-300 truncate">Create a payment</span>
+          <Icon name="tabler:chevron-up" class="ml-auto w-4 h-4 text-slate-400 flex-shrink-0" />
+        </div>
+
+        <div class="bg-slate-950/60 px-3 py-3 space-y-2.5">
+          <p class="text-[13px] font-semibold text-slate-400">Parameters</p>
+          <p class="text-[13px] font-semibold text-slate-400">Request body</p>
+          <p class="text-[13px] font-semibold text-slate-400">Responses</p>
+
+          <div class="rounded border border-primary/40 bg-primary/5 p-2.5">
+            <p class="text-[13px] font-semibold text-primary mb-2">DNA</p>
+            <dl class="space-y-1">
+              {
+                dna.map((d) => (
+                  <div class="flex gap-3">
+                    <dt class="text-[13px] text-slate-400 w-20 flex-shrink-0">{d.label}</dt>
+                    <dd class="text-[13px] font-mono text-slate-200">{d.value}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-lg border border-white/10 bg-slate-900 p-3">
+        <p class="text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">Where the convention breaks</p>
+        <pre
+          class="text-[13px] font-mono text-slate-200 leading-relaxed overflow-x-auto"><code>/orders.fulfill:
+  post:
+    <span class="text-primary">x-dna:</span>
+      <span class="text-primary">operation:</span> order.fulfill
+      <span class="text-primary">target:</span> $.body.orderId</code></pre>
+      </div>
+    </div>
+
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">The bind</p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-5">
+        Parameters. Responses.<br /><span class="text-accent">Authority</span>.
+      </h2>
+      <p class="text-muted leading-relaxed mb-4">
+        A third section on an endpoint you already document — not chrome painted over Swagger. It is read from the
+        document you already publish: across nine large public APIs,
+        <strong class="text-white">88% of operations resolve from the path alone</strong>.
+      </p>
+      <p class="text-muted leading-relaxed mb-6">
+        The rest take five lines of <code class="text-white">x-dna</code>, which Swagger ignores by design.
+        <code class="text-white">operation</code> names the act, <code class="text-white">target</code> names what it acts
+        on. Your model knows the rest.
+      </p>
+
+      <p class="text-base text-slate-300 italic">Nothing binds itself. A machine may observe; a person decides.</p>
+    </div>
+  </div>
+</WidgetWrapper>

@@ -1,0 +1,142 @@
+{
+  "shape": {
+    "refusal": {
+      "code": "string",
+      "message": "string",
+      "next": "string",
+      "options": "optional next-step array"
+    }
+  },
+  "codes": [
+    {
+      "code": "unauthenticated",
+      "status": 401,
+      "next": "Follow resource_metadata in the WWW-Authenticate header to the authorization server, get a token for this resource, and retry with an Authorization: Bearer header."
+    },
+    {
+      "code": "invalid_token",
+      "status": 401,
+      "next": "Get a new token whose audience is exactly this endpoint, and retry. The error_description in WWW-Authenticate says why this one was refused."
+    },
+    {
+      "code": "wrong_organization",
+      "status": 403,
+      "next": "Call the endpoint of the organization your token names, or get a token for this organization."
+    },
+    {
+      "code": "insufficient_scope",
+      "status": 403,
+      "next": "Get a token carrying the scope this act requires, and retry."
+    },
+    {
+      "code": "not_found",
+      "status": 404,
+      "next": "Take endpoint URLs from the discovery document under https://dna.codes/agents/ rather than constructing them."
+    },
+    {
+      "code": "method_not_allowed",
+      "status": 405,
+      "next": "Use a method named in the Allow header."
+    },
+    {
+      "code": "invalid_request",
+      "status": 400,
+      "next": "Correct the request as the message describes, and retry."
+    },
+    {
+      "code": "unsupported_protocol_version",
+      "status": 400,
+      "next": "Initialize again and use the protocol version the server answers with."
+    },
+    {
+      "code": "payload_too_large",
+      "status": 413,
+      "next": "Send a smaller document, split by domain."
+    },
+    {
+      "code": "unknown_tool",
+      "status": 400,
+      "next": "Call tools/list and use a tool it names."
+    },
+    {
+      "code": "internal_error",
+      "status": 500,
+      "next": "Retry later. Nothing was changed by a request refused this way."
+    },
+    {
+      "code": "invalid_dna",
+      "status": 422,
+      "next": "Fix the document at each path in details.issues, check it with validate, and apply again. Nothing was written."
+    },
+    {
+      "code": "document_not_found",
+      "status": 404,
+      "next": "Call list to see this organization's domains and their latest versions, and ask for one that exists."
+    },
+    {
+      "code": "version_conflict",
+      "status": 409,
+      "next": "Another act changed the domain first. Get its current version, diff your document against it, and apply again with that version in baseVersions."
+    },
+    {
+      "code": "idempotency_conflict",
+      "status": 409,
+      "next": "This idempotency key was already used for a different act. Use a new key for a new act; resend the original arguments to read the original result."
+    },
+    {
+      "code": "rule_failed",
+      "status": 422,
+      "next": "Read the failing rule in the refusal, change the input or the resource's state so it holds, and retry."
+    },
+    {
+      "code": "needs_approval",
+      "status": 403,
+      "next": "Follow the approval handle in the refusal. The act completes when a person approves it; do not resend it."
+    },
+    {
+      "code": "needs_claim",
+      "status": 403,
+      "next": "Ask your person to claim this sandbox with the claim link returned at registration. Until then, effects that leave the platform are refused and governed acts are capped per UTC day; reads and validate still answer."
+    },
+    {
+      "code": "proof_required",
+      "status": 400,
+      "next": "POST {base}/register/challenge, find a solution whose SHA-256 with the challenge has the stated leading zero bits, and register again with a fresh challenge."
+    },
+    {
+      "code": "rate_limited",
+      "status": 429,
+      "next": "Wait the number of seconds in the Retry-After header, then try again."
+    },
+    {
+      "code": "joining_is_governed",
+      "status": 403,
+      "next": "Register without naming an organization to get a sandbox of your own. To join an existing organization, ask a person who governs it to add you."
+    },
+    {
+      "code": "claim_incomplete",
+      "status": 502,
+      "next": "The sandbox is claimed and yours, but the identity provider did not record you as its member. Send the same claim request again to finish."
+    },
+    {
+      "code": "flow_unavailable",
+      "status": 501,
+      "next": "This host's identity provider does not offer this flow. Use a host whose discovery document lists it."
+    },
+    {
+      "code": "plan_limit",
+      "status": 402,
+      "next": "This feature needs a plan that includes it. Upgrade the workspace plan, or use a host whose discovery document lists the feature as provided and entitled."
+    },
+    {
+      "code": "allowance_exhausted",
+      "status": 429,
+      "next": "Wait for the allowance to reset, or ask your person to raise the plan's allowance."
+    },
+    {
+      "code": "spend_cap_reached",
+      "status": 402,
+      "next": "Ask your person to raise the spend cap for this workspace. An agent credential cannot raise it."
+    }
+  ]
+}

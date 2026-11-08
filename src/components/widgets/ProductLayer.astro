@@ -1,0 +1,254 @@
+---
+import { Icon } from 'astro-icon/components';
+
+type GanttStatus = 'done' | 'active' | 'planned';
+
+const COLS = 7;
+const weeks = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7'];
+
+const ganttRows: { label: string; start: number; span: number; status: GanttStatus }[] = [
+  { label: 'Auth & Identity', start: 0, span: 2, status: 'done' },
+  { label: 'Customer Portal', start: 1, span: 3, status: 'done' },
+  { label: 'API Gateway', start: 1, span: 3, status: 'active' },
+  { label: 'Data Models', start: 2, span: 2, status: 'active' },
+  { label: 'Analytics Views', start: 3, span: 3, status: 'planned' },
+  { label: 'Integrations', start: 5, span: 2, status: 'planned' },
+];
+
+const barColor: Record<GanttStatus, string> = {
+  done: 'bg-primary/85',
+  active: 'bg-sky-500/75',
+  planned: 'bg-white/18',
+};
+
+const customers = [
+  { name: 'Acme Corp', status: 'Active', plan: 'Pro', statusCls: 'text-emerald-400' },
+  { name: 'Beta Inc', status: 'Trial', plan: 'Starter', statusCls: 'text-amber-400' },
+  { name: 'Gamma LLC', status: 'Active', plan: 'Pro', statusCls: 'text-emerald-400' },
+  { name: 'Delta Co', status: 'Inactive', plan: '—', statusCls: 'text-slate-400' },
+];
+---
+
+<section class="py-20">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <!-- Header -->
+    <div class="text-center mb-12 intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+      <h2
+        class="inline-flex items-center px-5 py-2 rounded-full border-2 border-primary bg-primary/10 text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-4"
+      >
+        Product Layer
+      </h2>
+      <p class="text-slate-400 max-w-xl mx-auto leading-relaxed">
+        From operational DNA to shipped product — define once and your spec drives the roadmap and the interfaces your
+        team ships.
+      </p>
+    </div>
+
+    <!-- Three-panel flow: DNA Spec → Management → Product -->
+    <div
+      class="grid lg:grid-cols-[1fr_36px_1.5fr_36px_1.5fr] items-stretch gap-y-4 intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+    >
+      <!-- Panel 1: DNA Spec -->
+      <div class="bg-slate-900/90 rounded-2xl border border-primary/60 p-5">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-6 h-6 rounded-lg bg-primary/25 border border-primary/40 flex items-center justify-center">
+            <Icon name="tabler:dna" class="w-3.5 h-3.5 text-primary" />
+          </div>
+          <span class="text-[10px] font-bold text-primary uppercase tracking-widest">DNA Spec</span>
+          <span class="ml-auto text-[10px] text-slate-400 font-mono">customer.dna</span>
+        </div>
+        <div class="font-mono text-[11px] leading-loose">
+          <div>
+            <span class="text-violet-400">entity</span><span class="text-slate-500">:</span>
+            <span class="text-amber-300">Customer</span>
+          </div>
+          <div class="ml-2 text-slate-400">fields<span class="text-slate-600">:</span></div>
+          <div class="ml-4">
+            <span class="text-slate-300">id</span>
+            <span class="text-slate-500">·</span>
+            <span class="text-sky-400">uuid</span>
+          </div>
+          <div class="ml-4">
+            <span class="text-slate-300">name</span>
+            <span class="text-slate-500">·</span>
+            <span class="text-sky-400">string</span>
+          </div>
+          <div class="ml-4">
+            <span class="text-slate-300">status</span>
+            <span class="text-slate-500">·</span>
+            <span class="text-emerald-400">enum</span>
+          </div>
+          <div class="ml-4">
+            <span class="text-slate-300">plan</span>
+            <span class="text-slate-500">·</span>
+            <span class="text-sky-400">string</span>
+          </div>
+          <div class="mt-1 ml-2 text-slate-400">
+            views<span class="text-slate-600">:</span>
+            <span class="text-amber-300">[list, detail]</span>
+          </div>
+          <div class="ml-2 text-slate-400">workflows<span class="text-slate-600">:</span></div>
+          <div class="ml-4"><span class="text-slate-500">-</span> <span class="text-violet-400">onboard</span></div>
+          <div class="ml-4">
+            <span class="text-slate-500">-</span>
+            <span class="text-violet-400">churn-detect</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow 1 -->
+      <div class="hidden lg:flex items-center justify-center">
+        <Icon name="tabler:arrow-right" class="w-5 h-5 text-primary/50" />
+      </div>
+
+      <!-- Panel 2: Management (Gantt chart) -->
+      <div class="bg-slate-800/80 rounded-2xl border border-white/20 p-4">
+        <div class="flex items-center justify-between mb-4">
+          <span
+            class="text-[9px] font-bold uppercase tracking-widest bg-violet-500/25 text-violet-300 border border-violet-500/40 rounded-full px-2.5 py-1"
+          >
+            Management
+          </span>
+          <div class="flex items-center gap-1.5">
+            <Icon name="tabler:calendar-stats" class="w-3 h-3 text-slate-500" />
+            <span class="text-[9px] text-slate-400 font-mono">Q3 Sprint</span>
+          </div>
+        </div>
+
+        <!-- Week headers -->
+        <div class="flex ml-[80px] mb-1">
+          {weeks.map((w) => <div class="flex-1 text-[8px] text-center text-slate-500 font-mono">{w}</div>)}
+        </div>
+
+        <!-- Gantt rows -->
+        <div class="space-y-1.5">
+          {
+            ganttRows.map(({ label, start, span, status }) => (
+              <div class="flex items-center">
+                <span class="w-[80px] flex-shrink-0 text-[9px] text-slate-400 leading-tight pr-1.5">{label}</span>
+                <div class="flex flex-1">
+                  {Array.from({ length: COLS }, (_, i) => {
+                    const inBar = i >= start && i < start + span;
+                    return (
+                      <div
+                        class:list={[
+                          'flex-1 h-4',
+                          inBar ? barColor[status] : '',
+                          inBar && i === start ? 'rounded-l' : '',
+                          inBar && i === start + span - 1 ? 'rounded-r' : '',
+                        ]}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+
+        <!-- Legend -->
+        <div class="flex items-center gap-3 mt-3 pt-3 border-t border-white/8">
+          <div class="flex items-center gap-1">
+            <div class="w-2.5 h-1.5 rounded-sm bg-primary/85"></div>
+            <span class="text-[8px] text-slate-400">Done</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <div class="w-2.5 h-1.5 rounded-sm bg-sky-500/75"></div>
+            <span class="text-[8px] text-slate-400">In progress</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <div class="w-2.5 h-1.5 rounded-sm bg-white/18"></div>
+            <span class="text-[8px] text-slate-400">Planned</span>
+          </div>
+          <span class="ml-auto text-[8px] text-primary/60 italic">from DNA spec</span>
+        </div>
+      </div>
+
+      <!-- Arrow 2 -->
+      <div class="hidden lg:flex items-center justify-center">
+        <Icon name="tabler:arrow-right" class="w-5 h-5 text-primary/50" />
+      </div>
+
+      <!-- Panel 3: Product (Generated UI) -->
+      <div class="bg-slate-800/80 rounded-2xl border border-white/20 overflow-hidden flex flex-col">
+        <!-- Browser chrome -->
+        <div class="bg-slate-900/80 px-3 py-2 border-b border-white/8 flex items-center gap-2 flex-shrink-0">
+          <div class="flex gap-1">
+            <div class="w-2 h-2 rounded-full bg-red-500/60"></div>
+            <div class="w-2 h-2 rounded-full bg-amber-500/60"></div>
+            <div class="w-2 h-2 rounded-full bg-green-500/60"></div>
+          </div>
+          <div class="flex-1 mx-2 bg-white/6 rounded px-2 py-0.5">
+            <span class="text-[9px] text-slate-400 font-mono">app / customers</span>
+          </div>
+          <span
+            class="text-[9px] font-bold uppercase tracking-widest bg-sky-500/25 text-sky-300 border border-sky-500/40 rounded-full px-2 py-0.5 flex-shrink-0"
+          >
+            Product
+          </span>
+        </div>
+
+        <!-- App layout -->
+        <div class="flex flex-1 overflow-hidden">
+          <!-- Sidebar -->
+          <div class="w-[68px] bg-slate-900/50 border-r border-white/8 py-2 px-1.5 flex flex-col gap-0.5 flex-shrink-0">
+            {
+              ['Customers', 'Orders', 'Reports', 'Settings'].map((item, i) => (
+                <div
+                  class:list={[
+                    'text-[9px] px-1.5 py-1 rounded leading-tight cursor-default',
+                    i === 0 ? 'bg-primary/30 text-primary font-semibold' : 'text-slate-400',
+                  ]}
+                >
+                  {item}
+                </div>
+              ))
+            }
+          </div>
+
+          <!-- Main content -->
+          <div class="flex-1 p-3 overflow-hidden min-w-0">
+            <div class="flex items-center justify-between mb-2.5">
+              <span class="text-[10px] font-semibold text-slate-100">Customers</span>
+              <button
+                class="text-[9px] bg-primary/30 text-primary border border-primary/50 rounded px-1.5 py-0.5 font-medium"
+              >
+                + New
+              </button>
+            </div>
+
+            <!-- Table header -->
+            <div
+              class="grid grid-cols-[1fr_48px_40px_24px] gap-1 text-[8px] text-slate-400 uppercase tracking-wide border-b border-white/8 pb-1 mb-1.5"
+            >
+              <span>Name</span>
+              <span>Status</span>
+              <span>Plan</span>
+              <span></span>
+            </div>
+
+            <!-- Table rows -->
+            {
+              customers.map((c) => (
+                <div class="grid grid-cols-[1fr_48px_40px_24px] gap-1 text-[9px] py-1 border-b border-white/6 items-center">
+                  <span class="text-slate-200 truncate font-medium">{c.name}</span>
+                  <span class:list={['font-semibold text-[8px]', c.statusCls]}>{c.status}</span>
+                  <span class="text-slate-400 text-[8px]">{c.plan}</span>
+                  <span class="text-primary/80 text-[8px] cursor-default">Edit</span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Footer label -->
+        <div class="px-3 py-1.5 border-t border-white/8 bg-slate-900/40 flex items-center gap-1.5 flex-shrink-0">
+          <Icon name="tabler:dna" class="w-2.5 h-2.5 text-primary/60" />
+          <span class="text-[8px] text-slate-500"
+            >Generated from <span class="text-primary/70 font-mono">Customer</span> DNA spec</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

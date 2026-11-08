@@ -1,0 +1,50 @@
+{
+  "id": "order-lifecycle",
+  "name": "Order lifecycle",
+  "description": "From a submitted order to fulfilled or cancelled.",
+  "initial": "submitted",
+  "states": [
+    {
+      "id": "submitted",
+      "operations": [
+        "merchant-accepts",
+        "shopper-cancels"
+      ],
+      "transitions": [
+        {
+          "on": "merchant-accepts",
+          "to": "accepted"
+        },
+        {
+          "on": "shopper-cancels",
+          "to": "cancelled"
+        }
+      ]
+    },
+    {
+      "id": "accepted",
+      "operations": [
+        "merchant-fulfils",
+        "shopper-cancels"
+      ],
+      "transitions": [
+        {
+          "on": "merchant-fulfils",
+          "to": "fulfilled"
+        },
+        {
+          "on": "shopper-cancels",
+          "to": "cancelled"
+        }
+      ]
+    },
+    {
+      "id": "fulfilled",
+      "final": true
+    },
+    {
+      "id": "cancelled",
+      "final": true
+    }
+  ]
+}

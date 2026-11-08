@@ -1,0 +1,32 @@
+{
+  "id": "organization",
+  "name": "Organization",
+  "description": "A firm. Buyer, target, and advisor are three instances of this one entity. They are not three entities, and they are not domains.",
+  "attributes": [
+    {
+      "name": "legalName",
+      "type": "string",
+      "description": "The firm's legal name."
+    }
+  ],
+  "instances": [
+    {
+      "id": "harbor-buyer",
+      "name": "Harbor",
+      "description": "The buyer.",
+      "values": { "legalName": "Harbor Holdings" }
+    },
+    {
+      "id": "northline-target",
+      "name": "Northline",
+      "description": "The company being acquired.",
+      "values": { "legalName": "Northline Inc." }
+    },
+    {
+      "id": "vale-advisors",
+      "name": "Vale",
+      "description": "The buyer's advisor.",
+      "values": { "legalName": "Vale Advisors" }
+    }
+  ]
+}

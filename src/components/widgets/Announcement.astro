@@ -1,0 +1,20 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<div
+  class="text-sm bg-slate-900 text-slate-300 dark:bg-transparent border-b border-slate-800 dark:text-slate-400 hidden md:flex items-center justify-center gap-2 overflow-hidden px-3 py-2 relative text-ellipsis whitespace-nowrap"
+>
+  <span
+    class="bg-primary/20 text-primary font-semibold px-1.5 py-0.5 text-[10px] uppercase tracking-wider rounded inline-block"
+    >New</span
+  >
+  <span>UI Operations is in early access —</span>
+  <a
+    href="/ui-operations"
+    class="font-medium text-primary hover:text-accent transition-colors duration-150 inline-flex items-center gap-1"
+  >
+    see it working
+    <Icon name="tabler:arrow-right" class="w-3.5 h-3.5" />
+  </a>
+</div>

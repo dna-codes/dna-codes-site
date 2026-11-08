@@ -1,0 +1,41 @@
+---
+// Marks a post that hasn't shipped yet.
+//
+// Drafts only ever reach a browser under `astro dev` — the production build filters them
+// out before any route exists (see the `import.meta.env.DEV` guard in src/utils/blog.ts).
+// So this never renders for a visitor. It's here for the person previewing: with seven
+// scheduled posts sitting in src/data/post/, a draft and a live page otherwise look
+// identical, and that's the sort of thing you notice after publishing.
+import { Icon } from 'astro-icon/components';
+import { getFormattedDate } from '~/utils/utils';
+
+export interface Props {
+  /** Shown in the banner so you can tell which slot in the calendar this is. */
+  publishDate?: Date;
+  /** `banner` for the post page, `inline` for list and grid cards. */
+  variant?: 'banner' | 'inline';
+  class?: string;
+}
+
+const { publishDate, variant = 'inline', class: className = '' } = Astro.props;
+---
+
+{
+  variant === 'banner' ? (
+    <p
+      class={`flex items-center gap-2 rounded-md border border-amber-400/60 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200 ${className}`}
+    >
+      <Icon name="tabler:pencil" class="w-4 h-4 shrink-0" />
+      <span>
+        Draft — visible in dev only, never in a build.
+        {publishDate && <> Scheduled for {getFormattedDate(publishDate)}.</>}
+      </span>
+    </p>
+  ) : (
+    <span
+      class={`inline-block rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-amber-800 dark:bg-amber-500/20 dark:text-amber-300 ${className}`}
+    >
+      Draft
+    </span>
+  )
+}

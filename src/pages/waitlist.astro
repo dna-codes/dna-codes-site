@@ -1,0 +1,35 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import SocialProof from '~/components/widgets/SocialProof.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+// Every primary button on the site resolves here. It exists because the alternative was
+// sending somebody who came for Operations to a form buried in the Overlay's product
+// page, under a heading about controls they had not been reading about.
+const metadata = {
+  title: 'Join the waitlist — DNA Codes',
+  description: 'Want a living operating model? We are looking for design partners: contact us below.',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- The button that got somebody here says waitlist to keep the ask cheap, so the page
+       is where we say what we actually want: design partners, not a queue. -->
+  <HeroText tagline="Early access" title="Want a living operating model?">
+    <Fragment slot="subtitle"> We are looking for design partners: contact us below. </Fragment>
+  </HeroText>
+
+  <WidgetWrapper containerClass="max-w-4xl mx-auto !pt-0">
+    <div
+      class="rounded-2xl border border-primary/40 bg-slate-900/70 p-6 sm:p-10 shadow-[0_0_48px_rgba(13,148,136,0.18)]"
+    >
+      <WaitlistForm />
+    </div>
+  </WidgetWrapper>
+
+  <!-- No note: the hero directly above already makes the design-partner point. -->
+  <SocialProof />
+</Layout>

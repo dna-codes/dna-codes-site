@@ -1,0 +1,66 @@
+id,keyword,volume,difficulty,intent,cluster,fit,role,page,page_type,title,description,measured_at,source,notes
+sop-software,sop software,539,30,commercial,sop,3,primary,/sop-software,landing,"SOP Software That Runs, Not Just Documents","SOP software that turns written procedures into a living operating model: the roles, steps and rules your team and your agents run.",2026-11-08,moz,Commercial anchor. Closest match to the executable-SOP wedge.
+sop-management-software,sop management software,24,29,commercial,sop,3,secondary,/sop-software,landing,,,2026-11-08,moz,
+sop-management-system,sop management system,,23,commercial,sop,3,secondary,/sop-software,landing,,,2026-11-08,moz,Volume not shown in the grid view; re-measure.
+sop-automation,sop automation,,31,informational,sop,3,secondary,/sop-software,landing,,,2026-11-08,moz,Already tracked in a Moz campaign.
+best-software-for-sop-automation,best software for sop automation,15,,,sop,3,secondary,/sop-software,landing,,,2026-11-08,moz,
+sop-software-for-small-business,sop software for small business,24,24,informational,sop,2,primary,/blog/sop-software-for-small-business,post,SOP Software for Small Business,"What small teams actually need from SOP software, where checklists and wikis stop working, and how to choose a tool you will keep using.",2026-11-08,moz,
+sop-generator-ai,sop generator ai,27,19,,sop,2,candidate,,,,,2026-11-08,moz,Moz intent shows Error. Generator searchers want a free tool now.
+ai-sop-generator-free,ai sop generator free,,19,commercial,sop,2,candidate,,,,,2026-11-08,moz,Volume not shown; re-measure. Would need a free generator page to rank.
+microsoft-sop-software,microsoft sop software,26,47,informational,sop,1,skip,,,,,2026-11-08,moz,Microsoft-specific intent.
+how-to-write-an-sop,how to write an sop,,,,sop,3,to-measure,,,,,,,Backlog post in planned_posts.md.
+executable-sop,executable sop,,,,sop,3,to-measure,,,,,,,
+process-street,process street,1023,61,navigational,competitor,,skip,,,,,2026-11-08,moz,Competitor brand. Target via an alternative page instead.
+dozuki,dozuki,993,47,informational,competitor,,skip,,,,,2026-11-08,moz,Competitor brand.
+tallyfy,tallyfy,129,51,navigational,competitor,,skip,,,,,2026-11-08,moz,Competitor brand.
+scribe,scribe,61476,59,navigational,competitor,,skip,,,,,2026-11-08,moz,"Competitor brand, ambiguous word."
+process-street-alternative,process street alternative,,,,competitor,3,to-measure,,,,,,,
+tallyfy-alternative,tallyfy alternative,,,,competitor,3,to-measure,,,,,,,
+dozuki-alternative,dozuki alternative,,,,competitor,2,to-measure,,,,,,,
+business-process-management-software,business process management software,889,27,commercial,bpm,2,primary,/business-process-software,landing,"Business Process Management Software, as Data","Business process management software models your process once, as data, so the docs, workflows and apps that depend on it never drift apart.",2026-11-08,moz,Adjacent category. Page argues DNA against BPM suites rather than claiming to be one.
+business-process-management-tools,business process management tools,469,26,commercial,bpm,2,secondary,/business-process-software,landing,,,2026-11-08,moz,
+bpm-software,bpm software,356,34,commercial,bpm,2,secondary,/business-process-software,landing,,,2026-11-08,moz,
+business-process-management-system,business process management system,191,30,informational,bpm,2,secondary,/business-process-software,landing,,,2026-11-08,moz,
+business-process-software,business process software,83,27,commercial,bpm,2,secondary,/business-process-software,landing,,,2026-11-08,moz,
+business-process-workflow-software,business process workflow software,67,20,commercial,bpm,3,secondary,/business-process-software,landing,,,2026-11-08,moz,
+best-business-process-management-software,best business process management software,68,29,commercial,bpm,2,secondary,/business-process-software,landing,,,2026-11-08,moz,
+best-bpm-software,best bpm software,68,23,commercial,bpm,2,secondary,/business-process-software,landing,,,2026-11-08,moz,
+business-process-management,business process management,1097,28,informational,bpm,2,primary,/blog/business-process-management,post,"Business Process Management, With Real Examples","Business process management explained through worked examples: what a process is, how teams manage it, and why most BPM efforts drift.",2026-11-08,moz,
+business-process-management-examples,business process management examples,90,21,informational,bpm,2,secondary,/blog/business-process-management,post,,,2026-11-08,moz,
+business-process-bpm,business process bpm,115,21,informational,bpm,2,secondary,/blog/business-process-management,post,,,2026-11-08,moz,
+process-management-system,process management system,191,34,informational,bpm,2,candidate,,,,,2026-11-08,moz,
+bpm-tools,bpm tools,469,43,commercial,bpm,2,candidate,,,,,2026-11-08,moz,Difficulty over 40.
+business-process-management-platform,business process management platform,182,48,commercial,bpm,2,skip,,,,,2026-11-08,moz,Difficulty over 45.
+business-process-modeling-notation,business process modeling notation,534,28,informational,bpmn,3,primary,/blog/bpmn-vs-dna,post,Business Process Modeling Notation vs. DNA,"Business process modeling notation draws a process. DNA defines one as data your docs, workflows and agents can run. Same process, both ways.",2026-11-08,moz,
+bpmn-model,bpmn model,175,25,informational,bpmn,3,secondary,/blog/bpmn-vs-dna,post,,,2026-11-08,moz,
+business-process-modelling-notation,business process modelling notation,102,30,informational,bpmn,3,secondary,/blog/bpmn-vs-dna,post,,,2026-11-08,moz,
+bpmn-examples,bpmn examples,77,36,informational,bpmn,2,secondary,/blog/bpmn-vs-dna,post,,,2026-11-08,moz,
+business-process-modeling,business process modeling,467,32,informational,bpmn,3,primary,/blog/business-process-modeling,post,Business Process Modeling: A Practical Guide,"A practical guide to business process modeling: roles, steps, rules and handoffs, with a worked example you can copy into your own team.",2026-11-08,moz,
+business-process-modeling-examples,business process modeling examples,49,42,informational,bpmn,3,secondary,/blog/business-process-modeling,post,,,2026-11-08,moz,
+process-modelling,process modelling,132,37,informational,bpmn,2,secondary,/blog/business-process-modeling,post,,,2026-11-08,moz,
+business-process-modeling-tools,business process modeling tools,59,44,transactional,bpmn,3,candidate,,,,,2026-11-08,moz,"Strong fit, difficulty 44."
+process-modeling-software,process modeling software,127,41,informational,bpmn,2,candidate,,,,,2026-11-08,moz,
+business-process-diagram,business process diagram,131,41,informational,bpmn,1,candidate,,,,,2026-11-08,moz,
+bpmn-symbols,bpmn symbols,102,34,transactional,bpmn,1,candidate,,,,,2026-11-08,moz,
+bpmn-diagram,bpmn diagram,675,53,informational,bpmn,1,skip,,,,,2026-11-08,moz,Difficulty over 50.
+what-is-bpmn,what is bpmn,244,51,informational,bpmn,1,skip,,,,,2026-11-08,moz,
+target-operating-model,target operating model,216,22,commercial,operating-model,3,primary,/operating-model,landing,A Target Operating Model You Can Run,"Design a target operating model as data: roles, processes, rules and systems in one living model, instead of a slide deck nobody updates.",2026-11-08,moz,Closest match to the digital operational model positioning.
+operating-model-definition,operating model definition,87,47,informational,operating-model,2,secondary,/operating-model,landing,,,2026-11-08,moz,
+digital-operating-model,digital operating model,20,41,informational,operating-model,3,secondary,/operating-model,landing,,,2026-11-08,moz,
+operating-model-template,operating model template,45,31,transactional,operating-model,3,primary,/operating-model/template,lead-magnet,Free Operating Model Template,"A free operating model template: roles, processes, rules and systems laid out so you can fill it in today and turn it into a living model later.",2026-11-08,moz,Lead magnet. Ungated download with the waitlist alongside it.
+business-operating-model-template,business operating model template,11,22,informational,operating-model,3,secondary,/operating-model/template,lead-magnet,,,2026-11-08,moz,
+how-to-build-an-operating-model,how to build an operating model,39,41,informational,operating-model,3,primary,/blog/how-to-build-an-operating-model,post,How to Build an Operating Model That Runs,"How to build an operating model step by step: start from the work, name the roles and rules, and keep the model alive after the workshop ends.",2026-11-08,moz,
+operating-model-design,operating model design,59,43,informational,operating-model,3,secondary,/blog/how-to-build-an-operating-model,post,,,2026-11-08,moz,
+business-operating-model-design,business operating model design,30,28,informational,operating-model,3,secondary,/blog/how-to-build-an-operating-model,post,,,2026-11-08,moz,
+operating-model-enterprise-architecture,operating model enterprise architecture,27,32,informational,operating-model,2,candidate,,,,,2026-11-08,moz,
+it-operating-model,it operating model,34,49,informational,operating-model,1,skip,,,,,2026-11-08,moz,
+operating-model-software,operating model software,,,,operating-model,3,to-measure,,,,,,,
+operation-management-software,operation management software,95,28,commercial,ops-software,2,candidate,,,,,2026-11-08,moz,
+business-operations-management-software,business operations management software,75,25,commercial,ops-software,2,candidate,,,,,2026-11-08,moz,
+business-operations-software,business operations software,75,32,informational,ops-software,2,candidate,,,,,2026-11-08,moz,
+operations-management-software,operations management software,95,37,informational,ops-software,2,candidate,,,,,2026-11-08,moz,
+ai-app-builder,ai app builder,266,47,navigational,app-builder,1,skip,,,,,2026-11-08,moz,"Crowded, mostly navigational."
+best-free-ai-app-builder,best free ai app builder,321,43,commercial,app-builder,1,skip,,,,,2026-11-08,moz,
+free-ai-app-builder,free ai app builder,240,43,transactional,app-builder,1,skip,,,,,2026-11-08,moz,
+ai-company-brain,ai company brain,1,,,positioning,3,skip,,,,,2026-11-08,moz,"No search demand. A positioning phrase, not a keyword."
+digital-transformation,digital transformation,2487,31,informational,positioning,1,skip,,,,,2026-11-08,moz,Too broad.

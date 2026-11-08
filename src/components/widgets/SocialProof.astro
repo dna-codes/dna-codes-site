@@ -1,0 +1,66 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// Real numbers only. Three design partners, named by their space because none of them
+// has agreed to be named outright — when one does, its logo replaces its vertical here
+// and this component keeps its shape.
+//
+// Deliberately not a logo wall, and deliberately not a partner count. How many partners
+// there are is the least interesting true thing here; what they have in common is that
+// none of them is a software company, so the claim worth making is breadth of domain.
+//
+// The three verticals are the argument, not decoration — they are what "three domains"
+// resolves to, and they are there to be read alongside the note.
+const partners = [
+  { icon: 'tabler:scale', label: 'Legal' },
+  { icon: 'tabler:movie', label: 'Media & content' },
+  { icon: 'tabler:building-community', label: 'Fractional ownership' },
+];
+
+export interface Props {
+  /** Sits under the partner row. Omitted where the page already says this nearby. */
+  note?: string;
+  class?: string;
+}
+
+const { note, class: className = '' } = Astro.props;
+---
+
+<!-- Own vertical rhythm rather than relying on neighbours: this sits between a hero demo
+     and a full section on three different pages, and inherited nothing from any of them. -->
+<div class={`max-w-4xl mx-auto px-4 sm:px-6 py-14 sm:py-20 ${className}`}>
+  <!-- Section label above the panel, matching the Products section and the Operations
+       Layer. -->
+  <div class="text-center">
+    <p
+      class="inline-flex items-center px-5 py-2 rounded-full border-2 border-primary bg-primary/10 text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-6"
+    >
+      Partners
+    </p>
+  </div>
+
+  <!-- Accent border and glow, matching the waitlist card: this is a claim worth the same
+       weight as the ask, not a footnote between two sections. -->
+  <div
+    class="rounded-2xl border border-primary/40 bg-slate-900/60 px-6 py-8 sm:px-10 sm:py-10 shadow-[0_0_48px_rgba(13,148,136,0.15)]"
+  >
+    <h2 class="text-center text-2xl sm:text-3xl font-bold tracking-tight text-white">
+      Working with design partners across <span class="text-accent">three domains</span>
+    </h2>
+
+    <div class="mt-8 grid gap-3 sm:grid-cols-3">
+      {
+        partners.map(({ icon, label }) => (
+          <div class="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-800/50 px-4 py-3.5">
+            <div class="w-9 h-9 rounded-lg bg-primary/15 border border-primary/40 flex items-center justify-center flex-shrink-0">
+              <Icon name={icon} class="w-5 h-5 text-primary" />
+            </div>
+            <span class="text-sm font-semibold text-slate-200 leading-snug">{label}</span>
+          </div>
+        ))
+      }
+    </div>
+
+    {note && <p class="mt-7 text-center text-base text-muted leading-relaxed max-w-2xl mx-auto">{note}</p>}
+  </div>
+</div>

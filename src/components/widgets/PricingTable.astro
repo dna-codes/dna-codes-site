@@ -1,0 +1,99 @@
+---
+import { Icon } from 'astro-icon/components';
+import { TIERS, FEATURE_GROUPS, PRICING_CTA } from '~/data/pricing';
+---
+
+<div class="max-w-6xl mx-auto">
+  <!-- Horizontal scroll on small screens rather than a stacked accordion: a comparison
+       table that cannot be compared side by side is not a comparison table. -->
+  <div class="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+    <table class="w-full min-w-[52rem] border-collapse text-sm">
+      <thead>
+        <tr>
+          <th class="w-[26%] sticky left-0 bg-page text-left align-bottom pb-4 pr-4"></th>
+          {
+            TIERS.map((tier) => (
+              <th
+                class:list={[
+                  'align-bottom pb-4 px-3 text-center border-b border-white/10',
+                  tier.featured && 'bg-primary/5',
+                ]}
+              >
+                <span class="block text-xs font-bold uppercase tracking-widest text-primary">{tier.name}</span>
+                <span class="mt-1.5 block text-2xl font-extrabold text-white">{tier.priceLabel}</span>
+                <span class="block text-[11px] text-slate-500">{tier.period}</span>
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+
+      <tbody>
+        {
+          FEATURE_GROUPS.map((group) => (
+            <>
+              <tr>
+                <th
+                  colspan={TIERS.length + 1}
+                  class="text-left pt-8 pb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500"
+                >
+                  {group.label}
+                </th>
+              </tr>
+
+              {group.rows.map((r) => (
+                <tr class="border-t border-white/5">
+                  <th
+                    scope="row"
+                    class="sticky left-0 bg-page text-left font-normal text-slate-300 py-3 pr-4 align-top"
+                  >
+                    {r.label}
+                    {r.note && <span class="mt-1 block text-xs text-slate-500 leading-relaxed">{r.note}</span>}
+                  </th>
+
+                  {TIERS.map((tier) => {
+                    const v = r.values[tier.key];
+                    return (
+                      <td class:list={['py-3 px-3 text-center align-top', tier.featured && 'bg-primary/5']}>
+                        {v === true ? (
+                          <Icon name="tabler:check" class="w-4 h-4 text-primary inline-block" aria-label="Included" />
+                        ) : v === false ? (
+                          <span class="text-slate-600" aria-label="Not included">
+                            —
+                          </span>
+                        ) : (
+                          <span class="text-slate-300">{v}</span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </>
+          ))
+        }
+
+        <tr class="border-t border-white/10">
+          <td class="sticky left-0 bg-page py-6"></td>
+          {
+            TIERS.map((tier) => (
+              <td class:list={['py-6 px-3 text-center', tier.featured && 'bg-primary/5']}>
+                <a
+                  href={PRICING_CTA.href}
+                  class:list={[
+                    'inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-semibold transition-colors duration-150',
+                    tier.featured
+                      ? 'bg-primary text-white hover:bg-secondary'
+                      : 'border border-slate-600 text-slate-300 hover:border-slate-400 hover:bg-slate-800',
+                  ]}
+                >
+                  {tier.price === null ? 'Talk to us' : PRICING_CTA.text}
+                </a>
+              </td>
+            ))
+          }
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

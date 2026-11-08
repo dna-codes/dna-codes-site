@@ -1,0 +1,103 @@
+{
+  "dna": "behaviour/v1",
+  "id": "commerce-behaviour",
+  "name": "Commerce behaviour",
+  "description": "How an order placed from a cart is accepted, fulfilled or cancelled, against checkout v2's commerce domain.",
+  "domain": "commerce",
+  "actions": [
+    {
+      "id": "accept",
+      "entity": "order",
+      "name": "Accept",
+      "description": "The merchant accepts a submitted order and commits to fulfilling it.",
+      "transition": { "from": ["submitted"], "to": "accepted" }
+    },
+    {
+      "id": "fulfil",
+      "entity": "order",
+      "name": "Fulfil",
+      "description": "The merchant records that every line of an accepted order has shipped.",
+      "input": [{ "name": "shippedAt", "type": "datetime" }],
+      "transition": { "from": ["accepted"], "to": "fulfilled" }
+    },
+    {
+      "id": "cancel",
+      "entity": "order",
+      "name": "Cancel",
+      "description": "Cancel an order that has not been fulfilled.",
+      "input": [{ "name": "reason", "type": "string", "required": false }],
+      "transition": { "from": ["submitted", "accepted"], "to": "cancelled" }
+    },
+    {
+      "id": "quote",
+      "entity": "order",
+      "name": "Quote",
+      "description": "Read the amount and currency an order will be charged.",
+      "readOnly": true,
+      "output": [
+        { "name": "amount", "type": "number" },
+        { "name": "currency", "type": "string" }
+      ]
+    }
+  ],
+  "operations": [
+    {
+      "id": "merchant-accepts",
+      "name": "Merchant accepts",
+      "description": "Juniper & Pine accepts the order.",
+      "action": "accept",
+      "actor": { "entity": "parties/organization", "instance": "juniper-and-pine" }
+    },
+    {
+      "id": "merchant-fulfils",
+      "name": "Merchant fulfils",
+      "description": "Juniper & Pine ships the order.",
+      "action": "fulfil",
+      "actor": { "entity": "parties/organization", "instance": "juniper-and-pine" }
+    },
+    {
+      "id": "shopper-cancels",
+      "name": "Shopper cancels",
+      "description": "The shopper cancels before fulfilment.",
+      "action": "cancel",
+      "actor": { "entity": "parties/person", "instance": "ada" }
+    }
+  ],
+  "workflows": [
+    {
+      "id": "order-lifecycle",
+      "name": "Order lifecycle",
+      "description": "From a submitted order to fulfilled or cancelled.",
+      "initial": "submitted",
+      "states": [
+        {
+          "id": "submitted",
+          "operations": ["merchant-accepts", "shopper-cancels"],
+          "transitions": [
+            { "on": "merchant-accepts", "to": "accepted" },
+            { "on": "shopper-cancels", "to": "cancelled" }
+          ]
+        },
+        {
+          "id": "accepted",
+          "operations": ["merchant-fulfils", "shopper-cancels"],
+          "transitions": [
+            { "on": "merchant-fulfils", "to": "fulfilled" },
+            { "on": "shopper-cancels", "to": "cancelled" }
+          ]
+        },
+        { "id": "fulfilled", "final": true },
+        { "id": "cancelled", "final": true }
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "id": "large-cancellation-approval",
+      "description": "Cancelling an order above 500 needs a position's approval.",
+      "actions": ["cancel"],
+      "when": { "subject": "target", "path": "amount", "op": "gt", "value": 500 },
+      "effect": { "effect": "require_approval", "performer": "position" }
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
+
+import sitemap from '@astrojs/sitemap';
+import tailwindcss from '@tailwindcss/vite';
+import mdx from '@astrojs/mdx';
+import partytown from '@astrojs/partytown';
+import icon from 'astro-icon';
+import compress from 'astro-compress';
+import type { AstroIntegration } from 'astro';
+
+import astrowind from './vendor/integration';
+
+import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin } from './src/utils/frontmatter';
+import { resolveCoreSchemasRoot } from './src/utils/resolve-core-schemas.ts';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const coreSchemasRoot = resolveCoreSchemasRoot(__dirname);
+
+const hasExternalScripts = false;
+const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroIntegration)[] = []) =>
+  hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
+
+export default defineConfig({
+  site: 'https://dna.codes',
+  output: 'static',
+
+  // GitHub Pages can't serve real 301s — for a static build Astro emits a meta-refresh
+  // page with a canonical link, which is the standard substitute.
+  //
+  // The two Operations pieces (SOPs, Operational DNA as source code) are retired. They were
+  // written for a different reader than the one the blog now addresses, in a different
+  // register, and two posts of a third voice is what made the blog read as three blogs.
+  // Both were published, at the root first and then under /blog, so all four URLs are still
+  // out there — they land on the blog index rather than a 404. There is no equivalent piece
+  // to send them to; the index is the honest destination.
+  redirects: {
+    '/operational-dna-processes-like-source-code': '/blog',
+    '/why-sops-go-out-of-date': '/blog',
+    '/blog/operational-dna-processes-like-source-code': '/blog',
+    '/blog/why-sops-go-out-of-date': '/blog',
+    // /playground is a real page again — the industry genome generator, which shipped
+    // first as a campaign-only page at /whats-your-dna. Campaign links to the old URL
+    // keep working. (The name previously pointed at /operations, back when the
+    // Operations demo was called the Playground; that redirect is retired with it.)
+    '/whats-your-dna': '/playground',
+    // The Overlay stopped being a product and became the viewer every surface ships, so the
+    // product that owns the React panel is now UI Operations — named for its surface, like
+    // its three siblings. The old URL is public (the announcement bar, the homepage teaser
+    // and anything anyone has bookmarked), so it keeps resolving.
+    '/overlay': '/ui-operations',
+    // Product and Technology left the live reference. The URLs stay reachable and
+    // land on the Coming soon note rather than a removed layer page.
+    '/docs/product': '/docs#coming-soon',
+    '/docs/technical': '/docs#coming-soon',
+  },
+
+  integrations: [
+    sitemap(),
+    mdx(),
+    icon({
+      include: {
+        tabler: ['*'],
+        'flat-color-icons': [
+          'template',
+          'gallery',
+          'approval',
+          'document',
+          'advertising',
+          'currency-exchange',
+          'voice-presentation',
+          'business-contact',
+          'database',
+        ],
+        logos: ['google-drive', 'notion', 'confluence', 'dropbox', 'slack', 'airtable', 'jira', 'asana', 'monday'],
+        'simple-icons': ['linear', 'slack', 'notion', 'confluence', 'googledocs', 'gmail', 'zoom'],
+        mdi: ['microsoft-sharepoint'],
+        ri: ['notion-fill'],
+        devicon: ['slack'],
+      },
+    }),
+
+    ...whenExternalScripts(() =>
+      partytown({
+        config: { forward: ['dataLayer.push'] },
+      })
+    ),
+
+    compress({
+      CSS: true,
+      HTML: {
+        'html-minifier-terser': {
+          removeAttributeQuotes: false,
+        },
+      },
+      Image: false,
+      JavaScript: true,
+      SVG: false,
+      Logger: 1,
+    }),
+
+    astrowind({
+      config: './src/config.yaml',
+    }),
+  ],
+
+  image: {
+    // Astro's default Sharp service handles local images.
+    //
+    // Most remote CDN images (Unsplash, Cloudinary, Imgix…) are routed by
+    // src/components/common/Image.astro through `unpic`, which rewrites the
+    // URL with CDN-side query parameters and serves it straight from the
+    // provider — Astro never downloads it, so they don't need to be listed.
+    //
+    // `domains` only matters for remote URLs that fall through to Astro's
+    // native <Image /> (i.e. providers Unpic can't detect, like Pixabay).
+    // Listed entries are authorized to be processed by Sharp.
+    domains: ['cdn.pixabay.com'],
+  },
+
+  // Astro 7 defaults to Sätteri, its native Markdown pipeline, which has its own
+  // mdast/hast plugin ecosystem and does not run remark/rehype plugins. Both of
+  // ours are remark/rehype, so keep rendering through unified.
+  markdown: {
+    processor: unified({
+      remarkPlugins: [readingTimeRemarkPlugin],
+      rehypePlugins: [responsiveTablesRehypePlugin],
+    }),
+  },
+
+  vite: {
+    plugins: [
+      tailwindcss(),
+      // public/building-with-ai/index.html is the talk companion. GitHub Pages already
+      // maps /building-with-ai → /building-with-ai/; Vite's static middleware does not,
+      // so rewrite the pretty path in dev (hash like #overlay stays client-side).
+      {
+        name: 'building-with-ai-pretty-url',
+        configureServer(server) {
+          server.middlewares.use((req, _res, next) => {
+            const raw = req.url || '';
+            const pathOnly = raw.split('?', 1)[0];
+            if (pathOnly === '/building-with-ai' || pathOnly === '/building-with-ai/') {
+              const qs = raw.includes('?') ? raw.slice(raw.indexOf('?')) : '';
+              req.url = '/building-with-ai/index.html' + qs;
+            }
+            next();
+          });
+        },
+      },
+    ],
+    resolve: {
+      alias: {
+        '~': path.resolve(__dirname, './src'),
+        // Resolves via the @dna-codes/dna-schemas package published to npm.
+        '~schemas': path.resolve(__dirname, 'node_modules/@dna-codes/dna-schemas'),
+        // Core structure/v1 + behaviour/v1. Distinct from ~schemas, which genomes
+        // still read for the legacy operational package.
+        '~core-schemas': coreSchemasRoot,
+        // Lens definitions ship in @dna-codes/dna-core under lenses/ (JSON only —
+        // the page imports these files; dna-core's JS runtime is never loaded).
+        '~lenses': path.resolve(__dirname, 'node_modules/@dna-codes/dna-core/lenses'),
+      },
+    },
+  },
+});

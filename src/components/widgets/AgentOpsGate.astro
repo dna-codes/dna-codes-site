@@ -1,0 +1,185 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+// Prose left, visual right — the third beat in the alternation.
+//
+// The panel drew both calls fully expanded, which meant two verdicts, two reasons, two quoted
+// sentences and a chip legend all arguing at once. It now uses the Overlay panel's own rule:
+// **the verdict rides on the closed row, and opening one gives you the reasoning.** Three
+// rows, one open. A reader gets the shape of the answer at a glance and the depth only where
+// they asked for it.
+//
+// The one left open is the invoice for exactly $10,000 — the boundary case, and the most
+// instructive row available, because it is the one where a reader's intuition ("ten thousand
+// is the limit, so it is fine") is wrong and the rule is not.
+//
+// `<details>` rather than a script: this is a static section, and a disclosure that needs
+// JavaScript to disclose is one that fails closed on the one reader whose bundle did not load.
+
+const properties = [
+  {
+    lead: 'It cannot call what it was not granted.',
+    body: 'Tools are derived from the operations an agent owns, so one it has no grant for does not exist on it.',
+  },
+  {
+    lead: 'The rule is judged on the graph.',
+    body: 'Not on what the caller claimed. An agent that calls the approval tool with an invented amount is judged on the real one.',
+  },
+  {
+    lead: 'It cannot nominate itself.',
+    body: 'There is deliberately no “who is asking” parameter, so an agent cannot describe an actor and route its own work to itself.',
+  },
+  {
+    lead: 'Being sent somewhere is not permission to go.',
+    body: 'A rule that routes work is a refusal here, not information — that is how anything bypasses an escalation by ignoring where it was sent.',
+  },
+];
+
+const calls = [
+  {
+    ref: 'INV-0004',
+    vendor: 'Proseware Cloud',
+    amount: '$9,800',
+    outcome: 'Performed',
+    tone: 'good',
+    open: false,
+    reason: '$9,800 is under the limit, so the rule delegates it.',
+    effect: 'allow → the agent',
+    returned: null,
+  },
+  {
+    ref: 'INV-0006',
+    vendor: 'Woodgrove Facilities',
+    amount: '$10,000',
+    outcome: 'Assigned',
+    tone: 'warn',
+    open: true,
+    reason: '$10,000 is not under $10,000. The rule delegates what is below the limit; this sits exactly on it.',
+    effect: 'route → Chief Financial Officer',
+    returned: 'Approving this invoice is reserved to the CFO. It has been assigned to them.',
+  },
+  {
+    ref: 'INV-0008',
+    vendor: 'Fourth Coffee Group',
+    amount: '$42,000',
+    outcome: 'Assigned',
+    tone: 'warn',
+    open: false,
+    reason: 'Over the limit by a wide margin, and reserved by the same branch of the same rule.',
+    effect: 'route → Chief Financial Officer',
+    returned: 'Approving this invoice is reserved to the CFO. It has been assigned to them.',
+  },
+];
+
+const chip: Record<string, string> = {
+  good: 'bg-primary/15 text-accent border-primary/30',
+  warn: 'bg-amber-400/10 text-amber-300 border-amber-400/30',
+};
+---
+
+<WidgetWrapper id="gate" containerClass="max-w-5xl mx-auto">
+  <div class="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+    <!-- ── The prose ────────────────────────────────────────────────── -->
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Enforcement</p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-5">The gate is outside the model.</h2>
+      <p class="text-muted leading-relaxed mb-6">
+        Every guardrail story you have heard is a prompt asking a model nicely. This is not that. The decision is made
+        against your graph, before the tool body runs, by code the model cannot reach or reason with.
+      </p>
+
+      <ul class="space-y-3.5">
+        {
+          properties.map((p) => (
+            <li class="flex gap-3">
+              <Icon name="tabler:lock-check" class="w-4 h-4 text-primary flex-shrink-0 mt-1" />
+              <p class="text-sm leading-relaxed">
+                <strong class="text-white">{p.lead}</strong> <span class="text-muted">{p.body}</span>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- ── The picture ──────────────────────────────────────────────── -->
+    <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+      <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+        <Icon name="tabler:robot" class="w-3.5 h-3.5 text-cyan-300 flex-shrink-0" />
+        <span class="text-[11px] text-slate-300 truncate">Accounts Payable Agent</span>
+        <span class="ml-auto text-[10px] font-mono text-slate-500">invoice.approve</span>
+      </div>
+
+      <div class="p-3.5">
+        <!-- The rule every row below is judged against. -->
+        <div class="mb-2.5 flex items-center gap-2 rounded-lg border border-white/10 bg-slate-800/60 px-2.5 py-2">
+          <Icon name="tabler:gavel" class="w-3.5 h-3.5 text-primary flex-shrink-0" />
+          <span class="text-[10px] text-slate-400">Approval Authority</span>
+          <span class="ml-auto text-[11px] font-mono font-bold text-accent">under $10,000</span>
+        </div>
+
+        <div class="space-y-1.5">
+          {
+            calls.map((c) => (
+              <details class="call group rounded-lg border border-white/10 bg-slate-800/40" open={c.open}>
+                <summary class="flex items-center gap-2 px-2.5 py-2 cursor-pointer select-none">
+                  <Icon
+                    name="tabler:chevron-right"
+                    class="chev w-3 h-3 text-slate-500 flex-shrink-0 transition-transform"
+                  />
+                  <span class="text-[10px] font-mono text-slate-500 flex-shrink-0">{c.ref}</span>
+                  <span class="text-[11px] text-slate-300 truncate">{c.vendor}</span>
+                  <span class="text-[11px] font-mono text-white whitespace-nowrap ml-auto">{c.amount}</span>
+                  <span
+                    class:list={[
+                      'text-[9px] font-bold uppercase tracking-wider rounded border px-1.5 py-0.5 whitespace-nowrap',
+                      chip[c.tone],
+                    ]}
+                  >
+                    {c.outcome}
+                  </span>
+                </summary>
+
+                <div class="px-2.5 pb-2.5 pt-0.5 border-t border-white/8 mt-0.5 space-y-2">
+                  <p class="text-[11px] text-slate-400 leading-snug pt-2">{c.reason}</p>
+                  <p class="text-[10px] font-mono text-slate-500">{c.effect}</p>
+                  {c.returned && (
+                    <div class="rounded border border-white/10 bg-slate-900/70 px-2.5 py-2">
+                      <p class="text-[9px] uppercase tracking-wider text-slate-500 mb-1">Returned to the model</p>
+                      <p class="text-[11px] text-slate-200 italic leading-snug">“{c.returned}”</p>
+                    </div>
+                  )}
+                </div>
+              </details>
+            ))
+          }
+        </div>
+
+        <p class="mt-3 text-[10px] text-slate-500 leading-snug">
+          Every call ends in one of four — performed, assigned, blocked, or <strong class="text-slate-400"
+            >unevaluable</strong
+          > when two rules tie and nothing can break it. A system that always has an answer is one that is sometimes making
+          it up.
+        </p>
+      </div>
+    </div>
+  </div>
+</WidgetWrapper>
+
+<style>
+  /* A disclosure that still shows the browser's own triangle has two affordances arguing
+     about which one to press. */
+  .call > summary {
+    list-style: none;
+  }
+  .call > summary::-webkit-details-marker {
+    display: none;
+  }
+  .call[open] > summary .chev {
+    transform: rotate(90deg);
+  }
+  .call:hover {
+    border-color: rgb(255 255 255 / 18%);
+  }
+</style>

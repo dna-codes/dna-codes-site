@@ -1,0 +1,221 @@
+---
+import { Icon } from 'astro-icon/components';
+import Logo from '~/components/Logo.astro';
+import ToggleTheme from '~/components/common/ToggleTheme.astro';
+import ToggleMenu from '~/components/common/ToggleMenu.astro';
+import Button from '~/components/ui/Button.astro';
+import ProductMark from '~/components/ui/ProductMark.astro';
+
+import { getHomePermalink } from '~/utils/permalinks';
+import { trimSlash, getAsset } from '~/utils/permalinks';
+import type { CallToAction } from '~/types';
+
+interface Link {
+  text?: string;
+  href?: string;
+  ariaLabel?: string;
+  icon?: string;
+  /** Optional one-liner rendered under the label inside a dropdown. */
+  description?: string;
+}
+
+interface MenuLink extends Link {
+  links?: Array<MenuLink>;
+}
+
+export interface Props {
+  id?: string;
+  links?: Array<MenuLink>;
+  actions?: Array<CallToAction>;
+  isSticky?: boolean;
+  isDark?: boolean;
+  isFullWidth?: boolean;
+  showToggleTheme?: boolean;
+  showRssFeed?: boolean;
+  position?: string;
+}
+
+const {
+  id = 'header',
+  links = [],
+  actions = [],
+  isSticky = false,
+  isDark = false,
+  isFullWidth = false,
+  showToggleTheme = false,
+  showRssFeed = false,
+  position = 'center',
+} = Astro.props;
+
+const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+
+// Prefix-aware so a page inside a section lights up that section: /docs/getting-started
+// marks Docs, and /blog/some-post marks Blog. Exact-match alone left every nested page
+// looking like it belonged to no section at all.
+const isCurrent = (href?: string): boolean =>
+  !!href && href !== '/' && (href === currentPath || currentPath.startsWith(`${href}/`));
+
+// Product surfaces are marked: an accent rail across the header and a chip beside the
+// logo, so it is obvious you have stepped out of the pitch and into something you can
+// operate. Landing pages (home, pricing, blog) deliberately get neither.
+const PRODUCT_SECTIONS = [
+  { path: '/ui-operations', label: 'UI Operations' },
+  { path: '/operations', label: 'Operational DNA' },
+];
+const section = PRODUCT_SECTIONS.find(({ path }) => isCurrent(path));
+---
+
+<header
+  class:list={[
+    { sticky: isSticky, relative: !isSticky, dark: isDark },
+    'top-0 z-40 flex-none mx-auto w-full border-b border-gray-50/0 transition-[opacity] ease-in-out',
+  ]}
+  {...isSticky ? { 'data-aw-sticky-header': true } : {}}
+  {...id ? { id } : {}}
+>
+  <div class="absolute inset-0"></div>
+  {
+    section && (
+      <div
+        class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0"
+        aria-hidden="true"
+      />
+    )
+  }
+  <div
+    class:list={[
+      'relative text-default py-3 px-3 md:px-6 mx-auto w-full',
+      {
+        'md:flex md:justify-between': position !== 'center',
+      },
+      {
+        // `1fr auto 1fr` rather than three equal columns. The nav sits in a track sized to
+        // its own content, so it stays optically centred while the logo-plus-chip on the
+        // left and the waitlist button on the right split whatever is left. Equal thirds
+        // put the nav in a 1/3 track it had outgrown, and the overflow ran back under the
+        // section chip — which the longer product names made visible as an overlap at
+        // ~1024px. Auto-sized tracks push instead of overlapping.
+        'md:grid md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-x-4': position === 'center',
+      },
+      {
+        'max-w-7xl': !isFullWidth,
+      },
+    ]}
+  >
+    <div class:list={[{ 'mr-auto rtl:mr-0 rtl:ml-auto': position === 'right' }, 'flex justify-between']}>
+      <a class="flex items-center" href={getHomePermalink()}>
+        <Logo />
+      </a>
+      {
+        section && (
+          <span class="hidden sm:inline-flex items-center gap-1.5 ml-3 self-center rounded-full border border-primary/40 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-primary whitespace-nowrap">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+            {section.label}
+          </span>
+        )
+      }
+      <div class="flex items-center md:hidden">
+        <ToggleMenu />
+      </div>
+    </div>
+    <nav
+      class="items-center w-full md:w-auto hidden md:flex md:mx-5 text-default overflow-y-auto overflow-x-hidden md:overflow-visible md:justify-self-center"
+      aria-label="Main navigation"
+    >
+      <ul
+        class="flex flex-col md:flex-row md:self-center w-full md:w-auto text-xl md:text-[0.9375rem] tracking-[0.01rem] font-medium md:justify-center"
+      >
+        {
+          links.map(({ text, href, links }) => (
+            <li class={links?.length ? 'dropdown' : ''}>
+              {links?.length ? (
+                <>
+                  <button
+                    type="button"
+                    class:list={[
+                      'hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap',
+                      // A parent is "where you are" whenever one of its children is.
+                      { 'aw-link-active': links.some(({ href: childHref }) => isCurrent(childHref)) },
+                    ]}
+                  >
+                    {text}{' '}
+                    <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline" />
+                  </button>
+                  <ul class="dropdown-menu md:backdrop-blur-md dark:md:bg-dark rounded md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-white/90 md:min-w-[280px] drop-shadow-xl">
+                    {/* A child carrying an icon gets its product mark beside the label, so the
+                        menu is the first place the two logos are learned. */}
+                    {links.map(({ text: text2, href: href2, description, icon: icon2 }) => (
+                      <li>
+                        <a
+                          class:list={[
+                            'first:rounded-t last:rounded-b md:hover:bg-gray-100 hover:text-link dark:hover:text-white dark:hover:bg-gray-700 py-2 px-5 flex items-start gap-2.5 whitespace-no-wrap',
+                            { 'aw-link-active': isCurrent(href2) },
+                          ]}
+                          href={href2}
+                        >
+                          {icon2 && <ProductMark icon={icon2} size="sm" class="mt-0.5" />}
+                          <span class="min-w-0">
+                            {text2}
+                            {description && (
+                              <span class="block text-xs md:text-[0.75rem] font-normal text-muted leading-snug mt-0.5 whitespace-normal">
+                                {description}
+                              </span>
+                            )}
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <a
+                  class:list={[
+                    'hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap',
+                    { 'aw-link-active': isCurrent(href) },
+                  ]}
+                  href={href}
+                >
+                  {text}
+                </a>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div
+      class:list={[
+        { 'ml-auto rtl:ml-0 rtl:mr-auto': position === 'left' },
+        'hidden md:self-center md:flex items-center md:mb-0 fixed w-full md:w-auto md:static justify-end left-0 rtl:left-auto rtl:right-0 bottom-0 p-3 md:p-0 md:justify-self-end',
+      ]}
+    >
+      <div class="items-center flex justify-between w-full md:w-auto">
+        <div class="flex">
+          {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 md:w-5 md:h-5 md:inline-block" />}
+          {
+            showRssFeed && (
+              <a
+                class="text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center"
+                aria-label="RSS Feed"
+                href={getAsset('/rss.xml')}
+              >
+                <Icon name="tabler:rss" class="w-5 h-5" />
+              </a>
+            )
+          }
+        </div>
+        {
+          actions?.length ? (
+            <span class="ml-4 rtl:ml-0 rtl:mr-4">
+              {actions.map((btnProps) => (
+                <Button {...btnProps} class="ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" />
+              ))}
+            </span>
+          ) : (
+            ''
+          )
+        }
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,45 @@
+---
+import { SITE } from 'astrowind:config';
+import { PRODUCTS } from '~/data/products';
+
+// The homepage is where agents and search engines resolve who the site belongs to, so the
+// Organization lives there and nowhere else. No email, phone or postal address yet: the
+// contact page and its form are the honest contact point until those exist.
+const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
+const origin = String(SITE.site).replace(/\/$/, '');
+
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${origin}/#organization`,
+      name: SITE.name,
+      url: origin,
+      logo: `${origin}/favicon.png`,
+      description:
+        'DNA Codes builds a living operating model for teams of humans and agents: define roles, processes and rules once, then govern every screen, endpoint and agent from it.',
+      sameAs: ['https://github.com/dna-codes'],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'sales',
+        url: `${origin}/contact`,
+        availableLanguage: 'en',
+      },
+      makesOffer: PRODUCTS.map(({ name, href, description }) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name, description, url: `${origin}${href}` },
+      })),
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${origin}/#website`,
+      name: SITE.name,
+      url: origin,
+      publisher: { '@id': `${origin}/#organization` },
+    },
+  ],
+};
+---
+
+{isHome && <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />}
