@@ -69,6 +69,10 @@ const postCollection = defineCollection({
     // assumptions are the problem cannot leave this one unwritten.
     coAuthor: z.string().optional(),
 
+    // Registry id of the primary keyword this post owns. The search title comes from that
+    // row unless frontmatter already sets metadata.title.
+    targetKeyword: z.string().optional(),
+
     // Renders as a kicker above the headline: "The Future of Programming · Layer 02:
     // Semantics". It carries series identity and the layer's position in the stack so
     // the title itself doesn't have to — the title stays an argument, not a label.

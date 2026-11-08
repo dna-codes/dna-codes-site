@@ -201,4 +201,5 @@ After changes, always verify:
 2. `npm run check` passes (astro check + ESLint + Prettier)
 3. `npm run check:agentic` passes (is-agentic.com signals in `dist/`)
 4. `npm run check:ax` passes (homepage Markdown negotiation)
-5. Visual check in browser: homepage, blog, dark mode, mobile menu
+5. `npm run check:keywords` passes (keyword registry assignments against `dist/`)
+6. Visual check in browser: homepage, blog, dark mode, mobile menu

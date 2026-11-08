@@ -67,6 +67,16 @@ ${SURFACES.map((s) => `- ${s.planned ? s.name : `[${s.name}](${url(s.href)})`}: 
 
 ${GENOME_SOURCES.map((g) => `- [${g.orgName} genome](${url(`/genome/${g.key}.json`)}): ${g.description}`).join('\n')}
 
+## Search
+
+Pages written for the words an operations lead already uses. DNA is still not a BPM engine: the business-process page says where a suite that executes long-running workflows is the right tool.
+
+- [SOP software](${url('/sop-software')}): Procedures that stay tied to the work, including the small-team case where a wiki stops being enough.
+- [Target operating model](${url('/operating-model')}): Roles, processes, rules, and systems, plus an ungated operating model template.
+- [Business process management software](${url('/business-process-software')}): The drift between a process diagram and the software that runs it, and where a BPM suite is the better buy.
+- [Business process management](${url('/blog/business-process-management')}): What a process is, with worked examples.
+- [Business process modeling notation](${url('/blog/business-process-modeling')}): The same process drawn in BPMN and written as data.
+
 ## Optional
 
 - [About](${url('/about')}): Who DNA Codes is and what it is building.

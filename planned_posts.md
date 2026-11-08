@@ -372,13 +372,24 @@ Kept from the earlier plan. These target a different audience (ops leaders, not
 engineers) and different search intent. Worth resuming after the Execution close — running them concurrently would split the
 blog's voice mid-argument.
 
+The search-keyword change publishes two of these for operations leaders, aimed at measured queries rather than the series' engineering audience:
+
+- **Business Process Management, With Real Examples** (`/blog/business-process-management`), target keyword `business process management`. Cluster: bpm.
+- **Business Process Modeling Notation, Explained** (`/blog/business-process-modeling`), target keyword `business process modeling notation`. Cluster: bpmn. The heading "Business process modeling" absorbs the modeling query, so that phrase does not get its own post.
+
+The landing pages absorb the rest of what would have been posts:
+
+- **SOP software for small business**, including the "Google Docs is not a process system" angle, is a section of `/sop-software`.
+- **How to build an operating model** is a section of `/operating-model`, next to the ungated template.
+
 ### Pain-point / problem awareness
 
 - **The Hidden Cost of Process Debt: When Your Team Works Off Bad Docs** — the financial
   and operational cost of teams running on outdated processes: slow onboarding,
   inconsistent execution, compliance exposure.
-- **Google Docs Is Not a Process System** — why wiki-style tools fall short for
-  operational documentation, and what a real process system does differently.
+- **Google Docs Is Not a Process System** — absorbed into `/sop-software` under "SOP software
+  for small business." No separate post. The original brief: why wiki-style tools fall short
+  for operational documentation, and what a real process system does differently.
 - **The 5 Signs Your Team Has Outgrown Notion for Operations** — for teams at the 20–100
   person inflection point.
 

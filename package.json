@@ -10,7 +10,9 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "npm run check:genomes && astro build && node scripts/emit-homepage-markdown.mjs",
+    "build": "npm run check:genomes && node scripts/emit-operating-model-template.mjs && astro build && node scripts/emit-homepage-markdown.mjs && node scripts/check-keywords.mjs",
+    "keywords:import": "node scripts/keywords-import.mjs",
+    "check:keywords": "node scripts/check-keywords.mjs",
     "check:genomes": "node scripts/validate-genomes.mjs",
     "check:demo": "node scripts/demo-smoke.mjs",
     "check:agentic": "node scripts/agentic-check.mjs",

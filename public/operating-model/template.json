@@ -1,0 +1,107 @@
+{
+  "dna": "operating-model-template",
+  "example": "BrightBox Commerce",
+  "description": "A direct-to-consumer retailer running its own catalog, inventory, and fulfillment from order placement through delivery confirmation.",
+  "note": "Structure only. Sample orders, prices, and customer names are not in this file.",
+  "roles": [
+    {
+      "name": "Operations director",
+      "description": "Owns end-to-end fulfillment performance, carrier relationships, and SLA commitments."
+    },
+    {
+      "name": "Order manager",
+      "description": "Processes incoming orders, validates payments, and sets warehouse priority."
+    },
+    {
+      "name": "Warehouse lead",
+      "description": "Directs pick-and-pack, owns inventory accuracy, and oversees outbound shipments."
+    },
+    {
+      "name": "Customer support lead",
+      "description": "Handles delivery inquiries, manages returns, and resolves post-shipment exceptions."
+    },
+    {
+      "name": "Merchandising manager",
+      "description": "Owns the catalog — what is listed, how it is priced, and when it goes live."
+    }
+  ],
+  "processes": [
+    {
+      "name": "Order fulfillment",
+      "owner": "Operations director",
+      "description": "Placement through delivery confirmation, across catalog, inventory, and fulfillment.",
+      "steps": [
+        {
+          "name": "Receive order",
+          "role": "Order manager",
+          "description": "Ingest the order, validate line items, and confirm the SKUs are sellable."
+        },
+        {
+          "name": "Verify payment",
+          "role": "Order manager",
+          "description": "Confirm authorization; hold or decline anything the processor flags."
+        },
+        {
+          "name": "Reserve inventory",
+          "role": "Warehouse lead",
+          "description": "Hold stock at the fulfilling location and trigger replenishment if it goes short."
+        },
+        {
+          "name": "Pick & pack",
+          "role": "Warehouse lead",
+          "description": "Retrieve the items, verify quantities, and package for the carrier."
+        },
+        {
+          "name": "Dispatch shipment",
+          "role": "Warehouse lead",
+          "description": "Generate the label, hand off to the carrier, and publish tracking to the order."
+        },
+        {
+          "name": "Confirm delivery",
+          "role": "Customer support lead",
+          "description": "Verify carrier confirmation, close the order, and open the post-purchase follow-up."
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "name": "Payment clears before stock moves",
+      "description": "No stock is reserved until payment authorization has cleared."
+    },
+    {
+      "name": "Only warehouse dispatches",
+      "description": "Dispatch is the warehouse’s call. Support can ask; it cannot ship."
+    },
+    {
+      "name": "Returns are supports to approve",
+      "description": "Only support authorizes returns, so refund exposure has one owner."
+    },
+    {
+      "name": "Catalog goes live through merchandising",
+      "description": "Nothing reaches the storefront without merchandising publishing it."
+    }
+  ],
+  "systems": [
+    {
+      "name": "Storefront",
+      "description": "Customer-facing catalog and checkout."
+    },
+    {
+      "name": "Order service",
+      "description": "Order lifecycle and payment verification."
+    },
+    {
+      "name": "Inventory service",
+      "description": "Stock positions and reservations."
+    },
+    {
+      "name": "Fulfillment worker",
+      "description": "Runs the pick, pack, and dispatch steps against carrier APIs."
+    },
+    {
+      "name": "Commerce db",
+      "description": "Orders, catalog, inventory, shipments."
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import { seoFor } from '~/utils/seo';
+import { operatingModelTemplate } from '~/utils/operating-model-template';
+
+const metadata = seoFor('/sop-software');
+const model = operatingModelTemplate();
+const process = model.processes[0];
+---
+
+<Layout metadata={metadata}>
+  <article class="px-4 sm:px-6 mx-auto max-w-3xl pt-16 pb-4">
+    <div class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight">
+      <p class="text-sm font-semibold uppercase tracking-wide text-primary">SOP software</p>
+      <h1>SOP software that runs, not just documents</h1>
+      <p>
+        The procedure is in a doc. The work happens somewhere else. A new hire follows the doc, an old hand follows
+        memory, and the two of them do the same job differently until a customer notices. SOP software is supposed to
+        close that gap. Most of it stores a better copy of the doc.
+      </p>
+
+      <h2>The SOP nobody follows</h2>
+      <p>
+        A standard operating procedure fails in a quiet way. It was true the week it was written. Then the warehouse
+        changed who packs an order, the payment check moved, and the doc stayed. People stop trusting it, so they stop
+        opening it. The file is still named "the process." It is a souvenir.
+      </p>
+      <p>
+        The cost shows up as slow onboarding, two answers to the same question, and an audit that has to be assembled
+        from chat logs. None of that is a writing problem. The procedure and the work are two different things, and
+        nothing makes them the same thing.
+      </p>
+
+      <h2>One procedure, taken from a real operating model</h2>
+      <p>
+        This is order fulfillment at {model.example}, compiled from that company's genome. Each row is a step someone is
+        accountable for. The rule under the table is part of the procedure, not a footnote someone might remember.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Step</th>
+            <th>Who</th>
+            <th>What they do</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            process.steps.map((step) => (
+              <tr>
+                <td>{step.name}</td>
+                <td>{step.role}</td>
+                <td>{step.description}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+      <p>
+        <strong>{model.rules[0].name}.</strong>
+        {model.rules[0].description} When the rule changes, the procedure changes with it, because they are the same model.
+        A PDF cannot do that. A wiki page will not.
+      </p>
+
+      <h2>SOP software for small business</h2>
+      <p>
+        A small team does not need a suite. It needs one place where the way the work happens is the way the work is
+        described. Google Docs is a fine place to draft that. It is a bad place to run it. A doc has no owner per step,
+        no rule that blocks the next step, and no way to tell you the doc and the checkout flow have drifted apart.
+      </p>
+      <p>
+        At ten people you can still shout the correction across the room. At twenty you are forwarding the doc and
+        hoping. SOP software for a small business earns its place when the correction lands in the procedure the team
+        actually runs, including the agent that packs, refunds, or answers the ticket.
+      </p>
+
+      <h2>What DNA is, in this job</h2>
+      <p>
+        DNA Codes is the operating model those procedures live in. You describe the roles, the steps, and the rules
+        once. The doc, the workflow, and the agent read that description. The waitlist is how a team starts.
+      </p>
+    </div>
+  </article>
+  <div class="px-4 sm:px-6 mx-auto max-w-3xl pb-16">
+    <WaitlistForm preselect="operations" />
+  </div>
+</Layout>

@@ -4,6 +4,7 @@ import type { CollectionEntry } from 'astro:content';
 import type { Post } from '~/types';
 import { APP_BLOG } from 'astrowind:config';
 import { cleanSlug, trimSlash, BLOG_BASE, POST_PERMALINK_PATTERN, CATEGORY_BASE, TAG_BASE } from './permalinks';
+import { seoForKeyword } from './seo';
 
 const generatePermalink = async ({
   id,
@@ -56,7 +57,8 @@ const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> =
     coAuthor,
     series,
     draft = false,
-    metadata = {},
+    targetKeyword,
+    metadata: rawMetadata = {},
   } = data;
 
   const slug = cleanSlug(id); // cleanSlug(rawSlug.split('/').pop());
@@ -75,10 +77,26 @@ const getNormalizedPost = async (post: CollectionEntry<'post'>): Promise<Post> =
     title: tag,
   }));
 
+  const permalink = await generatePermalink({ id, slug, publishDate, category: category?.slug });
+
+  let metadata = rawMetadata;
+  if (targetKeyword && !rawMetadata.title) {
+    const seo = seoForKeyword(targetKeyword);
+    const url = `/${permalink}`;
+    if (seo.page !== url) {
+      throw new Error(`Post ${id} targets ${targetKeyword}, owned by ${seo.page}, not ${url}`);
+    }
+    metadata = {
+      ...rawMetadata,
+      title: seo.title,
+      description: rawMetadata.description ?? seo.description,
+    };
+  }
+
   return {
     id: id,
     slug: slug,
-    permalink: await generatePermalink({ id, slug, publishDate, category: category?.slug }),
+    permalink,
 
     publishDate: publishDate,
     updateDate: updateDate,
