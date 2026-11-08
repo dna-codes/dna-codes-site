@@ -1,5 +1,0 @@
-{
-  "name": "amount",
-  "type": "number",
-  "description": "How much money. Currency is a second attribute beside this one."
-}

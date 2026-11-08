@@ -1,9 +1,0 @@
-{
-  "id": "order-billed-to-address",
-  "name": "billed to",
-  "description": "The address an order is billed to. Shipping is the other relationship of this pair. Neither edge carries a quantity or a date of its own.",
-  "from": "order",
-  "to": "address",
-  "cardinality": "many-to-one",
-  "attribute": "order.billTo"
-}

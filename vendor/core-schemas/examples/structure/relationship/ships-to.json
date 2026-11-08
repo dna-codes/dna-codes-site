@@ -1,9 +1,0 @@
-{
-  "id": "order-ships-to-address",
-  "name": "ships to",
-  "description": "The address an order is shipped to. Billing is a second relationship from the same order entity to the same address entity.",
-  "from": "order",
-  "to": "address",
-  "cardinality": "many-to-one",
-  "attribute": "order.shipTo"
-}
