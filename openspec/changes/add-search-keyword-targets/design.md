@@ -172,11 +172,13 @@ change.
 
 **Operating model template** (45 searches a month) does not get its own route. `/operating-model`
 owns **target operating model**, and a section on that page owns the template phrase as a
-heading. The file is still generated at build time from a genome compiled with its sample values
-stripped: roles, processes and steps, rules, systems. It ships two ways, linked from that section:
+heading. The file is a blank of that shape, generated at build time: roles, processes and steps, rules,
+systems. The filled company stays on the board. The spreadsheet's first sheet explains the columns
+and shows one example of each row. The second sheet, the CSV, and the JSON are empty rows with the
+section already named. It ships two ways, linked from that section:
 
 - A spreadsheet download (`.xlsx` and `.csv`), because that is what the searcher wants today.
-- The same template as DNA (`.json`), because that is what it turns into.
+- The same rows as JSON.
 
 The files live at `/operating-model/template.xlsx`, `/operating-model/template.csv` and
 `/operating-model/template.json`, so they do not collide with the page. No email gate. A gate

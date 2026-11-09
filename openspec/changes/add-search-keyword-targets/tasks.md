@@ -46,10 +46,11 @@ not routes.
       filled-in example, then the three ungated downloads. A section headed **how to build an
       operating model** covers the how-to and operating model design. No template route and no
       how-to post.
-- [x] 3.3 Add a build step that compiles one genome with sample values stripped into a blank
-      operating model template, written to `public/operating-model/template.xlsx`,
-      `template.csv` and `template.json` (design D7). Open each download and confirm it is usable
-      without DNA: headers make sense, no ids or schema noise in the spreadsheet.
+- [x] 3.3 Add a build step that writes a blank operating model template to
+      `public/operating-model/template.xlsx`, `template.csv` and `template.json` (design D7). The
+      spreadsheet's first sheet explains the columns and shows one example of each row. The fill-in
+      sheet, the CSV, and the JSON are empty rows with the section already named. The filled
+      company on the board is not copied into the download.
 - [x] 3.4 `src/pages/business-process-software.astro`: owns **business process management
       software**. Written to design D6: names the drift problem, shows DNA against BPM suites, says
       plainly where a BPM engine is the right choice. Links to both posts under "Read more".

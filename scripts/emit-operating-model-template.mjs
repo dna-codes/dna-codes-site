@@ -1,11 +1,13 @@
 // Writes the blank operating-model template into public/ before `astro build` copies it.
-// The spreadsheet is the thing a searcher downloads. The JSON is the same rows, in the
-// shape the page calls DNA. Sample order numbers and prices never land in either file.
+// The spreadsheet is the thing a searcher downloads. The first sheet explains the columns
+// and shows one example of each row. The Model sheet, the CSV, and the JSON are empty rows
+// with the section already named. The filled company on the page stays out of these files.
 
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import * as esbuild from 'esbuild';
+import prettier from 'prettier';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, 'public/operating-model');
@@ -20,11 +22,13 @@ await esbuild.build({
   alias: { '~': join(root, 'src') },
 });
 
-const { operatingModelTemplate, templateRows } = await import(pathToFileURL(bundle).href);
-const model = operatingModelTemplate();
-const rows = templateRows(model);
+const { blankTemplateRows, templateColumns, templateExample, templateInstructions } = await import(
+  pathToFileURL(bundle).href
+);
+const rows = blankTemplateRows();
 
-const HEADERS = ['Section', 'Name', 'Who', 'What'];
+const HEADERS = [...templateColumns];
+const BANNED = ['BrightBox', 'Order manager', 'Warehouse lead', 'Merchandising manager'];
 
 function csvCell(value) {
   const text = String(value ?? '');
@@ -63,21 +67,28 @@ function xmlText(value) {
   return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 }
 
-function worksheet(table) {
-  const lines = [HEADERS, ...table.map((row) => [row.section, row.name, row.who, row.what])];
-  const rowsXml = lines
-    .map((line, rowIndex) => {
-      const cells = line
-        .map((value, columnIndex) => {
-          const ref = `${column(columnIndex)}${rowIndex + 1}`;
-          return `<c r="${ref}" t="inlineStr"><is><t>${xmlText(value)}</t></is></c>`;
-        })
-        .join('');
-      return `<row r="${rowIndex + 1}">${cells}</row>`;
+function cellsOf(line, rowIndex) {
+  return line
+    .map((value, columnIndex) => {
+      if (value === '') return '';
+      const ref = `${column(columnIndex)}${rowIndex + 1}`;
+      return `<c r="${ref}" t="inlineStr"><is><t>${xmlText(value)}</t></is></c>`;
     })
     .join('');
+}
+
+function worksheet(lines, { freeze = false, mergeThrough = 0 } = {}) {
+  const rowsXml = lines.map((line, rowIndex) => `<row r="${rowIndex + 1}">${cellsOf(line, rowIndex)}</row>`).join('');
+  const view = freeze
+    ? `<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>`
+    : '';
+  const cols = `<cols><col min="1" max="1" width="16" customWidth="1"/><col min="2" max="2" width="28" customWidth="1"/><col min="3" max="3" width="22" customWidth="1"/><col min="4" max="4" width="78" customWidth="1"/></cols>`;
+  const merges =
+    mergeThrough > 0
+      ? `<mergeCells count="${mergeThrough}">${Array.from({ length: mergeThrough }, (_, index) => `<mergeCell ref="A${index + 1}:D${index + 1}"/>`).join('')}</mergeCells>`
+      : '';
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${rowsXml}</sheetData></worksheet>`;
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">${view}${cols}<sheetData>${rowsXml}</sheetData>${merges}</worksheet>`;
 }
 
 function zipStore(files) {
@@ -121,12 +132,19 @@ function zipStore(files) {
   return Buffer.concat([...locals, centralDir, end]);
 }
 
-const sheet = worksheet(rows);
+const readMe = [
+  ...templateInstructions.map((line) => [line, '', '', '']),
+  ['', '', '', ''],
+  ['An example, so the columns are obvious. This is not your company.', '', '', ''],
+  HEADERS,
+  ...templateExample.map((row) => [row.section, row.name, row.who, row.what]),
+];
+const modelSheet = [HEADERS, ...rows.map((row) => [row.section, row.name, row.who, row.what])];
 const xlsx = zipStore([
   {
     name: '[Content_Types].xml',
     data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`,
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`,
   },
   {
     name: '_rels/.rels',
@@ -136,29 +154,36 @@ const xlsx = zipStore([
   {
     name: 'xl/workbook.xml',
     data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Operating model" sheetId="1" r:id="rId1"/></sheets></workbook>`,
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Read me" sheetId="1" r:id="rId1"/><sheet name="Model" sheetId="2" r:id="rId2"/></sheets></workbook>`,
   },
   {
     name: 'xl/_rels/workbook.xml.rels',
     data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>`,
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/></Relationships>`,
   },
-  { name: 'xl/worksheets/sheet1.xml', data: sheet },
+  { name: 'xl/worksheets/sheet1.xml', data: worksheet(readMe, { mergeThrough: templateInstructions.length + 2 }) },
+  { name: 'xl/worksheets/sheet2.xml', data: worksheet(modelSheet, { freeze: true }) },
 ]);
 
 const dna = {
-  dna: 'operating-model-template',
-  example: model.example,
-  description: model.description,
-  note: 'Structure only. Sample orders, prices, and customer names are not in this file.',
-  roles: model.roles,
-  processes: model.processes,
-  rules: model.rules,
-  systems: model.systems,
+  name: 'A Runnable Target Operating Model',
+  instructions: templateInstructions,
+  columns: HEADERS,
+  example: templateExample,
+  rows,
 };
 
+const csvText = csv(rows);
+const jsonPath = join(outDir, 'template.json');
+const prettierConfig = (await prettier.resolveConfig(jsonPath)) ?? {};
+const jsonText = await prettier.format(JSON.stringify(dna), { ...prettierConfig, filepath: jsonPath });
+const packed = `${csvText}\n${jsonText}\n${readMe.flat().join('\n')}`;
+for (const word of BANNED) {
+  if (packed.includes(word)) throw new Error(`template still contains the example company: ${word}`);
+}
+
 mkdirSync(outDir, { recursive: true });
-writeFileSync(join(outDir, 'template.csv'), csv(rows));
-writeFileSync(join(outDir, 'template.json'), `${JSON.stringify(dna, null, 2)}\n`);
+writeFileSync(join(outDir, 'template.csv'), csvText);
+writeFileSync(jsonPath, jsonText);
 writeFileSync(join(outDir, 'template.xlsx'), xlsx);
-console.log(`operating-model template: ${rows.length} rows`);
+console.log(`operating-model template: ${rows.length} blank rows`);

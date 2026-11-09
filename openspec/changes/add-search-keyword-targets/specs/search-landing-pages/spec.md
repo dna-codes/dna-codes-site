@@ -77,10 +77,12 @@ keyword.
 
 ### Requirement: An ungated operating model template on the operating-model page
 
-`/operating-model` SHALL include a blank operating model template generated at build time from a
-genome. The template SHALL be downloadable without submitting any form, as a spreadsheet and as
-DNA JSON, at `/operating-model/template.xlsx`, `/operating-model/template.csv` and
-`/operating-model/template.json`.
+`/operating-model` SHALL include a blank operating model template generated at build time. The
+template SHALL be downloadable without submitting any form, as a spreadsheet and as JSON, at
+`/operating-model/template.xlsx`, `/operating-model/template.csv` and
+`/operating-model/template.json`. The spreadsheet SHALL explain the columns and show one example
+of each row, and its fill-in sheet SHALL be empty rows with the section already named. The filled
+example company on the page SHALL NOT be copied into the download.
 
 #### Scenario: Download without a gate
 

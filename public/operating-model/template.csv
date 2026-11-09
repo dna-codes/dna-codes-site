@@ -1,22 +1,19 @@
 Section,Name,Who,What
-Role,Operations director,,"Owns end-to-end fulfillment performance, carrier relationships, and SLA commitments."
-Role,Order manager,,"Processes incoming orders, validates payments, and sets warehouse priority."
-Role,Warehouse lead,,"Directs pick-and-pack, owns inventory accuracy, and oversees outbound shipments."
-Role,Customer support lead,,"Handles delivery inquiries, manages returns, and resolves post-shipment exceptions."
-Role,Merchandising manager,,"Owns the catalog — what is listed, how it is priced, and when it goes live."
-Process,Order fulfillment,Operations director,"Placement through delivery confirmation, across catalog, inventory, and fulfillment."
-Step,Receive order,Order manager,"Ingest the order, validate line items, and confirm the SKUs are sellable."
-Step,Verify payment,Order manager,Confirm authorization; hold or decline anything the processor flags.
-Step,Reserve inventory,Warehouse lead,Hold stock at the fulfilling location and trigger replenishment if it goes short.
-Step,Pick & pack,Warehouse lead,"Retrieve the items, verify quantities, and package for the carrier."
-Step,Dispatch shipment,Warehouse lead,"Generate the label, hand off to the carrier, and publish tracking to the order."
-Step,Confirm delivery,Customer support lead,"Verify carrier confirmation, close the order, and open the post-purchase follow-up."
-Rule,Payment clears before stock moves,,No stock is reserved until payment authorization has cleared.
-Rule,Only warehouse dispatches,,Dispatch is the warehouse’s call. Support can ask; it cannot ship.
-Rule,Returns are supports to approve,,"Only support authorizes returns, so refund exposure has one owner."
-Rule,Catalog goes live through merchandising,,Nothing reaches the storefront without merchandising publishing it.
-System,Storefront,,Customer-facing catalog and checkout.
-System,Order service,,Order lifecycle and payment verification.
-System,Inventory service,,Stock positions and reservations.
-System,Fulfillment worker,,"Runs the pick, pack, and dispatch steps against carrier APIs."
-System,Commerce db,,"Orders, catalog, inventory, shipments."
+Role,,,
+Role,,,
+Role,,,
+Role,,,
+Process,,,
+Step,,,
+Step,,,
+Step,,,
+Process,,,
+Step,,,
+Step,,,
+Step,,,
+Rule,,,
+Rule,,,
+Rule,,,
+System,,,
+System,,,
+System,,,
