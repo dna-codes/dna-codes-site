@@ -37,20 +37,20 @@ export const headerData = {
     // Use cases are the searches these pages answer. Building With AI stays in Learn: it is a
     // companion you work through, the same kind of thing as the docs and the blog.
     {
-      text: 'Use cases',
+      text: 'Use Cases',
       links: [
         {
-          text: 'SOP software',
+          text: 'SOP Software',
           href: getPermalink('/sop-software'),
           description: 'Procedures that stay tied to the work.',
         },
         {
-          text: 'Target operating model',
+          text: 'Target Operating Model',
           href: getPermalink('/operating-model'),
           description: 'Roles, processes, rules, and systems.',
         },
         {
-          text: 'Business process software',
+          text: 'Business Process Software',
           href: getPermalink('/business-process-software'),
           description: 'Where a BPM suite fits, and where a model does.',
         },
@@ -106,11 +106,11 @@ export const footerData = {
       ],
     },
     {
-      title: 'Use cases',
+      title: 'Use Cases',
       links: [
-        { text: 'SOP software', href: getPermalink('/sop-software') },
-        { text: 'Target operating model', href: getPermalink('/operating-model') },
-        { text: 'Business process software', href: getPermalink('/business-process-software') },
+        { text: 'SOP Software', href: getPermalink('/sop-software') },
+        { text: 'Target Operating Model', href: getPermalink('/operating-model') },
+        { text: 'Business Process Software', href: getPermalink('/business-process-software') },
       ],
     },
   ],

@@ -73,9 +73,9 @@ ${GENOME_SOURCES.map((g) => `- [${g.orgName} genome](${url(`/genome/${g.key}.jso
 
 Pages written for the words an operations lead already uses. DNA is still not a BPM engine: the business-process page says where a suite that executes long-running workflows is the right tool.
 
-- [SOP software](${url('/sop-software')}): Procedures that stay tied to the work, including the small-team case where a wiki stops being enough.
-- [Target operating model](${url('/operating-model')}): Roles, processes, rules, and systems, plus an ungated operating model template.
-- [Business process management software](${url('/business-process-software')}): The drift between a process diagram and the software that runs it, and where a BPM suite is the better buy.
+- [SOP Software](${url('/sop-software')}): Procedures that stay tied to the work, including the small-team case where a wiki stops being enough. The page shows the procedure as a running SOP.
+- [Target Operating Model](${url('/operating-model')}): Roles, processes, rules, and systems on one board, plus an ungated operating model template.
+- [Business Process Software](${url('/business-process-software')}): Living business processes. The page walks a process diagram of steps, roles, and work, and says where a BPM suite is the better buy.
 - [Business process management](${url('/blog/business-process-management')}): What a process is, with worked examples.
 - [Business process modeling notation](${url('/blog/business-process-modeling')}): The same process drawn in BPMN and written as data.
 

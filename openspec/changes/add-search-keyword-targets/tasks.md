@@ -79,7 +79,7 @@ Each post sets `targetKeyword`, carries `coAuthor: Claude (Anthropic)`, links to
 
 - [x] 5.1 Add the three landing pages and the two posts to `/llms.txt` under a section that says
       what each is for. Confirm the "not a BPM engine" line still reads true next to the BPM page.
-- [x] 5.2 Add the landing pages under a header Use cases menu, and the same column in the
+- [x] 5.2 Add the landing pages under a header Use Cases menu, and the same column in the
       footer, in `src/navigation.ts`. Building With AI stays in Learn.
 - [x] 5.3 Confirm all five routes are in the sitemap and pass `npm run check:agentic`.
 

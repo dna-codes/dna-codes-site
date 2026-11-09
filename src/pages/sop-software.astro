@@ -1,19 +1,21 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import SopSheet from '~/components/widgets/use-case/SopSheet.astro';
 import { seoFor } from '~/utils/seo';
 import { operatingModelTemplate } from '~/utils/operating-model-template';
 
 const metadata = seoFor('/sop-software');
 const model = operatingModelTemplate();
-const process = model.processes[0];
 ---
 
 <Layout metadata={metadata}>
-  <article class="px-4 sm:px-6 mx-auto max-w-3xl pt-16 pb-4">
-    <div class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight">
-      <p class="text-sm font-semibold uppercase tracking-wide text-primary">SOP software</p>
-      <h1>SOP software that runs, not just documents</h1>
+  <article class="px-4 sm:px-6 mx-auto max-w-6xl pt-16 pb-4">
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto"
+    >
+      <p class="text-sm font-semibold tracking-wide text-primary">SOP Software</p>
+      <h1>SOP Software that runs, not just documents</h1>
       <p>
         The procedure is in a doc. The work happens somewhere else. A new hire follows the doc, an old hand follows
         memory, and the two of them do the same job differently until a customer notices. SOP software is supposed to
@@ -34,36 +36,17 @@ const process = model.processes[0];
 
       <h2>One procedure, taken from a real operating model</h2>
       <p>
-        This is order fulfillment at {model.example}, compiled from that company's genome. Each row is a step someone is
-        accountable for. The rule under the table is part of the procedure, not a footnote someone might remember.
+        This is order fulfillment at {model.example}, compiled from that company's genome. Each step names who is
+        accountable. The rule is in the step it governs, not a footnote someone might remember.
       </p>
-      <table>
-        <thead>
-          <tr>
-            <th>Step</th>
-            <th>Who</th>
-            <th>What they do</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            process.steps.map((step) => (
-              <tr>
-                <td>{step.name}</td>
-                <td>{step.role}</td>
-                <td>{step.description}</td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
-      <p>
-        <strong>{model.rules[0].name}.</strong>
-        {model.rules[0].description} When the rule changes, the procedure changes with it, because they are the same model.
-        A PDF cannot do that. A wiki page will not.
-      </p>
+    </div>
 
-      <h2>SOP software for small business</h2>
+    <SopSheet class="mt-8 max-w-3xl mx-auto" />
+
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto mt-10"
+    >
+      <h2>SOP Software for Small Business</h2>
       <p>
         A small team does not need a suite. It needs one place where the way the work happens is the way the work is
         described. Google Docs is a fine place to draft that. It is a bad place to run it. A doc has no owner per step,

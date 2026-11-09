@@ -10,19 +10,23 @@
     },
     {
       "name": "Order manager",
-      "description": "Processes incoming orders, validates payments, and sets warehouse priority."
+      "description": "Processes incoming orders, validates payments, and sets warehouse priority.",
+      "parent": "Operations director"
     },
     {
       "name": "Warehouse lead",
-      "description": "Directs pick-and-pack, owns inventory accuracy, and oversees outbound shipments."
+      "description": "Directs pick-and-pack, owns inventory accuracy, and oversees outbound shipments.",
+      "parent": "Operations director"
     },
     {
       "name": "Customer support lead",
-      "description": "Handles delivery inquiries, manages returns, and resolves post-shipment exceptions."
+      "description": "Handles delivery inquiries, manages returns, and resolves post-shipment exceptions.",
+      "parent": "Operations director"
     },
     {
       "name": "Merchandising manager",
-      "description": "Owns the catalog — what is listed, how it is priced, and when it goes live."
+      "description": "Owns the catalog — what is listed, how it is priced, and when it goes live.",
+      "parent": "Operations director"
     }
   ],
   "processes": [
@@ -34,32 +38,60 @@
         {
           "name": "Receive order",
           "role": "Order manager",
-          "description": "Ingest the order, validate line items, and confirm the SKUs are sellable."
+          "description": "Ingest the order, validate line items, and confirm the SKUs are sellable.",
+          "action": "Receive",
+          "resource": "Order",
+          "rules": []
         },
         {
           "name": "Verify payment",
           "role": "Order manager",
-          "description": "Confirm authorization; hold or decline anything the processor flags."
+          "description": "Confirm authorization; hold or decline anything the processor flags.",
+          "action": "Verify payment",
+          "resource": "Order",
+          "rules": []
         },
         {
           "name": "Reserve inventory",
           "role": "Warehouse lead",
-          "description": "Hold stock at the fulfilling location and trigger replenishment if it goes short."
+          "description": "Hold stock at the fulfilling location and trigger replenishment if it goes short.",
+          "action": "Reserve",
+          "resource": "Inventory item",
+          "rules": [
+            {
+              "name": "Payment clears before stock moves",
+              "description": "No stock is reserved until payment authorization has cleared."
+            }
+          ]
         },
         {
           "name": "Pick & pack",
           "role": "Warehouse lead",
-          "description": "Retrieve the items, verify quantities, and package for the carrier."
+          "description": "Retrieve the items, verify quantities, and package for the carrier.",
+          "action": "Pack",
+          "resource": "Shipment",
+          "rules": []
         },
         {
           "name": "Dispatch shipment",
           "role": "Warehouse lead",
-          "description": "Generate the label, hand off to the carrier, and publish tracking to the order."
+          "description": "Generate the label, hand off to the carrier, and publish tracking to the order.",
+          "action": "Dispatch",
+          "resource": "Shipment",
+          "rules": [
+            {
+              "name": "Only warehouse dispatches",
+              "description": "Dispatch is the warehouse’s call. Support can ask; it cannot ship."
+            }
+          ]
         },
         {
           "name": "Confirm delivery",
           "role": "Customer support lead",
-          "description": "Verify carrier confirmation, close the order, and open the post-purchase follow-up."
+          "description": "Verify carrier confirmation, close the order, and open the post-purchase follow-up.",
+          "action": "Confirm",
+          "resource": "Order",
+          "rules": []
         }
       ]
     }

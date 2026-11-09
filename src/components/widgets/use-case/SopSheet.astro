@@ -1,0 +1,274 @@
+---
+// The SOP page's document, in the same frame as the SOP card on the Operations page.
+// The steps are the real genome procedure, and the highlight walks them so the
+// document reads as the work rather than a file beside it.
+import { twMerge } from 'tailwind-merge';
+import { operatingModelTemplate } from '~/utils/operating-model-template';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const model = operatingModelTemplate();
+const process = model.processes[0];
+---
+
+<figure class={twMerge('not-prose', className)} data-playhead>
+  <div class="card">
+    <div class="bar">
+      <span class="pill">SOP</span>
+      <span class="example">{model.example}</span>
+      <button type="button" class="play" data-play aria-pressed="true">Pause</button>
+    </div>
+
+    <div class="head">
+      <p class="title">{process.name}</p>
+      <p class="owner">
+        Owner <span>{process.owner}</span>
+      </p>
+      <p class="blurb">{process.description}</p>
+    </div>
+
+    <div class="steps" role="group" aria-label={`${process.name} procedure`}>
+      {
+        process.steps.map((step, i) => (
+          <button
+            type="button"
+            class:list={['row', { 'is-current': i === 0 }]}
+            data-step={i}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+          >
+            <span class="n">{i + 1}</span>
+            <span class="body">
+              <span class="topline">
+                <span class="name">{step.name}</span>
+                <span class="role">{step.role}</span>
+              </span>
+              <span class="op">
+                <span class="action">{step.action}</span>
+                <span class="arrow" aria-hidden="true">
+                  →
+                </span>
+                <span class="resource">{step.resource}</span>
+              </span>
+              <span class="work">{step.description}</span>
+              {step.rules.map((rule) => (
+                <span class="rule">
+                  <strong>{rule.name}.</strong> {rule.description}
+                </span>
+              ))}
+            </span>
+          </button>
+        ))
+      }
+    </div>
+  </div>
+  <figcaption>
+    {process.name} at {model.example}. The highlight is the step underway. The rule sits in the step it governs, because
+    it is part of the procedure.
+  </figcaption>
+</figure>
+
+<script>
+  import { attachPlayhead } from './playhead';
+
+  document.querySelectorAll<HTMLElement>('[data-playhead]').forEach((root) => attachPlayhead(root));
+</script>
+
+<style>
+  .card {
+    overflow: hidden;
+    border-radius: 1rem;
+    border: 2px solid rgb(13 148 136 / 0.85);
+    background: rgb(15 23 42 / 0.92);
+    box-shadow: 0 0 48px rgb(13 148 136 / 0.28);
+  }
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 0.7rem 0.85rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  }
+  .pill {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(125 211 252);
+    background: rgb(14 165 233 / 0.16);
+    border: 1px solid rgb(56 189 248 / 0.4);
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+  }
+  .example {
+    font-size: 0.75rem;
+    color: rgb(148 163 184);
+  }
+  .play {
+    margin-left: auto;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    background: rgb(255 255 255 / 0.04);
+    color: rgb(226 232 240);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.7rem;
+    cursor: pointer;
+  }
+  .play:focus-visible,
+  .row:focus-visible {
+    outline: 2px solid rgb(45 212 191);
+    outline-offset: 2px;
+  }
+
+  .head {
+    padding: 0.9rem 1rem 0.2rem;
+  }
+  .title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: rgb(241 245 249);
+  }
+  .owner {
+    margin: 0.35rem 0 0;
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgb(148 163 184);
+  }
+  .owner span {
+    color: rgb(125 211 252);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0;
+    text-transform: none;
+    font-weight: 600;
+  }
+  .blurb {
+    margin: 0.4rem 0 0;
+    color: rgb(148 163 184);
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.85rem;
+  }
+  .row {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+    text-align: left;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    background: rgb(30 41 59 / 0.55);
+    border-radius: 0.75rem;
+    padding: 0.7rem 0.8rem;
+    color: inherit;
+    cursor: pointer;
+  }
+  .row.is-current {
+    border-color: rgb(13 148 136 / 0.7);
+    background: rgb(13 148 136 / 0.12);
+    box-shadow: 0 0 24px rgb(13 148 136 / 0.2);
+  }
+  .row.is-done {
+    border-color: rgb(255 255 255 / 0.06);
+    opacity: 0.72;
+  }
+  .n {
+    flex: 0 0 auto;
+    width: 1.6rem;
+    height: 1.6rem;
+    margin-top: 0.1rem;
+    border-radius: 999px;
+    border: 1px solid rgb(13 148 136 / 0.5);
+    background: rgb(13 148 136 / 0.18);
+    color: rgb(153 246 228);
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .body {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .topline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.35rem 0.75rem;
+  }
+  .name {
+    font-size: 0.92rem;
+    font-weight: 650;
+    color: rgb(241 245 249);
+  }
+  .role {
+    font-size: 0.72rem;
+    color: rgb(148 163 184);
+    background: rgb(255 255 255 / 0.06);
+    border-radius: 0.25rem;
+    padding: 0.05rem 0.4rem;
+  }
+  .op {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8rem;
+  }
+  .action {
+    color: rgb(45 212 191);
+    font-weight: 650;
+  }
+  .arrow {
+    color: rgb(100 116 139);
+    margin-inline: 0.25rem;
+  }
+  .resource {
+    color: rgb(226 232 240);
+  }
+  .work,
+  .rule {
+    font-size: 0.84rem;
+    line-height: 1.4;
+    color: rgb(203 213 225);
+  }
+  .rule {
+    color: rgb(153 246 228);
+  }
+  .rule strong {
+    font-weight: 650;
+  }
+
+  figcaption {
+    margin-top: 0.75rem;
+    color: rgb(100 116 139);
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .row.is-current .n {
+      animation: sop-pulse 1.8s ease-in-out infinite;
+    }
+  }
+  @keyframes sop-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(45 212 191 / 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 6px rgb(45 212 191 / 0);
+    }
+  }
+</style>

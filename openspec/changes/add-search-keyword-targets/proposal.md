@@ -90,7 +90,7 @@ through `.astro` files for title strings. This change makes a pivot a data edit.
     already contains that phrase, and a heading uses it exactly. One post, not two.
 
 - **Agent and crawler surfaces.** The three landing pages and the two posts join `/llms.txt` and
-  the sitemap. The landing pages join a Use cases menu in the header and the same column in the footer. An agent reading the site finds them the way a
+  the sitemap. The landing pages join a Use Cases menu in the header and the same column in the footer. An agent reading the site finds them the way a
   search engine does.
 
 ## Capabilities

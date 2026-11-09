@@ -120,6 +120,14 @@ Reach for the punctuation that names the relationship instead:
 Not a ban, so one or two in a long piece is fine. It should be a choice, not a reflex. A
 blind find-and-replace will mangle prose, since each one wants a different fix.
 
+**Section titles are short.** A heading names the section. It does not summarize the paragraph
+under it. Two or three words, punchy: "The Drift", "The Difference". A sentence in the heading
+slot ("What drifts", "A BPM suite and a model are different tools") is the paragraph starting
+early. Save the explanation for the first line of body copy.
+
+A heading that exists to carry a search phrase still has to contain that phrase. Everywhere
+else, name the section.
+
 ## A `<br>` needs an explicit space beside it
 
 The HTML minifier strips whitespace either side of a `<br>`, so a responsive break written the
@@ -204,6 +212,12 @@ supplies the search title.
 Five routes own the primaries: `/sop-software`, `/operating-model`, `/business-process-software`,
 `/blog/business-process-management`, `/blog/business-process-modeling`. A secondary phrase is a
 heading on its page, not another route.
+
+The three landing pages are the header and footer menu **Use Cases**, titled SOP Software, Target
+Operating Model, and Business Process Software. Each shows a visual drawn from the ecommerce genome,
+in the same frame as the product demos: a running SOP, an operating-model board (roles, process,
+rules, systems), and a process diagram of steps, roles, and work. The business-process page's
+heading is Living Business Processes. Its search title stays the registry row.
 
 An agent meets those pages in two places this repo owns. `/llms.txt` lists them under Search and
 tells an agent when to send someone there. The homepage Markdown's "For agents" block, written by

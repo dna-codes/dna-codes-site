@@ -239,9 +239,9 @@ export function homepageMarkdown(html) {
       `## For agents`,
       ``,
       `- [llms.txt](${ORIGIN}/llms.txt): index of docs, products, genomes, and the pages below.`,
-      `- [SOP software](${ORIGIN}/sop-software): procedures that stay tied to the work, including a small team that has outgrown a wiki.`,
-      `- [Target operating model](${ORIGIN}/operating-model): roles, processes, rules, and systems, plus an ungated template.`,
-      `- [Business process software](${ORIGIN}/business-process-software): where a BPM suite is the right tool. DNA is not a BPM engine.`,
+      `- [SOP Software](${ORIGIN}/sop-software): procedures that stay tied to the work, including a small team that has outgrown a wiki. The page shows the procedure as a running SOP.`,
+      `- [Target Operating Model](${ORIGIN}/operating-model): roles, processes, rules, and systems on one board, plus an ungated template.`,
+      `- [Business Process Software](${ORIGIN}/business-process-software): living business processes, as a diagram of steps, roles, and work. DNA is not a BPM engine.`,
       `- [Business process management](${ORIGIN}/blog/business-process-management): what a process is, with worked examples.`,
       `- [Business process modeling notation](${ORIGIN}/blog/business-process-modeling): the same process drawn in BPMN and written as data.`,
     ].join('\n')

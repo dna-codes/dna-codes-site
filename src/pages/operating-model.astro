@@ -1,19 +1,19 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import OperatingModelBoard from '~/components/widgets/use-case/OperatingModelBoard.astro';
 import { seoFor } from '~/utils/seo';
-import { operatingModelTemplate } from '~/utils/operating-model-template';
 
 const metadata = seoFor('/operating-model');
-const model = operatingModelTemplate();
-const process = model.processes[0];
 ---
 
 <Layout metadata={metadata}>
-  <article class="px-4 sm:px-6 mx-auto max-w-3xl pt-16 pb-4">
-    <div class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight">
-      <p class="text-sm font-semibold uppercase tracking-wide text-primary">Target operating model</p>
-      <h1>A target operating model you can run</h1>
+  <article class="px-4 sm:px-6 mx-auto max-w-6xl pt-16 pb-4">
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto"
+    >
+      <p class="text-sm font-semibold tracking-wide text-primary">Target Operating Model</p>
+      <h1>A Target Operating Model you can run</h1>
       <p>
         A target operating model usually leaves the workshop as a slide. Boxes for the functions, arrows for the
         handoffs, a footnote about the systems. Six months later the slides are still the target, and the company is
@@ -27,70 +27,22 @@ const process = model.processes[0];
 
       <h2>Roles, process, rules, systems</h2>
       <p>
-        This is {model.example}. {model.description} The names below are the operating model, not a sample customer or a sample
-        order.
+        The board is one company, compiled from its genome. Roles report the way the work does. The process names the
+        step, the role, and the operation. Rules sit on the step they govern. Systems are the cells that carry the data.
       </p>
-      <h3>Roles</h3>
-      <ul>
-        {
-          model.roles.map((role) => (
-            <li>
-              <strong>{role.name}.</strong> {role.description}
-            </li>
-          ))
-        }
-      </ul>
-      <h3>{process.name}</h3>
-      <p>
-        Owned by the {process.owner.toLowerCase()}. {process.description}
-      </p>
-      <table>
-        <thead>
-          <tr>
-            <th>Step</th>
-            <th>Role</th>
-            <th>Work</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            process.steps.map((step) => (
-              <tr>
-                <td>{step.name}</td>
-                <td>{step.role}</td>
-                <td>{step.description}</td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
-      <h3>Rules</h3>
-      <ul>
-        {
-          model.rules.map((rule) => (
-            <li>
-              <strong>{rule.name}.</strong> {rule.description}
-            </li>
-          ))
-        }
-      </ul>
-      <h3>Systems</h3>
-      <ul>
-        {
-          model.systems.map((system) => (
-            <li>
-              <strong>{system.name}.</strong> {system.description}
-            </li>
-          ))
-        }
-      </ul>
+    </div>
 
-      <h2>Operating model template</h2>
+    <OperatingModelBoard class="mt-8" />
+
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto mt-10"
+    >
+      <h2>Operating Model Template</h2>
       <p>
-        The tables above are the filled example. The template is the same shape with the story taken out: roles,
-        processes and steps, rules, and systems, ready to fill in for your own company. No email. The spreadsheet is
-        what you can use this afternoon. The JSON is the same template as DNA, which is what it becomes when you want
-        the model to drive the work.
+        The board above is the filled example. The template is the same shape with the story taken out: roles, processes
+        and steps, rules, and systems, ready to fill in for your own company. No email. The spreadsheet is what you can
+        use this afternoon. The JSON is the same template as DNA, which is what it becomes when you want the model to
+        drive the work.
       </p>
       <ul>
         <li><a href="/operating-model/template.xlsx">Download the spreadsheet (.xlsx)</a></li>
@@ -98,7 +50,7 @@ const process = model.processes[0];
         <li><a href="/operating-model/template.json">Download the DNA template (.json)</a></li>
       </ul>
 
-      <h2>How to build an operating model</h2>
+      <h2>How to Build an Operating Model</h2>
       <p>
         Start from a process the company already runs badly, not from a blank org chart. Name the roles that touch it.
         Write the steps in the order the work actually moves, and write the rule that people currently enforce by
