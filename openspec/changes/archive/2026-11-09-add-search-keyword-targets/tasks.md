@@ -83,10 +83,10 @@ Each post sets `targetKeyword`, carries `coAuthor: Claude (Anthropic)`, links to
 
 ## 6. Measurement
 
-- [ ] 6.1 Add every primary and secondary keyword to the Moz campaign's tracked keywords.
-- [ ] 6.2 Record a baseline rank (most will be unranked) in the sheet's notes column on launch day.
-
-These two need the Moz account and the research sheet. They are not something the repository can do.
+- [x] 6.1 Add every primary and secondary keyword to the Moz campaign's tracked keywords.
+      Done 2026-11-09 in the DNA Codes campaign, Google en-US, location National. 10 were already tracked. 19 were added. The tracked count went from 60 to 79.
+- [x] 6.2 Record a baseline rank (most will be unranked) in the sheet's notes column on launch day.
+      Done 2026-11-09 in DNA Keyword Targets, notes column, rows 15–46. The 10 keywords already in the campaign say rank #51+ (Google en-US, National, not in the top 50). The 19 added the same day say the rank is not collected yet. Existing notes were kept. Three sheet rows were not in the Moz set and were left as they were: operating model template, business process management examples, business operating model template.
 
 ## 7. Verify
 
