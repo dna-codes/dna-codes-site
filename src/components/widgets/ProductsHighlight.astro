@@ -4,12 +4,8 @@ import { Image } from 'astro:assets';
 import ProductMark from '~/components/ui/ProductMark.astro';
 import AgentCoveragePanel from '~/components/widgets/AgentCoveragePanel.astro';
 import ApiCoveragePanel from '~/components/widgets/ApiCoveragePanel.astro';
+import { operationsShot, overlayShot, productShotSizes, productShotWidths } from '~/data/product-shots';
 import { PRODUCT } from '~/data/products';
-// Captured from the live miniature on /ui-operations rather than from the product
-// screenshots in this folder: every one of those has a light host application, which next to
-// the dark core panel made the pair look like two unrelated sites.
-import overlayShot from '~/assets/images/overlay/panel-on-dark-app.png';
-import operationsShot from '~/assets/images/operations/process-flow-output.png';
 
 // The core and the three surfaces you can read about today, two sentences each, side by
 // side. This is the first thing below the hero, so its job is to make a visitor understand
@@ -45,6 +41,8 @@ const products = [
     cta: 'Try the demo',
     status: PRODUCT.operations.status,
     image: operationsShot,
+    // First of the two shots, and the usual LCP element. Fetched ahead of the other.
+    imageLoading: 'priority' as const,
     alt: 'The Operational DNA output panel showing a generated process flow: welcome email sent, intro call booked, product walkthrough and a 30-day check-in, each with its owning team and timing.',
   },
   {
@@ -57,6 +55,9 @@ const products = [
     cta: 'Open the Overlay',
     status: PRODUCT['ui-operations'].status,
     image: overlayShot,
+    // Beside the first shot from the md breakpoint up, so it is sometimes the LCP
+    // element itself. Eager, but not high priority, so it does not queue ahead of it.
+    imageLoading: 'eager' as const,
     alt: 'The Overlay panel docked beside a running application, answering for a refund button with its address, the operation it performs, who may press it, and a note that every refund is now recorded.',
   },
   {
@@ -113,7 +114,7 @@ const products = [
     }
     <div class="grid gap-5 md:grid-cols-2">
       {
-        products.map(({ name, verb, icon, headline, body, href, cta, status, image, panel, alt }) => (
+        products.map(({ name, verb, icon, headline, body, href, cta, status, image, imageLoading, panel, alt }) => (
           <a
             href={href}
             class="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 transition-colors duration-200 hover:border-primary/50 hover:bg-slate-900/80"
@@ -151,10 +152,12 @@ const products = [
                 <Image
                   src={image}
                   alt={alt}
-                  widths={[520, 1040]}
-                  sizes="(min-width: 1024px) 380px, (min-width: 768px) 480px, 100vw"
-                  loading="lazy"
+                  widths={productShotWidths}
+                  sizes={productShotSizes}
                   class="aspect-[4/3] w-full object-cover"
+                  {...(imageLoading === 'priority'
+                    ? { priority: true }
+                    : { loading: 'eager' as const, decoding: 'sync' as const })}
                 />
               ) : (
                 <div class="aspect-[4/3] w-full p-3 flex">
