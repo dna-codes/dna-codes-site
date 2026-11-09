@@ -31,7 +31,8 @@ if (!existsSync(join(dist, 'index.html'))) {
 }
 
 // Anything under public/ is copied into dist/ verbatim and is not rendered by our layouts
-// (the talk companion app, the CMS admin), so the metadata rules do not apply to it.
+// (the talk companion app, the CMS admin), so these agent-readiness rules do not apply to it.
+// Crawl issues on those pages (canonical, thin content, noindex) are scripts/crawl-check.mjs.
 const publicDir = join(root, 'public');
 const passthrough = readdirSync(publicDir).filter((name) => statSync(join(publicDir, name)).isDirectory());
 

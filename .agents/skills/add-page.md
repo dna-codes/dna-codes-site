@@ -47,6 +47,7 @@ Hero, Features, Content, Steps, Testimonials, FAQs, Stats, Pricing, Brands, Call
 
 ## Notes
 
+- Pages that use `PageLayout` or `Layout` get a canonical URL from `Metadata.astro`. A hand-written page in `public/` does not: add the canonical yourself, and put at least 250 words in the body outside `<script>`. See AGENTS.md, "Search crawl".
 - Pages in `src/pages/` are automatically routed by filename
 - Use `PageLayout` (includes Header + Footer) or `Layout` (bare)
 - All widgets accept an `id` prop for anchor links
