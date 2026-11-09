@@ -2,8 +2,8 @@
 publishDate: 2026-11-08T00:00:00Z
 author: Tim Kleier
 coAuthor: Claude (Anthropic)
-title: 'Business Process Modeling Notation, Explained'
-excerpt: 'Business process modeling notation draws a process. This guide writes the same process as data, with roles, steps and rules, and shows the BPMN beside it.'
+title: 'Business Process Modeling Notation: A Drawing'
+excerpt: 'Business process modeling notation draws the process. Written as roles, steps, and a rule, the same process is what the software can read.'
 category: Operations
 tags:
   - bpmn

@@ -61,8 +61,8 @@
     "role": "primary",
     "page": "/blog/business-process-management",
     "pageType": "post",
-    "title": "Business Process Management, With Real Examples",
-    "description": "Business process management explained through worked examples: what a process is, how teams manage it, and why most BPM efforts drift.",
+    "title": "Business Process Management: The Copies Drift",
+    "description": "Three copies of one process. The examples that hold are a step, a role, and a rule. The diagram is the copy that drifts.",
     "measuredAt": "2026-11-08",
     "source": "moz",
     "notes": null
@@ -316,8 +316,8 @@
     "role": "primary",
     "page": "/blog/business-process-modeling",
     "pageType": "post",
-    "title": "Business Process Modeling Notation, Explained",
-    "description": "Business process modeling notation draws a process. This guide writes the same process as data, with roles, steps and rules, and shows the BPMN beside it.",
+    "title": "Business Process Modeling Notation: A Drawing",
+    "description": "Business process modeling notation draws the process. Written as roles, steps, and a rule, the same process is what the software can read.",
     "measuredAt": "2026-11-08",
     "source": "moz",
     "notes": "One post covers notation and business process modeling. The title contains both phrases."

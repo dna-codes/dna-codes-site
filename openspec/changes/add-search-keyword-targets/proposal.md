@@ -81,10 +81,10 @@ through `.astro` files for title strings. This change makes a pivot a data edit.
 
 - **Two posts**, each owning an informational head term the commercial page cannot title for,
   and linking to the landing page in its cluster:
-  - **Business Process Management, With Real Examples** (`/blog/business-process-management`):
+  - **Business Process Management: The Copies Drift** (`/blog/business-process-management`):
     **business process management** (1,097, 28), plus bpm examples. This is the largest keyword
     we measured, and it is a definition query, not a software query.
-  - **Business Process Modeling Notation, Explained** (`/blog/business-process-modeling`):
+  - **Business Process Modeling Notation: A Drawing** (`/blog/business-process-modeling`):
     **business process modeling notation** (534, 28), plus bpmn model and bpmn examples.
     **Business process modeling** (467, 32) stays on this post as a secondary. The notation title
     already contains that phrase, and a heading uses it exactly. One post, not two.

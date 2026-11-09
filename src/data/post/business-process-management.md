@@ -2,8 +2,8 @@
 publishDate: 2026-11-08T00:00:00Z
 author: Tim Kleier
 coAuthor: Claude (Anthropic)
-title: 'Business Process Management, With Real Examples'
-excerpt: 'Business process management explained through worked examples: what a process is, how teams manage it, and why most BPM efforts drift.'
+title: 'Business Process Management: The Copies Drift'
+excerpt: 'Three copies of one process. The examples that hold are a step, a role, and a rule. The diagram is the copy that drifts.'
 category: Operations
 tags:
   - business process management

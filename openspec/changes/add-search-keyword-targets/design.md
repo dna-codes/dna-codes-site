@@ -202,7 +202,7 @@ The post links to the hub in its closing section, and the hub links back under "
 | bpmn            | the modeling post            | business process modeling, bpmn model, bpmn examples       | Business Process Modeling Notation (534) |
 
 The modeling post is the hub for the bpmn cluster because both head terms are informational.
-Its title is "Business Process Modeling Notation, Explained", which also contains "business
+Its title is "Business Process Modeling Notation: A Drawing", which also contains "business
 process modeling", and a heading uses that phrase on its own. The two terms share a page
 instead of competing as `/blog/bpmn-vs-dna` and `/blog/business-process-modeling`.
 

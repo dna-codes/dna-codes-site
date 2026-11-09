@@ -63,10 +63,10 @@ not routes.
 Each post sets `targetKeyword`, carries `coAuthor: Claude (Anthropic)`, links to
 `/business-process-software` (design D8), and follows the prose rules in `AGENTS.md`.
 
-- [x] 4.1 **Business Process Management, With Real Examples** (`business-process-management`),
+- [x] 4.1 **Business Process Management: The Copies Drift** (`business-process-management`),
       target `business-process-management`. Worked examples. This is the 1,097-volume definition
       query, so it stays its own post.
-- [x] 4.2 **Business Process Modeling Notation, Explained** (`business-process-modeling`), target
+- [x] 4.2 **Business Process Modeling Notation: A Drawing** (`business-process-modeling`), target
       `business-process-modeling-notation`. One process from a genome, drawn in BPMN and written
       in DNA side by side. A heading uses **business process modeling** and covers roles, steps,
       rules and handoffs, so that keyword does not get a second post. Links to `/docs/frameworks`
