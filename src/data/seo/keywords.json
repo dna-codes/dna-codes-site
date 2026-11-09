@@ -58,14 +58,14 @@
     "intent": "informational",
     "cluster": "bpm",
     "fit": 2,
-    "role": "primary",
-    "page": "/blog/business-process-management",
+    "role": "secondary",
+    "page": "/blog/business-process-modeling",
     "pageType": "post",
-    "title": "Business Process Management: The Copies Drift",
-    "description": "Three copies of one process. The examples that hold are a step, a role, and a rule. The diagram is the copy that drifts.",
+    "title": null,
+    "description": null,
     "measuredAt": "2026-11-08",
     "source": "moz",
-    "notes": null
+    "notes": "Heading on the modeling post. The practice ends in slides."
   },
   {
     "id": "business-process-management-software",
@@ -195,7 +195,7 @@
     "cluster": "bpm",
     "fit": 2,
     "role": "secondary",
-    "page": "/blog/business-process-management",
+    "page": "/blog/business-process-modeling",
     "pageType": "post",
     "title": null,
     "description": null,
@@ -211,14 +211,14 @@
     "intent": "informational",
     "cluster": "bpm",
     "fit": 2,
-    "role": "secondary",
-    "page": "/blog/business-process-management",
-    "pageType": "post",
+    "role": "skip",
+    "page": null,
+    "pageType": null,
     "title": null,
     "description": null,
     "measuredAt": "2026-11-08",
     "source": "moz",
-    "notes": null
+    "notes": "The examples post was folded into the modeling post. That post is the model, not a catalog of examples."
   },
   {
     "id": "business-process-software",
@@ -313,14 +313,14 @@
     "intent": "informational",
     "cluster": "bpmn",
     "fit": 3,
-    "role": "primary",
+    "role": "secondary",
     "page": "/blog/business-process-modeling",
     "pageType": "post",
-    "title": "Business Process Modeling Notation: A Drawing",
-    "description": "Business process modeling notation draws the process. Written as roles, steps, and a rule, the same process is what the software can read.",
+    "title": null,
+    "description": null,
     "measuredAt": "2026-11-08",
     "source": "moz",
-    "notes": "One post covers notation and business process modeling. The title contains both phrases."
+    "notes": "Heading on the modeling post. The notation draws the process and stays a diagram."
   },
   {
     "id": "business-process-modeling",
@@ -330,14 +330,14 @@
     "intent": "informational",
     "cluster": "bpmn",
     "fit": 3,
-    "role": "secondary",
+    "role": "primary",
     "page": "/blog/business-process-modeling",
     "pageType": "post",
-    "title": null,
-    "description": null,
+    "title": "Business Process Modeling with DNA",
+    "description": "Business process modeling with DNA writes the process as roles, steps, and rules. Notation leaves it in a diagram. Management leaves it in slides.",
     "measuredAt": "2026-11-08",
     "source": "moz",
-    "notes": "Secondary on the notation post. The primary title already contains this phrase, and a heading uses it exactly."
+    "notes": "The one post. Notation and management are headings on it."
   },
   {
     "id": "what-is-bpmn",

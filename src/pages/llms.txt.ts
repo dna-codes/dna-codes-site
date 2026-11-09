@@ -76,8 +76,7 @@ Pages written for the words an operations lead already uses. DNA is still not a 
 - [SOP Software](${url('/sop-software')}): Procedures that stay tied to the work, including the small-team case where a wiki stops being enough. The page shows the procedure as a running SOP.
 - [Target Operating Model](${url('/operating-model')}): Roles, processes, rules, and systems on one board.
 - [Business Process Software](${url('/business-process-software')}): Living business processes. The page walks a process diagram of steps, roles, and work, and says where a BPM suite is the better buy.
-- [Business Process Management: The Copies Drift](${url('/blog/business-process-management')}): Three copies of one process. A step, a role, and a rule are what holds. The diagram is the copy that drifts.
-- [Business Process Modeling Notation: A Drawing](${url('/blog/business-process-modeling')}): The notation draws the process. Written as roles, steps, and a rule, the same process is what the software can read.
+- [Business Process Modeling with DNA](${url('/blog/business-process-modeling')}): The process as roles, steps, and rules. Notation leaves it in a diagram. Management leaves it in slides.
 
 ## Optional
 

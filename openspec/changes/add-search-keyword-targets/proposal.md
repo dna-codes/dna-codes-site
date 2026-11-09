@@ -1,4 +1,4 @@
-# Search keyword targets: a registry, three landing pages, two posts
+# Search keyword targets: a registry, three landing pages, one post
 
 > How the registry is shaped, how a pivot works, and why each page owns the keyword it owns are
 > in [`design.md`](./design.md). The research behind every number here is in
@@ -79,17 +79,15 @@ through `.astro` files for title strings. This change makes a pivot a data edit.
     tools, BPM software, business process workflow software. Written as DNA against BPM suites,
     not as one (see design D6).
 
-- **Two posts**, each owning an informational head term the commercial page cannot title for,
-  and linking to the landing page in its cluster:
-  - **Business Process Management: The Copies Drift** (`/blog/business-process-management`):
-    **business process management** (1,097, 28), plus bpm examples. This is the largest keyword
-    we measured, and it is a definition query, not a software query.
-  - **Business Process Modeling Notation: A Drawing** (`/blog/business-process-modeling`):
-    **business process modeling notation** (534, 28), plus bpmn model and bpmn examples.
-    **Business process modeling** (467, 32) stays on this post as a secondary. The notation title
-    already contains that phrase, and a heading uses it exactly. One post, not two.
+- **One post**, owning the informational modeling query the commercial page cannot title for,
+  and linking to the business-process page:
+  - **Business Process Modeling with DNA** (`/blog/business-process-modeling`): **business
+    process modeling** (467, 32). **Business process modeling notation** (534, 28) and
+    **business process management** (1,097, 28) are headings on it: the notation stays a
+    diagram, and management stays in slides. `/blog/business-process-management` redirects
+    there.
 
-- **Agent and crawler surfaces.** The three landing pages and the two posts join `/llms.txt` and
+- **Agent and crawler surfaces.** The three landing pages and the post join `/llms.txt` and
   the sitemap. The landing pages join a Use Cases menu in the header and the same column in the footer. An agent reading the site finds them the way a
   search engine does.
 
@@ -102,11 +100,10 @@ through `.astro` files for title strings. This change makes a pivot a data edit.
   sheet; and a build check that fails on broken or conflicting assignments.
 
 - `search-landing-pages`: Public pages at `/sop-software`, `/operating-model` and
-  `/business-process-software`, plus posts at `/blog/business-process-management` and
-  `/blog/business-process-modeling`. Each owns one primary keyword and reads its metadata from
-  the registry. The landing pages convert through the shared waitlist form. The posts link to
-  the hub in their cluster. Folded keywords stay on those pages as secondaries with their own
-  headings.
+  `/business-process-software`, plus the post at `/blog/business-process-modeling`. Each owns one
+  primary keyword and reads its metadata from the registry. The landing pages convert through the
+  shared waitlist form. The post links to the business-process page. Folded keywords stay on
+  those pages as secondaries with their own headings.
 
 ### Modified Capabilities
 
@@ -117,12 +114,12 @@ through `.astro` files for title strings. This change makes a pivot a data edit.
 
 - **New files**: `src/data/seo/keywords.json`, `src/utils/seo.ts` (`seoFor`, `keywordsFor`),
   `scripts/keywords-import.mjs`, `scripts/check-keywords.mjs`; pages `src/pages/sop-software.astro`,
-  `src/pages/operating-model.astro`, `src/pages/business-process-software.astro`; the template's
-  downloadable files under `public/operating-model/`; two posts in `src/data/post/`.
+  `src/pages/operating-model.astro`, `src/pages/business-process-software.astro`; one post in
+  `src/data/post/`.
 - **Modified files**: `src/content.config.ts` (optional `targetKeyword` on posts);
   `package.json` (`keywords:import`, `check:keywords`, and `check:keywords` in `build`);
-  `src/pages/llms.txt.ts`; `src/navigation.ts` (footer links); `planned_posts.md` (the two
-  posts, and the backlog items the new pages absorb).
+  `src/pages/llms.txt.ts`; `src/navigation.ts` (footer links); `planned_posts.md` (the post,
+  and the backlog items the new pages absorb).
 - **Dependencies**: none. CSV parsing is small enough to write; the check is plain Node.
 - **Existing pages**: not retitled in this change. The homepage and `/operations` keep their
   brand titles. Whether `/operations` should take a secondary operating-model keyword is an open

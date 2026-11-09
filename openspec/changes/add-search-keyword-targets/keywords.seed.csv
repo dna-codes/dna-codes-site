@@ -25,17 +25,17 @@ business-process-software,business process software,83,27,commercial,bpm,2,secon
 business-process-workflow-software,business process workflow software,67,20,commercial,bpm,3,secondary,/business-process-software,landing,,,2026-11-08,moz,
 best-business-process-management-software,best business process management software,68,29,commercial,bpm,2,secondary,/business-process-software,landing,,,2026-11-08,moz,
 best-bpm-software,best bpm software,68,23,commercial,bpm,2,secondary,/business-process-software,landing,,,2026-11-08,moz,
-business-process-management,business process management,1097,28,informational,bpm,2,primary,/blog/business-process-management,post,"Business Process Management, With Real Examples","Business process management explained through worked examples: what a process is, how teams manage it, and why most BPM efforts drift.",2026-11-08,moz,
-business-process-management-examples,business process management examples,90,21,informational,bpm,2,secondary,/blog/business-process-management,post,,,2026-11-08,moz,
-business-process-bpm,business process bpm,115,21,informational,bpm,2,secondary,/blog/business-process-management,post,,,2026-11-08,moz,
+business-process-management,business process management,1097,28,informational,bpm,2,secondary,/blog/business-process-modeling,post,,,2026-11-08,moz,Heading on the modeling post. The practice ends in slides.
+business-process-management-examples,business process management examples,90,21,informational,bpm,2,skip,,,,,2026-11-08,moz,"The examples post was folded into the modeling post. That post is the model, not a catalog of examples."
+business-process-bpm,business process bpm,115,21,informational,bpm,2,secondary,/blog/business-process-modeling,post,,,2026-11-08,moz,
 process-management-system,process management system,191,34,informational,bpm,2,candidate,,,,,2026-11-08,moz,
 bpm-tools,bpm tools,469,43,commercial,bpm,2,candidate,,,,,2026-11-08,moz,Difficulty over 40.
 business-process-management-platform,business process management platform,182,48,commercial,bpm,2,skip,,,,,2026-11-08,moz,Difficulty over 45.
-business-process-modeling-notation,business process modeling notation,534,28,informational,bpmn,3,primary,/blog/business-process-modeling,post,"Business Process Modeling Notation, Explained","Business process modeling notation draws a process. This guide writes the same process as data, with roles, steps and rules, and shows the BPMN beside it.",2026-11-08,moz,One post covers notation and business process modeling. The title contains both phrases.
+business-process-modeling-notation,business process modeling notation,534,28,informational,bpmn,3,secondary,/blog/business-process-modeling,post,,,2026-11-08,moz,Heading on the modeling post. The notation draws the process and stays a diagram.
 bpmn-model,bpmn model,175,25,informational,bpmn,3,secondary,/blog/business-process-modeling,post,,,2026-11-08,moz,
 business-process-modelling-notation,business process modelling notation,102,30,informational,bpmn,3,secondary,/blog/business-process-modeling,post,,,2026-11-08,moz,
 bpmn-examples,bpmn examples,77,36,informational,bpmn,2,secondary,/blog/business-process-modeling,post,,,2026-11-08,moz,
-business-process-modeling,business process modeling,467,32,informational,bpmn,3,secondary,/blog/business-process-modeling,post,,,2026-11-08,moz,"Secondary on the notation post. The primary title already contains this phrase, and a heading uses it exactly."
+business-process-modeling,business process modeling,467,32,informational,bpmn,3,primary,/blog/business-process-modeling,post,"Business Process Modeling with DNA","Business process modeling with DNA writes the process as roles, steps, and rules. Notation leaves it in a diagram. Management leaves it in slides.",2026-11-08,moz,The one post. Notation and management are headings on it.
 business-process-modeling-examples,business process modeling examples,49,42,informational,bpmn,3,secondary,/blog/business-process-modeling,post,,,2026-11-08,moz,
 process-modelling,process modelling,132,37,informational,bpmn,2,secondary,/blog/business-process-modeling,post,,,2026-11-08,moz,
 business-process-modeling-tools,business process modeling tools,59,44,transactional,bpmn,3,candidate,,,,,2026-11-08,moz,"Strong fit, difficulty 44."

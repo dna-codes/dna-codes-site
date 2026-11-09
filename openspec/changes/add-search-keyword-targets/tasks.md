@@ -2,9 +2,9 @@
 
 Ordered so the registry and its check exist before any page depends on them (§1–§2), the
 commercial pages land before the posts that link to them (§3–§4), and agent surfaces are updated
-once every route is real (§5). Three landing pages and two posts. The template, the
-how-to, the small-business variant and the second modeling post are sections on those pages,
-not routes.
+once every route is real (§5). Three landing pages and one post. The how-to, the
+small-business variant, business process modeling notation, and business process management
+are headings on those pages, not routes.
 
 ## 1. Registry and import
 
@@ -60,25 +60,26 @@ not routes.
 Each post sets `targetKeyword`, carries `coAuthor: Claude (Anthropic)`, links to
 `/business-process-software` (design D8), and follows the prose rules in `AGENTS.md`.
 
-- [x] 4.1 **Business Process Management: The Copies Drift** (`business-process-management`),
-      target `business-process-management`. Worked examples. This is the 1,097-volume definition
-      query, so it stays its own post.
-- [x] 4.2 **Business Process Modeling Notation: A Drawing** (`business-process-modeling`), target
-      `business-process-modeling-notation`. One process from a genome, drawn in BPMN and written
-      in DNA side by side. A heading uses **business process modeling** and covers roles, steps,
-      rules and handoffs, so that keyword does not get a second post. Links to `/docs/frameworks`
-      and `/business-process-software`.
-- [x] 4.3 Update `planned_posts.md`: add the two posts with their target keywords and cluster,
-      and mark the backlog items the landing pages absorb (small-business SOP, how to build an
-      operating model). Do not add posts for those.
+- [x] 4.1 **Business Process Modeling with DNA** (`business-process-modeling`), target
+      `business-process-modeling`. The process is roles, steps, rules, and handoffs. A heading
+      uses **business process modeling notation**: the drawing gets stuck as a diagram. A heading
+      uses **business process management**: the practice gets stuck in slides. Links to
+      `/docs/frameworks` and `/business-process-software`.
+- [x] 4.2 No second post. `/blog/business-process-management` redirects to the modeling post.
+      **business process management examples** is skipped: the post is the model, not a catalog
+      of examples.
+- [x] 4.3 Update `planned_posts.md`: one post, with its target keyword and cluster, and mark the
+      backlog items the landing pages absorb (small-business SOP, how to build an operating
+      model). Do not add posts for those.
 
 ## 5. Agent and crawler surfaces
 
-- [x] 5.1 Add the three landing pages and the two posts to `/llms.txt` under a section that says
-      what each is for. Confirm the "not a BPM engine" line still reads true next to the BPM page.
+- [x] 5.1 Add the three landing pages and the modeling post to `/llms.txt` under a section that
+      says what each is for. Confirm the "not a BPM engine" line still reads true next to the BPM
+      page.
 - [x] 5.2 Add the landing pages under a header Use Cases menu, and the same column in the
       footer, in `src/navigation.ts`. Building With AI stays in Learn.
-- [x] 5.3 Confirm all five routes are in the sitemap and pass `npm run check:agentic`.
+- [x] 5.3 Confirm the four routes are in the sitemap and pass `npm run check:agentic`.
 
 ## 6. Measurement
 
@@ -94,5 +95,5 @@ These two need the Moz account and the research sheet. They are not something th
 - [x] 7.2 Rehearse a pivot end to end: in a scratch branch, move **sop software** from primary to
       secondary and promote **sop management software**, export, import, build. The check should
       pass with one warning (title lacks keyword) until the title is rewritten.
-- [x] 7.3 Visual check of the three new pages and two posts: desktop, mobile, dark mode, and the
+- [x] 7.3 Visual check of the three new pages and the post: desktop, mobile, dark mode, and the
       `<br>` spacing rule in `AGENTS.md`.

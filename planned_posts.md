@@ -374,8 +374,7 @@ blog's voice mid-argument.
 
 The search-keyword change publishes two of these for operations leaders, aimed at measured queries rather than the series' engineering audience:
 
-- **Business Process Management: The Copies Drift** (`/blog/business-process-management`), target keyword `business process management`. Cluster: bpm.
-- **Business Process Modeling Notation: A Drawing** (`/blog/business-process-modeling`), target keyword `business process modeling notation`. Cluster: bpmn. The heading "Business process modeling" absorbs the modeling query, so that phrase does not get its own post.
+- **Business Process Modeling with DNA** (`/blog/business-process-modeling`), target keyword `business process modeling`. Cluster: bpmn. Business process modeling notation and business process management are headings on it, not separate posts. `/blog/business-process-management` redirects there.
 
 The landing pages absorb the rest of what would have been posts:
 
