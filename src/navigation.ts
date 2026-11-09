@@ -69,7 +69,7 @@ export const headerData = {
         {
           text: 'Blog',
           href: getBlogPermalink(),
-          description: 'Essays on the layers between intent and execution.',
+          description: 'Writing on DNA, and the businesses it describes.',
         },
         {
           text: 'Building With AI',
