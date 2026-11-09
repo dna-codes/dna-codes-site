@@ -1,0 +1,19 @@
+---
+description: Keep pages indexable, with a canonical URL, a title under Moz's width limit, and real body text
+globs:
+  - public/**/*.html
+  - src/config.yaml
+  - src/data/post/**/*.{md,mdx}
+  - src/pages/**/*.{astro,md,mdx}
+  - src/components/common/Metadata.astro
+alwaysApply: false
+---
+
+# Search crawl
+
+`npm run check:crawl` (after `npm run build`) fails the build on the Moz issues this site has already shipped. Details are in AGENTS.md, "Search crawl".
+
+- **Canonical.** Layout pages get one from `Metadata.astro`. A page in `public/` does not. Write `<link rel="canonical" href="https://dna.codes/...">` yourself.
+- **noindex.** Tag archives stay indexable: `apps.blog.tag.robots.index` is `true` in `src/config.yaml`. The template default is `false`, and that is what a crawl reports as "has meta noindex" on every `/tag/` URL. Do not set `robots.index: false` on a page that should rank. `/decapcms/` and page 2+ of a blog, tag, or category archive are the allowlisted exceptions.
+- **Title width.** The rendered `<title>` must stay under about 560 pixels (Moz flags roughly 600). The suffix is ` — DNA Codes`. When a headline plus that suffix is too wide, set `metadata.title` to a shorter search title and `metadata.ignoreTitleTemplate: true`. Leave the on-page `title` alone. A keyword page takes its search title from `src/data/seo/keywords.json`. Keep that title inside the same limit.
+- **Thin content.** A crawl does not read `<script>`. Indexable HTML in `public/` needs at least 250 words in the body, outside `<script>`, `<style>`, and `<svg>`. Do not put the only copy in `<noscript>`, `hidden`, or `display:none`. `/building-with-ai/` keeps that text in `<article class="crawl-summary">`, clipped so the full-screen app does not scroll. `public/agents/` is generated elsewhere; do not edit it here.

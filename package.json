@@ -17,6 +17,7 @@
     "check:demo": "node scripts/demo-smoke.mjs",
     "check:agentic": "node scripts/agentic-check.mjs",
     "check:ax": "node scripts/ax-check.mjs",
+    "check:crawl": "node scripts/crawl-check.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "check": "npm run check:astro && npm run check:eslint && npm run check:prettier",

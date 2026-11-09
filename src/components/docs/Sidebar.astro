@@ -22,18 +22,22 @@ type Item = { label: string; href: string };
 type Section = { label: string; href: string; children?: Item[] };
 
 const sections: Section[] = [
-  { label: 'Getting Started', href: '/docs/getting-started' },
+  { label: 'Getting Started', href: '/docs/getting-started/' },
   {
     label: 'Reference',
-    href: '/docs/operational',
-    children: [{ label: 'Operational', href: '/docs/operational' }],
+    href: '/docs/operational/',
+    children: [{ label: 'Operational', href: '/docs/operational/' }],
   },
-  { label: 'Lenses', href: '/docs/lenses' },
-  { label: 'Examples', href: '/docs/examples' },
-  { label: 'Frameworks', href: '/docs/frameworks' },
+  { label: 'Lenses', href: '/docs/lenses/' },
+  { label: 'Examples', href: '/docs/examples/' },
+  { label: 'Frameworks', href: '/docs/frameworks/' },
 ];
 
-const isActive = (href: string) => currentPath === href || currentPath.startsWith(href + '/');
+const bare = (href: string) => href.split(/[?#]/)[0].replace(/\/$/, '') || '/';
+const isActive = (href: string) => {
+  const path = bare(href);
+  return currentPath === path || currentPath.startsWith(`${path}/`);
+};
 const isInReference = currentPath === '/docs/operational' || currentPath.startsWith('/docs/operational/');
 
 // Group anchors by their optional `group` field so the reference pages can
@@ -104,7 +108,7 @@ const groupKeys = Object.keys(groupedAnchors);
             {showRefChildren && section.children && (
               <ul class="mt-1 ml-3 space-y-1 border-l border-gray-200 pl-3 dark:border-slate-700">
                 {section.children.map((child) => {
-                  const childActive = currentPath === child.href;
+                  const childActive = currentPath === bare(child.href);
                   return (
                     <li>
                       <a

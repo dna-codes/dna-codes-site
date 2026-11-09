@@ -5,12 +5,30 @@ import { SITE, APP_BLOG } from 'astrowind:config';
 import { trim } from '~/utils/utils';
 
 export const trimSlash = (s: string) => trim(trim(s, '/'));
+
+const suffixOf = (value: string): [string, string] => {
+  const index = value.search(/[?#]/);
+  if (index === -1) return [value, ''];
+  return [value.slice(0, index), value.slice(index)];
+};
+
+// GitHub Pages serves a route as a directory index and redirects the slashless
+// URL to the slashed one. The slash belongs on the path, before a query or hash,
+// and never on a file (a sitemap, a feed, a genome).
+const applyTrailingSlash = (pathname: string): string => {
+  if (!pathname || pathname === '/') return pathname || '/';
+  if (/\.[a-z0-9]+$/i.test(pathname)) return pathname;
+  if (SITE.trailingSlash) return pathname.endsWith('/') ? pathname : `${pathname}/`;
+  return pathname.replace(/\/+$/, '') || '/';
+};
+
 const createPath = (...params: string[]) => {
+  const suffix = params.map((el) => suffixOf(el)[1]).find(Boolean) ?? '';
   const paths = params
-    .map((el) => trimSlash(el))
+    .map((el) => trimSlash(suffixOf(el)[0]))
     .filter((el) => !!el)
     .join('/');
-  return '/' + paths + (SITE.trailingSlash && paths ? '/' : '');
+  return applyTrailingSlash(`/${paths}`) + suffix;
 };
 
 const BASE_PATHNAME = SITE.base || '/';
@@ -28,14 +46,10 @@ export const TAG_BASE = cleanSlug(APP_BLOG?.tag?.pathname) || 'tag';
 export const POST_PERMALINK_PATTERN = trimSlash(APP_BLOG?.post?.permalink || `${BLOG_BASE}/%slug%`);
 
 /** */
-export const getCanonical = (path = ''): string | URL => {
-  const url = String(new URL(path, SITE.site));
-  if (SITE.trailingSlash == false && path && url.endsWith('/')) {
-    return url.slice(0, -1);
-  } else if (SITE.trailingSlash == true && path && !url.endsWith('/')) {
-    return url + '/';
-  }
-  return url;
+export const getCanonical = (path = ''): string => {
+  const url = new URL(path || '/', SITE.site);
+  url.pathname = applyTrailingSlash(url.pathname);
+  return url.href;
 };
 
 /** */

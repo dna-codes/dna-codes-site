@@ -12,12 +12,11 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { APIRoute } from 'astro';
-import { SITE } from 'astrowind:config';
 import { CORE, SURFACES } from '~/data/products';
 import { GENOME_SOURCES } from '~/data/genome';
+import { getCanonical } from '~/utils/permalinks';
 
-const origin = String(SITE.site).replace(/\/$/, '');
-const url = (path: string) => `${origin}${path}`;
+const url = (path: string) => getCanonical(path);
 
 const agentSectionFile = join(process.cwd(), 'public/agents/apex-llms-section.md');
 const agentSection = existsSync(agentSectionFile) ? `${readFileSync(agentSectionFile, 'utf8').trim()}\n\n` : '';

@@ -43,6 +43,8 @@ Posts are available at `/blog/{slug}` where slug is derived from the filename.
 
 ## Notes
 
+- The rendered `<title>` has to stay under about 560 pixels (Moz flags roughly 600). If the headline plus ` — DNA Codes` is wider than that, set `metadata.title` to a shorter search title and `metadata.ignoreTitleTemplate: true`. The on-page headline stays `title`. A post with `targetKeyword` takes its search title from the keyword registry instead, so shorten that row and leave `metadata.title` unset.
+- Do not set `metadata.robots.index: false`. Tag archives are indexable. See AGENTS.md, "Search crawl".
 - Reading time is calculated automatically via remark plugin
 - Images referenced with `~/` are optimized at build time
 - Use `.mdx` extension to embed Astro components in posts

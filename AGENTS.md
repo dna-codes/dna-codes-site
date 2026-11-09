@@ -450,6 +450,18 @@ An agent that reads only `/index.md` does not open `/llms.txt`. When you change 
 
 Do not add these pages to `public/agents/`. `dna-codes-platform` generates that directory.
 
+## Search crawl
+
+Moz crawls the live site. `npm run check:crawl` runs four checks on `dist/` after `npm run build`. CI runs the same command. A page that fails a check is the same finding as the crawl export.
+
+**Canonical.** Each indexable page needs `<link rel="canonical">`. `Metadata.astro` adds the link for a page that uses the layout. A file in `public/` is copied as written. Add the link in that file. `/building-with-ai/` shipped without one.
+
+**noindex.** Each post links to its tag archives (`/tag/...`). `src/config.yaml` sets `apps.blog.tag.robots.index` to `true`. The AstroWind default is `false`. That default is the "has meta noindex" finding on each tag. Do not set `index: false` on a page that should be in the crawl. Two cases may stay `noindex`: `/decapcms/` (the admin UI) and page 2 or later of the blog, a tag, or a category. Add any other case to the allowlist in `scripts/crawl-check.mjs`, and write the reason there.
+
+**Title width.** Moz flags a `<title>` wider than about 600 pixels. The check estimates that width. The estimate can miss by about 20 pixels. Keep the rendered title under 560 pixels. The site suffix is ` — DNA Codes`. When a headline plus the suffix is too wide, set `metadata.title` to a shorter search title and set `metadata.ignoreTitleTemplate` to `true`. The headline on the page stays the `title` field. The posts in The Future of Programming series already do this. A page that owns a keyword gets its search title from the registry. Keep that registry title inside the same limit.
+
+**Thin content.** Moz counts words in the HTML. Moz does not read `<script>`. Moz does not count words that exist only after JavaScript runs. `/building-with-ai/` is a self-contained app. Its copy lives in a script. The crawl saw a header and an empty panel. The text version is the `.crawl-summary` article in `public/building-with-ai/index.html`. The article is in the body, outside the script. CSS clips it, so the full-screen companion does not scroll. Keep the article past 250 words. Keep it aligned with the eras and the phases in the script. A new indexable HTML file under `public/` has the same requirement. `public/agents/` is generated elsewhere and is not part of this check. Do not put the only copy of the words in `<noscript>`, in `hidden`, or in `display:none`.
+
 ## Verification
 
 After a change, run these checks:
@@ -459,5 +471,6 @@ After a change, run these checks:
 3. `npm run check:agentic` passes. It checks the is-agentic.com signals in `dist/`.
 4. `npm run check:ax` passes. It checks Markdown negotiation for the homepage.
 5. `npm run check:keywords` passes. It checks the keyword registry against `dist/`.
+6. `npm run check:crawl` passes. It checks the canonical link, indexable tag archives, title width, and thin content.
 
 Then check the site in a browser. Look at the homepage, the blog, dark mode, and the mobile menu.

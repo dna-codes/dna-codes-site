@@ -2,7 +2,9 @@ site:
   name: DNA Codes
   site: 'https://dna.codes'
   base: '/'
-  trailingSlash: false
+  # GitHub Pages serves each page as a directory and redirects the slashless URL
+  # to the slashed one. Canonicals and the sitemap use the URL that returns 200.
+  trailingSlash: true
 
 # Default SEO metadata
 metadata:
@@ -56,7 +58,9 @@ apps:
       isEnabled: true
       pathname: 'tag' # Tag main path /tag/some-tag, you can change this to "topics" (/topics/some-category)
       robots:
-        index: false
+        # Archives are linked from every post. The template default (index: false)
+        # is what a crawl reports as "has meta noindex" on each tag.
+        index: true
 
     isRelatedPostsEnabled: true
     relatedPostsCount: 4
