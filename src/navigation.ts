@@ -3,7 +3,7 @@ import { getBlogPermalink, getPermalink } from './utils/permalinks';
 
 // Single source of truth for the waitlist. Product pages embed the same form inline with
 // their own interest pre-ticked; every other primary button on the site comes here.
-export const WAITLIST_HREF = '/waitlist';
+export const WAITLIST_HREF = getPermalink('/waitlist');
 export const WAITLIST_TEXT = 'Join the waitlist';
 
 // There was an APP_HREF here, pointing at `https://app.dna.codes` for the Playground's two

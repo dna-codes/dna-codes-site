@@ -52,8 +52,11 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
 // Prefix-aware so a page inside a section lights up that section: /docs/getting-started
 // marks Docs, and /blog/some-post marks Blog. Exact-match alone left every nested page
 // looking like it belonged to no section at all.
-const isCurrent = (href?: string): boolean =>
-  !!href && href !== '/' && (href === currentPath || currentPath.startsWith(`${href}/`));
+const isCurrent = (href?: string): boolean => {
+  if (!href || href === '/') return false;
+  const path = `/${trimSlash(href.split(/[?#]/)[0])}`;
+  return path === currentPath || currentPath.startsWith(`${path}/`);
+};
 
 // Product surfaces are marked: an accent rail across the header and a chip beside the
 // logo, so it is obvious you have stepped out of the pitch and into something you can
