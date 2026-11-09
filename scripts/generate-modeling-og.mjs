@@ -28,7 +28,6 @@ const H = 628;
 const TEAL = '#2dd4bf';
 const TEAL_DIM = '#14b8a6';
 const WHITE = '#ffffff';
-const MUTED = '#8fa3b0';
 const FONT = "Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif";
 
 const STEPS = ['Receive', 'Verify', 'Reserve', 'Pack', 'Dispatch', 'Confirm'];
@@ -71,7 +70,6 @@ const svg = () => {
   </g>
   <text x="${ruleX}" y="${y - 28}" text-anchor="middle" font-family="${FONT}" font-size="14" font-weight="600" fill="${TEAL}">Payment before stock</text>
   ${nodes}
-  <text x="${W / 2}" y="560" text-anchor="middle" font-family="${FONT}" font-size="18" fill="${MUTED}">Roles, steps, and a rule. The drawing stays in the room.</text>
 </svg>`;
 };
 
