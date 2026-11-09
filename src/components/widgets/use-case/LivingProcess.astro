@@ -7,9 +7,11 @@ import { operatingModelTemplate } from '~/utils/operating-model-template';
 
 interface Props {
   class?: string;
+  /** The chip in the bar. The use-case page calls it a living process. */
+  label?: string;
 }
 
-const { class: className } = Astro.props;
+const { class: className, label = 'Living process' } = Astro.props;
 const model = operatingModelTemplate();
 const process = model.processes[0];
 ---
@@ -18,7 +20,7 @@ const process = model.processes[0];
 <figure class={twMerge('not-prose', className)} data-playhead data-interval="5000">
   <div class="card">
     <div class="bar">
-      <span class="pill">Living process</span>
+      <span class="pill">{label}</span>
       <span class="proc">{process.name}</span>
       <span class="example">{model.example}</span>
       <button type="button" class="play" data-play aria-pressed="true">Pause</button>

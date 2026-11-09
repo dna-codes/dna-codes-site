@@ -4,6 +4,7 @@ author: Tim Kleier
 coAuthor: Claude (Anthropic)
 title: 'Business Process Modeling with DNA'
 excerpt: 'Business process modeling with DNA writes the process as roles, steps, and rules. Notation leaves it in a diagram. Management leaves it in slides.'
+image: '~/assets/images/posts/business-process-modeling.png'
 category: Operations
 tags:
   - business process modeling
@@ -13,9 +14,13 @@ tags:
 targetKeyword: business-process-modeling
 ---
 
+import LivingProcess from '~/components/widgets/use-case/LivingProcess.astro';
+
 Business process modeling with DNA is naming a process so software can read it. The name is data: the roles, the steps, the rules, and the handoffs. A screen can read those rows. An agent can read them. A new hire can read them. It is the same description each time.
 
 Take fulfillment. A customer pays. An order manager receives the order and checks the payment. A warehouse lead holds the stock, packs it, and hands it to a carrier. Support confirms delivery. One rule sits on the handoff that usually goes wrong: no stock moves until the payment has cleared.
+
+<LivingProcess label="The model" />
 
 That is the model. Four things, and then you can stop.
 
