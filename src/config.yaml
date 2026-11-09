@@ -65,6 +65,11 @@ analytics:
   vendors:
     googleAnalytics:
       id: null # or "G-XXXXXXXXXX"
+    # Public site token from Cloudflare → Web Analytics → Manage site → JS snippet.
+    # Leave null and the beacon is omitted. When set, the beacon counts ClientRouter
+    # navigations itself, so do not add a second pageview.
+    cloudflareWebAnalytics:
+      token: '3fc2b7a2235a43a786bf67e430127fe8'
 
 ui:
   theme: 'dark:only'

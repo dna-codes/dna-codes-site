@@ -254,9 +254,18 @@
                 }
               },
               "required": ["id"]
+            },
+            "cloudflareWebAnalytics": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": ["string", "null"]
+                }
+              },
+              "required": ["token"]
             }
           },
-          "required": ["googleAnalytics"]
+          "required": ["googleAnalytics", "cloudflareWebAnalytics"]
         }
       },
       "required": ["vendors"]

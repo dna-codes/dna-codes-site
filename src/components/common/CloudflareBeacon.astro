@@ -1,0 +1,24 @@
+---
+interface Props {
+  token: string;
+}
+
+const { token } = Astro.props;
+
+// Install the beacon once. ClientRouter can re-run an inline script after a navigation,
+// and a second copy would register another listener. The beacon already records those
+// navigations: it watches the Navigation API and history, which is what ClientRouter uses.
+// Do not also send a pageview on astro:page-load.
+---
+
+<script is:inline define:vars={{ token }}>
+  (() => {
+    if (window.__dnaCfBeacon) return;
+    window.__dnaCfBeacon = true;
+    const el = document.createElement('script');
+    el.type = 'module';
+    el.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    el.dataset.cfBeacon = JSON.stringify({ token });
+    document.head.appendChild(el);
+  })();
+</script>
