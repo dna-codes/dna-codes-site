@@ -82,7 +82,7 @@ Pages written for the words an operations lead already uses. DNA is still not a 
 
 - [About](${url('/about')}): Who DNA Codes is and what it is building.
 - [Contact](${url('/contact')}): How to reach the team.
-- [Blog](${url('/blog')}): Essays on the abstraction layers between intent and execution.
+- [Blog](${url('/blog')}): Writing on DNA and operating models.
 - [Building With AI](${url('/building-with-ai')}): Interactive companion on lifecycle, agent-stack and patterns for building with AI.
 - [RSS](${url('/rss.xml')})
 `;
