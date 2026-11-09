@@ -57,8 +57,9 @@ export function contentHref(href) {
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
   if (url.origin !== ORIGIN) return url.href;
   if (url.pathname.startsWith('/_astro/') || ASSET.test(url.pathname)) return null;
-  const pathname = url.pathname === '/' ? '/' : url.pathname.replace(/\/$/, '');
-  return `${ORIGIN}${pathname === '/' ? '/' : pathname}${url.search}`;
+  // Keep the trailing slash. GitHub Pages returns 200 on the slashed URL, and that
+  // is the canonical. linkKey still folds the two forms together for the coverage check.
+  return `${ORIGIN}${url.pathname}${url.search}`;
 }
 
 /**
@@ -239,10 +240,10 @@ export function homepageMarkdown(html) {
       `## For agents`,
       ``,
       `- [llms.txt](${ORIGIN}/llms.txt): index of docs, products, genomes, and the pages below.`,
-      `- [SOP Software](${ORIGIN}/sop-software): procedures that stay tied to the work, including a small team that has outgrown a wiki. The page shows the procedure as a running SOP.`,
-      `- [Target Operating Model](${ORIGIN}/operating-model): roles, processes, rules, and systems on one board.`,
-      `- [Business Process Software](${ORIGIN}/business-process-software): living business processes, as a diagram of steps, roles, and work. DNA is not a BPM engine.`,
-      `- [Business Process Modeling with DNA](${ORIGIN}/blog/business-process-modeling): a workflow of states, operations, and policies. Notation leaves it in a diagram. Management leaves it in slides.`,
+      `- [SOP Software](${ORIGIN}/sop-software/): procedures that stay tied to the work, including a small team that has outgrown a wiki. The page shows the procedure as a running SOP.`,
+      `- [Target Operating Model](${ORIGIN}/operating-model/): roles, processes, rules, and systems on one board.`,
+      `- [Business Process Software](${ORIGIN}/business-process-software/): living business processes, as a diagram of steps, roles, and work. DNA is not a BPM engine.`,
+      `- [Business Process Modeling with DNA](${ORIGIN}/blog/business-process-modeling/): a workflow of states, operations, and policies. Notation leaves it in a diagram. Management leaves it in slides.`,
     ].join('\n')
   );
 

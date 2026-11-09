@@ -38,26 +38,26 @@ export default defineConfig({
   // out there — they land on the blog index rather than a 404. There is no equivalent piece
   // to send them to; the index is the honest destination.
   redirects: {
-    '/operational-dna-processes-like-source-code': '/blog',
-    '/why-sops-go-out-of-date': '/blog',
-    '/blog/operational-dna-processes-like-source-code': '/blog',
-    '/blog/why-sops-go-out-of-date': '/blog',
+    '/operational-dna-processes-like-source-code': '/blog/',
+    '/why-sops-go-out-of-date': '/blog/',
+    '/blog/operational-dna-processes-like-source-code': '/blog/',
+    '/blog/why-sops-go-out-of-date': '/blog/',
     // /playground is a real page again — the industry genome generator, which shipped
     // first as a campaign-only page at /whats-your-dna. Campaign links to the old URL
     // keep working. (The name previously pointed at /operations, back when the
     // Operations demo was called the Playground; that redirect is retired with it.)
-    '/whats-your-dna': '/playground',
+    '/whats-your-dna': '/playground/',
     // The Overlay stopped being a product and became the viewer every surface ships, so the
     // product that owns the React panel is now UI Operations — named for its surface, like
     // its three siblings. The old URL is public (the announcement bar, the homepage teaser
     // and anything anyone has bookmarked), so it keeps resolving.
-    '/overlay': '/ui-operations',
+    '/overlay': '/ui-operations/',
     // Product and Technology left the live reference. The URLs stay reachable and
     // land on the Coming soon note rather than a removed layer page.
-    '/docs/product': '/docs#coming-soon',
-    '/docs/technical': '/docs#coming-soon',
+    '/docs/product': '/docs/#coming-soon',
+    '/docs/technical': '/docs/#coming-soon',
     // Folded into Business Process Modeling with DNA before the management URL shipped.
-    '/blog/business-process-management': '/blog/business-process-modeling',
+    '/blog/business-process-management': '/blog/business-process-modeling/',
   },
 
   integrations: [
