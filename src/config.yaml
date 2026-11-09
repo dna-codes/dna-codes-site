@@ -2,7 +2,9 @@ site:
   name: DNA Codes
   site: 'https://dna.codes'
   base: '/'
-  trailingSlash: false
+  # GitHub Pages serves each page as a directory and redirects the slashless URL
+  # to the slashed one. Canonicals and the sitemap use the URL that returns 200.
+  trailingSlash: true
 
 # Default SEO metadata
 metadata:

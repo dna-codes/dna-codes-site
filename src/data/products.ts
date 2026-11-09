@@ -49,7 +49,7 @@ export interface Product {
 export const CORE: Product = {
   key: 'operations',
   name: 'Operational DNA',
-  href: '/operations',
+  href: '/operations/',
   icon: 'tabler:sitemap',
   description: 'The living operating model every surface runs on',
   verb: 'Model it',
@@ -63,7 +63,7 @@ export const SURFACES: Product[] = [
   {
     key: 'ui-operations',
     name: 'UI Operations',
-    href: '/ui-operations',
+    href: '/ui-operations/',
     icon: 'tabler:zoom-scan',
     description: 'Operational controls inside your running app',
     verb: 'Govern it',
@@ -72,7 +72,7 @@ export const SURFACES: Product[] = [
   {
     key: 'api-operations',
     name: 'API Operations',
-    href: '/api-operations',
+    href: '/api-operations/',
     icon: 'tabler:plug-connected',
     description: 'Who may call your endpoints, and what it records',
     verb: 'Govern it',
@@ -81,7 +81,7 @@ export const SURFACES: Product[] = [
   {
     key: 'agent-operations',
     name: 'Agent Operations',
-    href: '/agent-operations',
+    href: '/agent-operations/',
     icon: 'tabler:robot',
     description: 'Your agents, under the rules you already wrote',
     verb: 'Run it',

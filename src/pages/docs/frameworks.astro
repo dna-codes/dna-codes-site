@@ -136,12 +136,12 @@ const ghBase = 'https://github.com/dna-codes/dna/blob/main';
   <p>
     <strong>BPMN 2.0</strong> (Business Process Model and Notation, OMG) is a graphical process-modeling notation. DNA is
     a textual description of the broader business. Process is one concern among many. The two overlap most in a <a
-      href="/docs/operational#workflow"><code>Workflow</code></a
-    >, written over <a href="/docs/operational#operation"><code>Operation</code></a>s. One fulfillment workflow, written
-    as data with the drawing beside it, is
-    <a href="/blog/business-process-modeling">business process modeling with DNA</a>. Where a BPM suite is the right
+      href="/docs/operational/#workflow"><code>Workflow</code></a
+    >, written over <a href="/docs/operational/#operation"><code>Operation</code></a>s. One fulfillment workflow,
+    written as data with the drawing beside it, is
+    <a href="/blog/business-process-modeling/">business process modeling with DNA</a>. Where a BPM suite is the right
     tool, and where it is not, is
-    <a href="/business-process-software">business process management software</a>.
+    <a href="/business-process-software/">business process management software</a>.
   </p>
 
   <h3>Concept mapping</h3>
@@ -163,7 +163,7 @@ const ghBase = 'https://github.com/dna-codes/dna/blob/main';
       >
       <tr
         ><td>Task (atomic activity)</td><td><code>Operation</code></td><td
-          >One <a href="/docs/operational#action"><code>Action</code></a>, performed by one actor. The same Action with
+          >One <a href="/docs/operational/#action"><code>Action</code></a>, performed by one actor. The same Action with
           a different actor is a different Operation. A state lists the operations available in it.</td
         ></tr
       >
@@ -175,8 +175,8 @@ const ghBase = 'https://github.com/dna-codes/dna/blob/main';
       >
       <tr
         ><td>Exclusive Gateway (XOR)</td><td><code>Policy</code>, or a transition <code>when</code></td><td
-          >A <a href="/docs/operational#policy"><code>Policy</code></a> decides an action when its <a
-            href="/docs/operational#condition"><code>Condition</code></a
+          >A <a href="/docs/operational/#policy"><code>Policy</code></a> decides an action when its <a
+            href="/docs/operational/#condition"><code>Condition</code></a
           > holds. A transition guard reads the operation's output. Neither is a node between states.</td
         ></tr
       >

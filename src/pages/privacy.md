@@ -5,7 +5,7 @@ layout: '~/layouts/MarkdownLayout.astro'
 
 _Last updated_: November 9, 2026
 
-DNA Codes operates this site, [dna.codes](https://dna.codes). This page describes what we collect when you read it or write to us, who receives that information, and how to ask a question. The way to reach us is the [contact form](/contact).
+DNA Codes operates this site, [dna.codes](https://dna.codes). This page describes what we collect when you read it or write to us, who receives that information, and how to ask a question. The way to reach us is the [contact form](/contact/).
 
 ## Reading the site
 

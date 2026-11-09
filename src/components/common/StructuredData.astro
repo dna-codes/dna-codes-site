@@ -1,6 +1,7 @@
 ---
 import { SITE } from 'astrowind:config';
 import { PRODUCTS } from '~/data/products';
+import { getCanonical } from '~/utils/permalinks';
 
 // The homepage is where agents and search engines resolve who the site belongs to, so the
 // Organization lives there and nowhere else. No email, phone or postal address yet: the
@@ -15,7 +16,7 @@ const graph = {
       '@type': 'Organization',
       '@id': `${origin}/#organization`,
       name: SITE.name,
-      url: origin,
+      url: getCanonical('/'),
       logo: `${origin}/favicon.png`,
       description:
         'DNA Codes builds a living operating model for teams of humans and agents: define roles, processes and rules once, then govern every screen, endpoint and agent from it.',
@@ -23,19 +24,19 @@ const graph = {
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'sales',
-        url: `${origin}/contact`,
+        url: getCanonical('/contact'),
         availableLanguage: 'en',
       },
       makesOffer: PRODUCTS.map(({ name, href, description }) => ({
         '@type': 'Offer',
-        itemOffered: { '@type': 'Service', name, description, url: `${origin}${href}` },
+        itemOffered: { '@type': 'Service', name, description, url: getCanonical(href) },
       })),
     },
     {
       '@type': 'WebSite',
       '@id': `${origin}/#website`,
       name: SITE.name,
-      url: origin,
+      url: getCanonical('/'),
       publisher: { '@id': `${origin}/#organization` },
     },
   ],
