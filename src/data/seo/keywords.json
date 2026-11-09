@@ -334,7 +334,7 @@
     "page": "/blog/business-process-modeling",
     "pageType": "post",
     "title": "Business Process Modeling with DNA",
-    "description": "Business process modeling with DNA writes the process as roles, steps, and rules. Notation leaves it in a diagram. Management leaves it in slides.",
+    "description": "Business process modeling with DNA writes a workflow of states, operations, and policies. Notation leaves it in a diagram. Management leaves it in slides.",
     "measuredAt": "2026-11-08",
     "source": "moz",
     "notes": "The one post. Notation and management are headings on it."

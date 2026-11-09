@@ -61,7 +61,7 @@ Each post sets `targetKeyword`, carries `coAuthor: Claude (Anthropic)`, links to
 `/business-process-software` (design D8), and follows the prose rules in `AGENTS.md`.
 
 - [x] 4.1 **Business Process Modeling with DNA** (`business-process-modeling`), target
-      `business-process-modeling`. The process is roles, steps, rules, and handoffs. A heading
+      `business-process-modeling`. The process is a workflow of states, operations, and policies. A heading
       uses **business process modeling notation**: the drawing gets stuck as a diagram. A heading
       uses **business process management**: the practice gets stuck in slides. Links to
       `/docs/frameworks` and `/business-process-software`.
