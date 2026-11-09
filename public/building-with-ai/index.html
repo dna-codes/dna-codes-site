@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Companion app for the talk Building With AI: Patterns and Anti-patterns. Watch the software lifecycle's bottleneck move from Pre-AI to 2026 to Future.">
+<link rel="canonical" href="https://dna.codes/building-with-ai/">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Building With AI">
+<meta property="og:description" content="Companion app for the talk Building With AI: Patterns and Anti-patterns. Watch the software lifecycle's bottleneck move from Pre-AI to 2026 to Future.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dna.codes/building-with-ai/">
+<meta property="og:site_name" content="DNA Codes">
 <link rel="icon" href="/favicon.png">
 <style>
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -378,6 +385,8 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
 .dev-title-card h1{margin:0;font-size:clamp(28px,5vw,44px);line-height:1.2;letter-spacing:-.03em;color:var(--heading);font-weight:700}
 .dev-title-card h1 .dev-title-brand{display:block;color:var(--accent-text)}
 .dev-title-card h1 .dev-title-rest{display:block}
+/* Text version of the companion. A crawl does not run the script, and the first view is only a few sentences, which scores as thin content. Clipped, not display:none, so the words stay in the body and the full-screen app does not scroll. */
+.crawl-summary{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
 </style>
 </head>
 <body>
@@ -452,6 +461,32 @@ kbd{font-family:var(--font-mono);font-size:11px;padding:2px 6px;margin-right:5px
     <h1 id="dev-title-heading"><span class="dev-title-brand">Building With AI</span><span class="dev-title-rest">Patterns and Anti-patterns</span></h1>
   </div>
 </div>
+
+<!--
+  Text version of the companion. The interactive copy lives in the script below, and the
+  first view is only a few sentences. A crawler that does not run that script scores the
+  page as thin content. Keep this article in the body, outside the script, and in sync
+  with the eras and phases below. scripts/crawl-check.mjs requires 250 words.
+-->
+<article class="crawl-summary" id="about-talk">
+  <h1>Building With AI: Patterns and Anti-patterns</h1>
+  <p>Companion to the talk. It shows where the software lifecycle slows down, and how that slowdown moves as building with AI gets cheaper. Choose an era, then walk four phases. Each phase lists its sub-stages, the tools teams use, the patterns that hold up, and the anti-patterns that show up once generation is cheap.</p>
+  <h2>Three eras</h2>
+  <p><strong>Pre-AI.</strong> A proposal was easy to have. A working product was not. New ideas were abundant. Usable requirements, the capacity to build, and getting a release out the door were where work piled up. Teams coped with Agile, smaller batches, continuous integration, and DevOps.</p>
+  <p><strong>2026.</strong> A first version arrives quickly. Trust in it does not. Generated code, throwaway prototypes, and a spec drafted for you are abundant. Work piles up in checking the change, and in whether the spec it followed was any good. Teams cope with tests that gate a merge, smaller diffs, an AI first pass, and agent skills.</p>
+  <p><strong>Future.</strong> New features are easy. Standing behind them is not. Review, and then the code itself, can be produced on demand. Work piles up at a safe release into production, and then at deciding what the running system may change on its own. Teams cope with progressive delivery, live evals, policy as code, and governed runtimes. Treat this era as a set of bets, not a prediction.</p>
+  <h2>Discover</h2>
+  <p>Problem framing, user research, ideation, prioritization, and the brief that hands the opportunity to Design. Before AI, ideas were cheap and testing them was not. In 2026 a prototype is cheap enough to be research: build a throwaway version, put it in front of real users, and open the sources yourself. The anti-patterns are a prototype that becomes the product, an idea flood that replaces a decision, unverified research, and synthetic users standing in for real ones. When anything can be built, choosing is the work. The handoff into Design is a brief plus, today, a working prototype that says what it was built to learn.</p>
+  <h2>Design</h2>
+  <p>Requirements analysis, systems design, UX, planning, and the spec that hands the plan to Develop. Requirements used to be the first traffic jam. A spec now has a second reader, the model. Patterns that hold up: specs used as context, comparing a few architectures before committing, talking a problem through and then tightening it into a spec, reacting to mockups instead of descriptions, planning in tasks an agent can finish, and encoding team conventions as agent skills. Anti-patterns: skipping design because code is cheap, long specs nobody reads, a raw transcript handed to an agent, default-looking screens, plans that still treat coding as the long pole, and pasting everything into the context. The handoff into Develop fails when the spec leaves gaps the agent will fill in on its own.</p>
+  <h2>Develop</h2>
+  <p>Implementation, testing, integration, refactoring, and code review, which hands the change to Deliver as a pull request. Implementation used to be the constraint. Generation is now cheap and review is not. Patterns: agents that iterate until tests, types, and linters pass; tests written or approved before the code; one agent on one task on one branch; merging agent work daily; refactors held in place by tests; diffs a person can read in one sitting. Anti-patterns: counting lines generated, more agents than anyone is watching, an agent that edits the tests until they pass, parallel branches that drift for days, and code nobody can explain. The handoff into Deliver is where the work piles up in 2026. Agents open pull requests faster than people can review them. Tests and a first-pass review can take the routine. A person still reviews risk, design, and intent, and the author reads the diff before asking anyone else to.</p>
+  <h2>Deliver</h2>
+  <p>Deployment, release, monitoring, incident response, and feedback, which hands what was learned back to Discover. Releases used to be events. The rule now is to ship only as fast as you can see the result and undo it. Patterns: evals that gate an AI feature, small changes behind a feature flag with a one-step rollback, a log of what agents changed, triage drafted by a model and decided by a person, and feedback routed back into Discover on a schedule. Anti-patterns: shipping after a few prompts look good, agents that hold production keys, releasing faster than monitoring can follow, and generated runbooks nobody has tried. Further out, deployment itself is the bottleneck. Every change should start small and roll back when metrics or evals regress. A runtime that can change itself still needs a person to set the goals and a rule for who may change what.</p>
+  <h2>Stack, patterns, and the glossary</h2>
+  <p>Stack plots the agent stack by maturity and scope. Pick a category to see the tools in that layer. Patterns pairs each anti-pattern with the practice that replaces it. The glossary defines the terms the talk uses, from bottleneck, handoff, and work in progress to vibe coding, deep research, agent skills, evals, and policy as code, each with an example and the older name for the same idea.</p>
+  <p>The ring is the lifecycle: Discover, Design, Develop, Deliver, then a feedback loop. Brackets change the era. The number keys jump to a phase. Arrow keys step through sub-stages. S opens Stack, P opens Patterns, and G opens the glossary.</p>
+</article>
 
 <script>
 (function(){
