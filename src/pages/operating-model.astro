@@ -1,0 +1,60 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import OperatingModelBoard from '~/components/widgets/use-case/OperatingModelBoard.astro';
+import { seoFor } from '~/utils/seo';
+
+const metadata = seoFor('/operating-model');
+---
+
+<Layout metadata={metadata}>
+  <article class="px-4 sm:px-6 mx-auto max-w-6xl pt-16 pb-4">
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto"
+    >
+      <p class="text-sm font-semibold tracking-wide text-primary">Target Operating Model</p>
+      <h1>A Runnable Target Operating Model</h1>
+      <p>
+        A target operating model usually leaves the workshop as a slide. Boxes for the functions, arrows for the
+        handoffs, a footnote about the systems. Six months later the slides are still the target, and the company is
+        running on whatever people remember. The deck cannot tell a new hire what to do on a Tuesday, and it cannot tell
+        software what it is allowed to do.
+      </p>
+      <p>
+        An operating model you can run is smaller and stricter. Roles, processes, rules, and the systems that carry
+        them. One description. The slides, if you still want them, are a view of it.
+      </p>
+
+      <h2>The Operating Model</h2>
+      <p>
+        The board is one company, compiled from its genome. Roles report the way the work does. The process names the
+        step, the role, and the operation. Rules sit on the step they govern. Systems are the cells that carry the data.
+      </p>
+    </div>
+
+    <OperatingModelBoard class="mt-8" />
+
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto mt-10"
+    >
+      <h2>How to Build an Operating Model</h2>
+      <p>
+        Start from a process the company already runs badly, not from a blank org chart. Name the roles that touch it.
+        Write the steps in the order the work actually moves, and write the rule that people currently enforce by
+        nagging. Then name the systems that hold the data those steps need. That is operating model design. The rest is
+        keeping the model when the workshop is over.
+      </p>
+      <p>
+        A slide deck cannot stay current, because nothing reads it. A model that the procedure, the permissions, and the
+        agent all read will get corrected the first time it is wrong. That correction is the whole point.
+      </p>
+      <p>
+        <a href="/playground">The Playground</a> shows what a filled genome looks like, industry by industry. The waitlist
+        is how a team puts its own model on the same footing.
+      </p>
+    </div>
+  </article>
+  <div class="px-4 sm:px-6 mx-auto max-w-3xl pb-16">
+    <WaitlistForm preselect="operations" />
+  </div>
+</Layout>

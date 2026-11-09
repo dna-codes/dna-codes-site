@@ -1,0 +1,508 @@
+---
+// Fulfillment as a behaviour/v1 workflow. The words on the figure are the ones
+// the operational reference defines: Workflow, State, Operation, Action, Actor,
+// Transition, Policy. A policy decides an action. It is not a gateway between states.
+import { twMerge } from 'tailwind-merge';
+
+interface Props {
+  class?: string;
+}
+
+interface Actor {
+  /** Entity the actor is an instance of. */
+  entity: string;
+  instance: string;
+  label: string;
+}
+
+interface ActionDef {
+  id: string;
+  entity: string;
+  name: string;
+}
+
+interface OperationDef {
+  id: string;
+  name: string;
+  description: string;
+  action: string;
+  actor: Actor;
+}
+
+interface PolicyWhen {
+  subject: 'target' | 'actor' | 'context' | 'input';
+  path: string;
+  op: 'eq' | 'neq' | 'lt' | 'lte' | 'gt' | 'gte' | 'in' | 'notIn';
+  value: string | string[];
+}
+
+interface PolicyDef {
+  id: string;
+  description: string;
+  actions: string[];
+  when: PolicyWhen;
+  effect: 'allow' | 'deny';
+}
+
+interface TransitionDef {
+  on: string;
+  to: string;
+  status: 'completed' | 'failed';
+}
+
+interface StateDef {
+  id: string;
+  name: string;
+  /** Operation available in this state. A final state has none. */
+  operation?: string;
+  final?: boolean;
+  transitions: TransitionDef[];
+}
+
+const { class: className } = Astro.props;
+
+const actions: ActionDef[] = [
+  { id: 'verify-payment', entity: 'order', name: 'Verify payment' },
+  { id: 'reserve', entity: 'inventory-item', name: 'Reserve' },
+  { id: 'pack', entity: 'shipment', name: 'Pack' },
+  { id: 'dispatch', entity: 'shipment', name: 'Dispatch' },
+  { id: 'confirm', entity: 'order', name: 'Confirm' },
+];
+
+const operations: OperationDef[] = [
+  {
+    id: 'verify-payment',
+    name: 'Order manager verifies payment',
+    description: 'Confirm authorization, and hold or decline anything the processor flags.',
+    action: 'verify-payment',
+    actor: { entity: 'position', instance: 'order-manager', label: 'Order manager' },
+  },
+  {
+    id: 'reserve',
+    name: 'Warehouse lead reserves',
+    description: 'Hold stock at the fulfilling location.',
+    action: 'reserve',
+    actor: { entity: 'position', instance: 'warehouse-lead', label: 'Warehouse lead' },
+  },
+  {
+    id: 'pack',
+    name: 'Warehouse lead packs',
+    description: 'Retrieve the items, verify quantities, and package them for the carrier.',
+    action: 'pack',
+    actor: { entity: 'position', instance: 'warehouse-lead', label: 'Warehouse lead' },
+  },
+  {
+    id: 'dispatch',
+    name: 'Warehouse lead dispatches',
+    description: 'Hand the shipment to the carrier and publish tracking.',
+    action: 'dispatch',
+    actor: { entity: 'position', instance: 'warehouse-lead', label: 'Warehouse lead' },
+  },
+  {
+    id: 'confirm',
+    name: 'Support confirms delivery',
+    description: 'Verify the carrier confirmation and close the order.',
+    action: 'confirm',
+    actor: { entity: 'position', instance: 'customer-support-lead', label: 'Customer support lead' },
+  },
+];
+
+const policies: PolicyDef[] = [
+  {
+    id: 'payment-clears-before-stock-moves',
+    description: 'No stock is reserved until payment authorization has cleared.',
+    actions: ['reserve'],
+    when: { subject: 'input', path: 'payment', op: 'neq', value: 'cleared' },
+    effect: 'deny',
+  },
+  {
+    id: 'only-warehouse-dispatches',
+    description: 'Dispatch belongs to the warehouse lead. Support can ask. It cannot ship.',
+    actions: ['dispatch'],
+    when: { subject: 'actor', path: 'id', op: 'notIn', value: ['warehouse-lead'] },
+    effect: 'deny',
+  },
+];
+
+const states: StateDef[] = [
+  {
+    id: 'received',
+    name: 'Received',
+    operation: 'verify-payment',
+    transitions: [{ on: 'verify-payment', status: 'completed', to: 'paid' }],
+  },
+  {
+    id: 'paid',
+    name: 'Paid',
+    operation: 'reserve',
+    transitions: [{ on: 'reserve', status: 'completed', to: 'held' }],
+  },
+  {
+    id: 'held',
+    name: 'Held',
+    operation: 'pack',
+    transitions: [{ on: 'pack', status: 'completed', to: 'packed' }],
+  },
+  {
+    id: 'packed',
+    name: 'Packed',
+    operation: 'dispatch',
+    transitions: [{ on: 'dispatch', status: 'completed', to: 'shipped' }],
+  },
+  {
+    id: 'shipped',
+    name: 'Shipped',
+    operation: 'confirm',
+    transitions: [{ on: 'confirm', status: 'completed', to: 'delivered' }],
+  },
+  { id: 'delivered', name: 'Delivered', final: true, transitions: [] },
+];
+
+const workflow = {
+  name: 'Order fulfillment',
+  example: 'BrightBox',
+  initial: 'received',
+};
+
+const byId = <T extends { id: string }>(rows: T[]) => new Map(rows.map((row) => [row.id, row]));
+const actionById = byId(actions);
+const operationById = byId(operations);
+
+const opWord: Record<PolicyWhen['op'], string> = {
+  eq: 'equals',
+  neq: 'does not equal',
+  lt: 'is below',
+  lte: 'is at most',
+  gt: 'is above',
+  gte: 'is at least',
+  in: 'is in',
+  notIn: 'is not in',
+};
+
+const conditionText = (when: PolicyWhen) => {
+  const value = Array.isArray(when.value) ? when.value.join(', ') : when.value;
+  return `${when.subject}.${when.path} ${opWord[when.op]} ${value}`;
+};
+
+const view = states.map((state) => {
+  const operation = state.operation ? operationById.get(state.operation) : undefined;
+  const action = operation ? actionById.get(operation.action) : undefined;
+  const transition = state.transitions[0];
+  const next = transition ? states.find((candidate) => candidate.id === transition.to) : undefined;
+  return {
+    state,
+    operation,
+    action,
+    transition,
+    next,
+    policies: action ? policies.filter((policy) => policy.actions.includes(action.id)) : [],
+  };
+});
+---
+
+<figure class={twMerge('not-prose', className)} data-playhead data-interval="5000">
+  <div class="card">
+    <div class="bar">
+      <span class="pill">Workflow</span>
+      <span class="proc">{workflow.name}</span>
+      <span class="example">{workflow.example}</span>
+      <button type="button" class="play" data-play aria-pressed="true">Pause</button>
+    </div>
+
+    <div class="track" data-track role="group" aria-label={`${workflow.name} states`}>
+      {
+        view.map((row, i) => (
+          <div class="slot">
+            {i > 0 && (
+              <div class="join" data-join={i}>
+                <span class="line" aria-hidden="true" />
+              </div>
+            )}
+            <button
+              type="button"
+              class:list={['node', { 'is-current': i === 0 }]}
+              data-step={i}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              <span class="n">{i + 1}</span>
+              <span class="name">{row.state.name}</span>
+              <span class="chip">{row.operation ? row.action?.name : 'Final'}</span>
+              <span class="sr-only">
+                {row.state.id === workflow.initial ? 'Initial state. ' : ''}
+                {row.state.final
+                  ? 'A final state ends the run.'
+                  : `${row.operation?.name}. Actor ${row.operation?.actor.label}. Action ${row.action?.name} on ${row.action?.entity}. Transition on ${row.transition?.on}, ${row.transition?.status}, to ${row.transition?.to}.`}
+                {row.policies.map((policy) => ` Policy. ${policy.description}`)}
+              </span>
+            </button>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="detail">
+      {
+        view.map((row, i) => (
+          <div data-panel={i} hidden={i !== 0}>
+            <p class="kicker">State</p>
+            <p class="title">{row.state.name}</p>
+            {row.state.final ? (
+              <p class="work">A final state ends the run. It has no operations and no transitions.</p>
+            ) : (
+              <>
+                <p class="line">
+                  <span class="k">Operation</span>
+                  {row.operation?.name}
+                </p>
+                <p class="line">
+                  <span class="k">Actor</span>
+                  {row.operation?.actor.label}
+                </p>
+                <p class="line">
+                  <span class="k">Action</span>
+                  {row.action?.name} on {row.action?.entity}
+                </p>
+                <p class="work">{row.operation?.description}</p>
+                {row.transition && row.next && (
+                  <p class="line">
+                    <span class="k">Transition</span>
+                    <span class="mono">
+                      on {row.transition.on}, {row.transition.status}, to {row.transition.to}
+                    </span>
+                  </p>
+                )}
+                {row.policies.map((policy) => (
+                  <p class="policy">
+                    <span class="k">Policy</span>
+                    {policy.description} Effect {policy.effect}, when {conditionText(policy.when)}.
+                  </p>
+                ))}
+              </>
+            )}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <figcaption>
+    {workflow.name} at {workflow.example}, written as a <a href="/docs/operational#workflow">workflow</a>. Each node is
+    a state. The chip is the action of the operation available there, and the line into the next state is the transition
+    that operation completes. A policy decides the action. It advances on its own. Select a state to hold it.
+  </figcaption>
+</figure>
+
+<script>
+  import { attachPlayhead } from './playhead';
+
+  document.querySelectorAll<HTMLElement>('[data-playhead]').forEach((root) => attachPlayhead(root));
+</script>
+
+<style>
+  .card {
+    overflow: hidden;
+    border-radius: 1rem;
+    border: 2px solid rgb(13 148 136 / 0.85);
+    background: rgb(15 23 42 / 0.92);
+    box-shadow: 0 0 48px rgb(13 148 136 / 0.28);
+  }
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 0.7rem 0.85rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  }
+  .pill {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(153 246 228);
+    background: rgb(13 148 136 / 0.2);
+    border: 1px solid rgb(13 148 136 / 0.45);
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+  }
+  .proc {
+    font-size: 0.875rem;
+    font-weight: 650;
+    color: rgb(241 245 249);
+  }
+  .example {
+    font-size: 0.75rem;
+    color: rgb(148 163 184);
+  }
+  .play {
+    margin-left: auto;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    background: rgb(255 255 255 / 0.04);
+    color: rgb(226 232 240);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.7rem;
+    cursor: pointer;
+  }
+  .play:focus-visible,
+  .node:focus-visible {
+    outline: 2px solid rgb(45 212 191);
+    outline-offset: 2px;
+  }
+
+  .track {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding: 1rem 0.85rem 0.85rem;
+    scrollbar-width: thin;
+  }
+  .slot {
+    display: flex;
+    align-items: flex-start;
+    flex: 0 0 auto;
+  }
+  .node {
+    flex: 0 0 7.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    text-align: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 0.85rem;
+    padding: 0.4rem 0.3rem 0.55rem;
+    color: inherit;
+    cursor: pointer;
+  }
+  .node.is-current {
+    border-color: rgb(13 148 136 / 0.7);
+    background: rgb(13 148 136 / 0.12);
+    box-shadow: 0 0 24px rgb(13 148 136 / 0.25);
+  }
+  .n {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: 1px solid rgb(13 148 136 / 0.5);
+    background: rgb(13 148 136 / 0.18);
+    color: rgb(153 246 228);
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .node.is-done .n {
+    background: rgb(13 148 136 / 0.45);
+  }
+  .name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: rgb(241 245 249);
+  }
+  .chip {
+    font-size: 0.68rem;
+    line-height: 1.3;
+    color: rgb(148 163 184);
+    background: rgb(255 255 255 / 0.06);
+    border-radius: 0.25rem;
+    padding: 0.05rem 0.35rem;
+  }
+
+  .join {
+    position: relative;
+    flex: 0 0 1.35rem;
+    height: 1rem;
+    margin-top: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgb(255 255 255 / 0.14);
+  }
+  .join.is-done .line {
+    background: linear-gradient(to right, rgb(45 212 191 / 0.25), rgb(45 212 191 / 0.95));
+  }
+
+  .detail {
+    border-top: 1px solid rgb(255 255 255 / 0.08);
+    padding: 0.9rem 1rem 1.05rem;
+    min-height: 11.5rem;
+  }
+  .kicker {
+    margin: 0;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(148 163 184);
+  }
+  .title {
+    margin: 0.15rem 0 0.45rem;
+    font-size: 1.05rem;
+    font-weight: 650;
+    color: rgb(241 245 249);
+  }
+  .line,
+  .work,
+  .policy {
+    margin: 0.35rem 0 0;
+    color: rgb(203 213 225);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+  .k {
+    display: inline-block;
+    min-width: 6.25rem;
+    margin-right: 0.35rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(153 246 228);
+  }
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.86rem;
+    color: rgb(226 232 240);
+  }
+  .policy {
+    color: rgb(153 246 228);
+  }
+
+  figcaption {
+    margin-top: 0.75rem;
+    color: rgb(100 116 139);
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+  figcaption a {
+    color: rgb(45 212 191);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .node.is-current .n {
+      animation: workflow-pulse 1.8s ease-in-out infinite;
+    }
+  }
+  @keyframes workflow-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(45 212 191 / 0.45);
+    }
+    70% {
+      box-shadow: 0 0 0 7px rgb(45 212 191 / 0);
+    }
+  }
+</style>

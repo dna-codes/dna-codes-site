@@ -54,7 +54,7 @@
   "fit": 3, // 1 loose … 3 exact, our judgement
   "role": "primary", // primary | secondary | candidate | to-measure | skip
   "page": "/sop-software", // required for primary and secondary
-  "pageType": "landing", // landing | post | lead-magnet
+  "pageType": "landing", // landing | post
   "title": "SOP Software That Runs, Not Just Documents", // primary only, without the site suffix
   "description": "SOP software that turns written procedures into …", // primary only
   "measuredAt": "2026-11-08",
@@ -96,10 +96,17 @@ A page owns exactly one primary keyword, and a primary keyword belongs to exactl
 pages chasing the same query split their own ranking. Secondary keywords belong to a page too, but
 only inform its copy: they never set the title.
 
-The check enforces both directions (D5). When a post and a landing page both seem to fit a
-keyword, the landing page gets the commercial phrasing and the post gets the informational one:
-`/operating-model` owns **target operating model**; the post owns **how to build an operating
-model**.
+The check enforces both directions (D5). When a commercial phrase and an informational phrase
+name different searches, they get different pages: `/business-process-software` owns
+**business process management software**; the post owns **business process management**.
+
+A variant does not get its own page when the owning page can say the phrase in a heading, or
+when the primary title already contains it. **sop software for small business** and **how to
+build an operating model** are headings on their hubs. **Business process modeling notation** and
+**business process management** are headings on the modeling post. **Operating model template** is
+skipped: the page shows one filled model and does not offer a file to download.
+Splitting any of those into another URL would thin the page that should rank and add a route
+nobody asked to maintain.
 
 ### D4: Pages ask the registry, and fail if it has no answer
 
@@ -117,7 +124,7 @@ A page opts in with one line:
 const metadata = seoFor('/sop-software');
 ```
 
-Posts opt in with `targetKeyword: sop-software-for-small-business` in frontmatter. The blog
+Posts opt in with `targetKeyword: business-process-modeling` in frontmatter. The blog
 utility resolves it the same way when the post has no explicit `metadata.title`. An explicit
 title in frontmatter still wins, so the published series is untouched.
 
@@ -159,35 +166,40 @@ It names where a BPM suite is the right answer. That honesty is also the defence
 bounce rate a mismatched page earns.
 
 **Open question:** if this page converts poorly after a quarter, demote the cluster to `candidate`
-and redirect the route to `/business-process-modeling`. The registry makes that a two-row change.
+and redirect the route to `/blog/business-process-modeling`. The registry makes that a two-row
+change.
 
-### D7: The template is generated, ungated, and points at the real thing
+### D7: No operating model template download
 
-`/operating-model/template` owns **operating model template**. The template is generated at build
-time from a genome compiled with its sample values stripped: roles, processes and steps, rules,
-systems. It ships two ways:
+`/operating-model` owns **target operating model** and shows one filled company on the board.
+It does not offer a template section or a spreadsheet, CSV, or JSON download. **Operating model
+template** and **business operating model template** are `skip` rows, so the page does not claim
+a file it does not have.
 
-- A spreadsheet download (`.xlsx` and `.csv`), because that is what the searcher wants today.
-- The same template as DNA (`.json`), because that is what it turns into.
+The same page has a how-to section headed with **how to build an operating model**. That query
+is 39 searches a month at difficulty 41. A separate post would be a second operating-model URL
+chasing the same reader.
 
-No email gate. A gate blocks crawlers and agents from the content that earns the ranking, and the
-waitlist form sits beside the download for anyone who wants more. The page shows a filled-in
-example from one industry genome so the empty template is never the first thing a visitor sees.
+### D8: One URL per head term, headings for the rest
 
-### D8: Clusters are hub and spoke
+Each commercial landing page is a hub. A post exists only when its primary keyword is a
+different search from the hub's, large enough that a heading on the hub would not carry it.
+The post links to the hub in its closing section, and the hub links back under "Read more".
 
-Each commercial landing page is a hub. The posts in its cluster link to it in their closing
-section, and it links back to them under "Read more". The template links to the operating-model
-hub and the how-to post.
+| Cluster         | Hub (commercial)             | On the hub, as headings                                    | Own post                                           |
+| --------------- | ---------------------------- | ---------------------------------------------------------- | -------------------------------------------------- |
+| sop             | `/sop-software`              | sop software for small business; later How to Write an SOP | none                                               |
+| operating-model | `/operating-model`           | how to build an operating model                            | none                                               |
+| bpm             | `/business-process-software` | the software, tools and workflow phrases                   | none; management is a heading on the modeling post |
+| bpmn            | the modeling post            | business process modeling notation                         | Business Process Modeling with DNA (467)           |
 
-| Cluster         | Hub (commercial)             | Spokes (informational)                                          |
-| --------------- | ---------------------------- | --------------------------------------------------------------- |
-| sop             | `/sop-software`              | SOP Software for Small Business; later How to Write an SOP      |
-| operating-model | `/operating-model`           | How to Build an Operating Model That Runs; the template         |
-| bpm / bpmn      | `/business-process-software` | BPMN vs. DNA; Business Process Modeling; Business Process Mgmt. |
+One post, `/blog/business-process-modeling`, owns **business process modeling**. The title is
+"Business Process Modeling with DNA". Business process modeling notation is a heading: the
+drawing is where the work gets stuck. Business process management is a heading: the practice
+ends in slides. `/blog/business-process-management` redirects to that post.
 
-The posts follow the house rules in `AGENTS.md`: `coAuthor: Claude (Anthropic)`, em dashes rare.
-They are written for ops leaders, the backlog's audience, not for the series' engineers.
+The post follows the house rules in `AGENTS.md`: `coAuthor: Claude (Anthropic)`, em dashes rare.
+It is written for ops leaders, the backlog's audience, not for the series' engineers.
 
 ### D9: How a pivot works
 

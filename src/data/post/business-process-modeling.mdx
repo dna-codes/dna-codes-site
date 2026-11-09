@@ -1,0 +1,49 @@
+---
+publishDate: 2026-11-08T00:00:00Z
+author: Tim Kleier
+coAuthor: Claude (Anthropic)
+title: 'Business Process Modeling with DNA'
+excerpt: 'Business process modeling with DNA writes a workflow of states, operations, and policies. Notation leaves it in a diagram. Management leaves it in slides.'
+image: '~/assets/images/posts/business-process-modeling.png'
+category: Operations
+tags:
+  - business process modeling
+  - bpmn
+  - business process management
+  - operations
+targetKeyword: business-process-modeling
+---
+
+import WorkflowDiagram from '~/components/widgets/use-case/WorkflowDiagram.astro';
+
+Business process modeling with DNA is naming a process so software can read it. The name is a workflow: the states an order moves through, the operation available in each one, and the policy on its action. A screen can read that. An agent can read it. A new hire can read it. It is the same description each time.
+
+Take fulfillment. A customer pays. An order manager receives the order and checks the payment. A warehouse lead holds the stock, packs it, and hands it to a carrier. Support confirms delivery. One policy sits on the action that usually goes wrong: reserve is denied until the payment has cleared.
+
+<WorkflowDiagram />
+
+That is the model. A workflow, and then you can stop.
+
+**States.** Where the order is. Received, paid, held, packed, shipped, delivered. Delivered ends the run. "Fulfill the order" is a wish. "Held" is a state.
+
+**Operations.** One action, performed by one actor. Verify payment is the order manager performing Verify payment on the order. Reserve is the warehouse lead performing Reserve on the inventory item. The same action performed by someone else is a different operation.
+
+**Policies.** The decision, written on the action. Reserve is denied while payment has not cleared. Dispatch is denied unless the actor is the warehouse lead. A policy is not a diamond drawn between the states.
+
+**Transitions.** What moves the run. On reserve, completed, the state is held. The handoff is that sentence.
+
+## Business Process Modeling Notation
+
+Business process modeling notation draws that same fulfillment. A circle starts it, a rounded box is a task, a diamond is the payment check, an arrow is the order. A trained reader can look at the page and tell you who does what.
+
+The drawing is the right way to look at a process in a room. It is also where the work gets stuck. The diagram is accurate the week of the workshop. The checkout service does what shipped. Nothing in the drawing hears about the ship, so the notation stays a diagram. [How DNA maps onto BPMN](/docs/frameworks) is the comparison with the drawing. The [operational reference](/docs/operational) is the vocabulary the model is written in. What leaves the room is a state, an operation, and a policy that software can read.
+
+## Business Process Management
+
+Business process management is the effort to keep one process from splitting into copies. Support, the warehouse, and the service each hold one, and the copies disagree. The usual result is a slide. Boxes for the functions, arrows for the handoffs, a footnote about the systems.
+
+The slides get stuck the same way the diagram does. A picture of the work does not take part in the work, so nothing forces it to stay true. Move "verify payment" to after "reserve inventory," the way a Friday bugfix tends to. The deck still says payment first. The service reserves stock on the way in. The meeting that follows is people reading the deck and the service aloud until someone decides which one is the real process.
+
+A model that the procedure, the permissions, and the agent read gets corrected the first time it is wrong. The wrongness shows up as a refused operation, not as a stale slide.
+
+[Business process management software](/business-process-software) is the choice that follows: a suite that runs the work on its own engine, or a description the systems you already run can read. The model is the piece that stays either way.

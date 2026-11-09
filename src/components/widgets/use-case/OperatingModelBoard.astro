@@ -1,0 +1,336 @@
+---
+// The operating-model page's artifact: roles, the process, the rules, and the
+// systems, in one frame. The org and the step rail follow the Operations page
+// (a lead with reports, a numbered flow with the role on the step).
+import { twMerge } from 'tailwind-merge';
+import { operatingModelTemplate, type TemplateRole } from '~/utils/operating-model-template';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const model = operatingModelTemplate();
+const process = model.processes[0];
+const reportsOf = (name: string): TemplateRole[] => model.roles.filter((role) => role.parent === name);
+const roots = model.roles.filter((role) => !role.parent);
+---
+
+<figure class={twMerge('not-prose', className)}>
+  <div class="card">
+    <div class="bar">
+      <span class="pill">Operating model</span>
+      <span class="example">{model.example}</span>
+    </div>
+
+    <div class="grid">
+      <section class="panel">
+        <p class="kicker">Roles</p>
+        {
+          roots.map((root) => (
+            <div class="org">
+              <div class="box lead">
+                <p class="box-name">{root.name}</p>
+                <p class="box-desc">{root.description}</p>
+              </div>
+              {reportsOf(root.name).length > 0 && (
+                <div class="reports">
+                  {reportsOf(root.name).map((role) => (
+                    <div class="box">
+                      <p class="box-name">{role.name}</p>
+                      <p class="box-desc">{role.description}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))
+        }
+      </section>
+
+      <section class="panel">
+        <p class="kicker">Systems</p>
+        <ul class="stack">
+          {
+            model.systems.map((system) => (
+              <li>
+                <p class="box-name">{system.name}</p>
+                <p class="box-desc">{system.description}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="panel span">
+        <p class="kicker">Process</p>
+        <p class="proc">
+          {process.name}
+          <span>Owned by the {process.owner.toLowerCase()}</span>
+        </p>
+        <p class="box-desc intro">{process.description}</p>
+        <ol class="rail">
+          {
+            process.steps.map((step, i) => (
+              <li>
+                <span class="n">{i + 1}</span>
+                <div class="step">
+                  <div class="topline">
+                    <span class="box-name">{step.name}</span>
+                    <span class="role">{step.role}</span>
+                  </div>
+                  <p class="op">
+                    <span class="action">{step.action}</span>
+                    <span class="arrow" aria-hidden="true">
+                      →
+                    </span>
+                    <span class="resource">{step.resource}</span>
+                  </p>
+                  <p class="box-desc">{step.description}</p>
+                  {step.rules.map((rule) => (
+                    <p class="rule">
+                      <strong>{rule.name}.</strong> {rule.description}
+                    </p>
+                  ))}
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <section class="panel span">
+        <p class="kicker">Rules</p>
+        <ul class="stack">
+          {
+            model.rules.map((rule) => (
+              <li>
+                <p class="box-name">{rule.name}</p>
+                <p class="box-desc">{rule.description}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+  </div>
+  <figcaption>
+    {model.example}. {model.description} The names are the operating model, with the sample orders left out.
+  </figcaption>
+</figure>
+
+<style>
+  .card {
+    overflow: hidden;
+    border-radius: 1rem;
+    border: 2px solid rgb(13 148 136 / 0.85);
+    background: rgb(15 23 42 / 0.92);
+    box-shadow: 0 0 48px rgb(13 148 136 / 0.28);
+  }
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 0.7rem 0.85rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  }
+  .pill {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(153 246 228);
+    background: rgb(13 148 136 / 0.2);
+    border: 1px solid rgb(13 148 136 / 0.45);
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+  }
+  .example {
+    font-size: 0.75rem;
+    color: rgb(148 163 184);
+  }
+
+  .grid {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.85rem;
+  }
+  @media (min-width: 900px) {
+    .grid {
+      grid-template-columns: 1.3fr 0.9fr;
+    }
+    .span {
+      grid-column: 1 / -1;
+    }
+  }
+  .panel {
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 0.85rem;
+    background: rgb(2 6 23 / 0.35);
+    padding: 0.85rem;
+  }
+  .kicker {
+    margin: 0 0 0.7rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(45 212 191);
+  }
+  .box-name {
+    margin: 0;
+    font-size: 0.84rem;
+    font-weight: 650;
+    color: rgb(241 245 249);
+  }
+  .box-desc {
+    margin: 0.15rem 0 0;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: rgb(148 163 184);
+  }
+
+  .org {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .box {
+    border: 1px solid rgb(148 163 184 / 0.22);
+    border-radius: 0.7rem;
+    background: rgb(15 23 42 / 0.65);
+    padding: 0.55rem 0.65rem;
+  }
+  .lead {
+    border-color: rgb(13 148 136 / 0.55);
+    background: rgb(13 148 136 / 0.12);
+  }
+  .reports {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+    margin-top: 0.7rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid rgb(45 212 191 / 0.35);
+  }
+  @media (min-width: 640px) {
+    .reports {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .stack {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .proc {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: rgb(241 245 249);
+  }
+  .proc span {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgb(148 163 184);
+  }
+  .intro {
+    margin-top: 0.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .rail {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .rail li {
+    display: flex;
+    gap: 0.7rem;
+  }
+  .n {
+    flex: 0 0 auto;
+    width: 1.45rem;
+    height: 1.45rem;
+    margin-top: 0.1rem;
+    border-radius: 999px;
+    border: 1px solid rgb(13 148 136 / 0.5);
+    background: rgb(13 148 136 / 0.18);
+    color: rgb(153 246 228);
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .rail li:not(:last-child) .n::after {
+    content: '';
+    position: absolute;
+    top: 1.45rem;
+    bottom: -0.85rem;
+    left: 50%;
+    width: 1px;
+    background: rgb(255 255 255 / 0.12);
+  }
+  .step {
+    padding-bottom: 0.85rem;
+    min-width: 0;
+  }
+  .topline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.6rem;
+  }
+  .role {
+    font-size: 0.7rem;
+    color: rgb(148 163 184);
+    background: rgb(255 255 255 / 0.06);
+    border-radius: 0.25rem;
+    padding: 0.05rem 0.4rem;
+  }
+  .op {
+    margin: 0.2rem 0 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78rem;
+  }
+  .action {
+    color: rgb(45 212 191);
+    font-weight: 650;
+  }
+  .arrow {
+    color: rgb(100 116 139);
+    margin-inline: 0.25rem;
+  }
+  .resource {
+    color: rgb(226 232 240);
+  }
+  .rule {
+    margin: 0.3rem 0 0;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: rgb(153 246 228);
+  }
+  .rule strong {
+    font-weight: 650;
+  }
+
+  figcaption {
+    margin-top: 0.75rem;
+    color: rgb(100 116 139);
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+</style>

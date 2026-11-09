@@ -56,6 +56,8 @@ export default defineConfig({
     // land on the Coming soon note rather than a removed layer page.
     '/docs/product': '/docs#coming-soon',
     '/docs/technical': '/docs#coming-soon',
+    // Folded into Business Process Modeling with DNA before the management URL shipped.
+    '/blog/business-process-management': '/blog/business-process-modeling',
   },
 
   integrations: [

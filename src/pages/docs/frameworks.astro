@@ -135,10 +135,13 @@ const ghBase = 'https://github.com/dna-codes/dna/blob/main';
   </h2>
   <p>
     <strong>BPMN 2.0</strong> (Business Process Model and Notation, OMG) is a graphical process-modeling notation. DNA is
-    a textual description of the broader business — process is one concern among many. The two overlap most in DNA's <code
-      >Process</code
-    > / <code>Step</code>{' '}
-    / <code>Task</code> primitives.
+    a textual description of the broader business. Process is one concern among many. The two overlap most in a <a
+      href="/docs/operational#workflow"><code>Workflow</code></a
+    >, written over <a href="/docs/operational#operation"><code>Operation</code></a>s. One fulfillment workflow, written
+    as data with the drawing beside it, is
+    <a href="/blog/business-process-modeling">business process modeling with DNA</a>. Where a BPM suite is the right
+    tool, and where it is not, is
+    <a href="/business-process-software">business process management software</a>.
   </p>
 
   <h3>Concept mapping</h3>
@@ -148,47 +151,51 @@ const ghBase = 'https://github.com/dna-codes/dna/blob/main';
     </thead>
     <tbody>
       <tr
-        ><td>Process</td><td><code>Process</code></td><td
-          >1:1. DNA adds explicit <code>startStep</code> and an owning Resource-as-Role.</td
+        ><td>Process</td><td><code>Workflow</code></td><td
+          >A state machine over Operations. <code>initial</code> is the state a run starts in. A <code>final</code> state
+          ends it.</td
         ></tr
       >
       <tr
-        ><td>Pool / Lane</td><td>Implicit via <code>Task.actor</code></td><td
-          >Swimlanes are computed by grouping Steps by their Task's actor — no separate primitive.</td
+        ><td>Pool / Lane</td><td>Implicit via <code>Operation.actor</code></td><td
+          >The actor is who performs the operation. There is no swimlane primitive.</td
         ></tr
       >
       <tr
-        ><td>Task (atomic activity)</td><td><code>Step</code> (orchestration) + <code>Task</code> (assignment)</td><td
-          >BPMN conflates these; DNA splits. The same Task can appear in multiple Steps across multiple Processes.</td
+        ><td>Task (atomic activity)</td><td><code>Operation</code></td><td
+          >One <a href="/docs/operational#action"><code>Action</code></a>, performed by one actor. The same Action with
+          a different actor is a different Operation. A state lists the operations available in it.</td
         ></tr
       >
       <tr
-        ><td>Sequence Flow</td><td><code>Step.depends_on</code></td><td
-          >BPMN draws arrows; DNA enumerates predecessor IDs. AND-joins fall out naturally.</td
+        ><td>Sequence Flow</td><td>Transition</td><td
+          ><code>on</code> an operation, <code>to</code> a state, when that operation completes or fails. BPMN draws the arrow.
+          DNA names it.</td
         ></tr
       >
       <tr
-        ><td>Exclusive Gateway (XOR)</td><td><code>Step.conditions</code> + <code>Step.else</code></td><td
-          >Gate lives on the Step rather than as a separate node.</td
+        ><td>Exclusive Gateway (XOR)</td><td><code>Policy</code>, or a transition <code>when</code></td><td
+          >A <a href="/docs/operational#policy"><code>Policy</code></a> decides an action when its <a
+            href="/docs/operational#condition"><code>Condition</code></a
+          > holds. A transition guard reads the operation's output. Neither is a node between states.</td
         ></tr
       >
       <tr
-        ><td>Parallel Gateway (AND)</td><td>Multiple Steps with shared <code>depends_on</code></td><td
-          >Fan-out is implicit; fan-in is multiple IDs in <code>depends_on</code>.</td
+        ><td>Parallel Gateway (AND)</td><td>Operations on one state</td><td
+          >The operations listed on a state may run any number of times. A transition moves the run when the operation
+          it names completes. There is no gateway node.</td
         ></tr
       >
+      <tr><td>Start Event</td><td><code>Workflow.initial</code></td><td>The state a run starts in.</td></tr>
       <tr
-        ><td>Start Event</td><td><code>Process.startStep</code> + a <code>Trigger</code> targeting the Process</td><td
-          >Split: <code>startStep</code> names where execution begins; the Trigger says how it gets initiated.</td
+        ><td>Sub-Process</td><td><code>State.workflow</code></td><td
+          >A state runs another workflow of the same behaviour document. A transition can wait on the final state that
+          sub-workflow ended in.</td
         ></tr
-      >
-      <tr
-        ><td>Sub-Process</td><td>A separate <code>Process</code> chained via <code>Trigger.source: operation</code></td
-        ><td>DNA doesn't nest Processes inline.</td></tr
       >
       <tr
         ><td>Boundary Events, Compensation</td><td>Not modeled</td><td
-          >Runtime workflow concerns — deferred to the planned workflow-cell.</td
+          >The behaviour vocabulary does not include them.</td
         ></tr
       >
     </tbody>
@@ -197,29 +204,27 @@ const ghBase = 'https://github.com/dna-codes/dna/blob/main';
   <h3>Where DNA intentionally differs</h3>
   <ol>
     <li>
-      <strong>DNA is textual, BPMN is graphical.</strong> DNA round-trips through git diffs cleanly; BPMN diagrams don't.
+      <strong>DNA is textual, BPMN is graphical.</strong> DNA round-trips through git diffs cleanly. BPMN diagrams do not.
     </li>
     <li>
-      <strong>DNA separates orchestration (<code>Step</code>) from assignment (<code>Task</code>).</strong> Same <code
-        >(actor, operation)</code
-      > binding can appear in many Steps across many Processes.
+      <strong>DNA separates the <code>Action</code> from the <code>Operation</code>.</strong> An Action is one capability
+      of one entity. An Operation is that action, performed by one actor. The same action with another actor is another operation.
     </li>
     <li>
-      <strong>No Sub-Process primitive.</strong> Processes that trigger other Processes via Operation chaining force a clean
-      boundary instead of nesting.
+      <strong>A sub-workflow is a state, not a drawing inside a drawing.</strong>
+      <code>State.workflow</code> names another workflow of the same behaviour document.
     </li>
     <li>
-      <strong>Actors modeled structurally.</strong> Tasks reference Actor-Resources; Memberships pin Users to Roles within
-      Groups — relationships BPMN doesn't formalize.
+      <strong>The actor is a party.</strong>
+      <code>Operation.actor</code> is an entity and, optionally, one instance of it. A policy can route the work to a performer
+      of kind <code>agent</code> or <code>position</code>.
     </li>
   </ol>
 
   <p>
-    <strong>Tooling intersection:</strong>{' '}
-    <code>@dna-codes/dna-adapters/output/mermaid</code> renders a flowchart per Process — recognizable to BPMN readers without
-    claiming BPMN compliance. An <code>input/bpmn</code>{' '}
-    adapter is not yet shipped; when written, it would surface each unmodeled construct (boundary events, inclusive gateways)
-    as an explicit warning.
+    <strong>Tooling intersection:</strong> a flowchart of the workflow is recognizable to BPMN readers without claiming BPMN
+    compliance. An <code>input/bpmn</code> adapter is not yet shipped. When written, it would surface each unmodeled construct
+    (boundary events, inclusive gateways) as an explicit warning.
   </p>
 
   {/* ──────────────────────────────────────────────────────────────── */}

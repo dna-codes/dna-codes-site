@@ -1,4 +1,4 @@
-# Search keyword targets: a registry, three landing pages, a template, five posts
+# Search keyword targets: a registry, three landing pages, one post
 
 > How the registry is shaped, how a pivot works, and why each page owns the keyword it owns are
 > in [`design.md`](./design.md). The research behind every number here is in
@@ -66,32 +66,30 @@ through `.astro` files for title strings. This change makes a pivot a data edit.
   does not exist, two pages claiming the same keyword, a title past what a search result shows.
 
 - **Three landing pages**, each owning one commercial keyword cluster and ending on the shared
-  waitlist form:
+  waitlist form. Variants that would have been their own URLs are sections on the page that
+  already owns the phrase, so the keyword stays assigned without a second thin page:
   - `/sop-software`: **sop software** (539, 30), plus sop management software and system, sop
-    automation. The executable-SOP wedge, said in the buyer's words.
+    automation, and **sop software for small business** (24). The executable-SOP wedge, said in
+    the buyer's words. A heading uses the small-business phrase.
   - `/operating-model`: **target operating model** (216, 22), plus digital operating model and
-    operating model definition. The closest search phrase to "living operating model".
+    operating model definition. A how-to section uses **how to build an operating model** (39,
+    and operating model design) as a heading, not a route. **Operating model template** is
+    skipped: the page shows one filled model and does not offer a download.
   - `/business-process-software`: **business process management software** (889, 27), plus BPM
     tools, BPM software, business process workflow software. Written as DNA against BPM suites,
     not as one (see design D6).
 
-- **One lead magnet.** `/operating-model/template` owns **operating model template** (45, 31): a
-  free, ungated template generated from a DNA genome, downloadable as a sheet and as DNA, with the
-  waitlist beside it.
+- **One post**, owning the informational modeling query the commercial page cannot title for,
+  and linking to the business-process page:
+  - **Business Process Modeling with DNA** (`/blog/business-process-modeling`): **business
+    process modeling** (467, 32). **Business process modeling notation** (534, 28) and
+    **business process management** (1,097, 28) are headings on it: the notation stays a
+    diagram, and management stays in slides. `/blog/business-process-management` redirects
+    there.
 
-- **Five posts**, each owning one informational cluster and linking to the landing page in its
-  cluster:
-  - **Business Process Modeling Notation vs. DNA** (`/blog/bpmn-vs-dna`): business process
-    modeling notation (534, 28), bpmn model, bpmn examples.
-  - **Business Process Modeling: A Practical Guide**: business process modeling (467, 32).
-  - **Business Process Management, With Real Examples**: business process management (1,097, 28),
-    bpm examples.
-  - **How to Build an Operating Model That Runs**: how to build an operating model, operating
-    model design.
-  - **SOP Software for Small Business**: sop software for small business (24, 24).
-
-- **Agent and crawler surfaces.** The three landing pages and the template join `/llms.txt`, the
-  sitemap and the footer, so an agent reading the site finds them the way a search engine does.
+- **Agent and crawler surfaces.** The three landing pages and the post join `/llms.txt` and
+  the sitemap. The landing pages join a Use Cases menu in the header and the same column in the footer. An agent reading the site finds them the way a
+  search engine does.
 
 ## Capabilities
 
@@ -101,9 +99,11 @@ through `.astro` files for title strings. This change makes a pivot a data edit.
   primary keyword, and that page's search title and description; a CSV import from the research
   sheet; and a build check that fails on broken or conflicting assignments.
 
-- `search-landing-pages`: Public pages at `/sop-software`, `/operating-model`,
-  `/operating-model/template` and `/business-process-software`, each owning one keyword cluster,
-  reading its metadata from the registry, and converting through the shared waitlist form.
+- `search-landing-pages`: Public pages at `/sop-software`, `/operating-model` and
+  `/business-process-software`, plus the post at `/blog/business-process-modeling`. Each owns one
+  primary keyword and reads its metadata from the registry. The landing pages convert through the
+  shared waitlist form. The post links to the business-process page. Folded keywords stay on
+  those pages as secondaries with their own headings.
 
 ### Modified Capabilities
 
@@ -114,22 +114,22 @@ through `.astro` files for title strings. This change makes a pivot a data edit.
 
 - **New files**: `src/data/seo/keywords.json`, `src/utils/seo.ts` (`seoFor`, `keywordsFor`),
   `scripts/keywords-import.mjs`, `scripts/check-keywords.mjs`; pages `src/pages/sop-software.astro`,
-  `src/pages/operating-model/index.astro`, `src/pages/operating-model/template.astro`,
-  `src/pages/business-process-software.astro`; the template's downloadable files under `public/`;
-  five posts in `src/data/post/`.
+  `src/pages/operating-model.astro`, `src/pages/business-process-software.astro`; one post in
+  `src/data/post/`.
 - **Modified files**: `src/content.config.ts` (optional `targetKeyword` on posts);
   `package.json` (`keywords:import`, `check:keywords`, and `check:keywords` in `build`);
-  `src/pages/llms.txt.ts`; `src/navigation.ts` (footer links); `planned_posts.md` (the five
-  posts, and the backlog items they absorb).
+  `src/pages/llms.txt.ts`; `src/navigation.ts` (footer links); `planned_posts.md` (the post,
+  and the backlog items the new pages absorb).
 - **Dependencies**: none. CSV parsing is small enough to write; the check is plain Node.
 - **Existing pages**: not retitled in this change. The homepage and `/operations` keep their
   brand titles. Whether `/operations` should take a secondary operating-model keyword is an open
   question in `design.md`.
 - **Risk: the BPM page over-claims.** `/llms.txt` tells agents DNA is not a BPM engine. The BPM
   landing page has to win BPM searches without saying otherwise. Design D6 sets the line.
-- **Risk: thin pages.** Three landing pages written to keywords can read like SEO filler, which
-  hurts both conversion and ranking. Each page carries a real worked example from a genome, the
-  same way `/playground` does, rather than paraphrased copy.
+- **Risk: thin pages.** Pages written to keywords can read like SEO filler, which hurts both
+  conversion and ranking. That is also why the low-volume variants are sections instead of their
+  own URLs. Each page carries a real worked example from a genome, the same way `/playground`
+  does, rather than paraphrased copy.
 - **Out of scope**: competitor alternative pages (Process Street, Tallyfy, Dozuki; measured as
   navigational brands, the "alternative" phrasings still need measuring), a free SOP generator
   tool, paid search, and retitling existing posts.

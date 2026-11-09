@@ -1,0 +1,75 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import LivingProcess from '~/components/widgets/use-case/LivingProcess.astro';
+import { seoFor } from '~/utils/seo';
+
+const metadata = seoFor('/business-process-software');
+---
+
+<Layout metadata={metadata}>
+  <article class="px-4 sm:px-6 mx-auto max-w-6xl pt-16 pb-4">
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto"
+    >
+      <p class="text-sm font-semibold tracking-wide text-primary">Business Process Software</p>
+      <h1>Living Business Processes</h1>
+      <p>
+        Business process management software is bought to stop the process from living in someone's head. A year later
+        the suite has a diagram, the application has the real steps, and the two disagree. The diagram was the project.
+        The code is what the customer hits. Business process management tools that only draw the process leave you with
+        a second copy to maintain.
+      </p>
+    </div>
+
+    <LivingProcess class="mt-8" />
+
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto mt-10"
+    >
+      <h2>The Drift</h2>
+      <p>
+        Take fulfillment. The diagram says payment is checked before stock moves. The service reserves inventory on the
+        way into the queue, because that was the bugfix that shipped on a Friday. Both are "the process." Neither knows
+        about the other. The next audit, the next agent, and the next hire all pick one.
+      </p>
+      <p>
+        In the process above, that rule is on the step it governs. Stock cannot be reserved until payment has cleared,
+        and dispatch stays with the warehouse. The steps, the roles, and the work are the description the software is
+        built from.
+      </p>
+
+      <h2>The Difference</h2>
+      <p>
+        A BPM suite runs the process on its own engine. DNA describes the process, and the systems you already run
+        follow that description.
+      </p>
+      <ul>
+        <li>
+          <strong>A BPM suite</strong> draws the process and runs it on its own engine. Work items, timers, and human tasks
+          live there. That is the right tool when the suite is the system of record for the work: case management, long-running
+          approvals, a queue that has no other home.
+        </li>
+        <li>
+          <strong>DNA</strong> models the process as data. The docs, the application, the workflow, and the agent read that
+          one model. DNA does not execute long-running workflows on an engine of its own. It tells the systems you already
+          run who may do what, and it keeps the description those systems are built from.
+        </li>
+      </ul>
+      <p>
+        If you need a place where the work waits, buy a BPM engine. If the work already lives in your app and your
+        agents, and the description of it keeps falling behind, the thing you are missing is the model.
+      </p>
+
+      <h2>Read more</h2>
+      <ul>
+        <li>
+          <a href="/blog/business-process-modeling">Business Process Modeling with DNA</a>
+        </li>
+      </ul>
+    </div>
+  </article>
+  <div class="px-4 sm:px-6 mx-auto max-w-3xl pb-16">
+    <WaitlistForm preselect="operations" />
+  </div>
+</Layout>

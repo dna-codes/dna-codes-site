@@ -26,6 +26,7 @@ jobs:
       - run: npm run build
       - run: npm run check:agentic
       - run: npm run check:ax
+      - run: npm run check:keywords
       # - run: npm test
 
   check:

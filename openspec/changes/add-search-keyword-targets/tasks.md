@@ -2,99 +2,98 @@
 
 Ordered so the registry and its check exist before any page depends on them (§1–§2), the
 commercial pages land before the posts that link to them (§3–§4), and agent surfaces are updated
-last, once every route is real (§6).
+once every route is real (§5). Three landing pages and one post. The how-to, the
+small-business variant, business process modeling notation, and business process management
+are headings on those pages, not routes.
 
 ## 1. Registry and import
 
-- [ ] 1.1 Write `scripts/keywords-import.mjs`: read a CSV whose header row exactly matches
+- [x] 1.1 Write `scripts/keywords-import.mjs`: read a CSV whose header row exactly matches
       `keywords.seed.csv`, map snake_case headers to camelCase keys, coerce empty cells to `null`
       and numeric columns to numbers, sort by cluster then volume descending, write
       `src/data/seo/keywords.json`. Refuse a CSV with missing, extra or reordered columns
       (design D2).
-- [ ] 1.2 Add `"keywords:import": "node scripts/keywords-import.mjs"` to `package.json`.
-- [ ] 1.3 Seed the registry: `npm run keywords:import openspec/changes/add-search-keyword-targets/keywords.seed.csv`.
-- [ ] 1.4 Add `src/utils/seo.ts` with `seoFor(route)` and `keywordsFor(route)` (design D4).
+- [x] 1.2 Add `"keywords:import": "node scripts/keywords-import.mjs"` to `package.json`.
+- [x] 1.3 Seed the registry: `npm run keywords:import openspec/changes/add-search-keyword-targets/keywords.seed.csv`.
+- [x] 1.4 Add `src/utils/seo.ts` with `seoFor(route)` and `keywordsFor(route)` (design D4).
       `seoFor` throws when the route has no primary row.
-- [ ] 1.5 Add optional `targetKeyword: z.string().optional()` to the post schema in
+- [x] 1.5 Add optional `targetKeyword: z.string().optional()` to the post schema in
       `src/content.config.ts`, and resolve it in `src/utils/blog.ts` when a post has no explicit
       `metadata.title`.
 
 ## 2. The check
 
-- [ ] 2.1 Write `scripts/check-keywords.mjs` covering every fail and warn rule in design D5,
+- [x] 2.1 Write `scripts/check-keywords.mjs` covering every fail and warn rule in design D5,
       reading `src/data/seo/keywords.json`, the post collection's frontmatter, and `dist/`.
-- [ ] 2.2 Add `"check:keywords": "node scripts/check-keywords.mjs"` and run it at the end of
+- [x] 2.2 Add `"check:keywords": "node scripts/check-keywords.mjs"` and run it at the end of
       `npm run build`, after `emit-homepage-markdown.mjs`.
-- [ ] 2.3 Prove each fail rule once: a primary pointing at a missing route, two primaries on one
+- [x] 2.3 Prove each fail rule once: a primary pointing at a missing route, two primaries on one
       page, a 61-character title, a 156-character description, a post with an unknown
       `targetKeyword`. Revert each.
-- [ ] 2.4 Add the check to the CI workflow next to `check:agentic` and `check:ax`, and to the
+- [x] 2.4 Add the check to the CI workflow next to `check:agentic` and `check:ax`, and to the
       verification checklist in `AGENTS.md`.
 
 ## 3. Landing pages
 
-- [ ] 3.1 `src/pages/sop-software.astro`: owns **sop software**. Opens on the buyer's problem
+- [x] 3.1 `src/pages/sop-software.astro`: owns **sop software**. Opens on the buyer's problem
       (SOPs nobody follows, docs that drift from the work), shows one SOP from a genome becoming a
       runnable process, ends on the shared waitlist form. `metadata = seoFor('/sop-software')`.
-- [ ] 3.2 `src/pages/operating-model/index.astro`: owns **target operating model**. Shows an
-      industry genome's roles, processes, rules and systems as one operating model, and contrasts
-      it with the slide-deck operating model. Links to the template and the how-to post.
-- [ ] 3.3 `src/pages/business-process-software.astro`: owns **business process management
+      A heading uses **sop software for small business** and absorbs the backlog's "Google Docs
+      Is Not a Process System" angle. No separate post.
+- [x] 3.2 `src/pages/operating-model.astro`: owns **target operating model**. Shows an industry
+      genome's roles, processes, rules and systems as one operating model, and contrasts it with
+      the slide-deck operating model. A section headed **how to build an operating model** covers
+      the how-to and operating model design. No template section, no download, and no how-to post.
+- [x] 3.3 The template download was removed (design D7). `/operating-model` has no template
+      section, and `template.xlsx`, `template.csv` and `template.json` are not published. The
+      template keywords are `skip`.
+- [x] 3.4 `src/pages/business-process-software.astro`: owns **business process management
       software**. Written to design D6: names the drift problem, shows DNA against BPM suites, says
-      plainly where a BPM engine is the right choice.
-- [ ] 3.4 Each page embeds `WaitlistForm` with its interest pre-ticked, per the waitlist spec.
-- [ ] 3.5 Read each page as the searcher: does the first screen answer the query the page owns
-      before it introduces DNA?
+      plainly where a BPM engine is the right choice. Links to both posts under "Read more".
+- [x] 3.5 Each landing page embeds `WaitlistForm` with its interest pre-ticked, per the waitlist
+      spec.
+- [x] 3.6 Read each page as the searcher: does the first screen answer the query the page owns
+      before it introduces DNA? Does each folded keyword appear as a heading?
 
-## 4. Template lead magnet
+## 4. Posts
 
-- [ ] 4.1 Add a build step that compiles one genome with sample values stripped into a blank
-      operating model template, written to `public/operating-model/` as `.xlsx`, `.csv` and
-      `.json` (design D7).
-- [ ] 4.2 `src/pages/operating-model/template.astro`: owns **operating model template**. A
-      filled-in example first, then the three ungated downloads, then the waitlist form.
-- [ ] 4.3 Open each download and confirm it is usable without DNA: headers make sense, no ids
-      or schema noise in the spreadsheet.
+Each post sets `targetKeyword`, carries `coAuthor: Claude (Anthropic)`, links to
+`/business-process-software` (design D8), and follows the prose rules in `AGENTS.md`.
 
-## 5. Posts
+- [x] 4.1 **Business Process Modeling with DNA** (`business-process-modeling`), target
+      `business-process-modeling`. The process is a workflow of states, operations, and policies. A heading
+      uses **business process modeling notation**: the drawing gets stuck as a diagram. A heading
+      uses **business process management**: the practice gets stuck in slides. Links to
+      `/docs/frameworks` and `/business-process-software`.
+- [x] 4.2 No second post. `/blog/business-process-management` redirects to the modeling post.
+      **business process management examples** is skipped: the post is the model, not a catalog
+      of examples.
+- [x] 4.3 Update `planned_posts.md`: one post, with its target keyword and cluster, and mark the
+      backlog items the landing pages absorb (small-business SOP, how to build an operating
+      model). Do not add posts for those.
 
-Each post sets `targetKeyword`, carries `coAuthor: Claude (Anthropic)`, links to its cluster hub
-(design D8), and follows the prose rules in `AGENTS.md`.
+## 5. Agent and crawler surfaces
 
-- [ ] 5.1 **Business Process Modeling Notation vs. DNA** (`bpmn-vs-dna`), target
-      `business-process-modeling-notation`. One process from a genome, drawn in BPMN and written
-      in DNA side by side. Links to `/docs/frameworks` and `/business-process-software`.
-- [ ] 5.2 **Business Process Modeling: A Practical Guide** (`business-process-modeling`), target
-      `business-process-modeling`. Roles, steps, rules, handoffs, with a worked example.
-- [ ] 5.3 **Business Process Management, With Real Examples** (`business-process-management`),
-      target `business-process-management`.
-- [ ] 5.4 **How to Build an Operating Model That Runs** (`how-to-build-an-operating-model`),
-      target `how-to-build-an-operating-model`. Links to the template and `/operating-model`.
-- [ ] 5.5 **SOP Software for Small Business** (`sop-software-for-small-business`), target
-      `sop-software-for-small-business`. Absorbs the backlog's "Google Docs Is Not a Process
-      System" angle. Links to `/sop-software`.
-- [ ] 5.6 Update `planned_posts.md`: add the five posts with their target keywords and cluster,
-      and mark which backlog items they absorb.
+- [x] 5.1 Add the three landing pages and the modeling post to `/llms.txt` under a section that
+      says what each is for. Confirm the "not a BPM engine" line still reads true next to the BPM
+      page.
+- [x] 5.2 Add the landing pages under a header Use Cases menu, and the same column in the
+      footer, in `src/navigation.ts`. Building With AI stays in Learn.
+- [x] 5.3 Confirm the four routes are in the sitemap and pass `npm run check:agentic`.
 
-## 6. Agent and crawler surfaces
+## 6. Measurement
 
-- [ ] 6.1 Add the three landing pages and the template to `/llms.txt` under a section that says
-      what each is for. Confirm the "not a BPM engine" line still reads true next to the BPM page.
-- [ ] 6.2 Add the landing pages to the footer's Learn or Operations column in
-      `src/navigation.ts`. Not the header: the header's job is the conversion path.
-- [ ] 6.3 Confirm all four routes are in the sitemap and pass `npm run check:agentic`.
+- [ ] 6.1 Add every primary and secondary keyword to the Moz campaign's tracked keywords.
+- [ ] 6.2 Record a baseline rank (most will be unranked) in the sheet's notes column on launch day.
 
-## 7. Measurement
+These two need the Moz account and the research sheet. They are not something the repository can do.
 
-- [ ] 7.1 Add every primary and secondary keyword to the Moz campaign's tracked keywords.
-- [ ] 7.2 Record a baseline rank (most will be unranked) in the sheet's notes column on launch day.
+## 7. Verify
 
-## 8. Verify
-
-- [ ] 8.1 `npm run build`, `npm run check`, `npm run check:agentic`, `npm run check:ax`,
+- [x] 7.1 `npm run build`, `npm run check`, `npm run check:agentic`, `npm run check:ax`,
       `npm run check:keywords` all pass.
-- [ ] 8.2 Rehearse a pivot end to end: in a scratch branch, move **sop software** from primary to
+- [x] 7.2 Rehearse a pivot end to end: in a scratch branch, move **sop software** from primary to
       secondary and promote **sop management software**, export, import, build. The check should
       pass with one warning (title lacks keyword) until the title is rewritten.
-- [ ] 8.3 Visual check of the four new pages: desktop, mobile, dark mode, and the `<br>` spacing
-      rule in `AGENTS.md`.
+- [x] 7.3 Visual check of the three new pages and the post: desktop, mobile, dark mode, and the
+      `<br>` spacing rule in `AGENTS.md`.

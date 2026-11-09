@@ -235,7 +235,15 @@ export function homepageMarkdown(html) {
   const parts = [body.join('\n\n')];
   if (extras.length) parts.push(`## Also on this site\n\n${extras.join('\n')}`);
   parts.push(
-    `## For agents\n\n- [llms.txt](${ORIGIN}/llms.txt): index of docs, products, and machine-readable genomes.`
+    [
+      `## For agents`,
+      ``,
+      `- [llms.txt](${ORIGIN}/llms.txt): index of docs, products, genomes, and the pages below.`,
+      `- [SOP Software](${ORIGIN}/sop-software): procedures that stay tied to the work, including a small team that has outgrown a wiki. The page shows the procedure as a running SOP.`,
+      `- [Target Operating Model](${ORIGIN}/operating-model): roles, processes, rules, and systems on one board.`,
+      `- [Business Process Software](${ORIGIN}/business-process-software): living business processes, as a diagram of steps, roles, and work. DNA is not a BPM engine.`,
+      `- [Business Process Modeling with DNA](${ORIGIN}/blog/business-process-modeling): a workflow of states, operations, and policies. Notation leaves it in a diagram. Management leaves it in slides.`,
+    ].join('\n')
   );
 
   const footerNote = clean(document.querySelector('footer .mr-4')?.textContent || '');

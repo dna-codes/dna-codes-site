@@ -1,0 +1,72 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import SopSheet from '~/components/widgets/use-case/SopSheet.astro';
+import { seoFor } from '~/utils/seo';
+import { operatingModelTemplate } from '~/utils/operating-model-template';
+
+const metadata = seoFor('/sop-software');
+const model = operatingModelTemplate();
+---
+
+<Layout metadata={metadata}>
+  <article class="px-4 sm:px-6 mx-auto max-w-6xl pt-16 pb-4">
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto"
+    >
+      <p class="text-sm font-semibold tracking-wide text-primary">SOP Software</p>
+      <h1>Executable SOPs</h1>
+      <p>
+        The procedure is in a doc. The work happens somewhere else. A new hire follows the doc, an old hand follows
+        memory, and the two of them do the same job differently until a customer notices. SOP software is supposed to
+        close that gap. Most of it just stores a better copy of the doc.
+      </p>
+
+      <h2>The SOP Nobody Follows</h2>
+      <p>
+        A standard operating procedure fails in a quiet way. It was true the week it was written. Then the warehouse
+        changed who packs an order, the payment check moved, and the doc stayed. People stop trusting it, so they stop
+        opening it. The file is still named "the process." It is a relic.
+      </p>
+      <p>
+        A new hire follows the doc, then spends the first week learning the exceptions the doc missed. Support answers
+        from the file. The warehouse answers from the floor. An audit is assembled from chat logs, because the procedure
+        has no record of what changed. A clearer sentence does not close any of those gaps. The written steps and the
+        work are updated on different days, and a change to one does not reach the other.
+      </p>
+
+      <h2>A Real Operating Model</h2>
+      <p>
+        This is order fulfillment at {model.example}, compiled from that company's genome. Each step names who is
+        accountable. The rule is in the step it governs, not a footnote someone might remember.
+      </p>
+    </div>
+
+    <SopSheet class="mt-8 max-w-3xl mx-auto" />
+
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto mt-10"
+    >
+      <h2>SOP Software for Small Business</h2>
+      <p>
+        A small team does not need a suite. It needs one place where the way the work happens is the way the work is
+        described. Google Docs is a fine place to draft that. It is a bad place to run it. A doc has no owner per step,
+        no rule that blocks the next step, and no way to tell you the doc and the checkout flow have drifted apart.
+      </p>
+      <p>
+        At ten people you can still shout the correction across the room. At twenty you are forwarding the doc and
+        hoping. SOP software for a small business earns its place when the correction lands in the procedure the team
+        actually runs, including the agent that packs, refunds, or answers the ticket.
+      </p>
+
+      <h2>DNA</h2>
+      <p>
+        DNA Codes is the operating model those procedures live in. You describe the roles, the steps, and the rules
+        once. The doc, the workflow, and the agent read that description. If you're interested, join the waitlist.
+      </p>
+    </div>
+  </article>
+  <div class="px-4 sm:px-6 mx-auto max-w-3xl pb-16">
+    <WaitlistForm preselect="operations" />
+  </div>
+</Layout>

@@ -32,13 +32,14 @@ alone.
 
 ### Requirement: Landing pages convert through the shared waitlist form
 
-Each landing page and the template page SHALL end on the shared waitlist form component, with the
-interest that matches the page pre-selected. No new form component SHALL be introduced.
+Each landing page SHALL end on the shared waitlist form component, with the interest that
+matches the page pre-selected. No new form component SHALL be introduced. The modeling post SHALL
+link to `/business-process-software` rather than embed a second form.
 
 #### Scenario: Conversion section
 
-- **WHEN** a visitor reaches the end of `/sop-software`, `/operating-model`,
-  `/operating-model/template` or `/business-process-software`
+- **WHEN** a visitor reaches the end of `/sop-software`, `/operating-model` or
+  `/business-process-software`
 - **THEN** the shared waitlist form MUST be present
 - **AND** its fields and submit behaviour MUST be identical to `/waitlist`
 
@@ -53,28 +54,47 @@ SHALL name at least one situation where a BPM suite is the better choice.
 - **WHEN** `/business-process-software` and `/llms.txt` are both read
 - **THEN** neither MUST contradict the other on whether DNA is a BPM engine
 
-### Requirement: An ungated operating model template
+### Requirement: Folded keywords stay on the page that owns their phrase
 
-The site SHALL serve `/operating-model/template`, owning the `operating model template` keyword,
-with a blank operating model template generated at build time from a genome. The template SHALL be
-downloadable without submitting any form, as a spreadsheet and as DNA JSON.
+The site SHALL NOT give `sop software for small business`, `how to build an operating model`,
+`business process modeling notation` or `business process management` its own page. Each SHALL
+be a secondary row on the page named below, and that page SHALL use the phrase as a heading.
+`operating model template` is skipped: the site does not offer a template download.
 
-#### Scenario: Download without a gate
+| Keyword                            | Page                              |
+| ---------------------------------- | --------------------------------- |
+| sop software for small business    | `/sop-software`                   |
+| how to build an operating model    | `/operating-model`                |
+| business process modeling notation | `/blog/business-process-modeling` |
+| business process management        | `/blog/business-process-modeling` |
 
-- **WHEN** a visitor or crawler opens `/operating-model/template`
-- **THEN** links to the spreadsheet and JSON downloads MUST be present in the HTML
-- **AND** following them MUST NOT require an email address or any form submission
+#### Scenario: A folded keyword is still assigned
 
-#### Scenario: The template is usable on its own
+- **WHEN** the registry is checked
+- **THEN** each keyword in the table MUST be a secondary row whose `page` is the page in that row
+- **AND** the rendered page MUST contain a heading with that phrase
 
-- **WHEN** the spreadsheet download is opened
-- **THEN** it MUST contain labelled sections for roles, processes and steps, rules and systems
-- **AND** it MUST NOT contain internal ids or schema field names a reader would not recognise
+### Requirement: One post covers business process modeling
+
+The site SHALL publish `/blog/business-process-modeling`, owning `business process modeling`.
+Its title SHALL be "Business Process Modeling with DNA". The post SHALL link to
+`/business-process-software` and `/docs/frameworks`. The site SHALL NOT publish a separate post
+for business process management, for business process modeling notation, for SOP software for
+small business, or for how to build an operating model. `/blog/business-process-management`
+SHALL redirect to `/blog/business-process-modeling`.
+
+#### Scenario: The modeling post carries the argument
+
+- **WHEN** `/blog/business-process-modeling` renders
+- **THEN** its `<title>` MUST contain "business process modeling"
+- **AND** a heading MUST contain "business process modeling notation"
+- **AND** a heading MUST contain "business process management"
+- **AND** the post MUST link to `/business-process-software` and `/docs/frameworks`
 
 ### Requirement: Landing pages are discoverable by agents and crawlers
 
-The three landing pages and the template SHALL appear in the sitemap, in `/llms.txt`, and in the
-site footer.
+The three landing pages and the modeling post SHALL appear in the sitemap and in `/llms.txt`. The
+three landing pages SHALL appear in the header Use Cases menu and in the site footer.
 
 #### Scenario: An agent reads llms.txt
 

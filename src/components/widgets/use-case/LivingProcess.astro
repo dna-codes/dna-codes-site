@@ -1,0 +1,311 @@
+---
+// The business-process page's diagram: steps, the role on each, and the work.
+// Same frame as the product demos (dark card, teal edge, numbered node, role chip).
+// A rule that governs a step sits on the edge into that step.
+import { twMerge } from 'tailwind-merge';
+import { operatingModelTemplate } from '~/utils/operating-model-template';
+
+interface Props {
+  class?: string;
+  /** The chip in the bar. The use-case page calls it a living process. */
+  label?: string;
+}
+
+const { class: className, label = 'Living process' } = Astro.props;
+const model = operatingModelTemplate();
+const process = model.processes[0];
+---
+
+{/* Five seconds a step, so a reader can follow the role and the work before it moves. */}
+<figure class={twMerge('not-prose', className)} data-playhead data-interval="5000">
+  <div class="card">
+    <div class="bar">
+      <span class="pill">{label}</span>
+      <span class="proc">{process.name}</span>
+      <span class="example">{model.example}</span>
+      <button type="button" class="play" data-play aria-pressed="true">Pause</button>
+    </div>
+
+    <div class="track" data-track role="group" aria-label={`${process.name} steps`}>
+      {
+        process.steps.map((step, i) => (
+          <div class="slot">
+            {i > 0 && (
+              <div class="join" data-join={i}>
+                <span class="line" aria-hidden="true" />
+                {step.rules.length > 0 && <span class="diamond" aria-hidden="true" />}
+              </div>
+            )}
+            <button
+              type="button"
+              class:list={['node', { 'is-current': i === 0 }]}
+              data-step={i}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              <span class="n">{i + 1}</span>
+              <span class="name">{step.name}</span>
+              <span class="role">{step.role}</span>
+              <span class="sr-only">
+                {step.action} {step.resource}. {step.description}
+                {step.rules.map((rule) => ` ${rule.name}. ${rule.description}`)}
+              </span>
+            </button>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="detail">
+      {
+        process.steps.map((step, i) => (
+          <div data-panel={i} hidden={i !== 0}>
+            <p class="who">{step.role}</p>
+            <p class="op">
+              <span class="action">{step.action}</span>
+              <span class="arrow" aria-hidden="true">
+                →
+              </span>
+              <span class="resource">{step.resource}</span>
+            </p>
+            <p class="work">{step.description}</p>
+            {step.rules.map((rule) => (
+              <p class="rule">
+                <strong>{rule.name}.</strong> {rule.description}
+              </p>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <figcaption>
+    {process.name} at {model.example}. Each node is a step, the chip under it is the role, and the panel is the work. A
+    diamond is a rule on the way into that step. It advances on its own. Select a step to hold it.
+  </figcaption>
+</figure>
+
+<script>
+  import { attachPlayhead } from './playhead';
+
+  document.querySelectorAll<HTMLElement>('[data-playhead]').forEach((root) => attachPlayhead(root));
+</script>
+
+<style>
+  .card {
+    overflow: hidden;
+    border-radius: 1rem;
+    border: 2px solid rgb(13 148 136 / 0.85);
+    background: rgb(15 23 42 / 0.92);
+    box-shadow: 0 0 48px rgb(13 148 136 / 0.28);
+  }
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 0.7rem 0.85rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  }
+  .pill {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(153 246 228);
+    background: rgb(13 148 136 / 0.2);
+    border: 1px solid rgb(13 148 136 / 0.45);
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+  }
+  .proc {
+    font-size: 0.875rem;
+    font-weight: 650;
+    color: rgb(241 245 249);
+  }
+  .example {
+    font-size: 0.75rem;
+    color: rgb(148 163 184);
+  }
+  .play {
+    margin-left: auto;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    background: rgb(255 255 255 / 0.04);
+    color: rgb(226 232 240);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.7rem;
+    cursor: pointer;
+  }
+  .play:focus-visible,
+  .node:focus-visible {
+    outline: 2px solid rgb(45 212 191);
+    outline-offset: 2px;
+  }
+
+  .track {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding: 1rem 0.85rem 0.85rem;
+    scrollbar-width: thin;
+  }
+  .slot {
+    display: flex;
+    align-items: flex-start;
+    flex: 0 0 auto;
+  }
+  .node {
+    flex: 0 0 7.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    text-align: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 0.85rem;
+    padding: 0.4rem 0.3rem 0.55rem;
+    color: inherit;
+    cursor: pointer;
+  }
+  .node.is-current {
+    border-color: rgb(13 148 136 / 0.7);
+    background: rgb(13 148 136 / 0.12);
+    box-shadow: 0 0 24px rgb(13 148 136 / 0.25);
+  }
+  .n {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: 1px solid rgb(13 148 136 / 0.5);
+    background: rgb(13 148 136 / 0.18);
+    color: rgb(153 246 228);
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .node.is-done .n {
+    background: rgb(13 148 136 / 0.45);
+  }
+  .name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: rgb(241 245 249);
+  }
+  .role {
+    font-size: 0.68rem;
+    line-height: 1.3;
+    color: rgb(148 163 184);
+    background: rgb(255 255 255 / 0.06);
+    border-radius: 0.25rem;
+    padding: 0.05rem 0.35rem;
+  }
+
+  .join {
+    position: relative;
+    flex: 0 0 1.35rem;
+    height: 1rem;
+    margin-top: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgb(255 255 255 / 0.14);
+  }
+  .join.is-done .line {
+    background: linear-gradient(to right, rgb(45 212 191 / 0.25), rgb(45 212 191 / 0.95));
+  }
+  .diamond {
+    position: relative;
+    z-index: 1;
+    width: 0.55rem;
+    height: 0.55rem;
+    background: rgb(15 23 42);
+    border: 2px solid rgb(45 212 191);
+    transform: rotate(45deg);
+  }
+  .join.is-current .diamond {
+    background: rgb(45 212 191);
+    box-shadow: 0 0 10px rgb(13 148 136 / 0.85);
+  }
+
+  .detail {
+    border-top: 1px solid rgb(255 255 255 / 0.08);
+    padding: 0.9rem 1rem 1.05rem;
+    min-height: 9.5rem;
+  }
+  .who {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgb(153 246 228);
+  }
+  .op {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem;
+    margin: 0.35rem 0 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.95rem;
+  }
+  .action {
+    color: rgb(45 212 191);
+    font-weight: 650;
+  }
+  .arrow {
+    color: rgb(100 116 139);
+  }
+  .resource {
+    color: rgb(226 232 240);
+  }
+  .work {
+    margin: 0.4rem 0 0;
+    color: rgb(203 213 225);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+  .rule {
+    margin: 0.55rem 0 0;
+    color: rgb(153 246 228);
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+  .rule strong {
+    font-weight: 650;
+  }
+
+  figcaption {
+    margin-top: 0.75rem;
+    color: rgb(100 116 139);
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .node.is-current .n {
+      animation: living-pulse 1.8s ease-in-out infinite;
+    }
+  }
+  @keyframes living-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(45 212 191 / 0.45);
+    }
+    70% {
+      box-shadow: 0 0 0 7px rgb(45 212 191 / 0);
+    }
+  }
+</style>
