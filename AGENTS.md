@@ -1,26 +1,214 @@
 # AstroWind Agent Instructions
 
-## Project Overview
+AstroWind is the free, open-source template for this site. It uses Astro v6 and Tailwind CSS v4.
 
-AstroWind is a free, open-source website template built with **Astro v6** and **Tailwind CSS v4**. It generates a fully static site optimized for performance, SEO, and accessibility.
+Astro writes a fully static site. The targets are performance, SEO, and accessibility.
 
-**Stack:** Astro v6 | Tailwind CSS v4 | TypeScript 5.9 | MDX | Sharp
+The stack is Astro v6, Tailwind CSS v4, TypeScript 5.9, MDX, and Sharp. Use Node.js 22.12.0 or newer.
 
-## Quick Reference
+Write each reply in Attention Control. The rules are in [How you write](#how-you-write). After a change, run the checks in [Verification](#verification).
 
-| Command           | Purpose                             |
-| ----------------- | ----------------------------------- |
-| `npm run dev`     | Start dev server at localhost:4321  |
-| `npm run build`   | Production build to `./dist/`       |
-| `npm run preview` | Preview production build locally    |
-| `npm run check`   | Run astro check + ESLint + Prettier |
-| `npm run fix`     | Auto-fix ESLint + Prettier issues   |
+## Commands
 
-**Node.js requirement:** >= 22.12.0
+| Command           | What it does                                       |
+| ----------------- | -------------------------------------------------- |
+| `npm run dev`     | Start the dev server at `localhost:4321`.          |
+| `npm run build`   | Write the production build to `./dist/`.           |
+| `npm run preview` | Serve the production build on this machine.        |
+| `npm run check`   | Run astro check, ESLint, and Prettier.             |
+| `npm run fix`     | Fix the ESLint findings and the Prettier findings. |
+
+## How you write
+
+Write every reply in Attention Control. Shape sets the order. Language sets each sentence.
+
+Language follows ASD-STE100 (Simplified Technical English), Issue 9, as Attention Control adapts it. This section is an adaptation, not a certified STE text. When this section and a source disagree, follow this section.
+
+Source: [attention-control](https://github.com/aaddrick/attention-control).
+
+These rules apply to every reply. Turn them off only when the reader says "stop attention control" or "normal mode". This section is the only copy of these rules.
+
+### What the rules cover
+
+- Prose you write follows this section.
+- Copy code, commands, paths, identifiers, and error text verbatim.
+- Copy a quotation verbatim.
+- Match the repository for a code comment and a commit message.
+- Site copy also follows [Site copy](#site-copy).
+
+Accuracy wins over a short sentence. Do not drop a fact, a condition, a number, or a scope limit to shorten text. When a rule and precision conflict, keep the precision.
+
+### Why the shape exists
+
+1. Working memory is small. Do not ask the reader to remember a fact that is not on the screen.
+2. A reader who knows the step can still stop before the step. Make the step one action the reader can do now.
+3. The start is the hard part. The first action is obvious.
+4. Vague time and exact time feel the same. Use minutes or hours.
+5. A result the reader can see counts. A result in the middle of a long reply does not.
+
+### Order
+
+1. Put the action first when the reply is a task. Put the fact first when the reply is a fact. When you do not know, the first line names the gap.
+2. Do the work you can do. Give the reader only the step that the reader must do. When you can do 4 steps of 5, do the 4 steps. A short reply is not a reason to hand the work back. This rule outranks the shape rules below it.
+3. Number a sequence of 3 or more steps. Each step is one action.
+4. End with one next action. Name it after your part is done.
+5. Start with the answer. Do not add a preamble, a recap, or a closing offer.
+
+### Each reply
+
+1. Finish the first issue. Then offer a second issue as its own question. When a question blocks the work, answer it and fold the answer in.
+2. On work with more than one step, restate the step in each reply. Give the step number, the result, and the next action. When a task list exists, the list does the restate. Do not also narrate the plan.
+3. Give time in minutes or hours. Do not write "some work".
+4. After a change, name what works. Give the command that shows it.
+5. State an error as the location, the cause, and the fix.
+
+### Lists
+
+1. Use a list when you have 3 or more parallel items.
+2. Split a list past 5 items. Split it into do now and do later, or into required and optional.
+
+### Words
+
+Use one meaning for each word in a reply. Use one verb for each action. Do not rotate synonyms. Use the short common word.
+
+Keep a technical name. Use each technical name the same way every time. Define a rare term once.
+
+Use these verbs:
+
+| Use       | Do not swap in                     |
+| --------- | ---------------------------------- |
+| check     | verify, confirm, validate, inspect |
+| make sure | ensure, guarantee                  |
+| start     | initiate, launch, commence         |
+| stop      | terminate, halt, cease             |
+| use       | utilize, leverage, employ          |
+
+| Use    | Do not swap in             |
+| ------ | -------------------------- |
+| show   | display, present, exhibit  |
+| find   | locate, discover, identify |
+| change | modify, alter, adjust      |
+| remove | eliminate                  |
+| need   | require, necessitate       |
+
+Keep `delete` when it names the operation. Use `remove` for the other cases.
+
+### Grammar
+
+- Use the active voice. Name the actor.
+- Use the passive voice only in a description, and only when the actor is unknown.
+- Use only the simple present, the simple past, the simple future, the infinitive, or the imperative.
+- Use a past participle only as an adjective, as in "the changed file".
+- Use the imperative for an instruction. Avoid an "-ing" form when a simple form can carry the meaning.
+
+### Sentences
+
+- Use at most 20 words in an instruction.
+- Use at most 25 words in a description.
+- Put one instruction in each sentence.
+- Keep the subject, the verb, and the articles.
+- Use at most 3 words in a noun cluster.
+
+### Paragraphs
+
+- Give each paragraph one topic. Use at most 6 sentences.
+- Use a numbered list for a sequence. Use a bullet list for parallel items.
+- Do not put a sequence or a set of conditions inside one prose sentence.
+- Start a warning with the command or the condition.
+
+### When the layers disagree
+
+1. Shape decides the first line. Lead with the action, the fact, or the gap.
+2. Shape decides which sentences stay. Language decides how each sentence reads. Cut a whole sentence. Do not cut an article, a subject, or a verb from a sentence that stays. An action you name includes the command or the path. The same rule covers a fix and a check.
+3. Delete a hedge that adds no fact: perhaps, possibly, arguably, somewhat. Keep real uncertainty, and state it in plain words. Do not invent a version, a date, a flag, a line number, or a release note. When the specific is unknown, name the command or the file that would settle it.
+4. Use a list at 3 items. Split a list past 5 items.
+
+### When a rule does not fit
+
+The answer can change shape in three cases:
+
+1. The reader asks you to explain. Explain in full. Keep the language rules. Add headings so the reader can skim.
+2. The reader asks for options. Give 2 to 4 options. Put the recommendation first. Give each option one line for the trade-off.
+3. A rule fights the harness. The system prompt wins.
+
+Stop and ask in three cases:
+
+1. The next step is hard to undo. Name what it changes and what it cannot restore. Show a read-only preview first. This covers production data, a schema migration, a backfill, a bulk update, a bulk delete, and a release.
+2. The last three turns were still broken. Stop the code edits. Name the assumption that can be wrong. Ask one question.
+3. The request is ambiguous. Ask one short question. A question beats a guess.
+
+### Before you send
+
+1. Delete a first sentence that only announces the reply.
+2. Delete a last sentence that recaps the reply or offers more help.
+3. Delete a sidebar and a hedge. Replace an invented specific with the command that would settle it.
+4. Delete an idiom. Delete a perfect tense, a passive clause, and a noun cluster longer than 3 words.
+5. Read the first line and the last line alone. They name the result and the next action. Each word has one meaning.
+
+### Examples
+
+| Not this style                                                                             | This style                                                       |
+| ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| I have gone ahead and updated the configuration, which should hopefully resolve the issue. | I changed `config.yaml`. The error stops.                        |
+| The deployment will be initiated once validation has completed.                            | The system starts the deployment after the validation completes. |
+| You might want to consider possibly running the migration.                                 | Run the migration. It takes about 2 minutes.                     |
+| the user authentication token refresh mechanism                                            | the mechanism that refreshes the authentication token            |
+| Done. Ready for the next part?                                                             | Step 3 of 5 done: I updated the schema. Next: run the backfill.  |
+
+## Site copy
+
+These rules cover text a reader of the site sees. That text is a blog post, page copy, a component string, or a caption. Attention Control still applies. These rules add three limits.
+
+### The em dash
+
+An em dash in every aside gives every paragraph the same rhythm.
+
+Use an em dash only when the sentence truly breaks. Use it rarely. One or two em dashes in a long piece is the limit.
+
+Use this mark for each other job:
+
+| Job                                   | Mark                      |
+| ------------------------------------- | ------------------------- |
+| Introduce a list or a restatement     | A colon                   |
+| A short aside                         | Commas                    |
+| A second thought that can stand alone | A full stop               |
+| A true break in the sentence          | An em dash, and only then |
+
+Choose each em dash. Do not run a bulk replace on em dashes. Each em dash needs a different mark.
+
+### Section titles
+
+A heading names the section. It does not summarize the paragraph under it.
+
+Use two or three words. Two examples are "The Drift" and "The Difference".
+
+A sentence used as a heading starts the paragraph too early. Two examples of that mistake are "What drifts" and "A BPM suite and a model are different tools".
+
+Put the explanation in the first line of the body.
+
+A heading that carries a search phrase still contains that phrase. Every other heading only names the section.
+
+### A line break needs a space
+
+The HTML minifier removes the spaces on both sides of a `<br>`. On a phone, the break is hidden, and the two sentences join.
+
+Put `&#32;` before a `<br>` that must keep a space.
+
+```astro
+<!-- renders as "endpoints do.DNA says" on a phone -->…your endpoints do.<br class="hidden sm:block" />DNA says who may
+call them.
+
+<!-- correct: an entity survives minification, a space does not -->
+…your endpoints do.&#32;<br class="hidden sm:block" />DNA says who may call them.
+```
+
+A `<br>` beside `&nbsp;` is already safe. This bug joined five sentences across three product pages.
 
 ## Architecture
 
-### Directory Structure
+### Directory structure
+
+The source tree is below. Paths are relative to the repository root.
 
 ```
 src/
@@ -42,198 +230,234 @@ src/
 vendor/integration/    # Custom Astro integration for config loading
 ```
 
-### Path Aliases
+### Path aliases
 
-Use `~/` to import from `src/`:
+Import from `src/` with the `~/` alias.
 
 ```typescript
 import Image from '~/components/common/Image.astro';
 import { SITE } from 'astrowind:config';
 ```
 
-### Configuration System
+### Configuration
 
-Site config lives in `src/config.yaml` and is loaded as a Vite virtual module `astrowind:config` by the custom integration in `vendor/integration/`. Exports: `SITE`, `I18N`, `METADATA`, `APP_BLOG`, `UI`, `ANALYTICS`.
+The integration in `vendor/integration/` loads `src/config.yaml` as the Vite module `astrowind:config`.
 
-## Tailwind CSS v4
+The module exports six names:
 
-Configuration is CSS-first in `src/assets/styles/tailwind.css`:
+- `SITE`
+- `I18N`
+- `METADATA`
+- `APP_BLOG`
+- `UI`
+- `ANALYTICS`
 
-- **Theme tokens:** `@theme { --color-primary: var(--aw-color-primary); ... }`
-- **Custom utilities:** `@utility bg-page { ... }`
-- **Dark mode:** Class-based via `@variant dark (&:where(.dark, .dark *))`
-- **Plugins:** `@plugin "@tailwindcss/typography"`
-- **Custom variant:** `@custom-variant intersect (&:not([no-intersect]))`
+### Tailwind CSS v4
 
-CSS variables for colors/fonts are defined in `src/components/CustomStyles.astro` with light/dark theme variants.
+Configure Tailwind in CSS. The file is `src/assets/styles/tailwind.css`.
 
-The Vite plugin `@tailwindcss/vite` is configured in `astro.config.ts` (not as an Astro integration).
+The file sets these features:
 
-### Class Merging
+- `@theme` holds the theme tokens. One token is `--color-primary: var(--aw-color-primary)`.
+- `@utility` defines a custom utility. One utility is `bg-page`.
+- `@variant dark (&:where(.dark, .dark *))` sets class-based dark mode.
+- `@plugin "@tailwindcss/typography"` adds the typography plugin.
+- `@custom-variant intersect (&:not([no-intersect]))` adds the `intersect` variant.
 
-Components use `twMerge` from `tailwind-merge` v3 for conditional class composition.
+`src/components/CustomStyles.astro` defines the CSS variables for colors and fonts. The component has a light theme and a dark theme.
 
-## Content Collections
+Set `@tailwindcss/vite` in `astro.config.ts`. It is a Vite plugin. Do not register it as an Astro integration.
 
-Defined in `src/content.config.ts` using the Astro v6 Content Layer API with `glob()` loader. Posts are in `src/data/post/` as `.md` or `.mdx` files.
+### Class merging
 
-Post frontmatter: `title` (required), `publishDate`, `updateDate`, `draft`, `excerpt`, `image`, `category`, `tags`, `author`, `coAuthor`, `series`, `metadata`.
+Components call `twMerge` from `tailwind-merge` v3. `twMerge` joins conditional classes.
 
-**Every post carries `coAuthor: Claude (Anthropic)`.** These pieces are drafted with a model in
-the loop, so the blog says so: the byline reads "Tim Kleier with Claude (Anthropic)" and a line
-under the article explains what that means. A new post gets the field. If one is ever written
-without a model, leave the field off rather than writing a disclaimer about it.
+Call `twMerge()` when a component accepts a `className` override.
 
-## Component Patterns
+### Content collections
 
-- Props extend interfaces from `~/types`
-- Use `class:list` for conditional classes
-- Use `twMerge()` when accepting className overrides
-- Use named slots for layout composition
-- Widget components accept standardized props (see `~/types`)
+`src/content.config.ts` defines the collections. The file uses the Astro v6 Content Layer API and the `glob()` loader.
 
-## Image Handling
+A post is a `.md` file or a `.mdx` file in `src/data/post/`.
 
-`src/components/common/Image.astro` supports:
+A post can include these frontmatter fields:
 
-- Local images via `astro:assets` (optimized by Sharp)
-- Remote images via Unpic CDN
-- Allowed domains (for providers Unpic can't detect, processed by Sharp): `cdn.pixabay.com`
+- `title` (required)
+- `publishDate`
+- `updateDate`
+- `draft`
+- `excerpt`
+- `image`
+- `category`
+- `tags`
+- `author`
+- `coAuthor`
+- `series`
+- `metadata`
 
-Hero images use `loading="eager"` and `fetchpriority="high"`.
+A post that a model helped draft has `coAuthor: Claude (Anthropic)`. The byline reads "Tim Kleier with Claude (Anthropic)". A line under the article explains the byline.
 
-## Prose Style
+Add `coAuthor` to a new post that a model helped draft. A post that no model helped draft has no `coAuthor` field. Do not write a disclaimer on that post.
 
-**Use em dashes minimally.** They are the default reach for any aside, and left unchecked
-every paragraph acquires the same rhythm. Applies to everything a reader sees: blog posts,
-page copy, component strings, captions.
+### Component patterns
 
-Reach for the punctuation that names the relationship instead:
+- Extend props from the interfaces in `~/types`.
+- Use `class:list` for a conditional class.
+- Call `twMerge()` when a component accepts a `className` override.
+- Use a named slot to compose a layout.
+- Widget components take the shared props in `~/types`.
 
-| Instead of an em dash               | Use                      |
-| ----------------------------------- | ------------------------ |
-| Introducing a list or restatement   | a colon                  |
-| A short aside                       | commas                   |
-| A second, separable thought         | a full stop              |
-| A true interruption of the sentence | keep the em dash, rarely |
+### Image handling
 
-Not a ban, so one or two in a long piece is fine. It should be a choice, not a reflex. A
-blind find-and-replace will mangle prose, since each one wants a different fix.
+`src/components/common/Image.astro` supports a local image and a remote image.
 
-**Section titles are short.** A heading names the section. It does not summarize the paragraph
-under it. Two or three words, punchy: "The Drift", "The Difference". A sentence in the heading
-slot ("What drifts", "A BPM suite and a model are different tools") is the paragraph starting
-early. Save the explanation for the first line of body copy.
+Astro optimizes a local image through `astro:assets` and Sharp. Unpic serves a remote image from its CDN.
 
-A heading that exists to carry a search phrase still has to contain that phrase. Everywhere
-else, name the section.
+Sharp processes a remote image when Unpic does not detect the provider. The allowed domain is `cdn.pixabay.com`.
 
-## A `<br>` needs an explicit space beside it
-
-The HTML minifier strips whitespace either side of a `<br>`, so a responsive break written the
-obvious way silently joins two sentences at the breakpoint where the break is hidden:
-
-```astro
-<!-- renders as "endpoints do.DNA says" on a phone -->…your endpoints do.<br class="hidden sm:block" />DNA says who may
-call them.
-
-<!-- correct: an entity survives minification, a space does not -->
-…your endpoints do.&#32;<br class="hidden sm:block" />DNA says who may call them.
-```
-
-A break carrying an adjacent `&nbsp;` is already safe. This cost the site five run-together
-sentences across three product pages before anyone opened it on a phone.
+Set `loading="eager"` and `fetchpriority="high"` on a hero image.
 
 ## Agent readiness
 
-Two scorers cover how an agent reads this site. CI runs both against `dist/` after `npm run build`.
-The live grades lag a deploy and are not the pull-request gate.
+Two scorers grade how an agent reads this site. CI runs both scorers on `dist/` after `npm run build`.
+
+The live grades update after a deploy. The live grades are not the pull-request gate.
 
 ### is-agentic.com
 
-The site is scored by [is-agentic.com](https://is-agentic.com/) (`npx is-agentic dna.codes`).
-`npm run check:agentic` checks the signals we control against the build in `dist/`:
+[is-agentic.com](https://is-agentic.com/) scores the site. The command is `npx is-agentic dna.codes`.
 
-- **Metadata on every page:** canonical, `<html lang>`, `og:image`, `og:type`. `Metadata.astro`
-  drops every Open Graph tag when the default image (`src/assets/images/default.png`, generated
-  by `scripts/generate-default-og.mjs`) is missing, so don't delete it.
-- **Homepage JSON-LD:** an `Organization` with name, url, logo, description and contactPoint,
-  rendered by `src/components/common/StructuredData.astro`.
-- **`/llms.txt`:** generated by `src/pages/llms.txt.ts` from `~/data/products` and the genomes.
-  It needs a `## When to use` section, and every dna.codes link in it must exist in the build.
-  When you add a product, doc page, genome, or keyword page, check that it reads right
-  there, including the Search section and the "How an agent should use it today" lines.
-- **Trust pages:** `/about`, `/contact` and `/privacy`, each with at least 500 characters of copy.
-- **`/agents/`:** the agent documents (`llms.txt`, `llms-full.txt`, `auth.md`, `discovery.json`,
-  the profile, refusal codes, schemas). They are generated in `dna-codes-platform` from the agent
-  host's route table and configuration, and its `agent-documents` workflow commits them to
-  `public/agents/` on each deploy of the agent host. Never edit them here; Prettier ignores them so
-  they stay as generated. `llms.txt.ts` embeds their `apex-llms-section.md` as the apex's first
-  section, and only when it exists. The check requires that section and every link of the agent
-  `llms.txt` to resolve when `public/agents/` exists, and no `/agents/` link when it does not.
-  Nothing is published there until the platform's Phase 0a gate (stable structural definitions).
+`npm run check:agentic` checks the signals this repository controls. It reads the build in `dist/`.
+
+**Page metadata.** Each page has a canonical link, `<html lang>`, `og:image`, and `og:type`.
+
+`Metadata.astro` removes every Open Graph tag when `src/assets/images/default.png` is missing. `scripts/generate-default-og.mjs` generates that file. Do not delete `src/assets/images/default.png`.
+
+**Homepage JSON-LD.** The homepage has an `Organization` object. The object has `name`, `url`, `logo`, `description`, and `contactPoint`. `src/components/common/StructuredData.astro` renders the object.
+
+**`/llms.txt`.** `src/pages/llms.txt.ts` writes this file from `~/data/products` and the genomes.
+
+The file needs a `## When to use` section. Every dna.codes link in the file exists in the build.
+
+When you add a product, a doc page, a genome, or a keyword page, read `/llms.txt` and check it.
+
+Check the Search section. Check each line titled "How an agent should use it today".
+
+**Trust pages.** `/about`, `/contact`, and `/privacy` each have at least 500 characters of copy.
+
+**`/agents/`.** Do not edit files in `public/agents/`.
+
+The agent host in `dna-codes-platform` generates the files. The files are `llms.txt`, `llms-full.txt`, `auth.md`, `discovery.json`, the profile, the refusal codes, and the schemas. The source is the route table and the configuration of the agent host.
+
+The `agent-documents` workflow commits the files to `public/agents/` on each deploy of the agent host. Prettier ignores the files, so the files stay as the workflow wrote them.
+
+`llms.txt.ts` embeds `apex-llms-section.md` as the first section of the apex file. The embed runs only when that file exists.
+
+When `public/agents/` exists, the check requires that section. The check also requires every link in the agent `llms.txt` to resolve.
+
+When `public/agents/` does not exist, the site has no `/agents/` link.
+
+The platform publishes nothing in `public/agents/` until the Phase 0a gate. That gate is stable structural definitions.
 
 ### AX Check
 
-[AX Check](https://www.ax-check.com/dna.codes) (Gauge) grades whether a coding agent can read the
-site and get started. The grade is provisional and technical only. Coding sessions are separate
-evidence and do not change it. `unassessed` means not measured.
+[AX Check](https://www.ax-check.com/dna.codes) uses Gauge. Gauge grades one question. Can a coding agent read the site and start work?
 
-`npm run check:ax` is the pull-request gate for the signal this site owns: the homepage answers
-`Accept: text/markdown` with a Markdown representation of the same page.
+The grade is provisional. The grade is technical only.
 
-- The build writes `dist/index.md` from the homepage HTML (`scripts/emit-homepage-markdown.mjs`).
-  The page advertises it with `<link rel="alternate" type="text/markdown" href="/index.md">`.
-  Every content link in the HTML has to survive in that Markdown.
-- GitHub Pages serves `/index.md` as `text/markdown` and ignores `Accept` on `/`. Negotiation
-  runs at Cloudflare, which already proxies the apex. The worker in
-  `cloudflare/markdown-negotiation/` is routed only at `dna.codes/` so the rest of the site
-  never enters it. A client that prefers `text/markdown` gets `index.md` with
-  `Content-Type: text/markdown` and `Vary: Accept`. A browser, which asks for `text/html`
-  first, still gets the HTML page.
-- Deploy that worker with the `Markdown negotiation` workflow once `CLOUDFLARE_API_TOKEN` and
-  `CLOUDFLARE_ACCOUNT_ID` are set on the repository. The token needs Workers Scripts edit and
-  Workers Routes edit on the zone. The worker reads `/index.md` from GitHub Pages and, when
-  that file is not on the origin yet, falls through to the HTML page. The live check stays
-  red until both the worker and a site deploy that contains `index.md` are out.
-- Confirm production with `curl -sI -H "Accept: text/markdown" https://dna.codes/`. The response
-  should carry `content-type: text/markdown` and `vary: Accept`.
+A coding session is separate evidence. A coding session does not change the grade. `unassessed` means that Gauge did not measure the site.
 
-Markdown 404 bodies still need a server behavior GitHub Pages does not offer. The API, OpenAPI
-and CLI checks only apply once those products exist.
+`npm run check:ax` is the pull-request gate for the signal this site owns.
+
+The homepage answers `Accept: text/markdown` with Markdown for the same page.
+
+The build writes `dist/index.md` from the homepage HTML. The script is `scripts/emit-homepage-markdown.mjs`.
+
+The page points at that file with this tag:
+
+```html
+<link rel="alternate" type="text/markdown" href="/index.md" />
+```
+
+Every content link in the HTML remains in that Markdown.
+
+GitHub Pages serves `/index.md` as `text/markdown`. GitHub Pages ignores the `Accept` header on `/`.
+
+Cloudflare negotiates the format. Cloudflare already proxies the apex.
+
+The worker is in `cloudflare/markdown-negotiation/`. The route is `dna.codes/` only. The rest of the site does not enter the worker.
+
+A client that prefers `text/markdown` receives `index.md`. The response has `Content-Type: text/markdown` and `Vary: Accept`.
+
+A browser asks for `text/html` first. That browser receives the HTML page.
+
+Deploy the worker with the `Markdown negotiation` workflow. Deploy it after the repository has `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+
+The token needs Workers Scripts edit on the zone. The token needs Workers Routes edit on the zone.
+
+The worker reads `/index.md` from GitHub Pages. When that file is not on the origin yet, the worker returns the HTML page.
+
+The live check stays red until two deploys are out. Deploy the worker. Deploy a site build that contains `index.md`.
+
+Check production with this command:
+
+```bash
+curl -sI -H "Accept: text/markdown" https://dna.codes/
+```
+
+The response has `content-type: text/markdown` and `vary: Accept`.
+
+A Markdown 404 body needs a server behavior that GitHub Pages does not offer. The API check, the OpenAPI check, and the CLI check apply only after those products exist.
 
 ### Search keywords
 
-Measured queries live in `src/data/seo/keywords.json`, written by `npm run keywords:import`
-from a CSV with the seed's header. A landing page calls `seoFor(route)` from `src/utils/seo.ts`.
-A post that owns a query sets `targetKeyword` and leaves `metadata.title` unset, so the registry
-supplies the search title.
+Measured queries live in `src/data/seo/keywords.json`. `npm run keywords:import` writes that file from a CSV. The CSV uses the seed header.
 
-Four routes own the primaries: `/sop-software`, `/operating-model`, `/business-process-software`,
-and `/blog/business-process-modeling`. A secondary phrase is a heading on its page, not another
-route. Business process modeling notation and business process management are headings on that
-post. `/blog/business-process-management` redirects there.
+A landing page calls `seoFor(route)` from `src/utils/seo.ts`.
 
-The three landing pages are the header and footer menu **Use Cases**, titled SOP Software, Target
-Operating Model, and Business Process Software. Each shows a visual drawn from the ecommerce genome,
-in the same frame as the product demos: a running SOP, an operating-model board (roles, process,
-rules, systems), and a process diagram of steps, roles, and work. The business-process page's
-heading is Living Business Processes. Its search title stays the registry row.
+A post that owns a query sets `targetKeyword`. Leave `metadata.title` unset on that post. The registry then supplies the search title.
 
-An agent meets those pages in two places this repo owns. `/llms.txt` lists them under Search and
-tells an agent when to send someone there. The homepage Markdown's "For agents" block, written by
-`scripts/emit-homepage-markdown.mjs`, names the same four with a line each, because an agent that
-only reads `/index.md` never opens `/llms.txt`. Change a route and update both.
+Four routes own the primary queries:
 
-`public/agents/` is generated by dna-codes-platform. Do not add these pages there.
+- `/sop-software`
+- `/operating-model`
+- `/business-process-software`
+- `/blog/business-process-modeling`
 
-## Verification Checklist
+A secondary phrase is a heading on its page. It is not another route.
 
-After changes, always verify:
+That post has two of those headings: "business process modeling notation" and "business process management". `/blog/business-process-management` redirects to that post.
 
-1. `npm run build` succeeds
-2. `npm run check` passes (astro check + ESLint + Prettier)
-3. `npm run check:agentic` passes (is-agentic.com signals in `dist/`)
-4. `npm run check:ax` passes (homepage Markdown negotiation)
-5. `npm run check:keywords` passes (keyword registry assignments against `dist/`)
-6. Visual check in browser: homepage, blog, dark mode, mobile menu
+The three landing pages sit in the header menu and the footer menu, under "Use Cases". The titles are SOP Software, Target Operating Model, and Business Process Software.
+
+Each page shows a visual from the ecommerce genome. The frame matches the product demos.
+
+The three visuals are:
+
+- A running SOP.
+- An operating-model board. It shows roles, process, rules, and systems.
+- A process diagram. It shows steps, roles, and work.
+
+The heading on the business-process page is "Living Business Processes". The search title stays the registry row.
+
+An agent meets these pages in two places this repository owns.
+
+`/llms.txt` lists the pages under Search. The file tells an agent when to send a reader there.
+
+The homepage Markdown has a block titled "For agents". `scripts/emit-homepage-markdown.mjs` writes that block. The block names the same four routes, with one line each.
+
+An agent that reads only `/index.md` does not open `/llms.txt`. When you change a route, update both files.
+
+Do not add these pages to `public/agents/`. `dna-codes-platform` generates that directory.
+
+## Verification
+
+After a change, run these checks:
+
+1. `npm run build` completes with no error.
+2. `npm run check` passes. The command runs astro check, ESLint, and Prettier.
+3. `npm run check:agentic` passes. It checks the is-agentic.com signals in `dist/`.
+4. `npm run check:ax` passes. It checks Markdown negotiation for the homepage.
+5. `npm run check:keywords` passes. It checks the keyword registry against `dist/`.
+
+Then check the site in a browser. Look at the homepage, the blog, dark mode, and the mobile menu.
