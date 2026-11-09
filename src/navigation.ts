@@ -34,9 +34,30 @@ export const headerData = {
     // thing rather than read about it — the hero's second action lands here too.
     { text: 'Playground', href: getPermalink('/playground') },
     { text: 'Pricing', href: getPermalink('/pricing') },
+    // Use cases are the searches these pages answer. Building With AI stays in Learn: it is a
+    // companion you work through, the same kind of thing as the docs and the blog.
+    {
+      text: 'Use cases',
+      links: [
+        {
+          text: 'SOP software',
+          href: getPermalink('/sop-software'),
+          description: 'Procedures that stay tied to the work.',
+        },
+        {
+          text: 'Target operating model',
+          href: getPermalink('/operating-model'),
+          description: 'Roles, processes, rules, and systems.',
+        },
+        {
+          text: 'Business process software',
+          href: getPermalink('/business-process-software'),
+          description: 'Where a BPM suite fits, and where a model does.',
+        },
+      ],
+    },
     // Learn gathers the things you read or work through: schema docs, the blog, and the
-    // Building With AI companion. Three top-level items for "go read" crowded the bar next
-    // to Products / Playground / Pricing; one menu keeps the conversion path clear.
+    // Building With AI companion. One menu keeps the bar from growing a link per page.
     {
       text: 'Learn',
       links: [
@@ -82,6 +103,11 @@ export const footerData = {
         { text: 'Getting started', href: getPermalink('/docs/getting-started') },
         { text: 'Blog', href: getBlogPermalink() },
         { text: 'Building With AI', href: getPermalink('/building-with-ai') },
+      ],
+    },
+    {
+      title: 'Use cases',
+      links: [
         { text: 'SOP software', href: getPermalink('/sop-software') },
         { text: 'Target operating model', href: getPermalink('/operating-model') },
         { text: 'Business process software', href: getPermalink('/business-process-software') },

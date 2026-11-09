@@ -112,7 +112,7 @@ model.
 ### Requirement: Landing pages are discoverable by agents and crawlers
 
 The three landing pages and the two posts SHALL appear in the sitemap and in `/llms.txt`. The
-three landing pages SHALL appear in the site footer.
+three landing pages SHALL appear in the header Use cases menu and in the site footer.
 
 #### Scenario: An agent reads llms.txt
 
