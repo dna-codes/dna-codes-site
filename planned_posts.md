@@ -380,7 +380,7 @@ The search-keyword change publishes two of these for operations leaders, aimed a
 The landing pages absorb the rest of what would have been posts:
 
 - **SOP software for small business**, including the "Google Docs is not a process system" angle, is a section of `/sop-software`.
-- **How to build an operating model** is a section of `/operating-model`, next to the ungated template.
+- **How to build an operating model** is a section of `/operating-model`. The page does not offer a template download.
 
 ### Pain-point / problem awareness
 

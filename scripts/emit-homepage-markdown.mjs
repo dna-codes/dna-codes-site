@@ -240,7 +240,7 @@ export function homepageMarkdown(html) {
       ``,
       `- [llms.txt](${ORIGIN}/llms.txt): index of docs, products, genomes, and the pages below.`,
       `- [SOP Software](${ORIGIN}/sop-software): procedures that stay tied to the work, including a small team that has outgrown a wiki. The page shows the procedure as a running SOP.`,
-      `- [Target Operating Model](${ORIGIN}/operating-model): roles, processes, rules, and systems on one board, plus an ungated template.`,
+      `- [Target Operating Model](${ORIGIN}/operating-model): roles, processes, rules, and systems on one board.`,
       `- [Business Process Software](${ORIGIN}/business-process-software): living business processes, as a diagram of steps, roles, and work. DNA is not a BPM engine.`,
       `- [Business Process Management: The Copies Drift](${ORIGIN}/blog/business-process-management): three copies of one process. A step, a role, and a rule are what holds. The diagram is the copy that drifts.`,
       `- [Business Process Modeling Notation: A Drawing](${ORIGIN}/blog/business-process-modeling): the notation draws the process. Written as roles, steps, and a rule, the same process is what the software can read.`,

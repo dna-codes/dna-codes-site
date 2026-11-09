@@ -56,16 +56,15 @@ SHALL name at least one situation where a BPM suite is the better choice.
 
 ### Requirement: Folded keywords stay on the page that owns their phrase
 
-The site SHALL NOT give `sop software for small business`, `operating model template`,
-`how to build an operating model` or `business process modeling` its own page. Each SHALL be a
-secondary row on the page named below, and that page SHALL use the phrase as a heading.
+The site SHALL NOT give `sop software for small business`, `how to build an operating model`
+or `business process modeling` its own page. Each SHALL be a secondary row on the page named
+below, and that page SHALL use the phrase as a heading.
 `/blog/business-process-modeling` is the notation post, not a second page for the modeling
-keyword.
+keyword. `operating model template` is skipped: the site does not offer a template download.
 
 | Keyword                         | Page                              |
 | ------------------------------- | --------------------------------- |
 | sop software for small business | `/sop-software`                   |
-| operating model template        | `/operating-model`                |
 | how to build an operating model | `/operating-model`                |
 | business process modeling       | `/blog/business-process-modeling` |
 
@@ -74,27 +73,6 @@ keyword.
 - **WHEN** the registry is checked
 - **THEN** each keyword in the table MUST be a secondary row whose `page` is the page in that row
 - **AND** the rendered page MUST contain a heading with that phrase
-
-### Requirement: An ungated operating model template on the operating-model page
-
-`/operating-model` SHALL include a blank operating model template generated at build time. The
-template SHALL be downloadable without submitting any form, as a spreadsheet and as JSON, at
-`/operating-model/template.xlsx`, `/operating-model/template.csv` and
-`/operating-model/template.json`. The spreadsheet SHALL explain the columns and show one example
-of each row, and its fill-in sheet SHALL be empty rows with the section already named. The filled
-example company on the page SHALL NOT be copied into the download.
-
-#### Scenario: Download without a gate
-
-- **WHEN** a visitor or crawler opens `/operating-model`
-- **THEN** links to the spreadsheet and JSON downloads MUST be present in the HTML
-- **AND** following them MUST NOT require an email address or any form submission
-
-#### Scenario: The template is usable on its own
-
-- **WHEN** the spreadsheet download is opened
-- **THEN** it MUST contain labelled sections for roles, processes and steps, rules and systems
-- **AND** it MUST NOT contain internal ids or schema field names a reader would not recognise
 
 ### Requirement: Two posts cover the informational head terms
 

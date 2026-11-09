@@ -16,10 +16,9 @@ const DESCRIPTION_LIMIT = 155;
 const STALE_DAYS = 180;
 
 // Folded into a heading on the page that owns the phrase. The search-landing spec
-// names these four; a pivot that moves the row still has to keep the heading.
+// names these three; a pivot that moves the row still has to keep the heading.
 const HEADING_KEYWORDS = [
   'sop software for small business',
-  'operating model template',
   'how to build an operating model',
   'business process modeling',
 ];

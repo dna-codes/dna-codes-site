@@ -72,9 +72,9 @@ through `.astro` files for title strings. This change makes a pivot a data edit.
     automation, and **sop software for small business** (24). The executable-SOP wedge, said in
     the buyer's words. A heading uses the small-business phrase.
   - `/operating-model`: **target operating model** (216, 22), plus digital operating model and
-    operating model definition. The same page carries the ungated template download
-    (**operating model template**, 45) and a how-to section (**how to build an operating model**,
-    39, and operating model design). Those phrases are headings, not routes.
+    operating model definition. A how-to section uses **how to build an operating model** (39,
+    and operating model design) as a heading, not a route. **Operating model template** is
+    skipped: the page shows one filled model and does not offer a download.
   - `/business-process-software`: **business process management software** (889, 27), plus BPM
     tools, BPM software, business process workflow software. Written as DNA against BPM suites,
     not as one (see design D6).

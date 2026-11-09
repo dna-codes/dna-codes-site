@@ -42,15 +42,11 @@ not routes.
       Is Not a Process System" angle. No separate post.
 - [x] 3.2 `src/pages/operating-model.astro`: owns **target operating model**. Shows an industry
       genome's roles, processes, rules and systems as one operating model, and contrasts it with
-      the slide-deck operating model. A section headed **operating model template** shows a
-      filled-in example, then the three ungated downloads. A section headed **how to build an
-      operating model** covers the how-to and operating model design. No template route and no
-      how-to post.
-- [x] 3.3 Add a build step that writes a blank operating model template to
-      `public/operating-model/template.xlsx`, `template.csv` and `template.json` (design D7). The
-      spreadsheet's first sheet explains the columns and shows one example of each row. The fill-in
-      sheet, the CSV, and the JSON are empty rows with the section already named. The filled
-      company on the board is not copied into the download.
+      the slide-deck operating model. A section headed **how to build an operating model** covers
+      the how-to and operating model design. No template section, no download, and no how-to post.
+- [x] 3.3 The template download was removed (design D7). `/operating-model` has no template
+      section, and `template.xlsx`, `template.csv` and `template.json` are not published. The
+      template keywords are `skip`.
 - [x] 3.4 `src/pages/business-process-software.astro`: owns **business process management
       software**. Written to design D6: names the drift problem, shows DNA against BPM suites, says
       plainly where a BPM engine is the right choice. Links to both posts under "Read more".

@@ -687,14 +687,14 @@
     "intent": "transactional",
     "cluster": "operating-model",
     "fit": 3,
-    "role": "secondary",
-    "page": "/operating-model",
-    "pageType": "landing",
+    "role": "skip",
+    "page": null,
+    "pageType": null,
     "title": null,
     "description": null,
     "measuredAt": "2026-11-08",
     "source": "moz",
-    "notes": "Section and ungated download on /operating-model. 45 searches a month does not earn a route."
+    "notes": "No download. The page shows one filled operating model."
   },
   {
     "id": "how-to-build-an-operating-model",
@@ -789,14 +789,14 @@
     "intent": "informational",
     "cluster": "operating-model",
     "fit": 3,
-    "role": "secondary",
-    "page": "/operating-model",
-    "pageType": "landing",
+    "role": "skip",
+    "page": null,
+    "pageType": null,
     "title": null,
     "description": null,
     "measuredAt": "2026-11-08",
     "source": "moz",
-    "notes": null
+    "notes": "No download. The page shows one filled operating model."
   },
   {
     "id": "operating-model-software",

@@ -45,7 +45,7 @@ How an agent should use it today:
 - To read or author the current vocabulary, start with Operational DNA (\`structure/v1\` and \`behaviour/v1\`) at ${url('/docs/operational')} and the walkthrough at ${url('/docs/getting-started')}.
 - To show a user what a full operating model looks like, point them at the Playground (${url('/playground')}) or fetch a compiled industry genome as JSON (listed below).
 - To get access to the hosted product, send the user to ${url('/waitlist')}.
-- For SOP software, a target operating model, or business process management software, use the Search section below. Each link says what that page is for. The operating model template downloads with no form. DNA Codes is not a BPM engine: the business-process page says when a suite that runs the work on its own engine is the better tool.
+- For SOP software, a target operating model, or business process management software, use the Search section below. Each link says what that page is for. DNA Codes is not a BPM engine: the business-process page says when a suite that runs the work on its own engine is the better tool.
 
 Not a fit for: general project management, ticketing, HR or payroll systems, or BPM engines that execute long-running workflows on their own infrastructure. DNA Codes models and governs operations; it does not replace those systems.
 
@@ -74,7 +74,7 @@ ${GENOME_SOURCES.map((g) => `- [${g.orgName} genome](${url(`/genome/${g.key}.jso
 Pages written for the words an operations lead already uses. DNA is still not a BPM engine: the business-process page says where a suite that executes long-running workflows is the right tool.
 
 - [SOP Software](${url('/sop-software')}): Procedures that stay tied to the work, including the small-team case where a wiki stops being enough. The page shows the procedure as a running SOP.
-- [Target Operating Model](${url('/operating-model')}): Roles, processes, rules, and systems on one board, plus an ungated operating model template.
+- [Target Operating Model](${url('/operating-model')}): Roles, processes, rules, and systems on one board.
 - [Business Process Software](${url('/business-process-software')}): Living business processes. The page walks a process diagram of steps, roles, and work, and says where a BPM suite is the better buy.
 - [Business Process Management: The Copies Drift](${url('/blog/business-process-management')}): Three copies of one process. A step, a role, and a rule are what holds. The diagram is the copy that drifts.
 - [Business Process Modeling Notation: A Drawing](${url('/blog/business-process-modeling')}): The notation draws the process. Written as roles, steps, and a rule, the same process is what the software can read.

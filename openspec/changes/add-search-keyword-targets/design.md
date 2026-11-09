@@ -101,9 +101,10 @@ name different searches, they get different pages: `/business-process-software` 
 **business process management software**; the post owns **business process management**.
 
 A variant does not get its own page when the owning page can say the phrase in a heading, or
-when the primary title already contains it. **sop software for small business**, **operating
-model template** and **how to build an operating model** are headings on their hubs. **Business
-process modeling** is a heading on the notation post, whose title already contains those words.
+when the primary title already contains it. **sop software for small business** and **how to
+build an operating model** are headings on their hubs. **Business process modeling** is a heading
+on the notation post, whose title already contains those words. **Operating model template** is
+skipped: the page shows one filled model and does not offer a file to download.
 Splitting any of those into another URL would thin the page that should rank and add a route
 nobody asked to maintain.
 
@@ -168,23 +169,12 @@ bounce rate a mismatched page earns.
 and redirect the route to `/blog/business-process-management`. The registry makes that a two-row
 change.
 
-### D7: The template is a section of the operating-model page
+### D7: No operating model template download
 
-**Operating model template** (45 searches a month) does not get its own route. `/operating-model`
-owns **target operating model**, and a section on that page owns the template phrase as a
-heading. The file is a blank of that shape, generated at build time: roles, processes and steps, rules,
-systems. The filled company stays on the board. The spreadsheet's first sheet explains the columns
-and shows one example of each row. The second sheet, the CSV, and the JSON are empty rows with the
-section already named. It ships two ways, linked from that section:
-
-- A spreadsheet download (`.xlsx` and `.csv`), because that is what the searcher wants today.
-- The same rows as JSON.
-
-The files live at `/operating-model/template.xlsx`, `/operating-model/template.csv` and
-`/operating-model/template.json`, so they do not collide with the page. No email gate. A gate
-blocks crawlers and agents from the content that earns the ranking, and the waitlist form sits
-further down the same page. The section shows a filled-in example from one industry genome so
-the empty template is never the first thing a visitor sees.
+`/operating-model` owns **target operating model** and shows one filled company on the board.
+It does not offer a template section or a spreadsheet, CSV, or JSON download. **Operating model
+template** and **business operating model template** are `skip` rows, so the page does not claim
+a file it does not have.
 
 The same page has a how-to section headed with **how to build an operating model**. That query
 is 39 searches a month at difficulty 41. A separate post would be a second operating-model URL
@@ -199,7 +189,7 @@ The post links to the hub in its closing section, and the hub links back under "
 | Cluster         | Hub (commercial)             | On the hub, as headings                                    | Own post                                 |
 | --------------- | ---------------------------- | ---------------------------------------------------------- | ---------------------------------------- |
 | sop             | `/sop-software`              | sop software for small business; later How to Write an SOP | none                                     |
-| operating-model | `/operating-model`           | operating model template; how to build an operating model  | none                                     |
+| operating-model | `/operating-model`           | how to build an operating model                            | none                                     |
 | bpm             | `/business-process-software` | the software, tools and workflow phrases                   | Business Process Management (1,097)      |
 | bpmn            | the modeling post            | business process modeling, bpmn model, bpmn examples       | Business Process Modeling Notation (534) |
 
