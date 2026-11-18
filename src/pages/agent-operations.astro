@@ -6,12 +6,13 @@ import AgentOpsDemo from '~/components/widgets/AgentOpsDemo.astro';
 import AgentOpsActor from '~/components/widgets/AgentOpsActor.astro';
 import AgentOpsGate from '~/components/widgets/AgentOpsGate.astro';
 import AgentOpsInstall from '~/components/widgets/AgentOpsInstall.astro';
+import AgentOpsJourney from '~/components/widgets/AgentOpsJourney.astro';
 import AgentCoveragePanel from '~/components/widgets/AgentCoveragePanel.astro';
 import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 
-// Four content sections between the hero and the close, and they alternate side to side so
+// Five content sections between the hero and the close, and they alternate side to side so
 // the eye has somewhere new to land each time:
 //
 //   Hero + demo                                the argument, in motion
@@ -19,6 +20,7 @@ import FAQs from '~/components/widgets/FAQs.astro';
 //   2. The model          visual ◀ │ ▶ prose   an agent is an actor
 //   3. The gate           prose ◀ │ ▶ visual   the decision, made outside the model
 //   4. Install and trust  visual ◀ │ ▶ prose   what it costs to put in front of one
+//   5. Where you come in  prose ◀ │ ▶ visual   an agent that found us on its own, and the claim
 //   Close                                      FAQ, then the waitlist
 //
 // Every visual is a *specific* thing rather than an illustration of a category: a real
@@ -126,6 +128,9 @@ const metadata = {
 
   <!-- ── 4. Install and trust ─────────────────────────────────────────── -->
   <AgentOpsInstall />
+
+  <!-- ── 5. Where you come in ─────────────────────────────────────────── -->
+  <AgentOpsJourney />
 
   <!-- ── Close ────────────────────────────────────────────────────────── -->
   <FAQs
