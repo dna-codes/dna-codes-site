@@ -1,0 +1,311 @@
+---
+// /playground/<key>/: one company genome, open to read. The Playground generates its artifacts in
+// the browser, so a search engine sees none of them; this page carries them all in its HTML. Statically rendered, and complete with
+// JavaScript off: the map, the three questions and every Playground artifact are in the HTML.
+// The script only adds role selection, subject pickers and the copy button.
+//
+// Nothing on this page may branch on which genome it renders. A new genome gets this page from
+// its data alone.
+import Layout from '~/layouts/PageLayout.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import { LAYERS, outputsForLayer } from '~/data/industries';
+import { DERIVATIONS, genomeMap, genomeQuestions } from '~/utils/genome';
+import { genomeEntries, genomeEntry } from '~/utils/genome-pages';
+import { provenanceNotice } from '~/utils/genome-provenance';
+import { agentPrompt } from '~/utils/genome-prompt';
+import { renderArtifact, renderGenomeMap, renderQuestionAnswer, type QuestionKind } from '~/utils/genome-render';
+import { getCanonical } from '~/utils/permalinks';
+import '~/assets/styles/genome-artifacts.css';
+import '~/assets/styles/genome-map.css';
+
+export function getStaticPaths() {
+  return genomeEntries().map((e) => ({ params: { key: e.key } }));
+}
+
+const entry = genomeEntry(Astro.params.key ?? '');
+if (!entry) throw new Error(`No genome for ${Astro.params.key}`);
+
+const { key, orgName, industry, description, source, compiled, provenanceLabel } = entry;
+const provenance = source.provenance;
+const notice = provenanceNotice(provenance, orgName);
+const mapHtml = renderGenomeMap(genomeMap(compiled));
+const questions = genomeQuestions(compiled);
+const prompt = agentPrompt({ key, orgName });
+
+const QUESTIONS: { kind: QuestionKind; lead: string; tail: string; subjects: { name: string; label: string }[] }[] = [
+  { kind: 'who', lead: 'Who may perform', tail: '?', subjects: questions.operations },
+  { kind: 'stalls', lead: 'What stalls when', tail: 'is out?', subjects: questions.roles },
+  { kind: 'touches', lead: 'Who touches', tail: '?', subjects: questions.resources },
+];
+const defaultFor = (kind: QuestionKind) =>
+  kind === 'who'
+    ? questions.defaults.operation
+    : kind === 'stalls'
+      ? questions.defaults.role
+      : questions.defaults.resource;
+
+/** Search descriptions stop at 155 characters. A longer one ends at a word, with an ellipsis. */
+const fitDescription = (text: string, max = 155) =>
+  text.length <= max ? text : `${text.slice(0, max - 1).replace(/\s+\S*$/, '')}…`;
+
+const metadata = {
+  title: `${orgName} Operating Model`,
+  description: fitDescription(`${provenanceLabel}. ${description}`),
+  openGraph: {
+    images: [{ url: String(getCanonical(`/playground/${key}.png`)).replace(/\/$/, ''), width: 1200, height: 628 }],
+  },
+};
+---
+
+<Layout metadata={metadata}>
+  <link slot="head" rel="alternate" type="application/json" href={`/genome/${key}.json`} title="Compiled genome" />
+
+  <article class="mx-auto max-w-6xl px-4 pb-16 pt-12 sm:px-6 sm:pt-16">
+    <header class="mx-auto max-w-3xl">
+      <p class="text-sm font-semibold tracking-wide text-primary">
+        <a class="hover:underline" href="/playground/">Playground</a>
+        <span aria-hidden="true"> / </span>{industry}
+      </p>
+      <h1 class="mt-2 font-heading text-4xl font-bold tracking-tight sm:text-5xl dark:text-gray-100">{orgName}</h1>
+      <p class="mt-3 flex flex-wrap items-center gap-2 text-sm">
+        <span
+          class="inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-3 py-0.5 font-medium text-primary"
+          data-provenance={provenance.kind}>{provenanceLabel}</span
+        >
+        <span class="text-muted dark:text-slate-400">{industry}</span>
+      </p>
+      <p class="mt-4 text-lg text-muted dark:text-slate-300">{description}</p>
+      {
+        notice && (
+          <p class="mt-4 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-800 dark:text-amber-200">
+            {notice}
+          </p>
+        )
+      }
+      <div class="mt-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-muted dark:text-slate-400">Modeled on</p>
+        <ul class="mt-2 space-y-1 text-sm text-muted dark:text-slate-300">
+          {
+            source.ontologies.map((o) => (
+              <li>
+                <strong class="dark:text-slate-100">{o.name}</strong>: {o.note}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      {
+        provenance.kind === 'public-sources' && (
+          <div class="mt-5">
+            <p class="text-xs font-bold uppercase tracking-widest text-muted dark:text-slate-400">Sources</p>
+            <ul class="mt-2 space-y-1 text-sm text-muted dark:text-slate-300">
+              {provenance.sources.map((s) => (
+                <li>
+                  <a class="text-primary hover:underline" href={s.url} rel="noopener">
+                    {s.title}
+                  </a>
+                  : {s.supports}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </header>
+
+    <section class="mt-12" aria-labelledby="map-h">
+      <div class="mx-auto max-w-3xl">
+        <h2 id="map-h" class="font-heading text-2xl font-bold tracking-tight sm:text-3xl dark:text-gray-100">
+          The genome map
+        </h2>
+        <p class="mt-2 text-muted dark:text-slate-400">
+          Roles in their reporting line, the process step by step with the role on each step, the rules on the steps
+          they govern, and the resources the work acts on. Select a role to see what it reaches.
+        </p>
+      </div>
+      <div class="mt-6 overflow-x-auto rounded-2xl border border-slate-700/60 bg-slate-950 p-4 sm:p-6">
+        <Fragment set:html={mapHtml} />
+      </div>
+    </section>
+
+    <section class="mt-14" aria-labelledby="questions-h">
+      <div class="mx-auto max-w-3xl">
+        <h2 id="questions-h" class="font-heading text-2xl font-bold tracking-tight sm:text-3xl dark:text-gray-100">
+          Three questions this genome answers
+        </h2>
+        <p class="mt-2 text-muted dark:text-slate-400">
+          Each answer comes from the compiled genome alone. Pick another subject and the answer changes in place.
+        </p>
+      </div>
+      <div class="mt-6 grid gap-4 md:grid-cols-3">
+        {
+          QUESTIONS.map((q) => (
+            <div class="gq rounded-2xl border border-slate-700/60 bg-slate-950 p-4" data-question={q.kind}>
+              <label class="block text-sm font-semibold text-slate-100" for={`q-${q.kind}`}>
+                {q.lead}
+                <select
+                  id={`q-${q.kind}`}
+                  class="gq-select mt-2 block w-full rounded-md border border-slate-600 bg-slate-900 px-2 py-1.5 text-sm text-slate-100"
+                  data-question-select={q.kind}
+                >
+                  {q.subjects.map((s) => (
+                    <option value={s.name} selected={s.name === defaultFor(q.kind)}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+                <span class="mt-1 block text-slate-400">{q.tail}</span>
+              </label>
+              <div
+                class="gq-answer mt-3 text-sm text-slate-300"
+                data-question-answer={q.kind}
+                aria-live="polite"
+                set:html={renderQuestionAnswer(q.kind, defaultFor(q.kind), questions)}
+              />
+            </div>
+          ))
+        }
+      </div>
+      <script
+        is:inline
+        type="application/json"
+        id="genome-questions"
+        set:html={JSON.stringify(questions).replace(/</g, '\\u003c')}
+      />
+    </section>
+
+    <section class="mt-14" aria-labelledby="artifacts-h">
+      <div class="mx-auto max-w-3xl">
+        <h2 id="artifacts-h" class="font-heading text-2xl font-bold tracking-tight sm:text-3xl dark:text-gray-100">
+          Every artifact from one genome
+        </h2>
+        <p class="mt-2 text-muted dark:text-slate-400">
+          The same derivations and renderers the Playground runs, here for {orgName} at build time.&#32;
+          <a class="text-primary hover:underline" href={`/playground/?industry=${key}`}>Open it in the Playground</a> to pick
+          your own set.
+        </p>
+      </div>
+      {
+        LAYERS.map((layer) => (
+          <div class="mt-10">
+            <h3 class="font-heading text-xl font-bold tracking-tight dark:text-gray-100">{layer.label}</h3>
+            <p class="mt-1 text-sm text-muted dark:text-slate-400">{layer.blurb}</p>
+            <div class="mt-4 grid gap-4">
+              {outputsForLayer(layer.key).map((o) => (
+                <div class="min-w-0 rounded-2xl border border-slate-700/60 bg-slate-950 p-4" id={`artifact-${o.id}`}>
+                  <h4 class="text-sm font-bold text-slate-100">{o.label}</h4>
+                  <p class="text-xs text-slate-400">{o.description}</p>
+                  <div
+                    class="gx-panel-body mt-3 overflow-x-auto"
+                    set:html={renderArtifact(o.id, DERIVATIONS[o.id](compiled))}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="mx-auto mt-16 max-w-3xl" aria-labelledby="yours-h">
+      <h2 id="yours-h" class="font-heading text-2xl font-bold tracking-tight sm:text-3xl dark:text-gray-100">
+        Make yours
+      </h2>
+      <p class="mt-2 text-muted dark:text-slate-400">
+        Start from {orgName} and change what differs, or pick&#32;
+        <a class="text-primary hover:underline" href="/operating-model-template/">another company as your template</a>.
+        Three ways in:
+      </p>
+      <ol class="mt-6 space-y-6">
+        <li>
+          <h3 class="font-semibold dark:text-slate-100">1. Download the template</h3>
+          <p class="mt-1 text-sm text-muted dark:text-slate-400">
+            The compiled genome as JSON: every role, step, rule, resource, screen and system on this page.
+          </p>
+          <a class="btn-secondary mt-3 inline-flex" href={`/genome/${key}.json`} download={`${key}.genome.json`}
+            >Download {orgName} as JSON</a
+          >
+        </li>
+        <li>
+          <h3 class="font-semibold dark:text-slate-100">2. Start an agent from it</h3>
+          <p class="mt-1 text-sm text-muted dark:text-slate-400">
+            Paste this into an agent that has the DNA MCP server connected. It drafts your model in the conversation and
+            saves only when you ask.
+          </p>
+          <div class="relative mt-3">
+            <pre
+              id="agent-prompt"
+              class="overflow-x-auto whitespace-pre-wrap rounded-xl border border-slate-700/60 bg-slate-950 p-4 pr-20 text-xs text-slate-200">{prompt}</pre>
+            <button
+              type="button"
+              class="absolute right-2 top-2 rounded-md border border-slate-600 bg-slate-800 px-2 py-1 text-xs text-slate-100 hover:border-primary"
+              data-copy="#agent-prompt">Copy</button
+            >
+          </div>
+        </li>
+        <li>
+          <h3 class="font-semibold dark:text-slate-100">3. Join the waitlist</h3>
+          <p class="mt-1 text-sm text-muted dark:text-slate-400">
+            The hosted product runs your model for your team and your agents.
+          </p>
+        </li>
+      </ol>
+    </section>
+  </article>
+
+  <div class="mx-auto max-w-3xl px-4 pb-16 sm:px-6">
+    <WaitlistForm preselect="operations" />
+  </div>
+</Layout>
+
+<script>
+  import { mountGenomeMaps } from '~/utils/genome-map-client';
+  import { renderQuestionAnswer, type QuestionKind } from '~/utils/genome-render';
+  import type { GenomeQuestionsVm } from '~/utils/genome-map';
+
+  mountGenomeMaps();
+
+  const data = document.getElementById('genome-questions')?.textContent;
+  if (data) {
+    const questions = JSON.parse(data) as GenomeQuestionsVm;
+    for (const select of document.querySelectorAll<HTMLSelectElement>('[data-question-select]')) {
+      const kind = select.dataset.questionSelect as QuestionKind;
+      const answer = document.querySelector<HTMLElement>(`[data-question-answer="${kind}"]`);
+      select.addEventListener('change', () => {
+        if (answer) answer.innerHTML = renderQuestionAnswer(kind, select.value, questions);
+      });
+    }
+  }
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-copy]')) {
+    button.addEventListener('click', async () => {
+      const text = document.querySelector(button.dataset.copy ?? '')?.textContent ?? '';
+      try {
+        await navigator.clipboard.writeText(text);
+        button.textContent = 'Copied';
+      } catch {
+        button.textContent = 'Select and copy';
+      }
+      setTimeout(() => (button.textContent = 'Copy'), 2000);
+    });
+  }
+</script>
+
+<style is:global>
+  .gq-answer ul {
+    margin-top: 0.4rem;
+    list-style: disc;
+    padding-left: 1.1rem;
+  }
+  .gq-answer p + p {
+    margin-top: 0.4rem;
+  }
+  .gq-answer code {
+    font-size: 0.75rem;
+    color: rgb(94 234 212);
+  }
+  .gq-sub {
+    color: rgb(100 116 139);
+    font-size: 0.75rem;
+  }
+</style>

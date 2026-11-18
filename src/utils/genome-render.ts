@@ -26,6 +26,7 @@ import type {
   ScreenMapVm,
   SopVm,
 } from '~/utils/genome';
+import type { GenomeMapRole, GenomeMapRule, GenomeMapVm, GenomeQuestionsVm } from '~/utils/genome-map';
 
 // --- Escaping ---------------------------------------------------------------
 //
@@ -379,6 +380,148 @@ function renderAccessControl(vm: AccessControlVm): string {
         <p class="gx-foot">Derived, not declared — this is the list an audit asks about.</p>
       </div>`
     )}`;
+}
+
+// --- Genome map -------------------------------------------------------------
+//
+// The gallery's one picture of a whole genome: the role tree, each process as a rail of steps
+// with its rules on it, and the resources. Every element carries a data attribute, and the root
+// carries each role's reach as JSON, so the client script needs no second copy of the genome.
+// Roles are buttons: Tab reaches them, and Enter or Space selects them with no extra code.
+
+function renderMapRole(r: GenomeMapRole): string {
+  return `
+    <li>
+      <button type="button" class="gm-role" data-role="${esc(r.name)}" aria-pressed="false"${when(
+        r.description,
+        ` title="${esc(r.description)}"`
+      )}>${esc(r.label)}</button>
+      ${when(r.children.length, `<ul class="gm-tree-children">${r.children.map(renderMapRole).join('')}</ul>`)}
+    </li>`;
+}
+
+function renderMapRule(r: GenomeMapRule): string {
+  return `<li class="gm-rule gm-rule-${esc(r.kind)}" data-rule="${esc(r.name)}"${when(
+    r.description,
+    ` title="${esc(r.description)}"`
+  )}>${esc(r.label)}</li>`;
+}
+
+export function renderGenomeMap(vm: GenomeMapVm): string {
+  const ruleByName = new Map(vm.rules.map((r) => [r.name, r]));
+  return `<div class="gm" data-genome-map data-reach="${esc(JSON.stringify(vm.reach))}">
+    <div class="gm-body">
+    <div class="gm-section gm-roles">
+      <p class="gm-h">Roles <span class="gm-hint">Select a role to see its reach.</span></p>
+      <ul class="gm-tree">${vm.roles.map(renderMapRole).join('')}</ul>
+    </div>
+    <div class="gm-main">
+    ${vm.processes
+      .map(
+        (p) => `
+    <div class="gm-section gm-process" data-process="${esc(p.name)}">
+      <p class="gm-h">${esc(p.label)} <span class="gm-hint">Operated by ${esc(p.operatorLabel)}</span></p>
+      ${when(p.description, `<p class="gm-desc">${esc(p.description)}</p>`)}
+      <ol class="gm-rail">
+        ${p.steps
+          .map(
+            (s, i) => `
+        <li class="gm-step" data-step="${esc(s.id)}">
+          <span class="gm-step-n">${i + 1}</span>
+          <span class="gm-step-body">
+            <span class="gm-step-title">${esc(s.title)}</span>
+            <span class="gm-step-meta"><span class="gm-actor">${esc(s.actorLabel)}</span><code>${esc(s.operation)}</code></span>
+            ${when(
+              s.rules.length,
+              `<ul class="gm-rules">${s.rules
+                .map((name) => ruleByName.get(name))
+                .filter((r): r is GenomeMapRule => !!r)
+                .map(renderMapRule)
+                .join('')}</ul>`
+            )}
+          </span>
+        </li>`
+          )
+          .join('')}
+      </ol>
+    </div>`
+      )
+      .join('')}
+    <div class="gm-section gm-resources">
+      <p class="gm-h">Resources</p>
+      <ul class="gm-list">${vm.resources
+        .map(
+          (r) =>
+            `<li class="gm-resource" data-resource="${esc(r.name)}"${when(r.description, ` title="${esc(r.description)}"`)}>${esc(r.label)}</li>`
+        )
+        .join('')}</ul>
+    </div>
+    ${when(
+      vm.unattached.length,
+      `<div class="gm-section gm-unattached">
+      <p class="gm-h">Rules on no step <span class="gm-hint">They govern operations outside the process.</span></p>
+      <ul class="gm-rules">${vm.unattached
+        .map((name) => ruleByName.get(name))
+        .filter((r): r is GenomeMapRule => !!r)
+        .map(renderMapRule)
+        .join('')}</ul>
+    </div>`
+    )}
+    </div>
+    </div>
+    <p class="gm-status" data-genome-map-status aria-live="polite"></p>
+  </div>`;
+}
+
+// --- Questions ----------------------------------------------------------------
+//
+// One answer renderer for the build and the browser. The page prints the default answers at
+// build time, and the script calls this again when the visitor picks another subject.
+
+export type QuestionKind = 'who' | 'stalls' | 'touches';
+
+const strongList = (xs: string[]) => xs.map((x) => `<strong>${esc(x)}</strong>`).join(', ');
+
+export function renderQuestionAnswer(kind: QuestionKind, subject: string, q: GenomeQuestionsVm): string {
+  if (kind === 'who') {
+    const a = q.whoMay[subject];
+    if (!a) return '';
+    if (a.roles.length) {
+      return `<p>${strongList(a.roles)} may perform <code>${esc(subject)}</code>. ${
+        a.rules.length ? `The rule: ${a.rules.map(esc).join('; ')}.` : ''
+      }</p>`;
+    }
+    if (a.rules.length) {
+      return `<p>A rule governs <code>${esc(subject)}</code> (${a.rules.map(esc).join('; ')}), but no access rule names a role who may perform it.</p>`;
+    }
+    return `<p>No rule governs <code>${esc(subject)}</code>. The genome does not limit who may perform it.</p>`;
+  }
+
+  if (kind === 'stalls') {
+    const a = q.stalls[subject];
+    const label = q.roles.find((r) => r.name === subject)?.label ?? subject;
+    if (!a) return '';
+    if (!a.steps.length && !a.processes.length) {
+      return `<p>Nothing stalls. <strong>${esc(label)}</strong> performs no step and operates no process.</p>`;
+    }
+    return `${
+      a.steps.length
+        ? `<p>These steps wait for <strong>${esc(label)}</strong>:</p><ul>${a.steps
+            .map((s) => `<li>${esc(s.title)} <span class="gq-sub">${esc(s.process)}</span></li>`)
+            .join('')}</ul>`
+        : `<p><strong>${esc(label)}</strong> performs no step.</p>`
+    }${
+      a.processes.length
+        ? `<p>${esc(label)} also operates ${strongList(a.processes)}, so that process has no owner.</p>`
+        : ''
+    }`;
+  }
+
+  const a = q.touches[subject];
+  const label = q.resources.find((r) => r.name === subject)?.label ?? subject;
+  if (!a) return '';
+  if (!a.roles.length) return `<p>No role acts on <strong>${esc(label)}</strong>, by a step or by a rule.</p>`;
+  return `<p>${strongList(a.roles)} act on <strong>${esc(label)}</strong>, by a process step or under an access rule.</p>`;
 }
 
 // --- Registry ---------------------------------------------------------------

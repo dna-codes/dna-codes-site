@@ -10,6 +10,7 @@ import type { AuthoredGenome } from '~/utils/genome-types';
 
 export const security: AuthoredGenome = {
   key: 'security',
+  provenance: { kind: 'fictional' },
   ontologies: [
     { name: 'SOC 2 Trust Services Criteria', note: 'Control references (CC1–CC9) and the five criteria categories.' },
     { name: 'NIST SP 800-53 Rev. 5', note: 'Control family mappings — AC, AU, CM, IR.' },

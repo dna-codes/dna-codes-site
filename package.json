@@ -20,13 +20,15 @@
     "check:crawl": "node scripts/crawl-check.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "npm run check:astro && npm run check:eslint && npm run check:prettier",
+    "check": "npm run check:astro && npm run check:eslint && npm run check:prettier && npm run check:spacing",
     "check:astro": "astro check",
     "check:eslint": "eslint .",
     "check:prettier": "prettier --check .",
     "fix": "npm run fix:eslint && npm run fix:prettier",
     "fix:eslint": "eslint --fix .",
-    "fix:prettier": "prettier -w ."
+    "fix:prettier": "prettier -w .",
+    "test": "node --test 'src/**/*.test.ts'",
+    "check:spacing": "node scripts/check-inline-spacing.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.4",

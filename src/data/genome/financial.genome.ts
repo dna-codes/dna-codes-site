@@ -9,6 +9,7 @@ import type { AuthoredGenome } from '~/utils/genome-types';
 
 export const financial: AuthoredGenome = {
   key: 'financial',
+  provenance: { kind: 'fictional' },
   ontologies: [
     { name: 'FIBO', note: 'Financial Industry Business Ontology — facility, obligor, and exposure concepts.' },
     { name: 'BIAN', note: 'Service domains — Credit Facility, Credit Decisioning, Collateral Administration.' },

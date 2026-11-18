@@ -85,6 +85,11 @@ import { INDUSTRIES } from '~/data/industries';
     <p id="industry-preview" class="mx-auto mt-4 min-h-[1.5rem] max-w-lg text-center" data-empty aria-hidden="true">
       Six industries, one grammar underneath.
     </p>
+    <!-- The picked company's own page: its map, its questions and every artifact in one static
+         page. Hidden until a model is picked; the Playground script sets the href and the text. -->
+    <p class="mt-2 text-center text-sm">
+      <a id="industry-page-link" class="font-semibold text-primary hover:underline" href="/playground/" hidden></a>
+    </p>
   </div>
 </section>
 

@@ -154,6 +154,16 @@ const metadata = {
     // `data-empty` holds the muted styling; dropping it is what lights the proposition up.
     if (industry) el.removeAttribute('data-empty');
     else el.setAttribute('data-empty', '');
+    // The link to the picked company's static page. It follows the state, so a restored URL
+    // shows it too.
+    const link = $<HTMLAnchorElement>('#industry-page-link');
+    if (link) {
+      link.hidden = !industry;
+      if (industry) {
+        link.href = `/playground/${industry}/`;
+        link.textContent = `Open the whole ${INDUSTRY_BY_KEY[industry].name} company →`;
+      }
+    }
   }
 
   // --- Act I: the model listbox --------------------------------------------

@@ -11,6 +11,7 @@ import type { AuthoredGenome } from '~/utils/genome-types';
 
 export const ecommerce: AuthoredGenome = {
   key: 'ecommerce',
+  provenance: { kind: 'fictional' },
   ontologies: [
     { name: 'GS1', note: 'GTIN for trade items, GLN for locations, SSCC for shipping units.' },
     { name: 'EDI X12', note: 'The order-to-cash triple: 850 purchase order, 856 advance ship notice, 810 invoice.' },

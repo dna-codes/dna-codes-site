@@ -9,6 +9,7 @@ import type { AuthoredGenome } from '~/utils/genome-types';
 
 export const professional: AuthoredGenome = {
   key: 'professional',
+  provenance: { kind: 'fictional' },
   ontologies: [
     { name: 'PMBOK', note: 'Work breakdown structure, scope baseline, and change control.' },
     { name: 'Statement of Work conventions', note: 'Fee basis, acceptance criteria, change orders.' },

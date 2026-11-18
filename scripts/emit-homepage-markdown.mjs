@@ -243,6 +243,7 @@ export function homepageMarkdown(html) {
       `- [SOP Software](${ORIGIN}/sop-software/): procedures that stay tied to the work, including a small team that has outgrown a wiki. The page shows the procedure as a running SOP.`,
       `- [Target Operating Model](${ORIGIN}/operating-model/): roles, processes, rules, and systems on one board.`,
       `- [Business Process Software](${ORIGIN}/business-process-software/): living business processes, as a diagram of steps, roles, and work. DNA is not a BPM engine.`,
+      `- [Operating Model Template](${ORIGIN}/operating-model-template/): filled operating models, one company per industry, each open as a page and downloadable as JSON.`,
       `- [Business Process Modeling with DNA](${ORIGIN}/blog/business-process-modeling/): a workflow of states, operations, and policies. Notation leaves it in a diagram. Management leaves it in slides.`,
     ].join('\n')
   );

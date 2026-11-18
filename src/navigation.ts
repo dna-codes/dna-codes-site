@@ -54,6 +54,11 @@ export const headerData = {
           href: getPermalink('/business-process-software'),
           description: 'Where a BPM suite fits, and where a model does.',
         },
+        {
+          text: 'Operating Model Template',
+          href: getPermalink('/operating-model-template'),
+          description: 'Filled operating models to open and download.',
+        },
       ],
     },
     // Learn gathers the things you read or work through: schema docs, the blog, and the
@@ -111,6 +116,7 @@ export const footerData = {
         { text: 'SOP Software', href: getPermalink('/sop-software') },
         { text: 'Target Operating Model', href: getPermalink('/operating-model') },
         { text: 'Business Process Software', href: getPermalink('/business-process-software') },
+        { text: 'Operating Model Template', href: getPermalink('/operating-model-template') },
       ],
     },
   ],

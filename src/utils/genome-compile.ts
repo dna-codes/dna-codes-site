@@ -14,6 +14,7 @@
 //                   enough for a seventh industry to be an hour's work.
 
 import versions from '~schemas/operational/versions.json';
+import { humanize } from '~/utils/genome-labels';
 import type {
   AuthoredGenome,
   AuthoredNoun,
@@ -77,11 +78,7 @@ const identity = (key: string, type: string, name: string) => ({
 
 // --- Helpers ----------------------------------------------------------------
 
-/** `receive-order` → `Receive order`. Used wherever a kebab id has to face a human. */
-export function humanize(id: string): string {
-  const s = id.replace(/-/g, ' ');
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
+export { humanize };
 
 const dropUndefined = <T extends object>(o: T): T =>
   Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined)) as T;

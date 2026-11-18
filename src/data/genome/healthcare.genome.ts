@@ -16,6 +16,7 @@ import type { AuthoredGenome } from '~/utils/genome-types';
 
 export const healthcare: AuthoredGenome = {
   key: 'healthcare',
+  provenance: { kind: 'fictional' },
   ontologies: [
     {
       name: 'HL7 FHIR R4',
