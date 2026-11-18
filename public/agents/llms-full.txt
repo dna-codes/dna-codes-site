@@ -55,6 +55,9 @@ This release covers structure and behaviour: `attribute` is stable, `entity` is 
 - [Endpoints](https://dna.codes/agents/docs/endpoints.md): every endpoint of the agent host
 - [Tools](https://dna.codes/agents/docs/tools.md): each tool's input and output
 - [Definitions](https://dna.codes/agents/docs/definitions.md): each structural and behavioural definition and its status
+- [Operational DNA](https://dna.codes/docs/operational): human-readable structure and behaviour
+- [Getting started](https://dna.codes/docs/getting-started): write a structure document, then attach behaviour
+- [Examples](https://dna.codes/docs/examples): reference domains such as checkout, origination, and diligence
 - [Refusal codes as JSON](https://dna.codes/agents/refusals.json)
 
 ## Schemas
@@ -87,6 +90,16 @@ Published prices equal the bounds enforced by the host. Machine-readable: [https
 | Free | 25000 | 150 |
 
 
+## Public repositories
+
+Each worked example is a folder you can copy: DNA documents, `.mcp.json`, an `AGENTS.md` rule and a README.
+
+- [dna-codes/dna](https://github.com/dna-codes/dna): the DNA language: JSON Schema for structure/v1 and behaviour/v1, and worked examples
+- [Checkout example](https://github.com/dna-codes/dna/tree/main/examples/checkout): cart, order, payment authorization, refund approval
+- [Lending example](https://github.com/dna-codes/dna/tree/main/examples/lending): application, underwriting, approval authority, disbursement
+- [M&A diligence example](https://github.com/dna-codes/dna/tree/main/examples/ma-diligence): diligence request, finding, risk rating, sign-off authority
+- [dna-codes/skills](https://github.com/dna-codes/skills): agent skills dna-operational and dna-sync, installed with npx skills add dna-codes/skills
+
 ## Guides
 
 - [Agent quickstart](https://dna.codes/agents/guides/agent-quickstart.md): register (`dna register` / `dna init` or HTTP), connect MCP, work with shipped tools, hand off claim
@@ -94,10 +107,7 @@ Published prices equal the bounds enforced by the host. Machine-readable: [https
 - [Approving spend](https://dna.codes/agents/guides/approving-spend.md): for people — claim, plans, credits, caps, invoices
 - [Personal agents quickstart](https://dna.codes/agents/guides/personal-agents-quickstart.md): OpenClaw, Hermes, MCP connection, claim in-chat
 - [OpenRouter cookbook outline](https://dna.codes/agents/guides/openrouter-cookbook-outline.md): Agent SDK + `@openrouter/mcp` example plan
-- [Reference repos](https://dna.codes/agents/guides/reference-repos/README.md): checkout, home-loan lending, M&A diligence
-- [Reference repo outline — checkout](https://dna.codes/agents/guides/reference-repos/checkout.md): cart, order, payment authorization, refund approval
-- [Reference repo outline — home-loan lending](https://dna.codes/agents/guides/reference-repos/home-loan-lending.md): application, underwriting, approval authority, disbursement
-- [Reference repo outline — M&A diligence](https://dna.codes/agents/guides/reference-repos/ma-diligence.md): diligence request, finding, risk rating, sign-off authority
+- [Worked examples](https://dna.codes/agents/guides/reference-examples.md): checkout, home-loan lending and M&A diligence in dna-codes/dna, each a folder you can copy
 ---
 
 Source: https://dna.codes/agents/discovery.json
@@ -2603,6 +2613,8 @@ Source: https://dna.codes/agents/docs/definitions.md
 
 DNA is structural and behavioural definitions. A stable definition is promised to agents and its JSON Schema is published; an experimental one may still change.
 
+The human-readable companion for structure and behaviour is https://dna.codes/docs/operational. Published schemas and the `describe` tool remain authoritative.
+
 ## Structure
 
 What a business is made of: domains, their entities and attributes, and the relationships between them.
@@ -3082,141 +3094,38 @@ app in OpenRouter headers per OpenRouter app-attribution guidance.
 
 ---
 
-Source: https://dna.codes/agents/guides/reference-repos/README.md
+Source: https://dna.codes/agents/guides/reference-examples.md
 
-# Public reference repos (outlines)
+# Worked examples
 
-Each domain gets a **public** GitHub repo an agent can clone and use immediately.
-This directory holds outlines and file checklists; live repos are created by ops.
+Three worked examples of DNA are public in [dna-codes/dna](https://github.com/dna-codes/dna). Each is a folder you can copy and start from.
 
-| Domain | Outline | Suggested repo |
+| Example | Problem | Folder |
 | --- | --- | --- |
-| Checkout / commerce | [`checkout.md`](./checkout.md) | `dna-codes/reference-checkout` |
-| Home-loan lending | [`home-loan-lending.md`](./home-loan-lending.md) | `dna-codes/reference-lending` |
-| M&A diligence | [`ma-diligence.md`](./ma-diligence.md) | `dna-codes/reference-ma-diligence` |
+| Checkout | cart, order, payment authorization, refund, and who can approve a refund | [`examples/checkout`](https://github.com/dna-codes/dna/tree/main/examples/checkout) |
+| Home-loan lending | loan application, underwriting, approval authority, conditions and disbursement | [`examples/lending`](https://github.com/dna-codes/dna/tree/main/examples/lending) |
+| M&A diligence | diligence request, finding, risk rating and sign-off authority | [`examples/ma-diligence`](https://github.com/dna-codes/dna/tree/main/examples/ma-diligence) |
 
-## Required contents (every repo)
+## What each folder holds
 
-- DNA documents (structure + behaviour) for the domain sample
-- MCP configuration (`.mcp.json` / client snippets) pointing at DNA remote MCP
-- Skills: at least `business-rules` instructions, plus
-  `npx skills add dna-codes/skills` (`dna-operational`, `dna-sync`) + connection notes
-- `AGENTS.md` with the short auto-invoke rule (shipped tool names only)
-- `README.md` linking [Agent quickstart](../agent-quickstart.md)
+- `dna/structure/` — `structure/v1` domains: entities, attributes and relationships.
+- `dna/behaviour/` — `behaviour/v1` documents: actions, workflows and policies.
+- `.mcp.json` — the remote DNA MCP server. The organization and the token are environment references (`DNA_ORG`, `DNA_ACCESS_TOKEN`), never values.
+- `AGENTS.md` — the rule that sends an agent to DNA (`list`, `get`, `validate`, `apply`) before it changes that domain's permissions, approvals, state transitions or validation.
+- `README.md` — how to start, and the scenarios the DNA covers.
 
-## Remaining ops steps
+## Start from one
 
-- [ ] Create the three public repos from these outlines
-- [ ] Seed DNA + MCP config + AGENTS.md
-- [ ] Link from `https://dna.codes/agents/` and Context7 docs repo
-
----
-
-Source: https://dna.codes/agents/guides/reference-repos/checkout.md
-
-# Reference repo outline — checkout
-
-**Suggested name:** `dna-codes/reference-checkout`  
-**Problem language:** cart, order, payment authorization, refund, who can
-approve a refund.
-
-## Tree
-
-```
-README.md                 # links agent quickstart; one-liner install
-AGENTS.md                 # DNA auto-invoke rule (shipped tools)
-CLAUDE.md                 # optional same rule
-.mcp.json                 # remote DNA MCP template with {org} + bearer env
-dna/
-  structure/              # Product DNA: Order, LineItem, Payment, Refund, …
-  behaviour/              # actions, operations, policies for checkout
-skills/
-  business-rules/SKILL.md # or install instructions for ClawHub / skills.sh
+```bash
+npx degit dna-codes/dna/examples/checkout my-checkout
+cd my-checkout
+npx @dna-codes/cli register --json
 ```
 
-## AGENTS.md rule (sketch)
+Set `DNA_ORG` and `DNA_ACCESS_TOKEN` from the result, then follow the [agent quickstart](./agent-quickstart.md). Use `validate` on the documents in `dna/`. It writes nothing. Use `apply` only when a person asks to save. When a result says `needs_claim`, a person claims the organization.
 
-```markdown
-Before changing checkout permissions, refund rules, order status transitions or
-payment validation, use DNA MCP tools (list, get, validate, apply). Report
-mismatches between code and DNA. Do not guess business rules.
-```
+## Where the examples come from
 
-## README must say
+The examples and the JSON Schema in `dna-codes/dna` are generated from the DNA platform, where they are tested. They are synced one way, so do not edit them in `dna-codes/dna`. To suggest a change, open an issue there or post on the [forum](https://dna.codes/agents/forum).
 
-1. `npx @dna-codes/cli register --json` (and `init --json` for AGENTS.md), or how to point MCP at an existing org
-2. Link to https://dna.codes/agents/guides/agent-quickstart.md
-3. That claim is a person step when `needs_claim` appears
-
-## Sample scenarios for the seeded DNA
-
-- Place order → authorize payment → capture
-- Request refund under threshold (auto) vs over threshold (needs approval)
-- Cancel unpaid order
-
----
-
-Source: https://dna.codes/agents/guides/reference-repos/home-loan-lending.md
-
-# Reference repo outline — home-loan lending
-
-**Suggested name:** `dna-codes/reference-lending`  
-**Problem language:** loan application, underwriting, approval authority,
-disbursement, status transitions.
-
-## Tree
-
-Same required layout as [checkout](./checkout.md): `README.md`, `AGENTS.md`,
-`.mcp.json`, `dna/structure`, `dna/behaviour`, skills notes.
-
-## Seeded DNA focus
-
-- Application → underwriting → conditional approval → clear to close → funded
-- Policies: who may approve above a loan amount
-- Conditions that block disbursement
-
-## AGENTS.md rule (sketch)
-
-```markdown
-Before changing lending permissions, approval thresholds, application status
-transitions or underwriting validation, query DNA (list, get, validate, apply).
-Cite the DNA document; report code/DNA mismatches.
-```
-
-## README must link
-
-Agent quickstart + auth.md + this domain's claim/spend notes for long-running
-agent sessions.
-
----
-
-Source: https://dna.codes/agents/guides/reference-repos/ma-diligence.md
-
-# Reference repo outline — M&A diligence
-
-**Suggested name:** `dna-codes/reference-ma-diligence`  
-**Problem language:** diligence request, data room access, finding, risk rating,
-sign-off authority.
-
-## Tree
-
-Same required layout as [checkout](./checkout.md).
-
-## Seeded DNA focus
-
-- Diligence workstream entities and relationships to target company artifacts
-- Findings lifecycle (open → mitigated → accepted)
-- Who may sign off residual risk; egress allowlist for external counsel after claim
-
-## AGENTS.md rule (sketch)
-
-```markdown
-Before changing diligence workflows, finding statuses, sign-off permissions or
-validation rules, use DNA MCP (list, get, validate, apply). Do not invent
-approval chains in code.
-```
-
-## README must link
-
-Agent quickstart; note that unclaimed sandboxes block egress — claim before
-sharing data-room effects outside the platform.
+The agent skills are in a separate public repository, [dna-codes/skills](https://github.com/dna-codes/skills): `npx skills add dna-codes/skills`.

@@ -55,6 +55,9 @@ This release covers structure and behaviour: `attribute` is stable, `entity` is 
 - [Endpoints](https://dna.codes/agents/docs/endpoints.md): every endpoint of the agent host
 - [Tools](https://dna.codes/agents/docs/tools.md): each tool's input and output
 - [Definitions](https://dna.codes/agents/docs/definitions.md): each structural and behavioural definition and its status
+- [Operational DNA](https://dna.codes/docs/operational): human-readable structure and behaviour
+- [Getting started](https://dna.codes/docs/getting-started): write a structure document, then attach behaviour
+- [Examples](https://dna.codes/docs/examples): reference domains such as checkout, origination, and diligence
 - [Refusal codes as JSON](https://dna.codes/agents/refusals.json)
 
 ## Schemas
@@ -87,6 +90,16 @@ Published prices equal the bounds enforced by the host. Machine-readable: [https
 | Free | 25000 | 150 |
 
 
+## Public repositories
+
+Each worked example is a folder you can copy: DNA documents, `.mcp.json`, an `AGENTS.md` rule and a README.
+
+- [dna-codes/dna](https://github.com/dna-codes/dna): the DNA language: JSON Schema for structure/v1 and behaviour/v1, and worked examples
+- [Checkout example](https://github.com/dna-codes/dna/tree/main/examples/checkout): cart, order, payment authorization, refund approval
+- [Lending example](https://github.com/dna-codes/dna/tree/main/examples/lending): application, underwriting, approval authority, disbursement
+- [M&A diligence example](https://github.com/dna-codes/dna/tree/main/examples/ma-diligence): diligence request, finding, risk rating, sign-off authority
+- [dna-codes/skills](https://github.com/dna-codes/skills): agent skills dna-operational and dna-sync, installed with npx skills add dna-codes/skills
+
 ## Guides
 
 - [Agent quickstart](https://dna.codes/agents/guides/agent-quickstart.md): register (`dna register` / `dna init` or HTTP), connect MCP, work with shipped tools, hand off claim
@@ -94,7 +107,4 @@ Published prices equal the bounds enforced by the host. Machine-readable: [https
 - [Approving spend](https://dna.codes/agents/guides/approving-spend.md): for people — claim, plans, credits, caps, invoices
 - [Personal agents quickstart](https://dna.codes/agents/guides/personal-agents-quickstart.md): OpenClaw, Hermes, MCP connection, claim in-chat
 - [OpenRouter cookbook outline](https://dna.codes/agents/guides/openrouter-cookbook-outline.md): Agent SDK + `@openrouter/mcp` example plan
-- [Reference repos](https://dna.codes/agents/guides/reference-repos/README.md): checkout, home-loan lending, M&A diligence
-- [Reference repo outline — checkout](https://dna.codes/agents/guides/reference-repos/checkout.md): cart, order, payment authorization, refund approval
-- [Reference repo outline — home-loan lending](https://dna.codes/agents/guides/reference-repos/home-loan-lending.md): application, underwriting, approval authority, disbursement
-- [Reference repo outline — M&A diligence](https://dna.codes/agents/guides/reference-repos/ma-diligence.md): diligence request, finding, risk rating, sign-off authority
+- [Worked examples](https://dna.codes/agents/guides/reference-examples.md): checkout, home-loan lending and M&A diligence in dna-codes/dna, each a folder you can copy

@@ -2,6 +2,8 @@
 
 DNA is structural and behavioural definitions. A stable definition is promised to agents and its JSON Schema is published; an experimental one may still change.
 
+The human-readable companion for structure and behaviour is https://dna.codes/docs/operational. Published schemas and the `describe` tool remain authoritative.
+
 ## Structure
 
 What a business is made of: domains, their entities and attributes, and the relationships between them.
