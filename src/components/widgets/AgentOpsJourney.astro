@@ -1,0 +1,179 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+// Prose left, visual right: the fifth beat, continuing the alternation after Install.
+//
+// Install answers "what does it cost to put this in front of an agent I run". This answers the
+// question a buyer asks next, usually after their agent has already found us: "what did my
+// agent just do, and where do I come in". The visual is the real path from the agent documents
+// at /agents/, using the same command, tools and refusal code an agent sees, so a reader can check
+// every row against the guides it links to.
+//
+// Agent rows are cyan and person rows are accent, the same colours AgentOpsActor gives the two
+// kinds of actor. The hand-off is the one row in a person's colour with an agent's code on it,
+// because that is the moment the two meet.
+//
+// This shows what an agent does, never how we measure it. Fetch signals and attribution are
+// internal instrumentation and stay off the page.
+//
+// Facts here come from public/agents/ (auth.md, guides/agent-quickstart.md,
+// guides/approving-spend.md). That directory is regenerated from dna-codes-platform, so when
+// the 100-a-day cap or the refusal codes change there, change them here too.
+
+type Step = {
+  who: 'agent' | 'person';
+  title: string;
+  code: string;
+  note: string;
+  handoff?: boolean;
+};
+
+const steps: Step[] = [
+  {
+    who: 'agent',
+    title: 'Finds DNA',
+    code: 'dna.codes/llms.txt',
+    note: 'Reads the agent documents and the discovery file. Same pages you can read.',
+  },
+  {
+    who: 'agent',
+    title: 'Registers a sandbox',
+    code: 'npx @dna-codes/cli register',
+    note: 'No account, no card. It gets a credential and a claim link for you.',
+  },
+  {
+    who: 'agent',
+    title: 'Drafts your rules',
+    code: 'validate · apply',
+    note: 'Validating writes nothing. It saves only when you ask, and nothing leaves the platform.',
+  },
+  {
+    who: 'agent',
+    title: 'Stops and asks for you',
+    code: 'needs_claim',
+    note: 'After 100 governed acts in a day, it sends you the claim link instead of carrying on.',
+    handoff: true,
+  },
+  {
+    who: 'person',
+    title: 'You claim it',
+    code: 'sign in → confirm',
+    note: 'The sandbox becomes your workspace. The agent keeps its address and its credential.',
+  },
+  {
+    who: 'person',
+    title: 'You set the ceiling',
+    code: 'plan · credits · spend cap',
+    note: 'Only a person can raise a cap. An agent that asks gets refused.',
+  },
+];
+
+const style = {
+  agent: { icon: 'tabler:robot', label: 'Agent', text: 'text-cyan-300', dot: 'border-cyan-400/60 bg-cyan-500/10' },
+  person: { icon: 'tabler:user', label: 'You', text: 'text-accent', dot: 'border-accent/60 bg-accent/10' },
+};
+---
+
+<WidgetWrapper id="journey" containerClass="max-w-5xl mx-auto">
+  <div class="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+    <!-- ── The prose ────────────────────────────────────────────────── -->
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Where you come in</p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-5">
+        Your agent can start&#32;<br class="hidden sm:block" /> before you do.
+      </h2>
+      <p class="text-muted leading-relaxed mb-5">
+        Agents find DNA on their own. One can register a sandbox and start drafting your business rules without asking
+        anyone, and the sandbox is built so that nothing it does there costs you or leaves the platform.
+      </p>
+      <p class="text-lg text-white font-semibold leading-snug mb-3">
+        It runs out of room at exactly the point where a person should decide.
+      </p>
+      <p class="text-muted leading-relaxed mb-6">
+        Then it stops and sends you a link. Claiming makes the work yours, and from there the plan, the credits and the
+        spend cap are settings only a person can change. Your agent can ask for more. It cannot give itself more.
+      </p>
+      <p class="text-sm">
+        <a class="text-primary hover:underline" href="/agents/guides/approving-spend.md"
+          >What to do with a claim link →</a
+        >
+      </p>
+    </div>
+
+    <!-- ── The picture: the path, one row per step ──────────────────── -->
+    <div class="rounded-2xl border border-white/10 bg-slate-900 overflow-hidden shadow-xl">
+      <div class="px-3 py-2 border-b border-white/8 flex items-center gap-2">
+        <Icon name="tabler:route" class="w-3.5 h-3.5 text-primary flex-shrink-0" />
+        <span class="text-[11px] text-slate-300">From first read to your workspace</span>
+        <span class="ml-auto flex items-center gap-2.5 text-[10px]">
+          <span class="text-cyan-300">● agent</span>
+          <span class="text-accent">● you</span>
+        </span>
+      </div>
+
+      <ol class="p-5">
+        {
+          steps.map((s, i) => {
+            const st = style[s.who];
+            const last = i === steps.length - 1;
+            return (
+              <li class="relative flex gap-3.5">
+                {!last && (
+                  <span
+                    aria-hidden="true"
+                    class:list={[
+                      'absolute left-[13px] top-7 bottom-0 w-px',
+                      s.handoff
+                        ? 'bg-gradient-to-b from-cyan-400/50 to-accent/60'
+                        : s.who === 'agent'
+                          ? 'bg-cyan-400/25'
+                          : 'bg-accent/30',
+                    ]}
+                  />
+                )}
+                <span
+                  class:list={[
+                    'relative z-10 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border',
+                    st.dot,
+                  ]}
+                >
+                  <Icon name={st.icon} class:list={['w-3.5 h-3.5', st.text]} />
+                  <span class="sr-only">{st.label}</span>
+                </span>
+                <div
+                  class:list={[
+                    'min-w-0 flex-1',
+                    last ? 'pb-0' : 'pb-4',
+                    s.handoff && 'rounded-lg border border-accent/40 bg-accent/5 px-3 py-2.5 -mt-1 mb-4 !pb-2.5',
+                  ]}
+                >
+                  <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                    <p class="text-[13px] font-bold text-white leading-tight">{s.title}</p>
+                    <code
+                      class:list={[
+                        'text-[10px] font-mono rounded px-1.5 py-0.5 bg-slate-800',
+                        s.handoff ? 'text-accent' : st.text,
+                      ]}
+                    >
+                      {s.code}
+                    </code>
+                  </div>
+                  <p class="mt-1 text-[11px] text-slate-400 leading-snug">{s.note}</p>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ol>
+
+      <div class="px-4 py-3 border-t border-white/8 bg-slate-900/60">
+        <p class="text-[10px] text-slate-500 leading-snug">
+          Reading and validating never count toward the daily cap. The other refusals work the same way:{' '}
+          <code class="text-accent">allowance_exhausted</code>, <code class="text-accent">plan_limit</code> and{' '}
+          <code class="text-accent">spend_cap_reached</code> each name the person, not the agent, as the one who acts.
+        </p>
+      </div>
+    </div>
+  </div>
+</WidgetWrapper>
