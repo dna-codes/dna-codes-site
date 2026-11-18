@@ -1,0 +1,236 @@
+/* The genome map: the HTML renderGenomeMap() in src/utils/genome-render.ts emits. Used by the
+   genome pages and the homepage hero.
+
+   When a role is selected, the client script sets data-selected on the root and data-active on
+   the role and on every step, rule and resource in its reach. Everything else dims. */
+
+.gm {
+  container-type: inline-size;
+  font-size: 0.8rem;
+  color: rgb(203 213 225);
+}
+.gm-body,
+.gm-main {
+  display: grid;
+  gap: 1rem;
+}
+.gm-section {
+  min-width: 0;
+}
+.gm-h {
+  margin-bottom: 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(94 234 212);
+}
+.gm-hint {
+  margin-left: 0.4rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  color: rgb(100 116 139);
+}
+.gm-desc {
+  margin: -0.25rem 0 0.6rem;
+  font-size: 0.72rem;
+  color: rgb(148 163 184);
+}
+
+/* Roles: an indented tree of buttons. */
+.gm-tree,
+.gm-tree-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.gm-tree-children {
+  margin-left: 0.6rem;
+  padding-left: 0.7rem;
+  border-left: 1px solid rgba(148, 163, 184, 0.25);
+}
+.gm-tree li {
+  margin-top: 0.3rem;
+}
+.gm-role {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.7);
+  padding: 0.2rem 0.65rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: rgb(226 232 240);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    opacity 0.15s ease;
+}
+.gm-role:hover {
+  border-color: rgb(94 234 212 / 0.7);
+}
+.gm-role:focus-visible {
+  outline: 2px solid rgb(94 234 212);
+  outline-offset: 2px;
+}
+.gm-role[aria-pressed='true'] {
+  border-color: rgb(94 234 212);
+  background: rgb(13 148 136 / 0.35);
+  color: white;
+}
+
+/* Process: an ordered rail. */
+.gm-rail {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+.gm-step {
+  display: flex;
+  gap: 0.6rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(2, 6, 23, 0.45);
+  padding: 0.45rem 0.6rem;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    opacity 0.15s ease;
+}
+.gm-step-n {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 9999px;
+  background: rgb(13 148 136 / 0.25);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgb(94 234 212);
+}
+.gm-step-body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.gm-step-title {
+  font-weight: 600;
+  color: rgb(241 245 249);
+}
+.gm-step-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  color: rgb(148 163 184);
+}
+.gm-step-meta code {
+  overflow-wrap: anywhere;
+  font-size: 0.64rem;
+  color: rgb(148 163 184);
+}
+.gm-actor {
+  font-weight: 600;
+  color: rgb(203 213 225);
+}
+
+/* Rules: small tags on their step, or in the list of rules on no step. */
+.gm-rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.gm-rule {
+  border-radius: 0.35rem;
+  border: 1px dashed rgba(251, 191, 36, 0.45);
+  padding: 0.05rem 0.4rem;
+  font-size: 0.64rem;
+  color: rgb(253 230 138);
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    opacity 0.15s ease;
+}
+.gm-rule-access {
+  border-style: solid;
+}
+
+/* Resources. */
+.gm-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.gm-resource {
+  border-radius: 0.4rem;
+  border: 1px solid rgba(129, 140, 248, 0.4);
+  background: rgba(49, 46, 129, 0.25);
+  padding: 0.15rem 0.5rem;
+  font-size: 0.7rem;
+  color: rgb(199 210 254);
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.gm-status {
+  min-height: 1rem;
+  font-size: 0.72rem;
+  color: rgb(148 163 184);
+}
+
+/* Selection: the reach lights up, the rest dims. */
+.gm[data-selected] .gm-step,
+.gm[data-selected] .gm-rule,
+.gm[data-selected] .gm-resource,
+.gm[data-selected] .gm-role {
+  opacity: 0.35;
+}
+.gm[data-selected] [data-active] {
+  opacity: 1;
+}
+.gm .gm-step[data-active] {
+  border-color: rgb(94 234 212 / 0.8);
+  background: rgb(13 148 136 / 0.18);
+}
+.gm .gm-rule[data-active] {
+  border-color: rgb(251 191 36);
+  background: rgb(251 191 36 / 0.15);
+}
+.gm .gm-resource[data-active] {
+  border-color: rgb(165 180 252);
+  background: rgb(79 70 229 / 0.4);
+}
+
+/* Side by side once the map's own frame is wide enough, wherever the map is placed. */
+@container (min-width: 40rem) {
+  .gm-body {
+    grid-template-columns: minmax(11rem, 1fr) minmax(0, 2fr);
+    align-items: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gm-role,
+  .gm-step,
+  .gm-rule,
+  .gm-resource {
+    transition: none;
+  }
+}

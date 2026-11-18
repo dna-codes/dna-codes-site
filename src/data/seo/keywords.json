@@ -687,14 +687,14 @@
     "intent": "transactional",
     "cluster": "operating-model",
     "fit": 3,
-    "role": "skip",
-    "page": null,
-    "pageType": null,
-    "title": null,
-    "description": null,
+    "role": "primary",
+    "page": "/operating-model-template",
+    "pageType": "landing",
+    "title": "Operating Model Template, Filled In by Industry",
+    "description": "Start from a filled operating model template: one company genome per industry, with roles, processes, rules and systems to explore and download as JSON.",
     "measuredAt": "2026-11-08",
     "source": "moz",
-    "notes": "No download. The page shows one filled operating model."
+    "notes": "The gallery offers each genome as a JSON download. That download is the template."
   },
   {
     "id": "how-to-build-an-operating-model",
@@ -789,14 +789,14 @@
     "intent": "informational",
     "cluster": "operating-model",
     "fit": 3,
-    "role": "skip",
-    "page": null,
-    "pageType": null,
+    "role": "secondary",
+    "page": "/operating-model-template",
+    "pageType": "landing",
     "title": null,
     "description": null,
     "measuredAt": "2026-11-08",
     "source": "moz",
-    "notes": "No download. The page shows one filled operating model."
+    "notes": "Secondary on /operating-model-template, beside operating model template."
   },
   {
     "id": "operating-model-software",

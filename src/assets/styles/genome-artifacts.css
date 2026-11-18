@@ -1,0 +1,624 @@
+/* Styles for the HTML the twelve renderers in src/utils/genome-render.ts emit. Shared by the
+   Playground (GenomeGenerator.astro) and the genome gallery pages. */
+
+/* Shared artifact primitives --------------------------------------------- */
+.gx-lede {
+  font-size: 0.75rem;
+  color: rgb(148 163 184);
+  margin-bottom: 0.75rem;
+}
+.gx-foot {
+  margin-top: 0.75rem;
+  font-size: 0.68rem;
+  color: rgb(100 116 139);
+}
+.gx-empty {
+  font-size: 0.72rem;
+  color: rgb(100 116 139);
+  font-style: italic;
+}
+.gx-k {
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: rgb(100 116 139);
+  margin-bottom: 0.15rem;
+}
+.gx-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(13, 148, 136, 0.35);
+  background: rgba(13, 148, 136, 0.12);
+  padding: 0.1rem 0.4rem;
+  font-size: 0.66rem;
+  color: rgb(153 246 228);
+  margin: 0.1rem 0.15rem 0.1rem 0;
+}
+.gx-chip-sub {
+  color: rgb(94 234 212);
+  opacity: 0.7;
+  font-size: 0.6rem;
+}
+.gx-block {
+  display: inline-block;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  padding: 0.05rem 0.35rem;
+  font-size: 0.62rem;
+  color: rgb(148 163 184);
+  margin: 0.1rem 0.15rem 0.1rem 0;
+}
+.gx-panel-body code {
+  font-size: 0.66rem;
+  color: rgb(94 234 212);
+  background: rgba(13, 148, 136, 0.1);
+  border-radius: 0.25rem;
+  padding: 0.05rem 0.3rem;
+}
+.gx-scroll {
+  overflow-x: auto;
+}
+.gx-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.7rem;
+}
+.gx-table th {
+  text-align: left;
+  font-weight: 700;
+  color: rgb(148 163 184);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 0.5rem;
+  white-space: nowrap;
+}
+.gx-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.35rem 0.5rem;
+  color: rgb(203 213 225);
+  white-space: nowrap;
+}
+.gx-sticky-col {
+  position: sticky;
+  left: 0;
+  background: rgb(15 23 42);
+  z-index: 1;
+}
+
+/* Process flow ------------------------------------------------------------ */
+.gx-flow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.gx-flow-step {
+  display: flex;
+  gap: 0.6rem;
+  border-left: 2px solid rgba(13, 148, 136, 0.4);
+  padding: 0.3rem 0 0.3rem 0.7rem;
+}
+.gx-flow-index {
+  flex-shrink: 0;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 9999px;
+  background: rgba(13, 148, 136, 0.2);
+  border: 1px solid rgba(13, 148, 136, 0.5);
+  color: rgb(94 234 212);
+  font-size: 0.62rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gx-flow-title {
+  font-weight: 600;
+  color: rgb(241 245 249);
+  font-size: 0.78rem;
+}
+.gx-flow-desc {
+  font-size: 0.7rem;
+  color: rgb(148 163 184);
+  margin-top: 0.1rem;
+}
+.gx-flow-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+.gx-owner {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgb(94 234 212);
+}
+
+/* SOP --------------------------------------------------------------------- */
+.gx-sop-head {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+  color: rgb(203 213 225);
+}
+.gx-sop-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.gx-sop-title {
+  font-weight: 600;
+  color: rgb(241 245 249);
+  font-size: 0.76rem;
+}
+.gx-sop-n {
+  color: var(--aw-color-primary, #0d9488);
+  font-weight: 700;
+}
+.gx-sop-instruction {
+  font-size: 0.7rem;
+  color: rgb(148 163 184);
+  margin-top: 0.1rem;
+}
+.gx-sop-actor {
+  font-size: 0.65rem;
+  color: rgb(100 116 139);
+  margin-top: 0.15rem;
+}
+
+/* Key positions ----------------------------------------------------------- */
+.gx-pos-tree,
+.gx-pos-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.gx-pos-children {
+  margin-left: 1rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid rgba(148, 163, 184, 0.25);
+  margin-top: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.gx-pos-box {
+  border-radius: 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(2, 6, 23, 0.4);
+  padding: 0.45rem 0.6rem;
+}
+.gx-pos-name {
+  font-weight: 600;
+  font-size: 0.76rem;
+  color: rgb(241 245 249);
+}
+.gx-pos-desc {
+  font-size: 0.68rem;
+  color: rgb(148 163 184);
+  margin-top: 0.1rem;
+}
+.gx-pos-owns {
+  margin-top: 0.3rem;
+}
+
+/* RACI / ACL -------------------------------------------------------------- */
+.gx-raci-mark {
+  display: inline-flex;
+  width: 1.2rem;
+  height: 1.2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.3rem;
+  font-size: 0.6rem;
+  font-weight: 800;
+}
+.gx-raci-R {
+  background: rgba(13, 148, 136, 0.75);
+  color: white;
+}
+.gx-raci-A {
+  background: rgba(217, 119, 6, 0.7);
+  color: white;
+}
+.gx-raci-C {
+  background: rgba(100, 116, 139, 0.4);
+  color: rgb(226 232 240);
+}
+.gx-acl-yes {
+  color: rgb(45 212 191);
+  font-weight: 700;
+}
+.gx-acl-rule {
+  display: block;
+  font-size: 0.58rem;
+  color: rgb(100 116 139);
+}
+.gx-ungoverned {
+  margin-top: 0.85rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  background: rgba(248, 113, 113, 0.07);
+  padding: 0.6rem 0.7rem;
+}
+
+/* Rules ------------------------------------------------------------------- */
+.gx-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.gx-rule {
+  border-radius: 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(2, 6, 23, 0.4);
+  padding: 0.6rem 0.7rem;
+}
+.gx-rule-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.gx-rule-name {
+  font-weight: 600;
+  font-size: 0.76rem;
+  color: rgb(241 245 249);
+}
+.gx-badge {
+  border-radius: 0.3rem;
+  padding: 0.05rem 0.35rem;
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.gx-badge-access {
+  background: rgba(13, 148, 136, 0.25);
+  color: rgb(94 234 212);
+}
+.gx-badge-condition {
+  background: rgba(217, 119, 6, 0.2);
+  color: rgb(252 211 77);
+}
+.gx-rule-desc {
+  font-size: 0.7rem;
+  color: rgb(148 163 184);
+  margin: 0.25rem 0;
+}
+.gx-rule-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Data model -------------------------------------------------------------- */
+.gx-entities {
+  display: grid;
+  gap: 0.6rem;
+}
+.gx-entity {
+  border-radius: 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(2, 6, 23, 0.4);
+  padding: 0.6rem 0.7rem;
+}
+.gx-entity-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.gx-entity-name {
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: rgb(241 245 249);
+}
+.gx-entity-desc {
+  font-size: 0.68rem;
+  color: rgb(148 163 184);
+  margin: 0.2rem 0 0.35rem;
+}
+.gx-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.gx-fields li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+}
+.gx-field-name {
+  color: rgb(226 232 240);
+  font-weight: 500;
+}
+.gx-field-type {
+  color: rgb(94 234 212);
+  font-size: 0.62rem;
+}
+.gx-req {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgb(251 146 60);
+}
+.gx-field-values {
+  font-size: 0.6rem;
+  color: rgb(100 116 139);
+}
+
+/* Screen map -------------------------------------------------------------- */
+.gx-screens {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.gx-screen {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  padding: 0.45rem 0.6rem;
+}
+.gx-route {
+  flex-shrink: 0;
+}
+.gx-screen-title {
+  font-weight: 600;
+  font-size: 0.74rem;
+  color: rgb(241 245 249);
+}
+.gx-screen-desc {
+  font-size: 0.66rem;
+  color: rgb(148 163 184);
+}
+.gx-screen-meta {
+  margin-top: 0.2rem;
+}
+.gx-lock {
+  font-size: 0.6rem;
+}
+
+/* Example UI -------------------------------------------------------------- */
+.gx-ui {
+  border-radius: 0.7rem;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  overflow: hidden;
+  background: rgba(2, 6, 23, 0.55);
+}
+.gx-ui-chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.gx-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 9999px;
+  background: rgba(148, 163, 184, 0.4);
+}
+.gx-ui-title {
+  margin-left: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgb(203 213 225);
+}
+.gx-ui-action {
+  margin-left: auto;
+  border-radius: 0.3rem;
+  background: rgba(13, 148, 136, 0.3);
+  padding: 0.1rem 0.4rem;
+  font-size: 0.6rem;
+  color: rgb(153 246 228);
+}
+.gx-ui-form {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.7rem;
+}
+.gx-ui-form-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgb(100 116 139);
+  margin-bottom: 0.5rem;
+}
+.gx-form-grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.gx-field {
+  display: block;
+}
+.gx-label {
+  display: block;
+  font-size: 0.62rem;
+  color: rgb(148 163 184);
+  margin-bottom: 0.15rem;
+}
+.gx-star {
+  color: rgb(251 146 60);
+  margin-left: 0.15rem;
+}
+.gx-input {
+  width: 100%;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(15, 23, 42, 0.8);
+  padding: 0.25rem 0.4rem;
+  font-size: 0.68rem;
+  color: rgb(226 232 240);
+}
+.gx-input:disabled {
+  opacity: 0.55;
+}
+
+/* API --------------------------------------------------------------------- */
+.gx-api-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+.gx-api-ns {
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: rgb(241 245 249);
+}
+.gx-endpoints {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.gx-endpoints li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.3rem;
+}
+.gx-method {
+  flex-shrink: 0;
+  border-radius: 0.3rem;
+  padding: 0.05rem 0.35rem;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.gx-method-get {
+  background: rgba(13, 148, 136, 0.3);
+  color: rgb(153 246 228);
+}
+.gx-method-post {
+  background: rgba(59, 130, 246, 0.3);
+  color: rgb(191 219 254);
+}
+.gx-method-put,
+.gx-method-patch {
+  background: rgba(217, 119, 6, 0.3);
+  color: rgb(253 230 138);
+}
+.gx-method-delete {
+  background: rgba(220, 38, 38, 0.3);
+  color: rgb(254 202 202);
+}
+.gx-op {
+  font-size: 0.62rem;
+  color: rgb(148 163 184);
+}
+.gx-endpoint-desc {
+  width: 100%;
+  font-size: 0.62rem;
+  color: rgb(100 116 139);
+}
+
+/* Architecture ------------------------------------------------------------ */
+.gx-arch-cells {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  margin-bottom: 0.75rem;
+}
+.gx-cell {
+  border-radius: 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(2, 6, 23, 0.5);
+  padding: 0.5rem 0.6rem;
+}
+.gx-cell-web {
+  border-color: rgba(59, 130, 246, 0.45);
+}
+.gx-cell-service {
+  border-color: rgba(13, 148, 136, 0.5);
+}
+.gx-cell-data {
+  border-color: rgba(168, 85, 247, 0.45);
+}
+.gx-cell-worker {
+  border-color: rgba(217, 119, 6, 0.45);
+}
+.gx-cell-name {
+  font-weight: 700;
+  font-size: 0.74rem;
+  color: rgb(241 245 249);
+}
+.gx-cell-adapter {
+  font-size: 0.6rem;
+  color: rgb(94 234 212);
+}
+.gx-cell-desc {
+  font-size: 0.64rem;
+  color: rgb(148 163 184);
+  margin: 0.15rem 0;
+}
+.gx-cell-dna {
+  font-size: 0.55rem !important;
+}
+.gx-edges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.gx-edges li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.66rem;
+}
+.gx-edge-arrow {
+  color: rgb(94 234 212);
+}
+.gx-edge-type {
+  font-size: 0.6rem;
+  color: rgb(100 116 139);
+}
+
+/* Environments ------------------------------------------------------------ */
+.gx-envs {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+.gx-env {
+  border-radius: 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(2, 6, 23, 0.4);
+  padding: 0.6rem 0.7rem;
+}
+.gx-env-name {
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: rgb(241 245 249);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.gx-env-desc {
+  font-size: 0.65rem;
+  color: rgb(148 163 184);
+  margin: 0.15rem 0 0.4rem;
+}
+.gx-env-section {
+  margin-top: 0.4rem;
+}
+
+@media (max-width: 640px) {
+  .gx-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

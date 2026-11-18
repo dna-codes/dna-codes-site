@@ -17,6 +17,9 @@
 // drift to.
 
 import type { IndustryKey } from '~/data/industries';
+import type { Provenance } from './genome-provenance.ts';
+
+export type { Provenance, ProvenanceSource } from './genome-provenance.ts';
 
 // --- Authored format -------------------------------------------------------
 
@@ -225,6 +228,13 @@ export interface OntologyRef {
 
 export interface AuthoredGenome {
   key: IndustryKey;
+  /**
+   * Fictional, or modeled from public sources. A public-sources genome cites at least three
+   * sources, and it names no real individual: persons, memberships, descriptions and attribute
+   * values describe a kind of person in a role. The build checks the sources. A reviewer checks
+   * the no-individuals rule. See ./genome-provenance.
+   */
+  provenance: Provenance;
   /** The standards this genome's vocabulary is drawn from. At least two — see the validator. */
   ontologies: OntologyRef[];
   /** PascalCase root domain name. */

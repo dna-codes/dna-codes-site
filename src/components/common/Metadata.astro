@@ -70,6 +70,8 @@ function buildOpenGraph(og: MetaDataOpenGraph): SEOProps['openGraph'] | undefine
 const mergedTwitter = merge(
   {
     card: (adaptedOg?.images?.length ? 'summary_large_image' : 'summary') as 'summary_large_image' | 'summary',
+    // The same card as og:image, stated for crawlers that read only the twitter: tags.
+    ...(firstImage?.url ? { image: firstImage.url, imageAlt: title || METADATA?.title?.default || '' } : {}),
   },
   METADATA?.twitter
     ? {

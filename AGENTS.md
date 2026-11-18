@@ -452,7 +452,7 @@ Do not add these pages to `public/agents/`. `dna-codes-platform` generates that 
 
 ## Search crawl
 
-Moz crawls the live site. `npm run check:crawl` runs four checks on `dist/` after `npm run build`. CI runs the same command. A page that fails a check is the same finding as the crawl export.
+Moz crawls the live site. `npm run check:crawl` runs four crawl checks on `dist/` after `npm run build`, plus a genome-page check. Every compiled genome needs its `/playground/<key>/` page, its card on `/operating-model-template`, a 1200 × 628 share card, and a sitemap and `/llms.txt` entry. CI runs the same command. A page that fails a check is the same finding as the crawl export.
 
 **Canonical.** Each indexable page needs `<link rel="canonical">`. `Metadata.astro` adds the link for a page that uses the layout. A file in `public/` is copied as written. Add the link in that file. `/building-with-ai/` shipped without one.
 
@@ -462,12 +462,16 @@ Moz crawls the live site. `npm run check:crawl` runs four checks on `dist/` afte
 
 **Thin content.** Moz counts words in the HTML. Moz does not read `<script>`. Moz does not count words that exist only after JavaScript runs. `/building-with-ai/` is a self-contained app. Its copy lives in a script. The crawl saw a header and an empty panel. The text version is the `.crawl-summary` article in `public/building-with-ai/index.html`. The article is in the body, outside the script. CSS clips it, so the full-screen companion does not scroll. Keep the article past 250 words. Keep it aligned with the eras and the phases in the script. A new indexable HTML file under `public/` has the same requirement. `public/agents/` is generated elsewhere and is not part of this check. Do not put the only copy of the words in `<noscript>`, in `hidden`, or in `display:none`.
 
+## Text next to a link
+
+Astro's HTML compression deletes a line break between text and an inline tag. Prettier wraps long lines, so a template line that ends in `read the` before a line that starts with `<a>` renders as "read the<a>…". The same happens after a closing tag such as `</strong>`. End the text line with `&#32;`. Astro keeps it, and Prettier leaves it alone. `npm run check:spacing` fails on the pattern. It skips `<pre>`, `<script>` and `<style>`.
+
 ## Verification
 
 After a change, run these checks:
 
 1. `npm run build` completes with no error.
-2. `npm run check` passes. The command runs astro check, ESLint, and Prettier.
+2. `npm run check` passes. The command runs astro check, ESLint, Prettier, and `check:spacing`.
 3. `npm run check:agentic` passes. It checks the is-agentic.com signals in `dist/`.
 4. `npm run check:ax` passes. It checks Markdown negotiation for the homepage.
 5. `npm run check:keywords` passes. It checks the keyword registry against `dist/`.

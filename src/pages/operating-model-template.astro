@@ -1,0 +1,101 @@
+---
+// /operating-model-template: the Use Cases page for people searching for a template. One card per
+// genome in the corpus, built from the corpus alone, so a new genome adds its own card. Each card
+// opens that company's page in the Playground. The search title and description come from the
+// keyword registry.
+import Layout from '~/layouts/PageLayout.astro';
+import WaitlistForm from '~/components/widgets/WaitlistForm.astro';
+import { genomeEntries } from '~/utils/genome-pages';
+import { seoFor } from '~/utils/seo';
+import { getCanonical } from '~/utils/permalinks';
+
+const entries = genomeEntries();
+const metadata = {
+  ...seoFor('/operating-model-template'),
+  openGraph: {
+    images: [
+      { url: String(getCanonical('/operating-model-template.png')).replace(/\/$/, ''), width: 1200, height: 628 },
+    ],
+  },
+};
+
+const COUNTS = [
+  { key: 'roles', one: 'role', many: 'roles' },
+  { key: 'processes', one: 'process', many: 'processes' },
+  { key: 'rules', one: 'rule', many: 'rules' },
+  { key: 'systems', one: 'system', many: 'systems' },
+] as const;
+---
+
+<Layout metadata={metadata}>
+  <article class="mx-auto max-w-6xl px-4 pb-4 pt-16 sm:px-6">
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight mx-auto max-w-3xl"
+    >
+      <p class="text-sm font-semibold tracking-wide text-primary">Operating Model Template</p>
+      <h1>An Operating Model Template, Already Filled In</h1>
+      <p>
+        Most operating model templates are a slide of empty boxes. Each one below is a whole company instead: the roles
+        and who they report to, the process with a role on every step, the rules on those steps, and the systems that
+        carry the data. Open one to see how the company works, then download it as the starting point for yours.
+      </p>
+    </div>
+
+    <ul class="not-prose mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        entries.map((e) => (
+          <li class="flex">
+            <a
+              href={`/playground/${e.key}/`}
+              class="group flex w-full flex-col rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-primary dark:border-slate-700/60 dark:bg-slate-900"
+              data-genome-card={e.key}
+            >
+              <span class="text-xs font-bold uppercase tracking-widest text-primary">{e.industry}</span>
+              <span class="mt-1 font-heading text-xl font-bold dark:text-slate-100">{e.orgName}</span>
+              <span class="mt-1 text-xs font-medium text-muted dark:text-slate-400" data-provenance>
+                {e.provenanceLabel}
+              </span>
+              <span class="mt-3 flex-1 text-sm text-muted dark:text-slate-300">{e.description}</span>
+              <span class="mt-4 grid grid-cols-4 gap-2 text-center text-xs text-muted dark:text-slate-400">
+                {COUNTS.map((c) => (
+                  <span>
+                    <strong class="block text-lg text-slate-900 dark:text-slate-100" data-count={c.key}>
+                      {e.counts[c.key]}
+                    </strong>
+                    {e.counts[c.key] === 1 ? c.one : c.many}
+                  </span>
+                ))}
+              </span>
+              <span class="mt-4 text-sm font-semibold text-primary group-hover:underline">Open the company →</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div
+      class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight mx-auto mt-14 max-w-3xl"
+    >
+      <h2>A Business Operating Model Template That Runs</h2>
+      <p>
+        A business operating model template only helps if it stays true after the workshop. Each company here is written
+        as DNA, so every role reports to another role, every step names who does it and which operation it performs, and
+        every rule sits on the operation it governs. The build checks each one against the published DNA schemas, so
+        what you download is valid DNA, not a drawing of it.
+      </p>
+      <p>
+        Each card says whether its company is fictional or modeled from public sources. Each company uses the vocabulary
+        its industry already publishes, and its page names those standards.
+      </p>
+      <p>
+        Each company page also gives you a prompt that starts an agent from that model, so you can draft your own in
+        conversation. For the case behind a runnable model, read the&#32;
+        <a href="/operating-model/">target operating model</a> page. To compare companies lens by lens, open the&#32;
+        <a href="/playground/">Playground</a>.
+      </p>
+    </div>
+  </article>
+  <div class="mx-auto max-w-3xl px-4 pb-16 sm:px-6">
+    <WaitlistForm preselect="operations" />
+  </div>
+</Layout>

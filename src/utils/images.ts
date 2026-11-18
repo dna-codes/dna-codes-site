@@ -58,6 +58,12 @@ export const adaptOpenGraphImages = async (
     openGraph.images.map(async (image) => {
       if (!image?.url) return { url: '' };
 
+      // An absolute URL with its size already stated is a card the build renders itself, such
+      // as /genome/<key>.png. It is not a file yet when this runs, so pass it through as is.
+      if (/^https?:\/\//.test(image.url) && image.width && image.height) {
+        return { url: image.url, width: image.width, height: image.height };
+      }
+
       const resolved = await findImage(image.url);
       if (!resolved) return { url: '' };
 

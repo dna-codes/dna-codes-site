@@ -11,8 +11,10 @@
 // homepage's demo at risk to save a hundred lines here.
 
 import type { CompiledGenome, DnaNoun, DnaRule } from '~/utils/genome-types';
-import { humanize } from '~/utils/genome-compile';
+import { humanize, labelFor, titleFor } from '~/utils/genome-labels';
 import type { OutputId } from '~/data/industries';
+
+export { labelFor, titleFor };
 
 // --- Shared helpers ---------------------------------------------------------
 
@@ -20,31 +22,6 @@ const roles = (g: CompiledGenome): DnaNoun[] => g.operational.domain.roles ?? []
 const resources = (g: CompiledGenome): DnaNoun[] => g.operational.domain.resources ?? [];
 const rules = (g: CompiledGenome): DnaRule[] => g.operational.rules ?? [];
 const theProcess = (g: CompiledGenome) => g.operational.processes?.[0];
-
-const split = (name: string): string => name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ');
-
-/**
- * Sentence case, for things that read as a phrase: field names and rule names.
- * `enterpriseValue` → `Enterprise value`. `PaymentClearsBeforeStockMoves` → `Payment clears
- * before stock moves`, which is the sentence the rule is.
- */
-export function labelFor(name: string): string {
-  const spaced = split(name);
-  return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
-}
-
-/**
- * Title case, for proper nouns: roles, groups, entities, pages. `ManagingPartner` →
- * `Managing Partner`. A job title in sentence case reads like a typo, and these are the strings
- * a visitor scans first.
- */
-export function titleFor(name: string): string {
-  return split(name)
-    .split(' ')
-    .filter(Boolean)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
-}
 
 /** Steps in declared order, with the task that runs each one resolved. */
 function orderedSteps(g: CompiledGenome) {
@@ -407,6 +384,14 @@ export function accessControl(g: CompiledGenome): AccessControlVm {
     ungoverned: operations.filter((o) => !o.governedBy).map((o) => o.name),
   };
 }
+
+// --- Gallery view-models ------------------------------------------------------
+//
+// The genome map and the questions live in ./genome-map so `node --test` can load them. They are
+// not Playground outputs, so they sit beside the registry, not in it.
+
+export { genomeMap, genomeQuestions } from '~/utils/genome-map';
+export type { GenomeMapVm, GenomeQuestionsVm, RoleReach } from '~/utils/genome-map';
 
 // --- The registry -----------------------------------------------------------
 

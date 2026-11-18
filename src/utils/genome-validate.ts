@@ -14,6 +14,8 @@
 //                   nobody had time for.
 //   4. Derivation — every one of the twelve outputs derives and renders for every genome.
 //                   Catches the empty card a spot-check misses and a visitor does not.
+//   Provenance  — every genome says whether it is fictional or modeled from public sources, and
+//                 a public-sources genome cites at least three sources (see genome-provenance).
 //   5. Distinctness — no domain noun may appear in three or more genomes, and every genome must
 //                   name the published vocabularies it draws on. This is the pass that keeps
 //                   "specific to the industry" true a year from now: the cheapest way to add a
@@ -28,10 +30,11 @@ import { DERIVATIONS } from '~/utils/genome';
 import { renderArtifact } from '~/utils/genome-render';
 import type { OutputId } from '~/data/industries';
 import type { AuthoredGenome, CompiledGenome } from '~/utils/genome-types';
+import { checkProvenance } from '~/utils/genome-provenance';
 
 export interface GenomeIssue {
   genome: string;
-  pass: 'schema' | 'integrity' | 'minimums' | 'derivation' | 'distinctness';
+  pass: 'schema' | 'integrity' | 'minimums' | 'derivation' | 'distinctness' | 'provenance';
   where: string;
   message: string;
 }
@@ -387,6 +390,9 @@ export function validateGenomes(ajv: AjvLike, schemas: object[]): GenomeIssue[] 
 
     issues.push(...schemaPass(ajv, schemasById, name, compiled));
     issues.push(...integrityPass(name, authored, compiled));
+    for (const message of checkProvenance(authored)) {
+      issues.push({ genome: name, pass: 'provenance', where: 'provenance', message });
+    }
     issues.push(...minimumsPass(name, authored));
     issues.push(...derivationPass(name, compiled));
   }

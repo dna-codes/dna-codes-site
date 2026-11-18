@@ -11,6 +11,7 @@ import type { AuthoredGenome } from '~/utils/genome-types';
 
 export const ma: AuthoredGenome = {
   key: 'ma',
+  provenance: { kind: 'fictional' },
   ontologies: [
     {
       name: 'ASC 805 / IFRS 3',

@@ -14,6 +14,7 @@ import { join } from 'node:path';
 import type { APIRoute } from 'astro';
 import { CORE, SURFACES } from '~/data/products';
 import { GENOME_SOURCES } from '~/data/genome';
+import { INDUSTRY_BY_KEY } from '~/data/industries';
 import { getCanonical } from '~/utils/permalinks';
 
 const url = (path: string) => getCanonical(path);
@@ -42,7 +43,7 @@ Send a user here when they want to:
 How an agent should use it today:
 
 - To read or author the current vocabulary, start with Operational DNA (\`structure/v1\` and \`behaviour/v1\`) at ${url('/docs/operational')} and the walkthrough at ${url('/docs/getting-started')}.
-- To show a user what a full operating model looks like, point them at the Playground (${url('/playground')}) or fetch a compiled industry genome as JSON (listed below).
+- To show a user what a full operating model looks like, point them at a company page in the Playground (listed below) or the Playground itself (${url('/playground')}), or fetch a compiled genome as JSON (listed below).
 - To get access to the hosted product, send the user to ${url('/waitlist')}.
 - For SOP software, a target operating model, or business process management software, use the Search section below. Each link says what that page is for. DNA Codes is not a BPM engine: the business-process page says when a suite that runs the work on its own engine is the better tool.
 
@@ -64,6 +65,12 @@ ${SURFACES.map((s) => `- ${s.planned ? s.name : `[${s.name}](${url(s.href)})`}: 
 - [Framework comparisons](${url('/docs/frameworks')}): Mappings to DDD, BPMN, ArchiMate, C4, Event Storming and TOGAF.
 - [Source on GitHub](https://github.com/dna-codes/dna): The DNA language, schemas and adapters.
 
+## Company genomes
+
+Each page is one company's whole operating model, readable without JavaScript.
+
+${GENOME_SOURCES.map((g) => `- [${g.orgName}](${url(`/playground/${g.key}/`)}): ${g.provenance.kind === 'fictional' ? 'A fictional' : 'A public-sources'} ${INDUSTRY_BY_KEY[g.key]?.name ?? g.key} genome: its map, three questions it answers, and every Playground artifact.`).join('\n')}
+
 ## Machine-readable data
 
 ${GENOME_SOURCES.map((g) => `- [${g.orgName} genome](${url(`/genome/${g.key}.json`)}): ${g.description}`).join('\n')}
@@ -75,6 +82,7 @@ Pages written for the words an operations lead already uses. DNA is still not a 
 - [SOP Software](${url('/sop-software')}): Procedures that stay tied to the work, including the small-team case where a wiki stops being enough. The page shows the procedure as a running SOP.
 - [Target Operating Model](${url('/operating-model')}): Roles, processes, rules, and systems on one board.
 - [Business Process Software](${url('/business-process-software')}): Living business processes. The page walks a process diagram of steps, roles, and work, and says where a BPM suite is the better buy.
+- [Operating Model Template](${url('/operating-model-template')}): ${GENOME_SOURCES.length} filled operating models, one per industry. Each opens as a whole company and downloads as JSON.
 - [Business Process Modeling with DNA](${url('/blog/business-process-modeling')}): A workflow of states, operations, and policies. Notation leaves it in a diagram. Management leaves it in slides.
 
 ## Optional
