@@ -54,6 +54,10 @@ An unclaimed sandbox may perform at most 100 governed acts per day: performed ac
 | GET | `https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/api` | none |
 | GET | `https://agents.dna.codes/.well-known/oauth-protected-resource/workspaces` | none |
 | POST | `https://agents.dna.codes/o/{org}/mcp` | bearer |
+| GET | `https://agents.dna.codes/.well-known/oauth-protected-resource/mcp` | none |
+| POST | `https://agents.dna.codes/mcp` | bearer |
+| GET | `https://agents.dna.codes/.well-known/mcp/server-card.json` | none |
+| GET | `https://agents.dna.codes/.well-known/agent-card.json` | none |
 | GET | `https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/a2a` | none |
 | GET | `https://agents.dna.codes/o/{org}/a2a/agent-card` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/a2a` | bearer |

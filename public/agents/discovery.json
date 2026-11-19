@@ -93,6 +93,34 @@
       "auth": "bearer",
       "summary": "MCP over Streamable HTTP for one organization"
     },
+    "org-agnostic-protected-resource-metadata": {
+      "method": "GET",
+      "path": "/.well-known/oauth-protected-resource/mcp",
+      "href": "https://agents.dna.codes/.well-known/oauth-protected-resource/mcp",
+      "auth": "none",
+      "summary": "RFC 9728 metadata for the one MCP URL"
+    },
+    "org-agnostic-mcp": {
+      "method": "POST",
+      "path": "/mcp",
+      "href": "https://agents.dna.codes/mcp",
+      "auth": "bearer",
+      "summary": "MCP over Streamable HTTP at one URL. The token names one organization, chosen when the person authorized it, and the tools act there as at /o/{org}/mcp"
+    },
+    "server-card": {
+      "method": "GET",
+      "path": "/.well-known/mcp/server-card.json",
+      "href": "https://agents.dna.codes/.well-known/mcp/server-card.json",
+      "auth": "none",
+      "summary": "The MCP server card: the server's name, transport, auth requirement and shipped tools, for scanners with no credential"
+    },
+    "agent-card": {
+      "method": "GET",
+      "path": "/.well-known/agent-card.json",
+      "href": "https://agents.dna.codes/.well-known/agent-card.json",
+      "auth": "none",
+      "summary": "The public A2A Agent Card: the shipped tools as skills, the one MCP URL and the OAuth endpoints, with no organization data"
+    },
     "a2a-protected-resource-metadata": {
       "method": "GET",
       "path": "/.well-known/oauth-protected-resource/o/{org}/a2a",

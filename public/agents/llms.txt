@@ -2,9 +2,17 @@
 
 > How an agent reaches DNA: read and author an organization's DNA over MCP, HTTP and A2A at the agent host, https://agents.dna.codes. This file is a reading aid; the discovery document is authoritative.
 
+## Agents: start here
+
+1. Register a sandbox yourself: `npx @dna-codes/cli register --json`. It is free, needs no person, and returns a credential, an MCP endpoint and a claim link.
+2. Connect MCP: add the returned endpoint as one MCP server, with the credential as a bearer token. [Authentication](https://dna.codes/agents/auth.md) has the details.
+3. Draft and validate with your person: write structure/v1 and behaviour/v1 for their business, check it with `validate` (it writes nothing), and call `apply` when they ask to save.
+4. Hand your person the claim link after useful work. Claiming is how they sign up and keep the model.
+5. Optional, and only with your person's OK: add the rule ([AGENTS.md](https://dna.codes/agents/snippets/agents-md.md), [Cursor](https://dna.codes/agents/snippets/cursor-rule.mdc), [CLAUDE.md](https://dna.codes/agents/snippets/claude-md.md)) and install the skills: `npx skills add dna-codes/skills --skill dna-operational --skill dna-sync`.
+
 This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Events are not emitted yet.
 
-## Start here
+## Documents
 
 - [Discovery](https://dna.codes/agents/discovery.json): the base URL, every endpoint, the profile versions and each definition's status. Authoritative.
 - [Authentication](https://dna.codes/agents/auth.md): bearer tokens, the authorization server, client registration and the pre-claim cap
@@ -19,6 +27,10 @@ This release covers structure and behaviour: `attribute` is stable, `entity` is 
 - `GET https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/api` (no credential): RFC 9728 metadata for one organization's HTTP API
 - `GET https://agents.dna.codes/.well-known/oauth-protected-resource/workspaces` (no credential): RFC 9728 metadata for the Workspace listing
 - `POST https://agents.dna.codes/o/{org}/mcp` (bearer): MCP over Streamable HTTP for one organization
+- `GET https://agents.dna.codes/.well-known/oauth-protected-resource/mcp` (no credential): RFC 9728 metadata for the one MCP URL
+- `POST https://agents.dna.codes/mcp` (bearer): MCP over Streamable HTTP at one URL. The token names one organization, chosen when the person authorized it, and the tools act there as at /o/{org}/mcp
+- `GET https://agents.dna.codes/.well-known/mcp/server-card.json` (no credential): The MCP server card: the server's name, transport, auth requirement and shipped tools, for scanners with no credential
+- `GET https://agents.dna.codes/.well-known/agent-card.json` (no credential): The public A2A Agent Card: the shipped tools as skills, the one MCP URL and the OAuth endpoints, with no organization data
 - `GET https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/a2a` (no credential): RFC 9728 metadata for one organization's A2A endpoint
 - `GET https://agents.dna.codes/o/{org}/a2a/agent-card` (bearer): A2A Agent Card: skills derived from this organization's Actions
 - `POST https://agents.dna.codes/o/{org}/a2a` (bearer): A2A JSON-RPC SendMessage for one organization; each skill is an Action

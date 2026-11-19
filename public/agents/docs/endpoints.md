@@ -8,6 +8,10 @@ Every endpoint is under the agent host's base, `https://agents.dna.codes`. `{org
 | `api-protected-resource-metadata` | GET | `https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/api` | none | RFC 9728 metadata for one organization's HTTP API |
 | `workspaces-protected-resource-metadata` | GET | `https://agents.dna.codes/.well-known/oauth-protected-resource/workspaces` | none | RFC 9728 metadata for the Workspace listing |
 | `mcp` | POST | `https://agents.dna.codes/o/{org}/mcp` | bearer | MCP over Streamable HTTP for one organization |
+| `org-agnostic-protected-resource-metadata` | GET | `https://agents.dna.codes/.well-known/oauth-protected-resource/mcp` | none | RFC 9728 metadata for the one MCP URL |
+| `org-agnostic-mcp` | POST | `https://agents.dna.codes/mcp` | bearer | MCP over Streamable HTTP at one URL. The token names one organization, chosen when the person authorized it, and the tools act there as at /o/{org}/mcp |
+| `server-card` | GET | `https://agents.dna.codes/.well-known/mcp/server-card.json` | none | The MCP server card: the server's name, transport, auth requirement and shipped tools, for scanners with no credential |
+| `agent-card` | GET | `https://agents.dna.codes/.well-known/agent-card.json` | none | The public A2A Agent Card: the shipped tools as skills, the one MCP URL and the OAuth endpoints, with no organization data |
 | `a2a-protected-resource-metadata` | GET | `https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/a2a` | none | RFC 9728 metadata for one organization's A2A endpoint |
 | `a2a-agent-card` | GET | `https://agents.dna.codes/o/{org}/a2a/agent-card` | bearer | A2A Agent Card: skills derived from this organization's Actions |
 | `a2a` | POST | `https://agents.dna.codes/o/{org}/a2a` | bearer | A2A JSON-RPC SendMessage for one organization; each skill is an Action |
