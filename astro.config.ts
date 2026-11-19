@@ -66,7 +66,13 @@ export default defineConfig({
     // @astrojs/sitemap lists Astro routes only. The agent set under public/agents/ is copied
     // verbatim, so its documents are added by hand. /sitemap.xml is the path most clients try
     // first; it is a copy of the index, because GitHub Pages has no rewrites.
-    sitemap({ customPages: agentDocumentUrls(path.join(__dirname, 'public/agents'), 'https://dna.codes') }),
+    // The talk companion is also a public/ page, so it is listed by hand for the same reason.
+    sitemap({
+      customPages: [
+        'https://dna.codes/building-with-ai/',
+        ...agentDocumentUrls(path.join(__dirname, 'public/agents'), 'https://dna.codes'),
+      ],
+    }),
     {
       name: 'sitemap-xml-alias',
       hooks: {
