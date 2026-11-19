@@ -4,19 +4,19 @@ Write each test red first.
 
 ## 1. Tests
 
-- [ ] 1.1 Failing test: root `llms.txt` has "Agents: start here" first; the only waitlist line is the one addressed to people without an agent.
-- [ ] 1.2 Failing test: the homepage hero still links `/waitlist/`, and nav and footer also link `/agents/`.
-- [ ] 1.3 Failing test: `dist/llms-full.txt` equals `public/agents/llms-full.txt`.
-- [ ] 1.4 Failing test: sitemap lists `/agents/`, `/agents/llms.txt`, `/agents/auth.md`; `dist/sitemap.xml` exists.
-- [ ] 1.5 Failing test: homepage has both alternates and a `SoftwareApplication` with three `sameAs`.
+- [x] 1.1 Failing test: root `llms.txt` has "Agents: start here" first; the only waitlist line is the one addressed to people without an agent.
+- [x] 1.2 Failing test: the homepage hero still links `/waitlist/`, and nav and footer also link `/agents/`.
+- [x] 1.3 Failing test: `dist/llms-full.txt` equals `public/agents/llms-full.txt`.
+- [x] 1.4 Failing test: sitemap lists `/agents/`, `/agents/llms.txt`, `/agents/auth.md`; `dist/sitemap.xml` exists.
+- [x] 1.5 Failing test: homepage has both alternates and a `SoftwareApplication` with three `sameAs`.
 
 ## 2. Implementation
 
-- [ ] 2.1 `navigation.ts`: add a "For agents" `/agents/` link to nav and footer; keep the waitlist button.
-- [ ] 2.2 `llms.txt.ts`: insert the block (design D3); replace the two waitlist lines.
-- [ ] 2.3 Head alternates for `/llms.txt` and `/agents/discovery.json`.
-- [ ] 2.4 Build copy for `/llms-full.txt` and `/sitemap.xml`; sitemap `customPages` (D4, D5).
-- [ ] 2.5 `StructuredData.astro` (D6).
+- [x] 2.1 `navigation.ts`: add a "For agents" `/agents/` link to nav and footer; keep the waitlist button.
+- [x] 2.2 `llms.txt.ts`: insert the block (design D3); replace the two waitlist lines.
+- [x] 2.3 Head alternates for `/llms.txt` and `/agents/discovery.json`.
+- [x] 2.4 Build copy for `/llms-full.txt` and `/sitemap.xml`; sitemap `customPages` (D4, D5).
+- [x] 2.5 `StructuredData.astro` (D6).
 
 ## 3. Release
 
