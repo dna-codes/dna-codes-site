@@ -1,5 +1,6 @@
 import { PRODUCTS } from './data/products';
 import { getBlogPermalink, getPermalink } from './utils/permalinks';
+import { AGENTS_HREF, AGENTS_TEXT } from './utils/agent-front-door';
 
 // Single source of truth for the waitlist. Product pages embed the same form inline with
 // their own interest pre-ticked; every other primary button on the site comes here.
@@ -88,7 +89,14 @@ export const headerData = {
   // The one primary button on the site is the one conversion available pre-GA. Navigating
   // to a product is what the Products menu and the homepage cards are for, so the green
   // button never spends itself on a link a visitor already has two ways to reach.
-  actions: [{ text: 'Join the waitlist', href: WAITLIST_HREF, variant: 'primary' as const }],
+  //
+  // "For agents" is the second door, not a second conversion: a person can hand /agents/ to their
+  // agent, and the agent registers a sandbox there. It is a plain link so the button stays the
+  // one primary action.
+  actions: [
+    { text: AGENTS_TEXT, href: AGENTS_HREF, variant: 'link' as const },
+    { text: 'Join the waitlist', href: WAITLIST_HREF, variant: 'primary' as const },
+  ],
 };
 
 export const footerData = {
@@ -108,6 +116,7 @@ export const footerData = {
         { text: 'Getting started', href: getPermalink('/docs/getting-started') },
         { text: 'Blog', href: getBlogPermalink() },
         { text: 'Building With AI', href: getPermalink('/building-with-ai') },
+        { text: AGENTS_TEXT, href: AGENTS_HREF },
       ],
     },
     {

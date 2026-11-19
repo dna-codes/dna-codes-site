@@ -2,12 +2,22 @@
 import { SITE } from 'astrowind:config';
 import { PRODUCTS } from '~/data/products';
 import { getCanonical } from '~/utils/permalinks';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { SAME_AS, softwareApplication, type AgentPricing } from '~/utils/agent-front-door';
 
 // The homepage is where agents and search engines resolve who the site belongs to, so the
 // Organization lives there and nowhere else. No email, phone or postal address yet: the
 // contact page and its form are the honest contact point until those exist.
 const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
 const origin = String(SITE.site).replace(/\/$/, '');
+
+// The product's offers come from the agent pricing that dna-codes-platform publishes, the same
+// file an agent reads at /agents/pricing.json. Without it the node carries no offers.
+const pricingFile = join(process.cwd(), 'public/agents/pricing.json');
+const pricing: AgentPricing | undefined = existsSync(pricingFile)
+  ? JSON.parse(readFileSync(pricingFile, 'utf8'))
+  : undefined;
 
 const graph = {
   '@context': 'https://schema.org',
@@ -20,7 +30,7 @@ const graph = {
       logo: `${origin}/favicon.png`,
       description:
         'DNA Codes builds a living operating model for teams of humans and agents: define roles, processes and rules once, then govern every screen, endpoint and agent from it.',
-      sameAs: ['https://github.com/dna-codes'],
+      sameAs: SAME_AS,
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'sales',
@@ -32,6 +42,7 @@ const graph = {
         itemOffered: { '@type': 'Service', name, description, url: getCanonical(href) },
       })),
     },
+    softwareApplication(pricing, origin),
     {
       '@type': 'WebSite',
       '@id': `${origin}/#website`,

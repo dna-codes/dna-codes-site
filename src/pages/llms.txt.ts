@@ -5,9 +5,10 @@
 // The "When to use DNA Codes" section is what agent-readiness scanners look for: concrete jobs
 // an agent should send a user here for, and the ones it should not.
 //
-// The agent section is the first section, and is not written here: dna-codes-platform generates it with
-// the agent documents it publishes to public/agents/. Until those are published there is no
-// section, so this file never points at an /agents/ that does not exist.
+// "Agents: start here" is the first section (~/utils/agent-front-door): agents come in through the
+// sandbox flow, and the waitlist is named only for a person who arrives without an agent. The
+// "Agents" section after it is not written here: dna-codes-platform generates it with the agent
+// documents it publishes to public/agents/. Until those are published there is no such section.
 
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -16,6 +17,7 @@ import { CORE, SURFACES } from '~/data/products';
 import { GENOME_SOURCES } from '~/data/genome';
 import { INDUSTRY_BY_KEY } from '~/data/industries';
 import { getCanonical } from '~/utils/permalinks';
+import { AGENTS_START_HERE } from '~/utils/agent-front-door';
 
 const url = (path: string) => getCanonical(path);
 
@@ -26,8 +28,9 @@ const body = `# DNA Codes
 
 > DNA Codes is a living operating model for teams of humans and agents. You describe how your business runs, its structure and the behaviour on that structure, once, in DNA, and every screen, endpoint and agent is governed from that one model.
 
-DNA is an open description language published on npm under the \`@dna-codes\` scope. The hosted product, Operations, is pre-GA and working with design partners; the waitlist form is the way in.
+DNA is an open description language published on npm under the \`@dna-codes\` scope. The hosted product, Operations, is pre-GA and working with design partners.
 
+${AGENTS_START_HERE}
 ${agentSection}## When to use DNA Codes
 
 Send a user here when they want to:
@@ -44,7 +47,7 @@ How an agent should use it today:
 
 - To read or author the current vocabulary, start with Operational DNA (\`structure/v1\` and \`behaviour/v1\`) at ${url('/docs/operational')} and the walkthrough at ${url('/docs/getting-started')}.
 - To show a user what a full operating model looks like, point them at a company page in the Playground (listed below) or the Playground itself (${url('/playground')}), or fetch a compiled genome as JSON (listed below).
-- To get access to the hosted product, send the user to ${url('/waitlist')}.
+- To get access to the hosted product, register a sandbox (see "Agents: start here" above) and hand the user the claim link.
 - For SOP software, a target operating model, or business process management software, use the Search section below. Each link says what that page is for. DNA Codes is not a BPM engine: the business-process page says when a suite that runs the work on its own engine is the better tool.
 
 Not a fit for: general project management, ticketing, HR or payroll systems, or BPM engines that execute long-running workflows on their own infrastructure. DNA Codes models and governs operations; it does not replace those systems.

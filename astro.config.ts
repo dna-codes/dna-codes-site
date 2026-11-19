@@ -1,3 +1,4 @@
+import { copyFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -16,6 +17,7 @@ import astrowind from './vendor/integration';
 
 import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin } from './src/utils/frontmatter';
 import { resolveCoreSchemasRoot } from './src/utils/resolve-core-schemas.ts';
+import { agentDocumentUrls } from './src/utils/agent-front-door.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const coreSchemasRoot = resolveCoreSchemasRoot(__dirname);
@@ -61,7 +63,19 @@ export default defineConfig({
   },
 
   integrations: [
-    sitemap(),
+    // @astrojs/sitemap lists Astro routes only. The agent set under public/agents/ is copied
+    // verbatim, so its documents are added by hand. /sitemap.xml is the path most clients try
+    // first; it is a copy of the index, because GitHub Pages has no rewrites.
+    sitemap({ customPages: agentDocumentUrls(path.join(__dirname, 'public/agents'), 'https://dna.codes') }),
+    {
+      name: 'sitemap-xml-alias',
+      hooks: {
+        'astro:build:done': ({ dir }) => {
+          const out = fileURLToPath(dir);
+          copyFileSync(path.join(out, 'sitemap-index.xml'), path.join(out, 'sitemap.xml'));
+        },
+      },
+    },
     mdx(),
     icon({
       include: {
