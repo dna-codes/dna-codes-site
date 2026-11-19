@@ -150,7 +150,8 @@ Output:
                 "flow_unavailable",
                 "plan_limit",
                 "allowance_exhausted",
-                "spend_cap_reached"
+                "spend_cap_reached",
+                "person_required"
               ]
             },
             "message": {
@@ -337,7 +338,8 @@ Output:
                 "flow_unavailable",
                 "plan_limit",
                 "allowance_exhausted",
-                "spend_cap_reached"
+                "spend_cap_reached",
+                "person_required"
               ]
             },
             "message": {
@@ -624,7 +626,8 @@ Output:
                 "flow_unavailable",
                 "plan_limit",
                 "allowance_exhausted",
-                "spend_cap_reached"
+                "spend_cap_reached",
+                "person_required"
               ]
             },
             "message": {
@@ -817,7 +820,8 @@ Output:
                 "flow_unavailable",
                 "plan_limit",
                 "allowance_exhausted",
-                "spend_cap_reached"
+                "spend_cap_reached",
+                "person_required"
               ]
             },
             "message": {
@@ -1011,7 +1015,8 @@ Output:
                 "flow_unavailable",
                 "plan_limit",
                 "allowance_exhausted",
-                "spend_cap_reached"
+                "spend_cap_reached",
+                "person_required"
               ]
             },
             "message": {
@@ -1211,7 +1216,8 @@ Output:
                 "flow_unavailable",
                 "plan_limit",
                 "allowance_exhausted",
-                "spend_cap_reached"
+                "spend_cap_reached",
+                "person_required"
               ]
             },
             "message": {
@@ -1395,7 +1401,8 @@ Output:
                 "flow_unavailable",
                 "plan_limit",
                 "allowance_exhausted",
-                "spend_cap_reached"
+                "spend_cap_reached",
+                "person_required"
               ]
             },
             "message": {
@@ -1538,7 +1545,8 @@ Output:
                 "flow_unavailable",
                 "plan_limit",
                 "allowance_exhausted",
-                "spend_cap_reached"
+                "spend_cap_reached",
+                "person_required"
               ]
             },
             "message": {
@@ -1728,7 +1736,8 @@ Output:
                 "flow_unavailable",
                 "plan_limit",
                 "allowance_exhausted",
-                "spend_cap_reached"
+                "spend_cap_reached",
+                "person_required"
               ]
             },
             "message": {
@@ -1855,7 +1864,8 @@ Output:
                 "flow_unavailable",
                 "plan_limit",
                 "allowance_exhausted",
-                "spend_cap_reached"
+                "spend_cap_reached",
+                "person_required"
               ]
             },
             "message": {

@@ -45,7 +45,7 @@ Exact import names follow the live `@openrouter/mcp` docs at submit time.
 When **DNA's** platform model calls go through OpenRouter, send:
 
 - `HTTP-Referer: https://dna.codes`
-- `X-OpenRouter-Title: DNA`
+- `X-OpenRouter-Title: DNA Codes`
 - At most two recognized `X-OpenRouter-Categories` (e.g. `programming-app`)
 
 Cookbook sample agents using the developer's own key should still identify the

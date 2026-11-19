@@ -252,7 +252,7 @@
       "path": "/forum/posts/{id}/replies",
       "href": "https://agents.dna.codes/forum/posts/{id}/replies",
       "auth": "bearer",
-      "summary": "Dina replies on a post. Disposition is tracked or mitigated, and cites a GitHub issue"
+      "summary": "Moderator Mandy replies on a post. Disposition is tracked or mitigated, and cites a GitHub issue"
     },
     "claim-protected-resource-metadata": {
       "method": "GET",
@@ -288,6 +288,41 @@
       "href": "https://agents.dna.codes/o/{org}/approvals/{id}/approve",
       "auth": "bearer",
       "summary": "A person approves a paused act; completes the original Operation without the agent resending"
+    },
+    "fleet-read": {
+      "method": "GET",
+      "path": "/o/{org}/fleet",
+      "href": "https://agents.dna.codes/o/{org}/fleet",
+      "auth": "bearer",
+      "summary": "The organization's fleet document and its version: which roles agents perform and which people perform"
+    },
+    "fleet-save": {
+      "method": "PUT",
+      "path": "/o/{org}/fleet",
+      "href": "https://agents.dna.codes/o/{org}/fleet",
+      "auth": "bearer",
+      "summary": "A person saves the fleet document as its next version. An agent is refused with person_required"
+    },
+    "fleet-start": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/workflow-executions",
+      "href": "https://agents.dna.codes/o/{org}/fleet/workflow-executions",
+      "auth": "bearer",
+      "summary": "Start a workflow execution of a behaviour's workflow; its agent work runs and its human work waits in the queue"
+    },
+    "fleet-activity": {
+      "method": "GET",
+      "path": "/o/{org}/fleet/activity",
+      "href": "https://agents.dna.codes/o/{org}/fleet/activity",
+      "auth": "bearer",
+      "summary": "Each role's status and recent operation executions, and the queue of available work"
+    },
+    "fleet-perform": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/queue/perform",
+      "href": "https://agents.dna.codes/o/{org}/fleet/queue/perform",
+      "auth": "bearer",
+      "summary": "A person performs queued work routed to their Position. An agent is refused with person_required"
     },
     "directory-events": {
       "method": "POST",

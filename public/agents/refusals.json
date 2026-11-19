@@ -137,6 +137,11 @@
       "code": "spend_cap_reached",
       "status": 402,
       "next": "Ask your person to raise the spend cap for this workspace. An agent credential cannot raise it."
+    },
+    {
+      "code": "person_required",
+      "status": 403,
+      "next": "Only a person may do this. Ask your person to sign in and do it; an agent credential cannot."
     }
   ]
 }

@@ -82,6 +82,11 @@ An unclaimed sandbox may perform at most 100 governed acts per day: performed ac
 | GET | `https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/approvals` | none |
 | GET | `https://agents.dna.codes/o/{org}/approvals/{id}` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/approvals/{id}/approve` | bearer |
+| GET | `https://agents.dna.codes/o/{org}/fleet` | bearer |
+| PUT | `https://agents.dna.codes/o/{org}/fleet` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/workflow-executions` | bearer |
+| GET | `https://agents.dna.codes/o/{org}/fleet/activity` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/queue/perform` | bearer |
 | POST | `https://agents.dna.codes/directory/events` | none |
 | POST | `https://agents.dna.codes/o/{org}/plan/sso` | bearer |
 

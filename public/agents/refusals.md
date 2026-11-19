@@ -42,5 +42,6 @@ Over HTTP the refusal is the response body. In an MCP tool result it is `structu
 | `plan_limit` | 402 | This feature needs a plan that includes it. Upgrade the workspace plan, or use a host whose discovery document lists the feature as provided and entitled. |
 | `allowance_exhausted` | 429 | Wait for the allowance to reset, or ask your person to raise the plan's allowance. |
 | `spend_cap_reached` | 402 | Ask your person to raise the spend cap for this workspace. An agent credential cannot raise it. |
+| `person_required` | 403 | Only a person may do this. Ask your person to sign in and do it; an agent credential cannot. |
 
 The same table as JSON: [refusals.json](https://dna.codes/agents/refusals.json).
