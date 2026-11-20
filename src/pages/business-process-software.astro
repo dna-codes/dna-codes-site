@@ -5,20 +5,62 @@ import LivingProcess from '~/components/widgets/use-case/LivingProcess.astro';
 import { seoFor } from '~/utils/seo';
 
 const metadata = seoFor('/business-process-software');
+
+// One list feeds the visible answers and the FAQPage data, so the two cannot drift.
+// The questions carry this page's secondary keywords in src/data/seo/keywords.json, plus two
+// "People also ask" questions from the Google results for business process software (Moz, 2026-11-20).
+const faqs = [
+  {
+    question: 'What is business process management software?',
+    answer:
+      'Business process management (BPM) software helps a company model, run, measure and improve the repeatable work it does, such as order fulfillment or invoice approval. Most BPM software draws the process as a diagram and runs it on its own engine. DNA Codes models the process as data that your existing apps, workflows and agents read.',
+  },
+  {
+    question: 'What is a business process management system?',
+    answer:
+      'A business process management system is the platform where a BPM practice lives: the process models, the rules, the roles, and often an engine that routes the work. The term usually means a suite. The part that matters most is the description of the process, because every other system depends on it.',
+  },
+  {
+    question: 'What is business process automation?',
+    answer:
+      'Business process automation uses software to do the steps of a process that people used to do by hand, such as routing an approval or reserving stock. Automation follows a description of the process. If that description is out of date, the automation repeats the old process faster. DNA Codes keeps the description current; your workflow tools and agents do the automation.',
+  },
+  {
+    question: 'Is BPM still relevant?',
+    answer:
+      'The practice is more relevant than before. AI agents now do steps that people used to do, and an agent needs an exact description of who may do what. What changed is where the process lives. It no longer fits in one suite, because the work runs across apps, workflow tools and agents.',
+  },
+  {
+    question: 'How do I choose BPM software?',
+    answer:
+      'Start with where the work waits. If you need case management, long-running approvals or a queue with no other home, buy a BPM suite with its own engine. If the work already runs in your apps and agents, and the written process keeps falling behind, you need a model of the process, not a second engine.',
+  },
+];
+
+const faqData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
 ---
 
 <Layout metadata={metadata}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqData)} slot="head" />
   <article class="px-4 sm:px-6 mx-auto max-w-6xl pt-16 pb-4">
     <div
       class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto"
     >
-      <p class="text-sm font-semibold tracking-wide text-primary">Business Process Software</p>
-      <h1>Living Business Processes</h1>
+      <p class="text-sm font-semibold tracking-wide text-primary">Living Business Processes</p>
+      <h1>Business Process Management Software</h1>
       <p>
-        Business process management software is bought to stop the process from living in someone's head. A year later
-        the suite has a diagram, the application has the real steps, and the two disagree. The diagram was the project.
-        The code is what the customer hits. Business process management tools that only draw the process leave you with
-        a second copy to maintain.
+        Business process management software helps a company model, run and improve the repeatable work it does. Teams
+        buy it to stop the process from living in someone's head. A year later the suite has a diagram, the application
+        has the real steps, and the two disagree. The diagram was the project. The code is what the customer hits.
+        Business process management tools that only draw the process leave you with a second copy to maintain.
       </p>
     </div>
 
@@ -60,6 +102,16 @@ const metadata = seoFor('/business-process-software');
         If you need a place where the work waits, buy a BPM engine. If the work already lives in your app and your
         agents, and the description of it keeps falling behind, the thing you are missing is the model.
       </p>
+
+      <h2>Common Questions</h2>
+      {
+        faqs.map(({ question, answer }) => (
+          <>
+            <h3>{question}</h3>
+            <p>{answer}</p>
+          </>
+        ))
+      }
 
       <h2>Read more</h2>
       <ul>
