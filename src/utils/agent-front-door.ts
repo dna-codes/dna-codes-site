@@ -16,8 +16,8 @@ export const SAME_AS = [
   'https://www.npmjs.com/org/dna-codes',
 ];
 
-// Design D3, verbatim. When the platform ships one-mcp-url, step 2 names
-// https://agents.dna.codes/mcp first.
+// Design D3. one-mcp-url shipped (19 Nov 2026), so step 2 names https://agents.dna.codes/mcp
+// first; a registered sandbox's token is issued for the per-organization URL.
 export const AGENTS_START_HERE = `## Agents: start here
 
 The way in to DNA Codes is the sandbox flow: register a sandbox, do real work,
@@ -29,7 +29,9 @@ https://agents.dna.codes.
 
 1. Register a free sandbox (no human needed): \`npx @dna-codes/cli register --json\`
    or POST https://agents.dna.codes/register/challenge, then /register
-2. Connect MCP: https://agents.dna.codes/o/{org}/mcp (Bearer token from step 1)
+2. Connect MCP. A client that signs in with OAuth: https://agents.dna.codes/mcp
+   (your person signs in and picks a Workspace or a new sandbox). With the token
+   from step 1: https://agents.dna.codes/o/{org}/mcp (Bearer)
 3. Draft and validate DNA with your person in the conversation
 4. Hand your person the claim link so they keep the model. Claiming is how a human signs up.
 5. Optional, with your person's OK: add the DNA rule to AGENTS.md

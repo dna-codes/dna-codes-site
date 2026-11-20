@@ -20,6 +20,9 @@ test('"Agents: start here" leads with the sandbox flow and names the waitlist on
     assert.ok(AGENTS_START_HERE.includes(step), `missing step "${step}"`);
   assert.ok(AGENTS_START_HERE.includes('npx @dna-codes/cli register --json'));
   assert.ok(AGENTS_START_HERE.includes('https://agents.dna.codes/o/{org}/mcp'));
+  // one-mcp-url shipped: the one URL comes first; the per-organization URL is for a registered token.
+  const one = AGENTS_START_HERE.indexOf('https://agents.dna.codes/mcp');
+  assert.ok(one > 0 && one < AGENTS_START_HERE.indexOf('https://agents.dna.codes/o/{org}/mcp'));
   assert.ok(AGENTS_START_HERE.includes(`](${ORIGIN}/agents/llms.txt)`));
   assert.ok(AGENTS_START_HERE.includes(`](${ORIGIN}/agents/llms-full.txt)`));
   const waitlist = lines.filter((line) => /waitlist/i.test(line));
