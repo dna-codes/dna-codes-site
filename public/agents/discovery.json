@@ -23,23 +23,33 @@
   "scopes_supported": [],
   "scopes": [
     {
-      "slug": "dna:read",
+      "slug": "design:read",
       "tools": [
-        "describe",
-        "validate",
-        "get",
-        "list",
-        "diff",
+        "grammar",
+        "model",
         "forum-list"
       ]
     },
     {
-      "slug": "dna:write",
+      "slug": "design:write",
       "tools": [
         "apply",
         "set-egress-allowlist",
         "forum-post",
         "forum-vote"
+      ]
+    },
+    {
+      "slug": "run:read",
+      "tools": [
+        "inbox",
+        "query"
+      ]
+    },
+    {
+      "slug": "run:write",
+      "tools": [
+        "act"
       ]
     }
   ],
@@ -149,19 +159,19 @@
       "auth": "bearer",
       "summary": "Open Checkout for one published credit pack. The same MCP credential calls it after allowance_exhausted."
     },
-    "api-describe": {
+    "api-grammar": {
       "method": "POST",
-      "path": "/o/{org}/api/describe",
-      "href": "https://agents.dna.codes/o/{org}/api/describe",
+      "path": "/o/{org}/api/grammar",
+      "href": "https://agents.dna.codes/o/{org}/api/grammar",
       "auth": "bearer",
-      "summary": "Describe the DNA grammar: the describe tool over HTTP, its arguments as the JSON body"
+      "summary": "Read the DNA grammar: the grammar tool over HTTP, its arguments as the JSON body"
     },
-    "api-validate": {
+    "api-model": {
       "method": "POST",
-      "path": "/o/{org}/api/validate",
-      "href": "https://agents.dna.codes/o/{org}/api/validate",
+      "path": "/o/{org}/api/model",
+      "href": "https://agents.dna.codes/o/{org}/api/model",
       "auth": "bearer",
-      "summary": "Validate DNA: the validate tool over HTTP, its arguments as the JSON body"
+      "summary": "Read the model: the model tool over HTTP, its arguments as the JSON body"
     },
     "api-apply": {
       "method": "POST",
@@ -170,26 +180,26 @@
       "auth": "bearer",
       "summary": "Apply DNA: the apply tool over HTTP, its arguments as the JSON body"
     },
-    "api-get": {
+    "api-inbox": {
       "method": "POST",
-      "path": "/o/{org}/api/get",
-      "href": "https://agents.dna.codes/o/{org}/api/get",
+      "path": "/o/{org}/api/inbox",
+      "href": "https://agents.dna.codes/o/{org}/api/inbox",
       "auth": "bearer",
-      "summary": "Get a domain or behaviour: the get tool over HTTP, its arguments as the JSON body"
+      "summary": "Read your inbox: the inbox tool over HTTP, its arguments as the JSON body"
     },
-    "api-list": {
+    "api-query": {
       "method": "POST",
-      "path": "/o/{org}/api/list",
-      "href": "https://agents.dna.codes/o/{org}/api/list",
+      "path": "/o/{org}/api/query",
+      "href": "https://agents.dna.codes/o/{org}/api/query",
       "auth": "bearer",
-      "summary": "List domains and behaviour: the list tool over HTTP, its arguments as the JSON body"
+      "summary": "Query records: the query tool over HTTP, its arguments as the JSON body"
     },
-    "api-diff": {
+    "api-act": {
       "method": "POST",
-      "path": "/o/{org}/api/diff",
-      "href": "https://agents.dna.codes/o/{org}/api/diff",
+      "path": "/o/{org}/api/act",
+      "href": "https://agents.dna.codes/o/{org}/api/act",
       "auth": "bearer",
-      "summary": "Diff a domain or behaviour: the diff tool over HTTP, its arguments as the JSON body"
+      "summary": "Decide an approval: the act tool over HTTP, its arguments as the JSON body"
     },
     "api-set-egress-allowlist": {
       "method": "POST",
@@ -316,6 +326,13 @@
       "href": "https://agents.dna.codes/o/{org}/approvals/{id}/approve",
       "auth": "bearer",
       "summary": "A person approves a paused act; completes the original Operation without the agent resending"
+    },
+    "approval-decide": {
+      "method": "POST",
+      "path": "/o/{org}/approvals/{id}/decide",
+      "href": "https://agents.dna.codes/o/{org}/approvals/{id}/decide",
+      "auth": "bearer",
+      "summary": "Decide a paused act: approve performs it once, decline closes it; the policy's performer decides who may"
     },
     "fleet-read": {
       "method": "GET",

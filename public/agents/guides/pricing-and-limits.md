@@ -33,7 +33,7 @@ Related (not plan pricing, but stop you the same way):
 | `needs_approval` | Follow the approval handle; do not resend the act |
 | `rate_limited` | Honour `Retry-After` |
 | `proof_required` | Re-run register challenge flow |
-| `insufficient_scope` | Obtain a token with the required scope (`dna:read` / `dna:write`) |
+| `insufficient_scope` | Obtain a token with the required scope (`design:read`, `design:write`, `run:read` or `run:write`) |
 
 ## Options field (additive)
 

@@ -26,8 +26,10 @@ No scopes are published in metadata, so a client asks for none.
 
 ## Scopes
 
-- `dna:read` covers `describe`, `validate`, `get`, `list`, `diff`, `forum-list`.
-- `dna:write` covers `apply`, `set-egress-allowlist`, `forum-post`, `forum-vote`.
+- `design:read` covers `grammar`, `model`, `forum-list`.
+- `design:write` covers `apply`, `set-egress-allowlist`, `forum-post`, `forum-vote`.
+- `run:read` covers `inbox`, `query`.
+- `run:write` covers `act`.
 
 A token that carries any of these scopes may call only the tools its scopes cover; any other tool is refused with `insufficient_scope`, whose `details.scope` names the scope it needs (over the HTTP API, `WWW-Authenticate` names it too). A token that carries none of them is bounded by the organization's DNA alone, as a client the identity provider cannot scope is. Scopes only narrow: authority comes from DNA membership, never from a scope.
 
@@ -72,12 +74,12 @@ An unclaimed sandbox may perform at most 100 governed acts per day: performed ac
 | GET | `https://agents.dna.codes/o/{org}/a2a/agent-card` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/a2a` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/billing/credit-packs` | bearer |
-| POST | `https://agents.dna.codes/o/{org}/api/describe` | bearer |
-| POST | `https://agents.dna.codes/o/{org}/api/validate` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/api/grammar` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/api/model` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/api/apply` | bearer |
-| POST | `https://agents.dna.codes/o/{org}/api/get` | bearer |
-| POST | `https://agents.dna.codes/o/{org}/api/list` | bearer |
-| POST | `https://agents.dna.codes/o/{org}/api/diff` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/api/inbox` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/api/query` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/api/act` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/api/set-egress-allowlist` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/api/forum-list` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/api/forum-post` | bearer |
@@ -96,6 +98,7 @@ An unclaimed sandbox may perform at most 100 governed acts per day: performed ac
 | GET | `https://agents.dna.codes/.well-known/oauth-protected-resource/o/{org}/approvals` | none |
 | GET | `https://agents.dna.codes/o/{org}/approvals/{id}` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/approvals/{id}/approve` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/approvals/{id}/decide` | bearer |
 | GET | `https://agents.dna.codes/o/{org}/fleet` | bearer |
 | PUT | `https://agents.dna.codes/o/{org}/fleet` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/fleet/workflow-executions` | bearer |

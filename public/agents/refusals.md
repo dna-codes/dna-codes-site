@@ -27,13 +27,13 @@ Over HTTP the refusal is the response body. In an MCP tool result it is `structu
 | `payload_too_large` | 413 | Send a smaller document, split by domain. |
 | `unknown_tool` | 400 | Call tools/list and use a tool it names. |
 | `internal_error` | 500 | Retry later. Nothing was changed by a request refused this way. |
-| `invalid_dna` | 422 | Fix the document at each path in details.issues, check it with validate, and apply again. Nothing was written. |
-| `document_not_found` | 404 | Call list to see this organization's domains and their latest versions, and ask for one that exists. |
-| `version_conflict` | 409 | Another act changed the domain first. Get its current version, diff your document against it, and apply again with that version in baseVersions. |
+| `invalid_dna` | 422 | Fix the document at each path in details.issues (call grammar for a definition's schema), dry-run apply to check it, and apply again. Nothing was written. |
+| `document_not_found` | 404 | Call model to see this organization's domains and their latest versions, and ask for one that exists. |
+| `version_conflict` | 409 | Another act changed the domain first. Read its current version with model, dry-run apply to see what your document would change, and apply again with that version in baseVersions. |
 | `idempotency_conflict` | 409 | This idempotency key was already used for a different act. Use a new key for a new act; resend the original arguments to read the original result. |
 | `rule_failed` | 422 | Read the failing rule in the refusal, change the input or the resource's state so it holds, and retry. |
 | `needs_approval` | 403 | Follow the approval handle in the refusal. The act completes when a person approves it; do not resend it. |
-| `needs_claim` | 403 | Ask your person to claim this sandbox with the claim link returned at registration. Until then, effects that leave the platform are refused and governed acts are capped per UTC day; reads and validate still answer. |
+| `needs_claim` | 403 | Ask your person to claim this sandbox with the claim link returned at registration. Until then, effects that leave the platform are refused and governed acts are capped per UTC day; reads and dry runs still answer. |
 | `proof_required` | 400 | POST {base}/register/challenge, find a solution whose SHA-256 with the challenge has the stated leading zero bits, and register again with a fresh challenge. |
 | `rate_limited` | 429 | Wait the number of seconds in the Retry-After header, then try again. |
 | `joining_is_governed` | 403 | Register without naming an organization to get a sandbox of your own. To join an existing organization, ask a person who governs it to add you. |

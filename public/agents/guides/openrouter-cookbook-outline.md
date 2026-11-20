@@ -10,7 +10,7 @@ Show a developer running an OpenRouter Agent SDK agent that:
 1. Loads DNA tools through `@openrouter/mcp` against the DNA remote MCP server.
 2. Starts with **no** DNA credential, registers a sandbox, and obtains a claim
    link.
-3. Uses only shipped tools (`describe`, `list`, `get`, `validate`, `apply`, …).
+3. Uses only shipped tools (`grammar`, `model`, `apply`, `inbox`, `query`, …).
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ const dnaMcp = {
   headers: { Authorization: `Bearer ${token}` },
 };
 
-// 3. Run agent with DNA tools; first call: describe or list
+// 3. Run agent with DNA tools; first call: grammar or model
 // 4. Print claimUrl for the human when needs_claim appears
 ```
 

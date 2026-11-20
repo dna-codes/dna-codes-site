@@ -66,17 +66,17 @@
     {
       "code": "invalid_dna",
       "status": 422,
-      "next": "Fix the document at each path in details.issues, check it with validate, and apply again. Nothing was written."
+      "next": "Fix the document at each path in details.issues (call grammar for a definition's schema), dry-run apply to check it, and apply again. Nothing was written."
     },
     {
       "code": "document_not_found",
       "status": 404,
-      "next": "Call list to see this organization's domains and their latest versions, and ask for one that exists."
+      "next": "Call model to see this organization's domains and their latest versions, and ask for one that exists."
     },
     {
       "code": "version_conflict",
       "status": 409,
-      "next": "Another act changed the domain first. Get its current version, diff your document against it, and apply again with that version in baseVersions."
+      "next": "Another act changed the domain first. Read its current version with model, dry-run apply to see what your document would change, and apply again with that version in baseVersions."
     },
     {
       "code": "idempotency_conflict",
@@ -96,7 +96,7 @@
     {
       "code": "needs_claim",
       "status": 403,
-      "next": "Ask your person to claim this sandbox with the claim link returned at registration. Until then, effects that leave the platform are refused and governed acts are capped per UTC day; reads and validate still answer."
+      "next": "Ask your person to claim this sandbox with the claim link returned at registration. Until then, effects that leave the platform are refused and governed acts are capped per UTC day; reads and dry runs still answer."
     },
     {
       "code": "proof_required",

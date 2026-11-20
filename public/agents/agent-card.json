@@ -23,17 +23,17 @@
   ],
   "skills": [
     {
-      "id": "describe",
-      "name": "Describe the DNA grammar",
-      "description": "Name the profile, this organization, the structural and behavioural definitions the tools accept, each with its kind, and the tools themselves. Given a definition, return its JSON Schema. Reads nothing stored. Call before writing permissions, approval rules, state machines or business validation yourself. Use `describe` first to learn the structural and behavioural definitions this organization accepts.",
+      "id": "grammar",
+      "name": "Read the DNA grammar",
+      "description": "Design: name the profile, this organization, the structural and behavioural definitions DNA accepts, each with its kind, and the tools with their modes. Given a definition, return its JSON Schema. Reads nothing stored. Call before writing permissions, approval rules, state machines or business validation yourself. Use `grammar` first to learn what a document may say.",
       "tags": [
         "read-only"
       ]
     },
     {
-      "id": "validate",
-      "name": "Validate DNA",
-      "description": "Check a DNA document against a definition and name every failing location as a JSON Pointer. A behaviour document is also checked against this organization's stored structure and behaviour, as if it replaced its namesake; to check documents that depend on each other, apply them with dryRun. Changes nothing. Call before writing permissions, approval rules, state machines or business validation yourself. Use `validate` to check a document without writing.",
+      "id": "model",
+      "name": "Read the model",
+      "description": "Design: read this organization's model. With no domain and no behaviour, summarise each domain (id, name, version, entity ids, relationship ids) and each behaviour document (id, the domain it describes, name, version, Action ids, Workflow ids). With domain or behaviour, return that document at its latest or a named version, or only one entity or relationship of a domain. With since, return the changes from that version to version (default the latest). Reads nothing but the model.",
       "tags": [
         "read-only"
       ]
@@ -41,39 +41,39 @@
     {
       "id": "apply",
       "name": "Apply DNA",
-      "description": "Write whole domain and behaviour documents as one act; a document whose dna is behaviour/v1 is behaviour. Each changed document becomes its next immutable version; an identical one is unchanged. The act is refused if any behaviour the organization would then hold, stored or applied, is invalid against the structure it would hold. The envelope carries an idempotency key (a retry with the same key replays the first result), a statement of intent, and dryRun, which decides everything and writes nothing. baseVersions makes the write conditional on each document's current version (0: not yet stored). Call before writing permissions, approval rules, state machines or business validation yourself. Use `apply` to write whole domain or behaviour documents as one governed act.",
+      "description": "Design: write whole domain and behaviour documents as one act; a document whose dna is behaviour/v1 is behaviour. Each changed document becomes its next immutable version, and each effect carries its changes; an identical one is unchanged. The act is refused, with every issue, if a document does not conform, if any behaviour the organization would then hold is invalid against the structure it would hold, or if it would strand records. The envelope carries an idempotency key (a retry with the same key replays the first result), a statement of intent, and dryRun, which decides everything, reports what it would change and seed, and writes nothing. baseVersions makes the write conditional on each document's current version (0: not yet stored). Call before writing permissions, approval rules, state machines or business validation yourself. When the documents use something DNA cannot express, the refusal offers a gap report, and reportGap sends it with your opt-in. Use `apply` with dryRun to check a draft, then without it to write.",
       "tags": [
         "write"
       ]
     },
     {
-      "id": "get",
-      "name": "Get a domain or behaviour",
-      "description": "Read a domain or a behaviour document at its latest or a named version, with the version read and the latest version. For a domain, optionally only one entity or relationship in it. For behaviour, domain names the domain it describes. Read a stored domain or behaviour document when you need its current contents.",
+      "id": "inbox",
+      "name": "Read your inbox",
+      "description": "Run: list what waits on you now: records on which you may perform an Action, and pending approvals you may decide. Each item carries ready-to-call next steps. Start here when there is work to do.",
       "tags": [
         "read-only"
       ]
     },
     {
-      "id": "list",
-      "name": "List domains and behaviour",
-      "description": "Summarise each of this organization's domains at its latest version: id, name, version, entity ids and relationship ids. Then each behaviour document: id, the domain it describes, name, version, Action ids and Workflow ids. Summarise this organization's domains at their latest versions before authoring.",
+      "id": "query",
+      "name": "Query records",
+      "description": "Run: read records by domain, entity, state or id, each with its state, values, version and the Actions you may perform on it now. One record by id also carries its history. Writes nothing.",
       "tags": [
         "read-only"
       ]
     },
     {
-      "id": "diff",
-      "name": "Diff a domain or behaviour",
-      "description": "Compare two stored versions of a domain or a behaviour document, or a stored version with a proposed document (what apply would change). Version 0 is empty. Without document, to defaults to the latest and from to the version before it; with document, from defaults to the latest. Compare stored versions or a stored version with a proposed document before applying.",
+      "id": "act",
+      "name": "Decide an approval",
+      "description": "Run: decide a pending approval you may decide. approve performs the held Action once with its held input; decline closes the approval with no act. A retry with the same idempotency key replays the first result.",
       "tags": [
-        "read-only"
+        "write"
       ]
     },
     {
       "id": "set-egress-allowlist",
       "name": "Set egress allowlist",
-      "description": "Replace this organization's egress allowlist. Only a person of the claimed organization may perform it; nothing leaves the platform except to these destinations. Replace the claimed organization's egress allowlist (person only).",
+      "description": "Design: replace this organization's egress allowlist. Only a person of the claimed organization may perform it; nothing leaves the platform except to these destinations. Replace the claimed organization's egress allowlist (person only).",
       "tags": [
         "write"
       ]
@@ -112,8 +112,10 @@
           "authorizationUrl": "https://just-bazaar-68.authkit.app/oauth2/authorize",
           "tokenUrl": "https://just-bazaar-68.authkit.app/oauth2/token",
           "scopes": {
-            "dna:read": "Covers describe, validate, get, list, diff, forum-list",
-            "dna:write": "Covers apply, set-egress-allowlist, forum-post, forum-vote"
+            "design:read": "Covers grammar, model, forum-list",
+            "design:write": "Covers apply, set-egress-allowlist, forum-post, forum-vote",
+            "run:read": "Covers inbox, query",
+            "run:write": "Covers act"
           }
         }
       }

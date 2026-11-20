@@ -2,9 +2,9 @@
 
 Served over MCP at `https://agents.dna.codes/o/{org}/mcp`; `tools/list` returns the same.
 
-## `describe`
+## `grammar`
 
-Describe the DNA grammar. Name the profile, this organization, the structural and behavioural definitions the tools accept, each with its kind, and the tools themselves. Given a definition, return its JSON Schema. Reads nothing stored. Call before writing permissions, approval rules, state machines or business validation yourself. Use `describe` first to learn the structural and behavioural definitions this organization accepts.
+Read the DNA grammar. Design: name the profile, this organization, the structural and behavioural definitions DNA accepts, each with its kind, and the tools with their modes. Given a definition, return its JSON Schema. Reads nothing stored. Call before writing permissions, approval rules, state machines or business validation yourself. Use `grammar` first to learn what a document may say.
 
 Annotations: `readOnlyHint: true`, `idempotentHint: true`, `destructiveHint: false`, `openWorldHint: false`.
 
@@ -80,7 +80,15 @@ Output:
             "type": "object",
             "required": [
               "name"
-            ]
+            ],
+            "properties": {
+              "mode": {
+                "enum": [
+                  "design",
+                  "run"
+                ]
+              }
+            }
           }
         },
         "definition": {
@@ -173,9 +181,9 @@ Output:
 }
 ```
 
-## `validate`
+## `model`
 
-Validate DNA. Check a DNA document against a definition and name every failing location as a JSON Pointer. A behaviour document is also checked against this organization's stored structure and behaviour, as if it replaced its namesake; to check documents that depend on each other, apply them with dryRun. Changes nothing. Call before writing permissions, approval rules, state machines or business validation yourself. Use `validate` to check a document without writing.
+Read the model. Design: read this organization's model. With no domain and no behaviour, summarise each domain (id, name, version, entity ids, relationship ids) and each behaviour document (id, the domain it describes, name, version, Action ids, Workflow ids). With domain or behaviour, return that document at its latest or a named version, or only one entity or relationship of a domain. With since, return the changes from that version to version (default the latest). Reads nothing but the model.
 
 Annotations: `readOnlyHint: true`, `idempotentHint: true`, `destructiveHint: false`, `openWorldHint: false`.
 
@@ -184,36 +192,101 @@ Input:
 ```json
 {
   "type": "object",
-  "required": [
-    "document"
-  ],
   "properties": {
-    "definition": {
+    "domain": {
       "type": "string",
-      "enum": [
-        "attribute",
-        "entity",
-        "relationship",
-        "domain",
-        "behaviour",
-        "action",
-        "operation",
-        "workflow",
-        "condition",
-        "policy"
+      "description": "A domain, by id.",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "behaviour": {
+      "type": "string",
+      "description": "A behaviour document, by its own id.",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "integer",
+      "description": "A stored version, from 1.",
+      "minimum": 1
+    },
+    "entity": {
+      "type": "string",
+      "description": "Return only this entity of the domain.",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "relationship": {
+      "type": "string",
+      "description": "Return only this relationship of the domain.",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "since": {
+      "type": "integer",
+      "description": "Return the changes from this version (0: empty) to version, instead of the document.",
+      "minimum": 0
+    }
+  },
+  "not": {
+    "required": [
+      "domain",
+      "behaviour"
+    ]
+  },
+  "dependentSchemas": {
+    "version": {
+      "anyOf": [
+        {
+          "required": [
+            "domain"
+          ]
+        },
+        {
+          "required": [
+            "behaviour"
+          ]
+        }
+      ]
+    },
+    "since": {
+      "anyOf": [
+        {
+          "required": [
+            "domain"
+          ]
+        },
+        {
+          "required": [
+            "behaviour"
+          ]
+        }
       ],
-      "description": "The definition to validate against. Without it, a document whose dna is behaviour/v1 is a behaviour document, and any other is a domain."
+      "not": {
+        "anyOf": [
+          {
+            "required": [
+              "entity"
+            ]
+          },
+          {
+            "required": [
+              "relationship"
+            ]
+          }
+        ]
+      }
     },
-    "document": {
-      "description": "The DNA document to check."
+    "entity": {
+      "required": [
+        "domain"
+      ],
+      "not": {
+        "required": [
+          "relationship"
+        ]
+      }
     },
-    "reportGap": {
-      "type": "boolean",
-      "description": "Opt in to file a gap report when issues are unexpressible."
-    },
-    "includeDna": {
-      "type": "boolean",
-      "description": "When reportGap is true, approve attaching the validated document to the report."
+    "relationship": {
+      "required": [
+        "domain"
+      ]
     }
   },
   "additionalProperties": false
@@ -228,54 +301,145 @@ Output:
   "anyOf": [
     {
       "required": [
-        "valid",
-        "definition",
-        "errors",
-        "gapReportOffer",
-        "gapReportSent",
         "nextActions"
       ],
       "properties": {
-        "valid": {
-          "type": "boolean"
-        },
-        "definition": {
-          "type": "string"
-        },
-        "errors": {
+        "domains": {
           "type": "array",
           "items": {
             "type": "object",
             "required": [
-              "path",
-              "message"
+              "id",
+              "version",
+              "entities",
+              "relationships",
+              "updatedAt"
             ],
             "properties": {
-              "path": {
-                "type": "string",
-                "description": "JSON Pointer to the failing value."
-              },
-              "message": {
+              "id": {
                 "type": "string"
               },
-              "code": {
-                "type": "string",
-                "description": "For behaviour: a published behaviour issue code, or schema."
+              "name": {
+                "type": "string"
               },
-              "document": {
-                "type": "string",
-                "description": "For behaviour: the behaviour document the issue is in. A stored one is located inside itself."
+              "version": {
+                "type": "integer"
+              },
+              "entities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "relationships": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "updatedAt": {
+                "type": "string"
               }
             }
           }
         },
-        "gapReportOffer": {
-          "type": "boolean",
-          "description": "True when at least one issue is unexpressible and a gap report could be filed."
+        "behaviours": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "domain",
+              "version",
+              "actions",
+              "workflows",
+              "updatedAt"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "domain": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "integer"
+              },
+              "actions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "workflows": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "updatedAt": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "In a listing, every behaviour document."
         },
-        "gapReportSent": {
-          "type": "boolean",
-          "description": "True when this call filed a gap report."
+        "behaviour": {
+          "type": "string",
+          "description": "The behaviour document read."
+        },
+        "domain": {
+          "type": "string",
+          "description": "The domain read, or the domain a behaviour document describes."
+        },
+        "version": {
+          "type": "integer"
+        },
+        "latestVersion": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "document": {
+          "type": "object"
+        },
+        "entity": {
+          "type": "object"
+        },
+        "relationship": {
+          "type": "object"
+        },
+        "since": {
+          "type": "integer"
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "op",
+              "path"
+            ],
+            "properties": {
+              "op": {
+                "enum": [
+                  "add",
+                  "remove",
+                  "change"
+                ]
+              },
+              "path": {
+                "type": "string"
+              },
+              "before": {},
+              "after": {}
+            }
+          },
+          "description": "Changes as JSON Pointers. Array items with a unique id (entities, relationships, instances), or else a unique name (attributes), are addressed by that key instead of their index, so a reorder is not a change."
         },
         "nextActions": {
           "type": "array",
@@ -363,7 +527,7 @@ Output:
 
 ## `apply`
 
-Apply DNA. Write whole domain and behaviour documents as one act; a document whose dna is behaviour/v1 is behaviour. Each changed document becomes its next immutable version; an identical one is unchanged. The act is refused if any behaviour the organization would then hold, stored or applied, is invalid against the structure it would hold. The envelope carries an idempotency key (a retry with the same key replays the first result), a statement of intent, and dryRun, which decides everything and writes nothing. baseVersions makes the write conditional on each document's current version (0: not yet stored). Call before writing permissions, approval rules, state machines or business validation yourself. Use `apply` to write whole domain or behaviour documents as one governed act.
+Apply DNA. Design: write whole domain and behaviour documents as one act; a document whose dna is behaviour/v1 is behaviour. Each changed document becomes its next immutable version, and each effect carries its changes; an identical one is unchanged. The act is refused, with every issue, if a document does not conform, if any behaviour the organization would then hold is invalid against the structure it would hold, or if it would strand records. The envelope carries an idempotency key (a retry with the same key replays the first result), a statement of intent, and dryRun, which decides everything, reports what it would change and seed, and writes nothing. baseVersions makes the write conditional on each document's current version (0: not yet stored). Call before writing permissions, approval rules, state machines or business validation yourself. When the documents use something DNA cannot express, the refusal offers a gap report, and reportGap sends it with your opt-in. Use `apply` with dryRun to check a draft, then without it to write.
 
 Annotations: `readOnlyHint: false`, `idempotentHint: true`, `destructiveHint: false`, `openWorldHint: false`.
 
@@ -393,6 +557,14 @@ Input:
         "minimum": 0
       },
       "description": "The version each named document must be at for the act to proceed, by id; 0 means not yet stored."
+    },
+    "reportGap": {
+      "type": "boolean",
+      "description": "Opt in to file a gap report when issues are unexpressible."
+    },
+    "includeDna": {
+      "type": "boolean",
+      "description": "When reportGap is true, approve attaching the validated document to the report."
     },
     "envelope": {
       "type": "object",
@@ -565,6 +737,13 @@ Output:
             }
           }
         },
+        "seeded": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Records created from instances the documents declare; for a dry run, those it would create."
+        },
         "nextActions": {
           "type": "array",
           "description": "The calls now valid for what this result affected. Empty when none are valid for the caller.",
@@ -649,9 +828,9 @@ Output:
 }
 ```
 
-## `get`
+## `inbox`
 
-Get a domain or behaviour. Read a domain or a behaviour document at its latest or a named version, with the version read and the latest version. For a domain, optionally only one entity or relationship in it. For behaviour, domain names the domain it describes. Read a stored domain or behaviour document when you need its current contents.
+Read your inbox. Run: list what waits on you now: records on which you may perform an Action, and pending approvals you may decide. Each item carries ready-to-call next steps. Start here when there is work to do.
 
 Annotations: `readOnlyHint: true`, `idempotentHint: true`, `destructiveHint: false`, `openWorldHint: false`.
 
@@ -663,57 +842,23 @@ Input:
   "properties": {
     "domain": {
       "type": "string",
-      "description": "A domain, by id.",
+      "description": "Only this domain's work.",
       "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
     },
-    "behaviour": {
+    "entity": {
       "type": "string",
-      "description": "A behaviour document, by its own id.",
+      "description": "Only this entity's records.",
       "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
     },
-    "version": {
+    "limit": {
       "type": "integer",
-      "description": "A stored version, from 1.",
-      "minimum": 1
+      "description": "At most this many items.",
+      "minimum": 1,
+      "maximum": 200
     },
-    "entity": {
+    "after": {
       "type": "string",
-      "description": "Return only this entity of the domain.",
-      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
-    },
-    "relationship": {
-      "type": "string",
-      "description": "Return only this relationship of the domain.",
-      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
-    }
-  },
-  "oneOf": [
-    {
-      "required": [
-        "domain"
-      ]
-    },
-    {
-      "required": [
-        "behaviour"
-      ]
-    }
-  ],
-  "dependentSchemas": {
-    "entity": {
-      "required": [
-        "domain"
-      ],
-      "not": {
-        "required": [
-          "relationship"
-        ]
-      }
-    },
-    "relationship": {
-      "required": [
-        "domain"
-      ]
+      "description": "The next value of the page before."
     }
   },
   "additionalProperties": false
@@ -728,231 +873,53 @@ Output:
   "anyOf": [
     {
       "required": [
-        "domain",
-        "version",
-        "latestVersion",
-        "createdAt",
+        "items",
         "nextActions"
       ],
       "properties": {
-        "domain": {
-          "type": "string"
-        },
-        "behaviour": {
-          "type": "string"
-        },
-        "version": {
-          "type": "integer"
-        },
-        "latestVersion": {
-          "type": "integer"
-        },
-        "createdAt": {
-          "type": "string"
-        },
-        "document": {
-          "type": "object"
-        },
-        "entity": {
-          "type": "object"
-        },
-        "relationship": {
-          "type": "object"
-        },
-        "nextActions": {
+        "items": {
           "type": "array",
-          "description": "The calls now valid for what this result affected. Empty when none are valid for the caller.",
           "items": {
             "type": "object",
             "required": [
-              "tool"
+              "actions"
             ],
             "properties": {
-              "tool": {
-                "type": "string"
+              "record": {
+                "type": "object",
+                "required": [
+                  "entity",
+                  "id",
+                  "name",
+                  "state",
+                  "values",
+                  "version",
+                  "nextActions"
+                ],
+                "properties": {
+                  "values": {
+                    "type": "object"
+                  },
+                  "nextActions": {
+                    "type": "array"
+                  },
+                  "history": {
+                    "type": "array"
+                  }
+                }
               },
-              "arguments": {
+              "approval": {
                 "type": "object"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "type": "object",
-      "required": [
-        "refusal"
-      ],
-      "properties": {
-        "refusal": {
-          "type": "object",
-          "required": [
-            "code",
-            "message",
-            "next"
-          ],
-          "properties": {
-            "code": {
-              "enum": [
-                "unauthenticated",
-                "invalid_token",
-                "wrong_organization",
-                "insufficient_scope",
-                "not_found",
-                "method_not_allowed",
-                "invalid_request",
-                "unsupported_protocol_version",
-                "payload_too_large",
-                "unknown_tool",
-                "internal_error",
-                "invalid_dna",
-                "document_not_found",
-                "version_conflict",
-                "idempotency_conflict",
-                "rule_failed",
-                "needs_approval",
-                "needs_claim",
-                "proof_required",
-                "rate_limited",
-                "joining_is_governed",
-                "claim_incomplete",
-                "flow_unavailable",
-                "plan_limit",
-                "allowance_exhausted",
-                "spend_cap_reached",
-                "person_required"
-              ]
-            },
-            "message": {
-              "type": "string"
-            },
-            "next": {
-              "type": "string",
-              "description": "What to do next."
-            },
-            "details": {
-              "type": "object",
-              "description": "Per code: issues for invalid_dna and invalid_request; domain, expected and current for version_conflict."
-            }
-          }
-        }
-      }
-    }
-  ]
-}
-```
-
-## `list`
-
-List domains and behaviour. Summarise each of this organization's domains at its latest version: id, name, version, entity ids and relationship ids. Then each behaviour document: id, the domain it describes, name, version, Action ids and Workflow ids. Summarise this organization's domains at their latest versions before authoring.
-
-Annotations: `readOnlyHint: true`, `idempotentHint: true`, `destructiveHint: false`, `openWorldHint: false`.
-
-Input:
-
-```json
-{
-  "type": "object",
-  "properties": {},
-  "additionalProperties": false
-}
-```
-
-Output:
-
-```json
-{
-  "type": "object",
-  "anyOf": [
-    {
-      "required": [
-        "domains",
-        "behaviour",
-        "nextActions"
-      ],
-      "properties": {
-        "domains": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": [
-              "id",
-              "version",
-              "entities",
-              "relationships",
-              "updatedAt"
-            ],
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "version": {
-                "type": "integer"
-              },
-              "entities": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "relationships": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "updatedAt": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "behaviour": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": [
-              "id",
-              "domain",
-              "version",
-              "actions",
-              "workflows",
-              "updatedAt"
-            ],
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "domain": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "version": {
-                "type": "integer"
               },
               "actions": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "workflows": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "updatedAt": {
-                "type": "string"
+                "type": "array"
               }
             }
           }
+        },
+        "next": {
+          "type": "string",
+          "description": "Pass as after for the next page."
         },
         "nextActions": {
           "type": "array",
@@ -1038,9 +1005,9 @@ Output:
 }
 ```
 
-## `diff`
+## `query`
 
-Diff a domain or behaviour. Compare two stored versions of a domain or a behaviour document, or a stored version with a proposed document (what apply would change). Version 0 is empty. Without document, to defaults to the latest and from to the version before it; with document, from defaults to the latest. Compare stored versions or a stored version with a proposed document before applying.
+Query records. Run: read records by domain, entity, state or id, each with its state, values, version and the Actions you may perform on it now. One record by id also carries its history. Writes nothing.
 
 Annotations: `readOnlyHint: true`, `idempotentHint: true`, `destructiveHint: false`, `openWorldHint: false`.
 
@@ -1052,44 +1019,227 @@ Input:
   "properties": {
     "domain": {
       "type": "string",
-      "description": "A domain, by id.",
       "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
     },
-    "behaviour": {
+    "entity": {
       "type": "string",
-      "description": "A behaviour document, by its own id.",
       "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
     },
-    "from": {
-      "type": "integer",
-      "minimum": 0
+    "state": {
+      "type": "string"
     },
-    "to": {
-      "type": "integer",
-      "minimum": 0
+    "id": {
+      "type": "string",
+      "description": "One record, with its history."
     },
-    "document": {
-      "type": "object",
-      "description": "A proposed whole document of the same kind, validated against its definition first."
+    "limit": {
+      "type": "integer",
+      "description": "At most this many items.",
+      "minimum": 1,
+      "maximum": 200
+    },
+    "after": {
+      "type": "string",
+      "description": "The next value of the page before."
     }
   },
-  "oneOf": [
+  "additionalProperties": false
+}
+```
+
+Output:
+
+```json
+{
+  "type": "object",
+  "anyOf": [
     {
       "required": [
-        "domain"
-      ]
+        "records",
+        "nextActions"
+      ],
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "entity",
+              "id",
+              "name",
+              "state",
+              "values",
+              "version",
+              "nextActions"
+            ],
+            "properties": {
+              "values": {
+                "type": "object"
+              },
+              "nextActions": {
+                "type": "array"
+              },
+              "history": {
+                "type": "array"
+              }
+            }
+          }
+        },
+        "next": {
+          "type": "string",
+          "description": "Pass as after for the next page."
+        },
+        "nextActions": {
+          "type": "array",
+          "description": "The calls now valid for what this result affected. Empty when none are valid for the caller.",
+          "items": {
+            "type": "object",
+            "required": [
+              "tool"
+            ],
+            "properties": {
+              "tool": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
     },
     {
+      "type": "object",
       "required": [
-        "behaviour"
-      ]
+        "refusal"
+      ],
+      "properties": {
+        "refusal": {
+          "type": "object",
+          "required": [
+            "code",
+            "message",
+            "next"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "unauthenticated",
+                "invalid_token",
+                "wrong_organization",
+                "insufficient_scope",
+                "not_found",
+                "method_not_allowed",
+                "invalid_request",
+                "unsupported_protocol_version",
+                "payload_too_large",
+                "unknown_tool",
+                "internal_error",
+                "invalid_dna",
+                "document_not_found",
+                "version_conflict",
+                "idempotency_conflict",
+                "rule_failed",
+                "needs_approval",
+                "needs_claim",
+                "proof_required",
+                "rate_limited",
+                "joining_is_governed",
+                "claim_incomplete",
+                "flow_unavailable",
+                "plan_limit",
+                "allowance_exhausted",
+                "spend_cap_reached",
+                "person_required"
+              ]
+            },
+            "message": {
+              "type": "string"
+            },
+            "next": {
+              "type": "string",
+              "description": "What to do next."
+            },
+            "details": {
+              "type": "object",
+              "description": "Per code: issues for invalid_dna and invalid_request; domain, expected and current for version_conflict."
+            }
+          }
+        }
+      }
     }
+  ]
+}
+```
+
+## `act`
+
+Decide an approval. Run: decide a pending approval you may decide. approve performs the held Action once with its held input; decline closes the approval with no act. A retry with the same idempotency key replays the first result.
+
+Annotations: `readOnlyHint: false`, `idempotentHint: true`, `destructiveHint: false`, `openWorldHint: false`.
+
+Input:
+
+```json
+{
+  "type": "object",
+  "required": [
+    "approval",
+    "decision",
+    "envelope"
   ],
-  "dependentSchemas": {
-    "document": {
-      "not": {
+  "properties": {
+    "approval": {
+      "type": "string",
+      "description": "The approval's id, from inbox or a needs_approval handle."
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "approve",
+        "decline"
+      ]
+    },
+    "note": {
+      "type": "string",
+      "description": "Why, in a sentence."
+    },
+    "envelope": {
+      "type": "object",
+      "required": [
+        "intent"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Required unless dryRun. Unique per act."
+        },
+        "intent": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Why, in a sentence. Recorded with the operation."
+        },
+        "dryRun": {
+          "type": "boolean",
+          "default": false,
+          "description": "Decide and write nothing."
+        }
+      },
+      "if": {
+        "properties": {
+          "dryRun": {
+            "const": false
+          }
+        }
+      },
+      "then": {
         "required": [
-          "to"
+          "idempotencyKey"
         ]
       }
     }
@@ -1106,54 +1256,24 @@ Output:
   "anyOf": [
     {
       "required": [
-        "domain",
-        "from",
-        "to",
-        "changes",
+        "approval",
+        "decision",
+        "envelope",
         "nextActions"
       ],
       "properties": {
-        "domain": {
-          "type": "string",
-          "description": "The domain, or the domain a behaviour document describes."
+        "approval": {
+          "type": "object"
         },
-        "behaviour": {
+        "decision": {
           "type": "string"
         },
-        "from": {
-          "type": "integer"
+        "operation": {
+          "type": "string",
+          "description": "The performed act's operation, for approve."
         },
-        "to": {
-          "type": [
-            "integer",
-            "string"
-          ],
-          "description": "A version, or \"document\" for a proposed document."
-        },
-        "changes": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": [
-              "op",
-              "path"
-            ],
-            "properties": {
-              "op": {
-                "enum": [
-                  "add",
-                  "remove",
-                  "change"
-                ]
-              },
-              "path": {
-                "type": "string"
-              },
-              "before": {},
-              "after": {}
-            }
-          },
-          "description": "Changes as JSON Pointers. Array items with a unique id (entities, relationships, instances), or else a unique name (attributes), are addressed by that key instead of their index, so a reorder is not a change."
+        "envelope": {
+          "type": "object"
         },
         "nextActions": {
           "type": "array",
@@ -1241,7 +1361,7 @@ Output:
 
 ## `set-egress-allowlist`
 
-Set egress allowlist. Replace this organization's egress allowlist. Only a person of the claimed organization may perform it; nothing leaves the platform except to these destinations. Replace the claimed organization's egress allowlist (person only).
+Set egress allowlist. Design: replace this organization's egress allowlist. Only a person of the claimed organization may perform it; nothing leaves the platform except to these destinations. Replace the claimed organization's egress allowlist (person only).
 
 Annotations: `readOnlyHint: false`, `idempotentHint: true`, `destructiveHint: false`, `openWorldHint: false`.
 

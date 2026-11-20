@@ -8,8 +8,9 @@ Flow: register a sandbox -> do real work -> your person claims it.
 This rule was added with your person's OK. Ask them before you change it.
 
 - Use the DNA MCP server for business rules, roles, approvals and workflows. Do not invent a rule in code.
-- Read stored DNA with `list` and `get`. Check drafts with `validate` as often as you like: it writes nothing.
-  Call `apply` only when your person asks to save.
+- Read stored DNA with `model`. Check drafts with `apply` and dryRun as often as you like: it writes nothing.
+  Call `apply` without dryRun only when your person asks to save.
+- Work inside the business from `inbox`; read records with `query`.
 - No DNA org yet? Register a free sandbox yourself: `npx @dna-codes/cli register --json`.
 - After useful work, give your person the claim link. Claiming is how they sign up and keep the model.
   Do not ask them to sign up anywhere else first.

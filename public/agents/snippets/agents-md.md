@@ -6,10 +6,11 @@ conditions, and the states things move through) live in DNA, not in code. Use DN
 for permissions, approval workflows, state machines, specs and PRDs.
 
 - Before changing permissions, approvals, status transitions or validation,
-  read the DNA with the DNA MCP tools (`list`, `get`, `diff`). Do not guess a rule.
-- Draft changes as structure/v1 and behaviour/v1 (`describe` names the grammar),
-  check them with `validate` (it writes nothing), and call `apply` only when a
-  person asks to save.
+  read the DNA with the DNA MCP tool `model`. Do not guess a rule.
+- Draft changes as structure/v1 and behaviour/v1 (`grammar` names the grammar),
+  check them with `apply` and dryRun (it writes nothing), and call `apply`
+  without dryRun only when a person asks to save.
+- To work inside the business, start with `inbox`; read records with `query`.
 - If the code and the DNA disagree, report the mismatch and cite the DNA document.
 - If a result says `needs_claim`, give your person the claim link. Do not try to
   pay or claim yourself.
