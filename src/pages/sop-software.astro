@@ -7,19 +7,56 @@ import { operatingModelTemplate } from '~/utils/operating-model-template';
 
 const metadata = seoFor('/sop-software');
 const model = operatingModelTemplate();
+
+// One list feeds the visible answers and the FAQPage data, so the two cannot drift.
+// Each question carries a secondary keyword this page owns in src/data/seo/keywords.json.
+const faqs = [
+  {
+    question: 'What is SOP software?',
+    answer:
+      'SOP software stores the standard operating procedures a team follows: the steps, who owns each step, and the rules that apply. Most tools keep the procedure as a document. DNA Codes keeps it as data, so the doc, the workflow and the agent read the same procedure.',
+  },
+  {
+    question: 'What is SOP management software?',
+    answer:
+      'SOP management software tracks who wrote a procedure, who approved it, and which version is current. That record helps an audit. It does not stop the written procedure and the real work from drifting apart. DNA Codes changes the procedure in one place, and every system that reads it gets the change.',
+  },
+  {
+    question: 'Can SOP software automate a procedure?',
+    answer:
+      'Some SOP tools turn steps into checklists or task assignments. DNA Codes does not run the work on its own engine. It describes the steps, owners and rules as data that your apps, workflow tools and agents read, so the procedure they automate is the procedure you wrote.',
+  },
+  {
+    question: 'Does a small business need SOP software?',
+    answer:
+      'A team of five can keep procedures in a shared doc. Past ten or twenty people, the doc and the work start to drift, and new hires learn the exceptions by trial. SOP software earns its place when a correction must reach every person and every agent that does the work.',
+  },
+];
+
+const faqData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
 ---
 
 <Layout metadata={metadata}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqData)} slot="head" />
   <article class="px-4 sm:px-6 mx-auto max-w-6xl pt-16 pb-4">
     <div
       class="prose prose-lg dark:prose-invert prose-headings:font-heading prose-headings:tracking-tight max-w-3xl mx-auto"
     >
-      <p class="text-sm font-semibold tracking-wide text-primary">SOP Software</p>
-      <h1>Executable SOPs</h1>
+      <p class="text-sm font-semibold tracking-wide text-primary">Executable SOPs</p>
+      <h1>SOP Software That Runs</h1>
       <p>
         The procedure is in a doc. The work happens somewhere else. A new hire follows the doc, an old hand follows
-        memory, and the two of them do the same job differently until a customer notices. SOP software is supposed to
-        close that gap. Most of it just stores a better copy of the doc.
+        memory, and the two of them do the same job differently until a customer notices. SOP software stores a team's
+        standard operating procedures and is supposed to close that gap. Most of it just stores a better copy of the
+        doc.
       </p>
 
       <h2>The SOP Nobody Follows</h2>
@@ -58,6 +95,16 @@ const model = operatingModelTemplate();
         hoping. SOP software for a small business earns its place when the correction lands in the procedure the team
         actually runs, including the agent that packs, refunds, or answers the ticket.
       </p>
+
+      <h2>Common Questions</h2>
+      {
+        faqs.map(({ question, answer }) => (
+          <>
+            <h3>{question}</h3>
+            <p>{answer}</p>
+          </>
+        ))
+      }
 
       <h2>DNA</h2>
       <p>
