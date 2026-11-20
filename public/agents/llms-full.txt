@@ -10,6 +10,16 @@
 4. Hand your person the claim link after useful work. Claiming is how they sign up and keep the model.
 5. Optional, and only with your person's OK: add the rule ([AGENTS.md](https://dna.codes/agents/snippets/agents-md.md), [Cursor](https://dna.codes/agents/snippets/cursor-rule.mdc), [CLAUDE.md](https://dna.codes/agents/snippets/claude-md.md)) and install the skills: `npx skills add dna-codes/skills --skill dna-operational --skill dna-sync`.
 
+## A person connecting their own client
+
+A person who uses DNA from their own MCP client adds one URL: `https://agents.dna.codes/mcp`. Any client that supports MCP OAuth works, such as Claude Code, Cursor or ChatGPT.
+
+1. Add `https://agents.dna.codes/mcp` as one MCP server. In Claude Code: `claude mcp add --transport http dna https://agents.dna.codes/mcp`, then run `/mcp` and choose Authenticate.
+2. Sign in. Pick a Workspace, or start a new sandbox. A new person gets a sandbox at once and sees its claim link once.
+3. Allow access. The token names that Workspace, and the tools act there.
+
+An agent that registered a sandbox does not use this URL. Its token is issued for `https://agents.dna.codes/o/{org}/mcp` and is refused at `https://agents.dna.codes/mcp` with `invalid_token`.
+
 This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Events are not emitted yet.
 
 ## Documents
@@ -573,6 +583,16 @@ Source: https://dna.codes/agents/auth.md
 
 The agent host is at `https://agents.dna.codes`. It accepts bearer credentials only: send `Authorization: Bearer <token>`. It reads no cookie and no query-string token, so a session on any human-facing DNA site never authenticates a request here.
 
+## A person connecting their own client
+
+A person who uses DNA from their own MCP client adds one URL: `https://agents.dna.codes/mcp`. Any client that supports MCP OAuth works, such as Claude Code, Cursor or ChatGPT.
+
+1. Add `https://agents.dna.codes/mcp` as one MCP server. In Claude Code: `claude mcp add --transport http dna https://agents.dna.codes/mcp`, then run `/mcp` and choose Authenticate.
+2. Sign in. Pick a Workspace, or start a new sandbox. A new person gets a sandbox at once and sees its claim link once.
+3. Allow access. The token names that Workspace, and the tools act there.
+
+An agent that registered a sandbox does not use this URL. Its token is issued for `https://agents.dna.codes/o/{org}/mcp` and is refused at `https://agents.dna.codes/mcp` with `invalid_token`.
+
 ## Finding the authorization server
 
 1. Call an organization endpoint with no credential. The answer is `401` with `WWW-Authenticate: Bearer resource_metadata="…"`, naming that endpoint's protected-resource metadata (RFC 9728). That link is authoritative; no metadata is served at a domain root.
@@ -684,6 +704,7 @@ The agent host's base URL, `{base}`, is `https://agents.dna.codes`. Take it from
 ## Transports
 
 MCP over Streamable HTTP at `https://agents.dna.codes/o/{org}/mcp`: one JSON-RPC message per `POST`, answered with `application/json`, with no session. Protocol versions: `2025-11-25`, `2025-06-18`, `2025-03-26`.
+A person's own client may use the one MCP URL, `https://agents.dna.codes/mcp`, instead: its token names the one organization the person picked when signing in. A token issued for `https://agents.dna.codes/o/{org}/mcp` is refused there.
 A2A JSON-RPC at `https://agents.dna.codes/o/{org}/a2a`: `SendMessage` with a data part `{ name, arguments }` invokes the same Action as MCP `tools/call`. Agent Card at `https://agents.dna.codes/o/{org}/a2a/agent-card`: skills are the caller's Actions.
 
 ## Tools
@@ -2907,6 +2928,23 @@ Also read: [Authentication](https://dna.codes/agents/auth.md) ·
 [Tools](https://dna.codes/agents/docs/tools.md) ·
 [Refusals](https://dna.codes/agents/refusals.md)
 
+## A person connecting their own client
+
+This guide is for agents. A person who connects DNA from their own MCP client
+(Claude Code, Cursor, ChatGPT, or any client that supports MCP OAuth) does not
+register. They add one URL and sign in:
+
+1. Add `https://agents.dna.codes/mcp` as one MCP server. In Claude Code:
+   `claude mcp add --transport http dna https://agents.dna.codes/mcp`, then run
+   `/mcp` and choose **Authenticate**.
+2. Sign in with Google or GitHub. Pick a Workspace, or start a new sandbox. A
+   new person gets a sandbox at once and sees its claim link once.
+3. Allow access. The token names that Workspace.
+
+An agent's registered token works only at its per-organization URL,
+`https://agents.dna.codes/o/{org}/mcp`. At `https://agents.dna.codes/mcp` it is
+refused with `invalid_token`. Agents: start at step 1.
+
 ## 1. Register
 
 **With a shell (preferred):**
@@ -2949,8 +2987,9 @@ npx @dna-codes/cli status --json
 Otherwise connect Streamable HTTP directly:
 
 - URL: `https://agents.dna.codes/o/{org}/mcp`
-- Header: `Authorization: Bearer <token>` (CLI / automation). Directory
-  connectors (Claude, ChatGPT) use **OAuth** instead — follow the listing.
+- Header: `Authorization: Bearer <token>` (CLI / automation). A person's own
+  client uses **OAuth** at `https://agents.dna.codes/mcp` instead — see
+  [A person connecting their own client](#a-person-connecting-their-own-client).
 
 Example (Claude Code — only when no DNA connector exists yet):
 
@@ -3144,6 +3183,20 @@ and post the claim link in the same conversation.
 
 Also: [Agent quickstart](./agent-quickstart.md) ·
 [Approving spend](./approving-spend.md)
+
+## A person connecting their own client
+
+A person who connects DNA from their own MCP client (Claude Code, Cursor,
+ChatGPT, or any client that supports MCP OAuth) adds one URL,
+`https://agents.dna.codes/mcp`, and signs in with Google or GitHub. They pick a
+Workspace or start a new sandbox, then allow access; the token names that
+Workspace. In Claude Code:
+`claude mcp add --transport http dna https://agents.dna.codes/mcp`, then `/mcp`
+→ **Authenticate**.
+
+A personal agent that registers its own sandbox uses the per-organization URL
+below with its bearer. That token is refused at `https://agents.dna.codes/mcp`
+with `invalid_token`. Use one URL or the other, never both.
 
 ## 1. Skill hubs (optional)
 

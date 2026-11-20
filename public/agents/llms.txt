@@ -10,6 +10,16 @@
 4. Hand your person the claim link after useful work. Claiming is how they sign up and keep the model.
 5. Optional, and only with your person's OK: add the rule ([AGENTS.md](https://dna.codes/agents/snippets/agents-md.md), [Cursor](https://dna.codes/agents/snippets/cursor-rule.mdc), [CLAUDE.md](https://dna.codes/agents/snippets/claude-md.md)) and install the skills: `npx skills add dna-codes/skills --skill dna-operational --skill dna-sync`.
 
+## A person connecting their own client
+
+A person who uses DNA from their own MCP client adds one URL: `https://agents.dna.codes/mcp`. Any client that supports MCP OAuth works, such as Claude Code, Cursor or ChatGPT.
+
+1. Add `https://agents.dna.codes/mcp` as one MCP server. In Claude Code: `claude mcp add --transport http dna https://agents.dna.codes/mcp`, then run `/mcp` and choose Authenticate.
+2. Sign in. Pick a Workspace, or start a new sandbox. A new person gets a sandbox at once and sees its claim link once.
+3. Allow access. The token names that Workspace, and the tools act there.
+
+An agent that registered a sandbox does not use this URL. Its token is issued for `https://agents.dna.codes/o/{org}/mcp` and is refused at `https://agents.dna.codes/mcp` with `invalid_token`.
+
 This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Events are not emitted yet.
 
 ## Documents

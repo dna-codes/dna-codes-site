@@ -7,6 +7,20 @@ and post the claim link in the same conversation.
 Also: [Agent quickstart](./agent-quickstart.md) ·
 [Approving spend](./approving-spend.md)
 
+## A person connecting their own client
+
+A person who connects DNA from their own MCP client (Claude Code, Cursor,
+ChatGPT, or any client that supports MCP OAuth) adds one URL,
+`https://agents.dna.codes/mcp`, and signs in with Google or GitHub. They pick a
+Workspace or start a new sandbox, then allow access; the token names that
+Workspace. In Claude Code:
+`claude mcp add --transport http dna https://agents.dna.codes/mcp`, then `/mcp`
+→ **Authenticate**.
+
+A personal agent that registers its own sandbox uses the per-organization URL
+below with its bearer. That token is refused at `https://agents.dna.codes/mcp`
+with `invalid_token`. Use one URL or the other, never both.
+
 ## 1. Skill hubs (optional)
 
 Personal-agent skill hubs are not published on this host yet. Do **not** fetch a

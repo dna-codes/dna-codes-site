@@ -7,6 +7,23 @@ Also read: [Authentication](https://dna.codes/agents/auth.md) ·
 [Tools](https://dna.codes/agents/docs/tools.md) ·
 [Refusals](https://dna.codes/agents/refusals.md)
 
+## A person connecting their own client
+
+This guide is for agents. A person who connects DNA from their own MCP client
+(Claude Code, Cursor, ChatGPT, or any client that supports MCP OAuth) does not
+register. They add one URL and sign in:
+
+1. Add `https://agents.dna.codes/mcp` as one MCP server. In Claude Code:
+   `claude mcp add --transport http dna https://agents.dna.codes/mcp`, then run
+   `/mcp` and choose **Authenticate**.
+2. Sign in with Google or GitHub. Pick a Workspace, or start a new sandbox. A
+   new person gets a sandbox at once and sees its claim link once.
+3. Allow access. The token names that Workspace.
+
+An agent's registered token works only at its per-organization URL,
+`https://agents.dna.codes/o/{org}/mcp`. At `https://agents.dna.codes/mcp` it is
+refused with `invalid_token`. Agents: start at step 1.
+
 ## 1. Register
 
 **With a shell (preferred):**
@@ -49,8 +66,9 @@ npx @dna-codes/cli status --json
 Otherwise connect Streamable HTTP directly:
 
 - URL: `https://agents.dna.codes/o/{org}/mcp`
-- Header: `Authorization: Bearer <token>` (CLI / automation). Directory
-  connectors (Claude, ChatGPT) use **OAuth** instead — follow the listing.
+- Header: `Authorization: Bearer <token>` (CLI / automation). A person's own
+  client uses **OAuth** at `https://agents.dna.codes/mcp` instead — see
+  [A person connecting their own client](#a-person-connecting-their-own-client).
 
 Example (Claude Code — only when no DNA connector exists yet):
 

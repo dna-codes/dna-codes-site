@@ -2,6 +2,16 @@
 
 The agent host is at `https://agents.dna.codes`. It accepts bearer credentials only: send `Authorization: Bearer <token>`. It reads no cookie and no query-string token, so a session on any human-facing DNA site never authenticates a request here.
 
+## A person connecting their own client
+
+A person who uses DNA from their own MCP client adds one URL: `https://agents.dna.codes/mcp`. Any client that supports MCP OAuth works, such as Claude Code, Cursor or ChatGPT.
+
+1. Add `https://agents.dna.codes/mcp` as one MCP server. In Claude Code: `claude mcp add --transport http dna https://agents.dna.codes/mcp`, then run `/mcp` and choose Authenticate.
+2. Sign in. Pick a Workspace, or start a new sandbox. A new person gets a sandbox at once and sees its claim link once.
+3. Allow access. The token names that Workspace, and the tools act there.
+
+An agent that registered a sandbox does not use this URL. Its token is issued for `https://agents.dna.codes/o/{org}/mcp` and is refused at `https://agents.dna.codes/mcp` with `invalid_token`.
+
 ## Finding the authorization server
 
 1. Call an organization endpoint with no credential. The answer is `401` with `WWW-Authenticate: Bearer resource_metadata="…"`, naming that endpoint's protected-resource metadata (RFC 9728). That link is authoritative; no metadata is served at a domain root.
