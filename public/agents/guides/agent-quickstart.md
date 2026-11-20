@@ -86,6 +86,7 @@ Closed tool set:
 | `grammar` | Design: the DNA language, its definitions and their JSON Schemas |
 | `model` | Design: list domains; with `domain` / `behaviour`, read one document; with `since`, the changes |
 | `apply` | Design: write DNA; with `envelope.dryRun: true`, check a draft and write nothing |
+| `render` | Design: draw the stored model as a diagram or a table (`view`); show the returned `rendering` as it is (Mermaid, or a Markdown table) and do not redraw it; `shape` is the same graph or table as data, and a client that shows MCP Apps sees the drawing; with no `view`, list the views you can draw |
 | `inbox` | Run: records you may act on now, and approvals you may decide |
 | `query` | Run: read records by domain, entity, state or id |
 | `act` | Run: decide a pending approval (`approve` or `decline`) |

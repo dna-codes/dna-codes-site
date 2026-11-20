@@ -47,6 +47,14 @@
       ]
     },
     {
+      "id": "render",
+      "name": "Render the model",
+      "description": "Design: draw this organization's stored model. view picks one of six views (workflow-state, workflow-swimlane, entity-lifecycle, erd, permission-matrix, integration-map); domain, behaviour, workflow or entity names the document the view draws. workflow-swimlane accepts collapseWaits and overlayPolicies, and erd accepts showAttributes; an option the view does not accept is refused, naming what it accepts. The result has two halves: rendering is text to show exactly as returned (Mermaid for the five graph views, a Markdown table for permission-matrix), and shape is the same graph or table as data. Show rendering as returned; do not redraw it. An MCP Apps client draws shape through ui://dna/render. format is optional and only picks the text; each view has one. With no view, return the catalogue: each view, the documents it can draw here, its format, or why it is unavailable. The same stored DNA gives the same output. Reads nothing but the model and writes nothing.",
+      "tags": [
+        "read-only"
+      ]
+    },
+    {
       "id": "inbox",
       "name": "Read your inbox",
       "description": "Run: list what waits on you now: records on which you may perform an Action, and pending approvals you may decide. Each item carries ready-to-call next steps. Start here when there is work to do.",
@@ -112,7 +120,7 @@
           "authorizationUrl": "https://just-bazaar-68.authkit.app/oauth2/authorize",
           "tokenUrl": "https://just-bazaar-68.authkit.app/oauth2/token",
           "scopes": {
-            "design:read": "Covers grammar, model, forum-list",
+            "design:read": "Covers grammar, model, render, forum-list",
             "design:write": "Covers apply, set-egress-allowlist, forum-post, forum-vote",
             "run:read": "Covers inbox, query",
             "run:write": "Covers act"

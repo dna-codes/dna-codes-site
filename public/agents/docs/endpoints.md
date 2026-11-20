@@ -19,6 +19,7 @@ Every endpoint is under the agent host's base, `https://agents.dna.codes`. `{org
 | `api-grammar` | POST | `https://agents.dna.codes/o/{org}/api/grammar` | bearer | Read the DNA grammar: the grammar tool over HTTP, its arguments as the JSON body |
 | `api-model` | POST | `https://agents.dna.codes/o/{org}/api/model` | bearer | Read the model: the model tool over HTTP, its arguments as the JSON body |
 | `api-apply` | POST | `https://agents.dna.codes/o/{org}/api/apply` | bearer | Apply DNA: the apply tool over HTTP, its arguments as the JSON body |
+| `api-render` | POST | `https://agents.dna.codes/o/{org}/api/render` | bearer | Render the model: the render tool over HTTP, its arguments as the JSON body |
 | `api-inbox` | POST | `https://agents.dna.codes/o/{org}/api/inbox` | bearer | Read your inbox: the inbox tool over HTTP, its arguments as the JSON body |
 | `api-query` | POST | `https://agents.dna.codes/o/{org}/api/query` | bearer | Query records: the query tool over HTTP, its arguments as the JSON body |
 | `api-act` | POST | `https://agents.dna.codes/o/{org}/api/act` | bearer | Decide an approval: the act tool over HTTP, its arguments as the JSON body |

@@ -26,7 +26,7 @@ No scopes are published in metadata, so a client asks for none.
 
 ## Scopes
 
-- `design:read` covers `grammar`, `model`, `forum-list`.
+- `design:read` covers `grammar`, `model`, `render`, `forum-list`.
 - `design:write` covers `apply`, `set-egress-allowlist`, `forum-post`, `forum-vote`.
 - `run:read` covers `inbox`, `query`.
 - `run:write` covers `act`.
@@ -77,6 +77,7 @@ An unclaimed sandbox may perform at most 100 governed acts per day: performed ac
 | POST | `https://agents.dna.codes/o/{org}/api/grammar` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/api/model` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/api/apply` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/api/render` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/api/inbox` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/api/query` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/api/act` | bearer |

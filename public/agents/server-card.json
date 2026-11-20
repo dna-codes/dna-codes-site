@@ -257,6 +257,75 @@
       }
     },
     {
+      "name": "render",
+      "title": "Render the model",
+      "description": "Design: draw this organization's stored model. view picks one of six views (workflow-state, workflow-swimlane, entity-lifecycle, erd, permission-matrix, integration-map); domain, behaviour, workflow or entity names the document the view draws. workflow-swimlane accepts collapseWaits and overlayPolicies, and erd accepts showAttributes; an option the view does not accept is refused, naming what it accepts. The result has two halves: rendering is text to show exactly as returned (Mermaid for the five graph views, a Markdown table for permission-matrix), and shape is the same graph or table as data. Show rendering as returned; do not redraw it. An MCP Apps client draws shape through ui://dna/render. format is optional and only picks the text; each view has one. With no view, return the catalogue: each view, the documents it can draw here, its format, or why it is unavailable. The same stored DNA gives the same output. Reads nothing but the model and writes nothing.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "view": {
+            "type": "string",
+            "enum": [
+              "workflow-state",
+              "workflow-swimlane",
+              "entity-lifecycle",
+              "erd",
+              "permission-matrix",
+              "integration-map"
+            ],
+            "description": "The view to draw. Omit it for the catalogue."
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "mermaid",
+              "markdown"
+            ],
+            "description": "The text format of rendering: mermaid for the graph views, markdown for permission-matrix. Omit it for the view's one format; another is refused. There is no JSON format: the data is always in shape."
+          },
+          "domain": {
+            "type": "string",
+            "description": "A domain, by id: what erd draws, or the domain whose entity entity-lifecycle draws.",
+            "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+          },
+          "behaviour": {
+            "type": "string",
+            "description": "A behaviour document, by its own id.",
+            "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+          },
+          "workflow": {
+            "type": "string",
+            "description": "A workflow, by id: what workflow-state and workflow-swimlane draw.",
+            "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+          },
+          "entity": {
+            "type": "string",
+            "description": "An entity with a state attribute, by id: what entity-lifecycle draws.",
+            "minLength": 1
+          },
+          "collapseWaits": {
+            "type": "boolean",
+            "description": "workflow-swimlane only: fold states with no Operation into the edge that passes through them."
+          },
+          "overlayPolicies": {
+            "type": "boolean",
+            "description": "workflow-swimlane only: mark each operation whose Action a policy governs with that policy's id and effect."
+          },
+          "showAttributes": {
+            "type": "boolean",
+            "description": "erd only: list each entity's attributes."
+          }
+        },
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "inbox",
       "title": "Read your inbox",
       "description": "Run: list what waits on you now: records on which you may perform an Action, and pending approvals you may decide. Each item carries ready-to-call next steps. Start here when there is work to do.",

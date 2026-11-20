@@ -13,7 +13,7 @@ Three worked examples of DNA are public in [dna-codes/dna](https://github.com/dn
 - `dna/structure/` — `structure/v1` domains: entities, attributes and relationships.
 - `dna/behaviour/` — `behaviour/v1` documents: actions, workflows and policies.
 - `.mcp.json` — the remote DNA MCP server. The organization and the token are environment references (`DNA_ORG`, `DNA_ACCESS_TOKEN`), never values.
-- `AGENTS.md` — the rule that sends an agent to DNA (`model`, `grammar`, `apply`, `inbox`) before it changes that domain's permissions, approvals, state transitions or validation.
+- `AGENTS.md` — the rule that sends an agent to DNA (`model`, `grammar`, `apply`, `render`, `inbox`) before it changes that domain's permissions, approvals, state transitions or validation.
 - `README.md` — how to start, and the scenarios the DNA covers.
 
 ## Start from one

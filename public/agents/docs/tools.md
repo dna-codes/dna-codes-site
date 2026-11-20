@@ -828,6 +828,377 @@ Output:
 }
 ```
 
+## `render`
+
+Render the model. Design: draw this organization's stored model. view picks one of six views (workflow-state, workflow-swimlane, entity-lifecycle, erd, permission-matrix, integration-map); domain, behaviour, workflow or entity names the document the view draws. workflow-swimlane accepts collapseWaits and overlayPolicies, and erd accepts showAttributes; an option the view does not accept is refused, naming what it accepts. The result has two halves: rendering is text to show exactly as returned (Mermaid for the five graph views, a Markdown table for permission-matrix), and shape is the same graph or table as data. Show rendering as returned; do not redraw it. An MCP Apps client draws shape through ui://dna/render. format is optional and only picks the text; each view has one. With no view, return the catalogue: each view, the documents it can draw here, its format, or why it is unavailable. The same stored DNA gives the same output. Reads nothing but the model and writes nothing.
+
+Annotations: `readOnlyHint: true`, `idempotentHint: true`, `destructiveHint: false`, `openWorldHint: false`.
+
+Input:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "view": {
+      "type": "string",
+      "enum": [
+        "workflow-state",
+        "workflow-swimlane",
+        "entity-lifecycle",
+        "erd",
+        "permission-matrix",
+        "integration-map"
+      ],
+      "description": "The view to draw. Omit it for the catalogue."
+    },
+    "format": {
+      "type": "string",
+      "enum": [
+        "mermaid",
+        "markdown"
+      ],
+      "description": "The text format of rendering: mermaid for the graph views, markdown for permission-matrix. Omit it for the view's one format; another is refused. There is no JSON format: the data is always in shape."
+    },
+    "domain": {
+      "type": "string",
+      "description": "A domain, by id: what erd draws, or the domain whose entity entity-lifecycle draws.",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "behaviour": {
+      "type": "string",
+      "description": "A behaviour document, by its own id.",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "workflow": {
+      "type": "string",
+      "description": "A workflow, by id: what workflow-state and workflow-swimlane draw.",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "entity": {
+      "type": "string",
+      "description": "An entity with a state attribute, by id: what entity-lifecycle draws.",
+      "minLength": 1
+    },
+    "collapseWaits": {
+      "type": "boolean",
+      "description": "workflow-swimlane only: fold states with no Operation into the edge that passes through them."
+    },
+    "overlayPolicies": {
+      "type": "boolean",
+      "description": "workflow-swimlane only: mark each operation whose Action a policy governs with that policy's id and effect."
+    },
+    "showAttributes": {
+      "type": "boolean",
+      "description": "erd only: list each entity's attributes."
+    }
+  },
+  "additionalProperties": false
+}
+```
+
+Output:
+
+```json
+{
+  "type": "object",
+  "anyOf": [
+    {
+      "required": [
+        "nextActions"
+      ],
+      "properties": {
+        "view": {
+          "type": "string",
+          "description": "The view drawn."
+        },
+        "format": {
+          "type": "string",
+          "description": "The text format of rendering."
+        },
+        "rendering": {
+          "type": "string",
+          "description": "Text to show exactly as returned: Mermaid, or a Markdown table. Do not redraw it."
+        },
+        "shape": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "kind",
+                "diagram",
+                "direction",
+                "lanes",
+                "nodes",
+                "edges"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "graph"
+                },
+                "diagram": {
+                  "enum": [
+                    "state",
+                    "flowchart"
+                  ]
+                },
+                "direction": {
+                  "enum": [
+                    "TB",
+                    "LR"
+                  ]
+                },
+                "lanes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "label"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "kind",
+                      "label"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "lane": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "edges": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "from",
+                      "to",
+                      "kind",
+                      "label"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "from": {
+                        "type": "string"
+                      },
+                      "to": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "required": [
+                "kind",
+                "columns",
+                "rows"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "table"
+                },
+                "columns": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          ],
+          "description": "The graph or table the view projected, as data, present with every rendering: { kind: graph, diagram, direction, lanes, nodes, edges } or { kind: table, columns, rows }. It is not a stored document; the grammar has no object type, so it is declared as a reference and the tool's output schema gives its fields. Read it to draw your own or to check what the rendering shows."
+        },
+        "documents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "version"
+            ],
+            "properties": {
+              "domain": {
+                "type": "string"
+              },
+              "behaviour": {
+                "type": "string"
+              },
+              "version": {
+                "type": "integer"
+              }
+            }
+          },
+          "description": "Each document read, with the version read."
+        },
+        "views": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "view",
+              "formats",
+              "options",
+              "available",
+              "documents"
+            ],
+            "properties": {
+              "view": {
+                "type": "string"
+              },
+              "formats": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "available": {
+                "type": "boolean"
+              },
+              "documents": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "In the catalogue, each view: the documents it can draw, its format, or why it is unavailable."
+        },
+        "nextActions": {
+          "type": "array",
+          "description": "The calls now valid for what this result affected. Empty when none are valid for the caller.",
+          "items": {
+            "type": "object",
+            "required": [
+              "tool"
+            ],
+            "properties": {
+              "tool": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "refusal"
+      ],
+      "properties": {
+        "refusal": {
+          "type": "object",
+          "required": [
+            "code",
+            "message",
+            "next"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "unauthenticated",
+                "invalid_token",
+                "wrong_organization",
+                "insufficient_scope",
+                "not_found",
+                "method_not_allowed",
+                "invalid_request",
+                "unsupported_protocol_version",
+                "payload_too_large",
+                "unknown_tool",
+                "internal_error",
+                "invalid_dna",
+                "document_not_found",
+                "version_conflict",
+                "idempotency_conflict",
+                "rule_failed",
+                "needs_approval",
+                "needs_claim",
+                "proof_required",
+                "rate_limited",
+                "joining_is_governed",
+                "claim_incomplete",
+                "flow_unavailable",
+                "plan_limit",
+                "allowance_exhausted",
+                "spend_cap_reached",
+                "person_required"
+              ]
+            },
+            "message": {
+              "type": "string"
+            },
+            "next": {
+              "type": "string",
+              "description": "What to do next."
+            },
+            "details": {
+              "type": "object",
+              "description": "Per code: issues for invalid_dna and invalid_request; domain, expected and current for version_conflict."
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
 ## `inbox`
 
 Read your inbox. Run: list what waits on you now: records on which you may perform an Action, and pending approvals you may decide. Each item carries ready-to-call next steps. Start here when there is work to do.

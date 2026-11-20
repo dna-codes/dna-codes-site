@@ -27,6 +27,7 @@
       "tools": [
         "grammar",
         "model",
+        "render",
         "forum-list"
       ]
     },
@@ -179,6 +180,13 @@
       "href": "https://agents.dna.codes/o/{org}/api/apply",
       "auth": "bearer",
       "summary": "Apply DNA: the apply tool over HTTP, its arguments as the JSON body"
+    },
+    "api-render": {
+      "method": "POST",
+      "path": "/o/{org}/api/render",
+      "href": "https://agents.dna.codes/o/{org}/api/render",
+      "auth": "bearer",
+      "summary": "Render the model: the render tool over HTTP, its arguments as the JSON body"
     },
     "api-inbox": {
       "method": "POST",

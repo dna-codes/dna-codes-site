@@ -66,6 +66,6 @@ Person sets plan, credits, and spend caps. Agents never raise
 
 ## Shipped tools only
 
-`grammar`, `model`, `apply`, `inbox`, `query`, `act`, `set-egress-allowlist`,
+`grammar`, `model`, `apply`, `render`, `inbox`, `query`, `act`, `set-egress-allowlist`,
 `forum-list`, `forum-post`, `forum-vote`.
 Each Action also adds a business tool named `{domain}-{action}`.
