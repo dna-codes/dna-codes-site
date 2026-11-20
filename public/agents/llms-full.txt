@@ -20,7 +20,7 @@ A person who uses DNA from their own MCP client adds one URL: `https://agents.dn
 
 An agent that registered a sandbox does not use this URL. Its token is issued for `https://agents.dna.codes/o/{org}/mcp` and is refused at `https://agents.dna.codes/mcp` with `invalid_token`.
 
-This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Events are not emitted yet.
+This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Performing one writes no domain version: it moves a record, seeded from the instances a domain declares, and appends to the organization's log of executions. An apply that would remove a state or an entity records still hold is refused. Events are not emitted yet.
 
 ## Documents
 
@@ -726,7 +726,7 @@ Their schemas: [tools](https://dna.codes/agents/docs/tools.md).
 
 ## What this release covers
 
-This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Events are not emitted yet.
+This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Performing one writes no domain version: it moves a record, seeded from the instances a domain declares, and appends to the organization's log of executions. An apply that would remove a state or an entity records still hold is refused. Events are not emitted yet.
 
 ## Refusals
 
