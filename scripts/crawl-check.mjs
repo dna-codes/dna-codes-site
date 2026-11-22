@@ -4,6 +4,7 @@
 //   missing canonical     an indexable page with no <link rel="canonical">
 //   has meta noindex      any page other than the allowlist below
 //   title too long        rendered <title> wider than ~600px (Moz's cutoff)
+//   description too short meta description under 55 characters (Moz's cutoff)
 //   thin content          indexable HTML authored in public/ with under 250 words
 //                         outside <script>, <style>, and <svg>
 //   genome pages          every compiled genome has its /playground/<key>/ page, its card on
@@ -23,6 +24,7 @@ const dist = join(root, 'dist');
 const publicDir = join(root, 'public');
 const TITLE_LIMIT_PX = 600;
 const THIN_WORDS = 250;
+const DESCRIPTION_MIN = 55; // Moz "Description Too Short"
 const SKIP_DIRS = new Set(['agents', '_astro']);
 
 // Unscaled Arial-ish advances, then × SCALE so the samples from the 2026-11-09
@@ -150,6 +152,20 @@ for (const file of htmlFiles) {
     if (title && px > TITLE_LIMIT_PX) {
       fail('title', `${route} title is about ${px}px (limit ${TITLE_LIMIT_PX}): ${title}`);
     }
+
+    const descTag = (html.match(/<meta\b[^>]*>/gi) ?? []).find((tag) => /\bname=["']?description\b/i.test(tag));
+    const description = decode(
+      descTag
+        ?.match(/\bcontent=(?:"([^"]*)"|'([^']*)')/i)
+        ?.slice(1)
+        .find(Boolean) ?? ''
+    );
+    if (description.length < DESCRIPTION_MIN) {
+      fail(
+        'description',
+        `${route} meta description is ${description.length} characters (needs ${DESCRIPTION_MIN}): ${description}`
+      );
+    }
   }
 
   const fromPublic = existsSync(join(publicDir, relative(dist, file)));
@@ -250,5 +266,5 @@ if (failures.length) {
 }
 
 console.log(
-  `crawl-check: ${pages} pages pass canonical, index, title width, and thin content. ${genomeKeys.length} genomes have their Playground page, template card, and share card.`
+  `crawl-check: ${pages} pages pass canonical, index, title width, description length, and thin content. ${genomeKeys.length} genomes have their Playground page, template card, and share card.`
 );

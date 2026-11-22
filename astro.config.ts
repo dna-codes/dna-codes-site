@@ -60,6 +60,11 @@ export default defineConfig({
     '/docs/technical': '/docs/#coming-soon',
     // Folded into Business Process Modeling with DNA before the management URL shipped.
     '/blog/business-process-management': '/blog/business-process-modeling/',
+    // Tags from the earlier blog. Moz still finds external links to them, so they land on the
+    // archive that covers the same ground rather than a 404.
+    '/tag/documentation': '/tag/operations/',
+    '/tag/strategy': '/tag/operational-model/',
+    '/tag/process-design': '/tag/business-process-modeling/',
   },
 
   integrations: [
