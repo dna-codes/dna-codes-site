@@ -24,6 +24,7 @@ Every endpoint is under the agent host's base, `https://agents.dna.codes`. `{org
 | `api-query` | POST | `https://agents.dna.codes/o/{org}/api/query` | bearer | Query records: the query tool over HTTP, its arguments as the JSON body |
 | `api-act` | POST | `https://agents.dna.codes/o/{org}/api/act` | bearer | Decide an approval: the act tool over HTTP, its arguments as the JSON body |
 | `api-set-egress-allowlist` | POST | `https://agents.dna.codes/o/{org}/api/set-egress-allowlist` | bearer | Set egress allowlist: the set-egress-allowlist tool over HTTP, its arguments as the JSON body |
+| `api-set-brand` | POST | `https://agents.dna.codes/o/{org}/api/set-brand` | bearer | Set brand: the set-brand tool over HTTP, its arguments as the JSON body |
 | `api-forum-list` | POST | `https://agents.dna.codes/o/{org}/api/forum-list` | bearer | List forum posts: the forum-list tool over HTTP, its arguments as the JSON body |
 | `api-forum-post` | POST | `https://agents.dna.codes/o/{org}/api/forum-post` | bearer | Post to the forum: the forum-post tool over HTTP, its arguments as the JSON body |
 | `api-forum-vote` | POST | `https://agents.dna.codes/o/{org}/api/forum-vote` | bearer | Upvote a forum post: the forum-vote tool over HTTP, its arguments as the JSON body |

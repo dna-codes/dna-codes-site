@@ -846,7 +846,7 @@ Output:
 
 ## `render`
 
-Render the model. Design: draw this organization's stored model. view picks one of six views (workflow-state, workflow-swimlane, entity-lifecycle, erd, permission-matrix, integration-map); domain, behaviour, workflow or entity names the document the view draws. workflow-swimlane accepts collapseWaits and overlayPolicies, and erd accepts showAttributes; an option the view does not accept is refused, naming what it accepts. The result has two halves: rendering is text to show exactly as returned (Mermaid for the five graph views, a Markdown table for permission-matrix), and shape is the same graph or table as data. Show rendering as returned; do not redraw it. An MCP Apps client draws shape through ui://dna/render. format is optional and only picks the text; each view has one. With no view, return the catalogue: each view, the documents it can draw here, its format, or why it is unavailable. The same stored DNA gives the same output. Reads nothing but the model and writes nothing.
+Render the model. Design: draw this organization's stored model. view picks one of seven views (workflow-state, workflow-swimlane, workflow-steps, entity-lifecycle, erd, permission-matrix, integration-map); domain, behaviour, workflow or entity names the document the view draws. workflow-swimlane accepts collapseWaits and overlayPolicies, and erd accepts showAttributes; an option the view does not accept is refused, naming what it accepts. The result has two halves: rendering is text to show exactly as returned (Mermaid for the five graph views, a Markdown table for permission-matrix, a Markdown list of the steps for workflow-steps), and shape is the same graph, table or steps as data. Show rendering as returned; do not redraw it. An MCP Apps client draws shape through ui://dna/render. format is optional and only picks the text; each view has one. With no view, return the catalogue: each view, the documents it can draw here, its format, or why it is unavailable. The same stored DNA gives the same output. Reads nothing but the model and writes nothing.
 
 Annotations: `readOnlyHint: true`, `idempotentHint: true`, `destructiveHint: false`, `openWorldHint: false`.
 
@@ -861,6 +861,7 @@ Input:
       "enum": [
         "workflow-state",
         "workflow-swimlane",
+        "workflow-steps",
         "entity-lifecycle",
         "erd",
         "permission-matrix",
@@ -874,7 +875,7 @@ Input:
         "mermaid",
         "markdown"
       ],
-      "description": "The text format of rendering: mermaid for the graph views, markdown for permission-matrix. Omit it for the view's one format; another is refused. There is no JSON format: the data is always in shape."
+      "description": "The text format of rendering: mermaid for the graph views, markdown for permission-matrix and workflow-steps. Omit it for the view's one format; another is refused. There is no JSON format: the data is always in shape."
     },
     "domain": {
       "type": "string",
@@ -888,7 +889,7 @@ Input:
     },
     "workflow": {
       "type": "string",
-      "description": "A workflow, by id: what workflow-state and workflow-swimlane draw.",
+      "description": "A workflow, by id: what workflow-state, workflow-swimlane and workflow-steps draw.",
       "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
     },
     "entity": {
@@ -934,7 +935,7 @@ Output:
         },
         "rendering": {
           "type": "string",
-          "description": "Text to show exactly as returned: Mermaid, or a Markdown table. Do not redraw it."
+          "description": "Text to show exactly as returned: Mermaid, a Markdown table, or a Markdown list of steps. Do not redraw it."
         },
         "shape": {
           "oneOf": [
@@ -1063,9 +1064,48 @@ Output:
                   }
                 }
               }
+            },
+            {
+              "type": "object",
+              "required": [
+                "kind",
+                "workflow",
+                "machine",
+                "actions",
+                "routes",
+                "steps"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "steps"
+                },
+                "workflow": {
+                  "type": "string"
+                },
+                "machine": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "actions": {
+                  "type": "object"
+                },
+                "routes": {
+                  "type": "object"
+                },
+                "steps": {
+                  "type": "object"
+                }
+              }
             }
           ],
-          "description": "The graph or table the view projected, as data, present with every rendering: { kind: graph, diagram, direction, lanes, nodes, edges } or { kind: table, columns, rows }. It is not a stored document; the grammar has no object type, so it is declared as a reference and the tool's output schema gives its fields. Read it to draw your own or to check what the rendering shows."
+          "description": "The graph, table or steps the view projected, as data, present with every rendering: { kind: graph, diagram, direction, lanes, nodes, edges }, { kind: table, columns, rows } or { kind: steps, workflow, machine, actions, routes, steps }, where machine is an XState machine config with no guards. It is not a stored document; the grammar has no object type, so it is declared as a reference and the tool's output schema gives its fields. Read it to draw your own or to check what the rendering shows."
         },
         "documents": {
           "type": "array",
@@ -2214,6 +2254,321 @@ Output:
             }
           },
           "description": "The destinations now on the allowlist."
+        },
+        "nextActions": {
+          "type": "array",
+          "description": "The calls now valid for what this result affected. Empty when none are valid for the caller.",
+          "items": {
+            "type": "object",
+            "required": [
+              "tool"
+            ],
+            "properties": {
+              "tool": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "refusal"
+      ],
+      "properties": {
+        "refusal": {
+          "type": "object",
+          "required": [
+            "code",
+            "message",
+            "next"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "unauthenticated",
+                "invalid_token",
+                "wrong_organization",
+                "insufficient_scope",
+                "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
+                "method_not_allowed",
+                "invalid_request",
+                "unsupported_protocol_version",
+                "payload_too_large",
+                "unknown_tool",
+                "internal_error",
+                "invalid_dna",
+                "document_not_found",
+                "version_conflict",
+                "idempotency_conflict",
+                "rule_failed",
+                "needs_approval",
+                "needs_claim",
+                "proof_required",
+                "rate_limited",
+                "joining_is_governed",
+                "claim_incomplete",
+                "flow_unavailable",
+                "plan_limit",
+                "allowance_exhausted",
+                "spend_cap_reached",
+                "person_required"
+              ]
+            },
+            "message": {
+              "type": "string"
+            },
+            "next": {
+              "type": "string",
+              "description": "What to do next."
+            },
+            "details": {
+              "type": "object",
+              "description": "Per code: issues for invalid_dna and invalid_request; domain, expected and current for version_conflict."
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+## `set-brand`
+
+Set brand. Design: set or clear this organization's brand, which the DNA MCP App documents draw in: a name, the primary, success, warning and danger colours as { light, dark } hex pairs, and a font stack. Only a person who may administer the organization performs it. Each colour must stay readable on the light and the dark background, or nothing is stored. Omit brand to clear it. The brand is a host setting, not DNA.
+
+Annotations: `readOnlyHint: false`, `idempotentHint: true`, `destructiveHint: false`, `openWorldHint: false`.
+
+Input:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "brand": {
+      "type": "object",
+      "required": [
+        "name",
+        "primary",
+        "success",
+        "warning",
+        "danger"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "primary": {
+          "type": "object",
+          "required": [
+            "light",
+            "dark"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "light": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dark": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "success": {
+          "type": "object",
+          "required": [
+            "light",
+            "dark"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "light": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dark": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "warning": {
+          "type": "object",
+          "required": [
+            "light",
+            "dark"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "light": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dark": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "danger": {
+          "type": "object",
+          "required": [
+            "light",
+            "dark"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "light": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dark": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "font": {
+          "enum": [
+            "system-sans",
+            "system-serif",
+            "system-mono",
+            "inter"
+          ]
+        }
+      },
+      "description": "The brand to set, replacing any previous one. Omit it to clear the brand."
+    }
+  },
+  "additionalProperties": false
+}
+```
+
+Output:
+
+```json
+{
+  "type": "object",
+  "anyOf": [
+    {
+      "required": [
+        "nextActions"
+      ],
+      "properties": {
+        "brand": {
+          "type": "object",
+          "required": [
+            "name",
+            "primary",
+            "success",
+            "warning",
+            "danger"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "primary": {
+              "type": "object",
+              "required": [
+                "light",
+                "dark"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "dark": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "success": {
+              "type": "object",
+              "required": [
+                "light",
+                "dark"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "dark": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "warning": {
+              "type": "object",
+              "required": [
+                "light",
+                "dark"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "dark": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "danger": {
+              "type": "object",
+              "required": [
+                "light",
+                "dark"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "dark": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "font": {
+              "enum": [
+                "system-sans",
+                "system-serif",
+                "system-mono",
+                "inter"
+              ]
+            }
+          },
+          "description": "The brand now in effect, with each colour for both modes. Absent once cleared."
         },
         "nextActions": {
           "type": "array",

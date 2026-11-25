@@ -49,7 +49,7 @@
     {
       "id": "render",
       "name": "Render the model",
-      "description": "Design: draw this organization's stored model. view picks one of six views (workflow-state, workflow-swimlane, entity-lifecycle, erd, permission-matrix, integration-map); domain, behaviour, workflow or entity names the document the view draws. workflow-swimlane accepts collapseWaits and overlayPolicies, and erd accepts showAttributes; an option the view does not accept is refused, naming what it accepts. The result has two halves: rendering is text to show exactly as returned (Mermaid for the five graph views, a Markdown table for permission-matrix), and shape is the same graph or table as data. Show rendering as returned; do not redraw it. An MCP Apps client draws shape through ui://dna/render. format is optional and only picks the text; each view has one. With no view, return the catalogue: each view, the documents it can draw here, its format, or why it is unavailable. The same stored DNA gives the same output. Reads nothing but the model and writes nothing.",
+      "description": "Design: draw this organization's stored model. view picks one of seven views (workflow-state, workflow-swimlane, workflow-steps, entity-lifecycle, erd, permission-matrix, integration-map); domain, behaviour, workflow or entity names the document the view draws. workflow-swimlane accepts collapseWaits and overlayPolicies, and erd accepts showAttributes; an option the view does not accept is refused, naming what it accepts. The result has two halves: rendering is text to show exactly as returned (Mermaid for the five graph views, a Markdown table for permission-matrix, a Markdown list of the steps for workflow-steps), and shape is the same graph, table or steps as data. Show rendering as returned; do not redraw it. An MCP Apps client draws shape through ui://dna/render. format is optional and only picks the text; each view has one. With no view, return the catalogue: each view, the documents it can draw here, its format, or why it is unavailable. The same stored DNA gives the same output. Reads nothing but the model and writes nothing.",
       "tags": [
         "read-only"
       ]
@@ -82,6 +82,14 @@
       "id": "set-egress-allowlist",
       "name": "Set egress allowlist",
       "description": "Design: replace this organization's egress allowlist. Only a person of the claimed organization may perform it; nothing leaves the platform except to these destinations. Replace the claimed organization's egress allowlist (person only).",
+      "tags": [
+        "write"
+      ]
+    },
+    {
+      "id": "set-brand",
+      "name": "Set brand",
+      "description": "Design: set or clear this organization's brand, which the DNA MCP App documents draw in: a name, the primary, success, warning and danger colours as { light, dark } hex pairs, and a font stack. Only a person who may administer the organization performs it. Each colour must stay readable on the light and the dark background, or nothing is stored. Omit brand to clear it. The brand is a host setting, not DNA.",
       "tags": [
         "write"
       ]
@@ -121,7 +129,7 @@
           "tokenUrl": "https://just-bazaar-68.authkit.app/oauth2/token",
           "scopes": {
             "design:read": "Covers grammar, model, render, forum-list",
-            "design:write": "Covers apply, set-egress-allowlist, forum-post, forum-vote",
+            "design:write": "Covers apply, set-egress-allowlist, set-brand, forum-post, forum-vote",
             "run:read": "Covers inbox, query",
             "run:write": "Covers act"
           }

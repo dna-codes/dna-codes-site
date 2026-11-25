@@ -40,7 +40,7 @@ What a business does: Actions on entities, the Operations that perform them, Wor
 
 `https://dna.codes/schemas/behaviour/behaviour/v1`, schema: [schemas/behaviour/behaviour/v1.json](https://dna.codes/agents/schemas/behaviour/behaviour/v1.json)
 
-What a business does with the structure one domain describes: its Actions, the Operations that say who performs them on what, the workflows that sequence those Operations, the policies that decide them, and the defaults for what no policy governs. It names its domain and never changes it, so a business can be modelled structure first and given behaviour later. A set holds at most one behaviour document per domain. Its home is its domain: its policies and defaults target the domain or an entity in it.
+What a business does with the structure one domain describes: the roles it expects, its Actions, the Operations that say which role performs them on what, the workflows that sequence those Operations, the policies that decide them, and the defaults for what no policy governs. It names its domain and never changes it, so a business can be modelled structure first and given behaviour later. A set holds at most one behaviour document per domain. Its home is its domain: its policies and defaults target the domain or an entity in it.
 
 ### `action` (stable)
 
@@ -52,19 +52,19 @@ One capability of one entity: what it takes, what it returns, whether it changes
 
 `https://dna.codes/schemas/behaviour/operation/v1`, schema: [schemas/behaviour/operation/v1.json](https://dna.codes/agents/schemas/behaviour/operation/v1.json)
 
-One Action, performed by one actor on one target. It inherits the Action's contract. A workflow is written over Operations, so the same Action can appear in it twice with different performers.
+One Action, performed by one role on one target. It inherits the Action's contract. A workflow is written over Operations, so the same Action can appear in it twice with different roles.
 
 ### `workflow` (stable)
 
 `https://dna.codes/schemas/behaviour/workflow/v1`, schema: [schemas/behaviour/workflow/v1.json](https://dna.codes/agents/schemas/behaviour/workflow/v1.json)
 
-A state machine over Operations. A run starts in initial. In each state, its Operations may run any number of times; only a transition moves the run, when the Operation it names completes or fails, optionally guarded by a value in that Operation's output or by the final state a sub-workflow ended in. A final state ends the run and has no transitions.
+A state machine over Operations. A run starts in initial. In each state, its Operations may run any number of times; only a transition moves the run, when the Operation it names completes or fails, optionally guarded by a value in that Operation's output or by the final state a sub-workflow ended in. A state may run one sub-workflow, or two or more workflows at the same time as parallel regions. A final state ends the run and has no transitions.
 
 ### `condition` (stable)
 
 `https://dna.codes/schemas/behaviour/condition/v1`, schema: [schemas/behaviour/condition/v1.json](https://dna.codes/agents/schemas/behaviour/condition/v1.json)
 
-A test a policy applies: one predicate, a group, or a relation, or these composed with allOf, anyOf and not. A predicate reads a path off one subject and compares it with a literal value or with a reference to another path. The grammar is closed. It has no expressions, scripts or queries, and nothing in it names a business. target is the record acted on, actor is who is acting, context is the time and environment supplied to the evaluator, and input is the arguments the Action was called with. A group names a reusable condition over a principal, kept in the organization access document. A relation holds when a structure relationship connects two values.
+A test a policy applies: one predicate, a group, a role, or a relation, or these composed with allOf, anyOf and not. A predicate reads a path off one subject and compares it with a literal value or with a reference to another path. The grammar is closed. It has no expressions, scripts or queries, and nothing in it names a business. target is the record acted on, actor is who is acting, context is the time and environment supplied to the evaluator, and input is the arguments the Action was called with. A group names a reusable condition over a principal, kept in the organization access document. A relation holds when a structure relationship connects two values.
 
 ### `policy` (stable)
 

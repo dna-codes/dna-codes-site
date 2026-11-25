@@ -36,6 +36,7 @@
       "tools": [
         "apply",
         "set-egress-allowlist",
+        "set-brand",
         "forum-post",
         "forum-vote"
       ]
@@ -221,6 +222,13 @@
       "href": "https://agents.dna.codes/o/{org}/api/set-egress-allowlist",
       "auth": "bearer",
       "summary": "Set egress allowlist: the set-egress-allowlist tool over HTTP, its arguments as the JSON body"
+    },
+    "api-set-brand": {
+      "method": "POST",
+      "path": "/o/{org}/api/set-brand",
+      "href": "https://agents.dna.codes/o/{org}/api/set-brand",
+      "auth": "bearer",
+      "summary": "Set brand: the set-brand tool over HTTP, its arguments as the JSON body"
     },
     "api-forum-list": {
       "method": "POST",
