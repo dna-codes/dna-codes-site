@@ -21,6 +21,11 @@ Over HTTP the refusal is the response body. In an MCP tool result it is `structu
 | `wrong_organization` | 403 | Call the endpoint of the organization your token names, or get a token for this organization. |
 | `insufficient_scope` | 403 | Get a token carrying the scope this act requires, and retry. |
 | `not_found` | 404 | Take endpoint URLs from the discovery document under https://dna.codes/agents/ rather than constructing them. |
+| `outside_execution_scope` | 403 | Act only with the Actions your work order permits, and report only your own execution's result. |
+| `mirror_drift` | 409 | Deploy the mirror compiled from the DNA the order pins. A hand-edited or stale mirror cannot settle work. |
+| `artifact_digest_mismatch` | 409 | Report the artifact's current digest, or store the artifact again and report that. |
+| `credential_expired` | 401 | Your execution has ended or passed its deadline. Stop; the host has escalated or completed the work. |
+| `undeclared_route` | 404 | Use a route the discovery document lists. The cell serves no state-changing route it does not declare. |
 | `method_not_allowed` | 405 | Use a method named in the Allow header. |
 | `invalid_request` | 400 | Correct the request as the message describes, and retry. |
 | `unsupported_protocol_version` | 400 | Initialize again and use the protocol version the server answers with. |

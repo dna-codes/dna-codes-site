@@ -7,7 +7,7 @@
     {
       "url": "https://agents.dna.codes/mcp",
       "protocolBinding": "MCP",
-      "protocolVersion": "2025-11-25"
+      "protocolVersion": "2026-07-28"
     }
   ],
   "documentationUrl": "https://dna.codes/agents/",

@@ -40,7 +40,7 @@ What a business does: Actions on entities, the Operations that perform them, Wor
 
 `https://dna.codes/schemas/behaviour/behaviour/v1`, schema: [schemas/behaviour/behaviour/v1.json](https://dna.codes/agents/schemas/behaviour/behaviour/v1.json)
 
-What a business does with the structure one domain describes: its Actions, the Operations that say who performs them on what, the workflows that sequence those Operations, and the policies that decide them. It names its domain and never changes it, so a business can be modelled structure first and given behaviour later. A set holds at most one behaviour document per domain.
+What a business does with the structure one domain describes: its Actions, the Operations that say who performs them on what, the workflows that sequence those Operations, the policies that decide them, and the defaults for what no policy governs. It names its domain and never changes it, so a business can be modelled structure first and given behaviour later. A set holds at most one behaviour document per domain. Its home is its domain: its policies and defaults target the domain or an entity in it.
 
 ### `action` (stable)
 
@@ -64,10 +64,16 @@ A state machine over Operations. A run starts in initial. In each state, its Ope
 
 `https://dna.codes/schemas/behaviour/condition/v1`, schema: [schemas/behaviour/condition/v1.json](https://dna.codes/agents/schemas/behaviour/condition/v1.json)
 
-A test a policy applies: one predicate, or predicates composed with allOf, anyOf and not. A predicate reads a path off one subject and compares it with a value. The grammar is closed. It has no expressions, scripts or queries, and nothing in it names a business. target is the resource acted on, actor is who is acting, context is the time and environment supplied to the evaluator, and input is the arguments the Action was called with.
+A test a policy applies: one predicate, a group, or a relation, or these composed with allOf, anyOf and not. A predicate reads a path off one subject and compares it with a literal value or with a reference to another path. The grammar is closed. It has no expressions, scripts or queries, and nothing in it names a business. target is the record acted on, actor is who is acting, context is the time and environment supplied to the evaluator, and input is the arguments the Action was called with. A group names a reusable condition over a principal, kept in the organization access document. A relation holds when a structure relationship connects two values.
 
 ### `policy` (stable)
 
 `https://dna.codes/schemas/behaviour/policy/v1`, schema: [schemas/behaviour/policy/v1.json](https://dna.codes/agents/schemas/behaviour/policy/v1.json)
 
-A decision about the Actions it names: allow, deny, route the work to another performer, or require someone else's approval, when its condition holds or always when it has none. A rule on an Action's input is a policy whose condition reads input, so permissions and business rules are written in one grammar.
+A decision about the actions it names at its target: allow, deny, route the work to another performer, or require someone else's approval, when its condition holds or always when it has none. A rule on an Action's input is a policy whose condition reads input, so permissions and business rules are written in one grammar. A policy applies to every request at or under its target, wherever it is written. Combination: every applicable policy contributes, at any target, and the most restrictive decision wins, in the order deny, then require_approval, then allow. A narrower allow removes neither a wider deny nor a wider approval requirement; an exception is written on the policy it relaxes, as a not in its condition. route allows the act and adds an obligation naming the performer: where more than one route applies, the route at the deepest target is taken, then the higher priority. Approvals required by more than one policy accumulate. Where no policy governs a request, the effective default decides.
+
+### `access` (stable)
+
+`https://dna.codes/schemas/behaviour/access/v1`, schema: [schemas/behaviour/access/v1.json](https://dna.codes/agents/schemas/behaviour/access/v1.json)
+
+Who may do what at one home, the organization or one workspace: its policies and its defaults, and at the organization its groups. An organization holds one organization access document, and each of its workspaces one workspace access document beside its structure and behaviour documents. Neither names a domain. A domain's own policies and defaults are written in its behaviour document. A policy lives in the document whose home contains its target, and its target cannot reach outside that home. Groups are defined in the organization access document alone: a workspace or a domain cannot define one.

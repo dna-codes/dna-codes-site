@@ -20,7 +20,7 @@ A person who uses DNA from their own MCP client adds one URL: `https://agents.dn
 
 An agent that registered a sandbox does not use this URL. Its token is issued for `https://agents.dna.codes/o/{org}/mcp` and is refused at `https://agents.dna.codes/mcp` with `invalid_token`.
 
-This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Performing one writes no domain version: it moves a record, seeded from the instances a domain declares, and appends to the organization's log of executions. An apply that would remove a state or an entity records still hold is refused. Events are not emitted yet.
+This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable, `access` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Performing one writes no domain version: it moves a record, seeded from the instances a domain declares, and appends to the organization's log of executions. An apply that would remove a state or an entity records still hold is refused. Events are not emitted yet.
 
 ## Documents
 
@@ -71,11 +71,19 @@ This release covers structure and behaviour: `attribute` is stable, `entity` is 
 - `GET https://agents.dna.codes/o/{org}/approvals/{id}` (bearer): Follow a pending or completed approval handle
 - `POST https://agents.dna.codes/o/{org}/approvals/{id}/approve` (bearer): A person approves a paused act; completes the original Operation without the agent resending
 - `POST https://agents.dna.codes/o/{org}/approvals/{id}/decide` (bearer): Decide a paused act: approve performs it once, decline closes it; the policy's performer decides who may
+- `GET https://agents.dna.codes/o/{org}/workspaces` (bearer): The organization's workspaces the caller may read, each with its id and name
 - `GET https://agents.dna.codes/o/{org}/fleet` (bearer): The organization's fleet document and its version: which roles agents perform and which people perform
 - `PUT https://agents.dna.codes/o/{org}/fleet` (bearer): A person saves the fleet document as its next version. An agent is refused with person_required
 - `POST https://agents.dna.codes/o/{org}/fleet/workflow-executions` (bearer): Start a workflow execution of a behaviour's workflow; its agent work runs and its human work waits in the queue
 - `GET https://agents.dna.codes/o/{org}/fleet/activity` (bearer): Each role's status and recent operation executions, and the queue of available work
 - `POST https://agents.dna.codes/o/{org}/fleet/queue/perform` (bearer): A person performs queued work routed to their Position. An agent is refused with person_required
+- `POST https://agents.dna.codes/o/{org}/fleet/executions/{id}/result` (bearer): A performer's work-result/v1 for its own execution, under that execution's credential
+- `POST https://agents.dna.codes/o/{org}/fleet/effects/{id}/outcome` (bearer): A bound automation's effect-outcome/v1 for its own effect, under that effect's credential
+- `POST https://agents.dna.codes/o/{org}/fleet/mirrors` (bearer): A person deploys a binding's compiled mirror; the host records its reference, digest and time
+- `POST https://agents.dna.codes/o/{org}/fleet/sweep` (bearer): Escalates handed-off work past its deadline; any scheduler may call it, and it is idempotent
+- `POST https://agents.dna.codes/o/{org}/fleet/supervisor/retry` (bearer): The supervisor retries escalated work with the role that first had it
+- `POST https://agents.dna.codes/o/{org}/fleet/supervisor/reassign` (bearer): The supervisor hands escalated work to another role that performs the same Action
+- `POST https://agents.dna.codes/o/{org}/fleet/supervisor/propose` (bearer): The supervisor proposes a DNA change, which waits for a person to apply it
 - `POST https://agents.dna.codes/directory/events` (no credential): Inbound directory (SCIM) webhook: verified events become governed Person and Membership DNA
 - `POST https://agents.dna.codes/o/{org}/plan/sso` (bearer): Configure enterprise SSO when the workspace plan entitles it
 
@@ -101,6 +109,7 @@ This release covers structure and behaviour: `attribute` is stable, `entity` is 
 - [workflow](https://dna.codes/agents/schemas/behaviour/workflow/v1.json): Workflow, `https://dna.codes/schemas/behaviour/workflow/v1`
 - [condition](https://dna.codes/agents/schemas/behaviour/condition/v1.json): Condition, `https://dna.codes/schemas/behaviour/condition/v1`
 - [policy](https://dna.codes/agents/schemas/behaviour/policy/v1.json): Policy, `https://dna.codes/schemas/behaviour/policy/v1`
+- [access](https://dna.codes/agents/schemas/behaviour/access/v1.json): Access, `https://dna.codes/schemas/behaviour/access/v1`
 
 ## Pricing
 

@@ -5,7 +5,7 @@
     "version": "1"
   },
   "description": "Business rules via MCP. Register a sandbox, do real work, then hand your human the claim link.",
-  "protocolVersion": "2025-11-25",
+  "protocolVersion": "2026-07-28",
   "transport": {
     "type": "streamable-http",
     "url": "https://agents.dna.codes/mcp"
@@ -46,7 +46,8 @@
               "operation",
               "workflow",
               "condition",
-              "policy"
+              "policy",
+              "access"
             ],
             "description": "Return this definition's JSON Schema."
           }

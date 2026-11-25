@@ -26,7 +26,8 @@ Input:
         "operation",
         "workflow",
         "condition",
-        "policy"
+        "policy",
+        "access"
       ],
       "description": "Return this definition's JSON Schema."
     }
@@ -138,6 +139,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -482,6 +488,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -785,6 +796,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -1156,6 +1172,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -1275,7 +1296,181 @@ Output:
                     "type": "array"
                   },
                   "history": {
-                    "type": "array"
+                    "type": "array",
+                    "description": "For one record read by id: each performed Action on it, oldest first. principal, actingFor and version (of the behaviour document it was performed under) are present where the Run log recorded them.",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "execution",
+                        "action",
+                        "from",
+                        "to",
+                        "at"
+                      ],
+                      "properties": {
+                        "execution": {
+                          "type": "string"
+                        },
+                        "action": {
+                          "type": "string"
+                        },
+                        "from": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "to": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "at": {
+                          "type": "string"
+                        },
+                        "principal": {
+                          "type": "object",
+                          "required": [
+                            "subject",
+                            "clientId"
+                          ]
+                        },
+                        "actingFor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "version": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "audit": {
+                    "type": "array",
+                    "description": "For one record read by id: the Run log's audit entries at the record's address (refusals), oldest first. Each names the principal, whom it acted for, the tool, the model version, the inputs, the outcome, the reason and the contributing policies.",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "at",
+                        "kind",
+                        "principal",
+                        "actingFor",
+                        "tool",
+                        "address",
+                        "version",
+                        "inputs",
+                        "outcome",
+                        "reason"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "at": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "enum": [
+                            "refusal",
+                            "policy-change"
+                          ]
+                        },
+                        "principal": {
+                          "type": "object",
+                          "required": [
+                            "subject",
+                            "clientId"
+                          ]
+                        },
+                        "actingFor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tool": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "action": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "inputs": {
+                          "type": "object"
+                        },
+                        "outcome": {
+                          "type": "string"
+                        },
+                        "reason": {
+                          "type": "string"
+                        },
+                        "contributing": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "policy",
+                              "home",
+                              "target",
+                              "effect"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "entityName": {
+                    "type": "string",
+                    "description": "The entity's name, as its domain declares it."
+                  },
+                  "workflow": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "version"
+                    ],
+                    "description": "The workflow the record runs in, and the version of the behaviour document that declares it.",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "waitingOn": {
+                    "type": "object",
+                    "required": [
+                      "who"
+                    ],
+                    "description": "Who performs the Operations open in the record's state, and since when (the execution that moved it there).",
+                    "properties": {
+                      "who": {
+                        "type": "string"
+                      },
+                      "since": {
+                        "type": "string"
+                      }
+                    }
                   }
                 }
               },
@@ -1333,6 +1528,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -1451,7 +1651,181 @@ Output:
                 "type": "array"
               },
               "history": {
-                "type": "array"
+                "type": "array",
+                "description": "For one record read by id: each performed Action on it, oldest first. principal, actingFor and version (of the behaviour document it was performed under) are present where the Run log recorded them.",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "execution",
+                    "action",
+                    "from",
+                    "to",
+                    "at"
+                  ],
+                  "properties": {
+                    "execution": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string"
+                    },
+                    "from": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "to": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "at": {
+                      "type": "string"
+                    },
+                    "principal": {
+                      "type": "object",
+                      "required": [
+                        "subject",
+                        "clientId"
+                      ]
+                    },
+                    "actingFor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "version": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "audit": {
+                "type": "array",
+                "description": "For one record read by id: the Run log's audit entries at the record's address (refusals), oldest first. Each names the principal, whom it acted for, the tool, the model version, the inputs, the outcome, the reason and the contributing policies.",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "at",
+                    "kind",
+                    "principal",
+                    "actingFor",
+                    "tool",
+                    "address",
+                    "version",
+                    "inputs",
+                    "outcome",
+                    "reason"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "at": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "enum": [
+                        "refusal",
+                        "policy-change"
+                      ]
+                    },
+                    "principal": {
+                      "type": "object",
+                      "required": [
+                        "subject",
+                        "clientId"
+                      ]
+                    },
+                    "actingFor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "tool": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "action": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "inputs": {
+                      "type": "object"
+                    },
+                    "outcome": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "contributing": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "policy",
+                          "home",
+                          "target",
+                          "effect"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "entityName": {
+                "type": "string",
+                "description": "The entity's name, as its domain declares it."
+              },
+              "workflow": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "description": "The workflow the record runs in, and the version of the behaviour document that declares it.",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "waitingOn": {
+                "type": "object",
+                "required": [
+                  "who"
+                ],
+                "description": "Who performs the Operations open in the record's state, and since when (the execution that moved it there).",
+                "properties": {
+                  "who": {
+                    "type": "string"
+                  },
+                  "since": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
@@ -1501,6 +1875,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -1687,6 +2066,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -1872,6 +2256,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -2016,6 +2405,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -2207,6 +2601,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -2335,6 +2734,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",

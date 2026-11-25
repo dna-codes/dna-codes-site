@@ -65,9 +65,15 @@
     "mcp": {
       "endpoint": "mcp",
       "protocol_versions": [
+        "2026-07-28",
         "2025-11-25",
         "2025-06-18",
         "2025-03-26"
+      ],
+      "skills": [
+        "dna-operational",
+        "dna-sync",
+        "get-started"
       ]
     },
     "a2a": {
@@ -342,6 +348,13 @@
       "auth": "bearer",
       "summary": "Decide a paused act: approve performs it once, decline closes it; the policy's performer decides who may"
     },
+    "org-workspaces": {
+      "method": "GET",
+      "path": "/o/{org}/workspaces",
+      "href": "https://agents.dna.codes/o/{org}/workspaces",
+      "auth": "bearer",
+      "summary": "The organization's workspaces the caller may read, each with its id and name"
+    },
     "fleet-read": {
       "method": "GET",
       "path": "/o/{org}/fleet",
@@ -376,6 +389,55 @@
       "href": "https://agents.dna.codes/o/{org}/fleet/queue/perform",
       "auth": "bearer",
       "summary": "A person performs queued work routed to their Position. An agent is refused with person_required"
+    },
+    "fleet-result": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/executions/{id}/result",
+      "href": "https://agents.dna.codes/o/{org}/fleet/executions/{id}/result",
+      "auth": "bearer",
+      "summary": "A performer's work-result/v1 for its own execution, under that execution's credential"
+    },
+    "fleet-effect-outcome": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/effects/{id}/outcome",
+      "href": "https://agents.dna.codes/o/{org}/fleet/effects/{id}/outcome",
+      "auth": "bearer",
+      "summary": "A bound automation's effect-outcome/v1 for its own effect, under that effect's credential"
+    },
+    "fleet-mirror-deploy": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/mirrors",
+      "href": "https://agents.dna.codes/o/{org}/fleet/mirrors",
+      "auth": "bearer",
+      "summary": "A person deploys a binding's compiled mirror; the host records its reference, digest and time"
+    },
+    "fleet-sweep": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/sweep",
+      "href": "https://agents.dna.codes/o/{org}/fleet/sweep",
+      "auth": "bearer",
+      "summary": "Escalates handed-off work past its deadline; any scheduler may call it, and it is idempotent"
+    },
+    "fleet-supervisor-retry": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/supervisor/retry",
+      "href": "https://agents.dna.codes/o/{org}/fleet/supervisor/retry",
+      "auth": "bearer",
+      "summary": "The supervisor retries escalated work with the role that first had it"
+    },
+    "fleet-supervisor-reassign": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/supervisor/reassign",
+      "href": "https://agents.dna.codes/o/{org}/fleet/supervisor/reassign",
+      "auth": "bearer",
+      "summary": "The supervisor hands escalated work to another role that performs the same Action"
+    },
+    "fleet-supervisor-propose": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/supervisor/propose",
+      "href": "https://agents.dna.codes/o/{org}/fleet/supervisor/propose",
+      "auth": "bearer",
+      "summary": "The supervisor proposes a DNA change, which waits for a person to apply it"
     },
     "directory-events": {
       "method": "POST",
@@ -453,6 +515,12 @@
       "kind": "behaviour",
       "status": "stable",
       "schema": "https://dna.codes/agents/schemas/behaviour/policy/v1.json"
+    },
+    "access": {
+      "id": "https://dna.codes/schemas/behaviour/access/v1",
+      "kind": "behaviour",
+      "status": "stable",
+      "schema": "https://dna.codes/agents/schemas/behaviour/access/v1.json"
     }
   }
 }

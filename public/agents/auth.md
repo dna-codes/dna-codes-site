@@ -100,11 +100,19 @@ An unclaimed sandbox may perform at most 100 governed acts per day: performed ac
 | GET | `https://agents.dna.codes/o/{org}/approvals/{id}` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/approvals/{id}/approve` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/approvals/{id}/decide` | bearer |
+| GET | `https://agents.dna.codes/o/{org}/workspaces` | bearer |
 | GET | `https://agents.dna.codes/o/{org}/fleet` | bearer |
 | PUT | `https://agents.dna.codes/o/{org}/fleet` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/fleet/workflow-executions` | bearer |
 | GET | `https://agents.dna.codes/o/{org}/fleet/activity` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/fleet/queue/perform` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/executions/{id}/result` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/effects/{id}/outcome` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/mirrors` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/sweep` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/retry` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/reassign` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/propose` | bearer |
 | POST | `https://agents.dna.codes/directory/events` | none |
 | POST | `https://agents.dna.codes/o/{org}/plan/sso` | bearer |
 

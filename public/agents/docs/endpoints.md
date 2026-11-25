@@ -42,10 +42,18 @@ Every endpoint is under the agent host's base, `https://agents.dna.codes`. `{org
 | `approval-follow` | GET | `https://agents.dna.codes/o/{org}/approvals/{id}` | bearer | Follow a pending or completed approval handle |
 | `approval-approve` | POST | `https://agents.dna.codes/o/{org}/approvals/{id}/approve` | bearer | A person approves a paused act; completes the original Operation without the agent resending |
 | `approval-decide` | POST | `https://agents.dna.codes/o/{org}/approvals/{id}/decide` | bearer | Decide a paused act: approve performs it once, decline closes it; the policy's performer decides who may |
+| `org-workspaces` | GET | `https://agents.dna.codes/o/{org}/workspaces` | bearer | The organization's workspaces the caller may read, each with its id and name |
 | `fleet-read` | GET | `https://agents.dna.codes/o/{org}/fleet` | bearer | The organization's fleet document and its version: which roles agents perform and which people perform |
 | `fleet-save` | PUT | `https://agents.dna.codes/o/{org}/fleet` | bearer | A person saves the fleet document as its next version. An agent is refused with person_required |
 | `fleet-start` | POST | `https://agents.dna.codes/o/{org}/fleet/workflow-executions` | bearer | Start a workflow execution of a behaviour's workflow; its agent work runs and its human work waits in the queue |
 | `fleet-activity` | GET | `https://agents.dna.codes/o/{org}/fleet/activity` | bearer | Each role's status and recent operation executions, and the queue of available work |
 | `fleet-perform` | POST | `https://agents.dna.codes/o/{org}/fleet/queue/perform` | bearer | A person performs queued work routed to their Position. An agent is refused with person_required |
+| `fleet-result` | POST | `https://agents.dna.codes/o/{org}/fleet/executions/{id}/result` | bearer | A performer's work-result/v1 for its own execution, under that execution's credential |
+| `fleet-effect-outcome` | POST | `https://agents.dna.codes/o/{org}/fleet/effects/{id}/outcome` | bearer | A bound automation's effect-outcome/v1 for its own effect, under that effect's credential |
+| `fleet-mirror-deploy` | POST | `https://agents.dna.codes/o/{org}/fleet/mirrors` | bearer | A person deploys a binding's compiled mirror; the host records its reference, digest and time |
+| `fleet-sweep` | POST | `https://agents.dna.codes/o/{org}/fleet/sweep` | bearer | Escalates handed-off work past its deadline; any scheduler may call it, and it is idempotent |
+| `fleet-supervisor-retry` | POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/retry` | bearer | The supervisor retries escalated work with the role that first had it |
+| `fleet-supervisor-reassign` | POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/reassign` | bearer | The supervisor hands escalated work to another role that performs the same Action |
+| `fleet-supervisor-propose` | POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/propose` | bearer | The supervisor proposes a DNA change, which waits for a person to apply it |
 | `directory-events` | POST | `https://agents.dna.codes/directory/events` | none | Inbound directory (SCIM) webhook: verified events become governed Person and Membership DNA |
 | `plan-sso` | POST | `https://agents.dna.codes/o/{org}/plan/sso` | bearer | Configure enterprise SSO when the workspace plan entitles it |

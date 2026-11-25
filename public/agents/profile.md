@@ -10,7 +10,7 @@ The agent host's base URL, `{base}`, is `https://agents.dna.codes`. Take it from
 
 ## Transports
 
-MCP over Streamable HTTP at `https://agents.dna.codes/o/{org}/mcp`: one JSON-RPC message per `POST`, answered with `application/json`, with no session. Protocol versions: `2025-11-25`, `2025-06-18`, `2025-03-26`.
+MCP over Streamable HTTP at `https://agents.dna.codes/o/{org}/mcp`: one JSON-RPC message per `POST`, answered with `application/json`, with no session. Protocol versions: `2026-07-28`, `2025-11-25`, `2025-06-18`, `2025-03-26`. Under protocol 2026-07-28 it publishes skills through `skills/list`: `dna-operational`, `dna-sync`, `get-started`.
 A person's own client may use the one MCP URL, `https://agents.dna.codes/mcp`, instead: its token names the one organization the person picked when signing in. A token issued for `https://agents.dna.codes/o/{org}/mcp` is refused there.
 A2A JSON-RPC at `https://agents.dna.codes/o/{org}/a2a`: `SendMessage` with a data part `{ name, arguments }` invokes the same Action as MCP `tools/call`. Agent Card at `https://agents.dna.codes/o/{org}/a2a/agent-card`: skills are the caller's Actions.
 
@@ -34,7 +34,7 @@ Their schemas: [tools](https://dna.codes/agents/docs/tools.md).
 
 ## What this release covers
 
-This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Performing one writes no domain version: it moves a record, seeded from the instances a domain declares, and appends to the organization's log of executions. An apply that would remove a state or an entity records still hold is refused. Events are not emitted yet.
+This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable, `access` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Performing one writes no domain version: it moves a record, seeded from the instances a domain declares, and appends to the organization's log of executions. An apply that would remove a state or an entity records still hold is refused. Events are not emitted yet.
 
 ## Refusals
 

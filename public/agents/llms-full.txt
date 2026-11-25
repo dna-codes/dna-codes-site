@@ -20,7 +20,7 @@ A person who uses DNA from their own MCP client adds one URL: `https://agents.dn
 
 An agent that registered a sandbox does not use this URL. Its token is issued for `https://agents.dna.codes/o/{org}/mcp` and is refused at `https://agents.dna.codes/mcp` with `invalid_token`.
 
-This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Performing one writes no domain version: it moves a record, seeded from the instances a domain declares, and appends to the organization's log of executions. An apply that would remove a state or an entity records still hold is refused. Events are not emitted yet.
+This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable, `access` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Performing one writes no domain version: it moves a record, seeded from the instances a domain declares, and appends to the organization's log of executions. An apply that would remove a state or an entity records still hold is refused. Events are not emitted yet.
 
 ## Documents
 
@@ -71,11 +71,19 @@ This release covers structure and behaviour: `attribute` is stable, `entity` is 
 - `GET https://agents.dna.codes/o/{org}/approvals/{id}` (bearer): Follow a pending or completed approval handle
 - `POST https://agents.dna.codes/o/{org}/approvals/{id}/approve` (bearer): A person approves a paused act; completes the original Operation without the agent resending
 - `POST https://agents.dna.codes/o/{org}/approvals/{id}/decide` (bearer): Decide a paused act: approve performs it once, decline closes it; the policy's performer decides who may
+- `GET https://agents.dna.codes/o/{org}/workspaces` (bearer): The organization's workspaces the caller may read, each with its id and name
 - `GET https://agents.dna.codes/o/{org}/fleet` (bearer): The organization's fleet document and its version: which roles agents perform and which people perform
 - `PUT https://agents.dna.codes/o/{org}/fleet` (bearer): A person saves the fleet document as its next version. An agent is refused with person_required
 - `POST https://agents.dna.codes/o/{org}/fleet/workflow-executions` (bearer): Start a workflow execution of a behaviour's workflow; its agent work runs and its human work waits in the queue
 - `GET https://agents.dna.codes/o/{org}/fleet/activity` (bearer): Each role's status and recent operation executions, and the queue of available work
 - `POST https://agents.dna.codes/o/{org}/fleet/queue/perform` (bearer): A person performs queued work routed to their Position. An agent is refused with person_required
+- `POST https://agents.dna.codes/o/{org}/fleet/executions/{id}/result` (bearer): A performer's work-result/v1 for its own execution, under that execution's credential
+- `POST https://agents.dna.codes/o/{org}/fleet/effects/{id}/outcome` (bearer): A bound automation's effect-outcome/v1 for its own effect, under that effect's credential
+- `POST https://agents.dna.codes/o/{org}/fleet/mirrors` (bearer): A person deploys a binding's compiled mirror; the host records its reference, digest and time
+- `POST https://agents.dna.codes/o/{org}/fleet/sweep` (bearer): Escalates handed-off work past its deadline; any scheduler may call it, and it is idempotent
+- `POST https://agents.dna.codes/o/{org}/fleet/supervisor/retry` (bearer): The supervisor retries escalated work with the role that first had it
+- `POST https://agents.dna.codes/o/{org}/fleet/supervisor/reassign` (bearer): The supervisor hands escalated work to another role that performs the same Action
+- `POST https://agents.dna.codes/o/{org}/fleet/supervisor/propose` (bearer): The supervisor proposes a DNA change, which waits for a person to apply it
 - `POST https://agents.dna.codes/directory/events` (no credential): Inbound directory (SCIM) webhook: verified events become governed Person and Membership DNA
 - `POST https://agents.dna.codes/o/{org}/plan/sso` (bearer): Configure enterprise SSO when the workspace plan entitles it
 
@@ -101,6 +109,7 @@ This release covers structure and behaviour: `attribute` is stable, `entity` is 
 - [workflow](https://dna.codes/agents/schemas/behaviour/workflow/v1.json): Workflow, `https://dna.codes/schemas/behaviour/workflow/v1`
 - [condition](https://dna.codes/agents/schemas/behaviour/condition/v1.json): Condition, `https://dna.codes/schemas/behaviour/condition/v1`
 - [policy](https://dna.codes/agents/schemas/behaviour/policy/v1.json): Policy, `https://dna.codes/schemas/behaviour/policy/v1`
+- [access](https://dna.codes/agents/schemas/behaviour/access/v1.json): Access, `https://dna.codes/schemas/behaviour/access/v1`
 
 ## Pricing
 
@@ -209,9 +218,15 @@ Source: https://dna.codes/agents/discovery.json
     "mcp": {
       "endpoint": "mcp",
       "protocol_versions": [
+        "2026-07-28",
         "2025-11-25",
         "2025-06-18",
         "2025-03-26"
+      ],
+      "skills": [
+        "dna-operational",
+        "dna-sync",
+        "get-started"
       ]
     },
     "a2a": {
@@ -486,6 +501,13 @@ Source: https://dna.codes/agents/discovery.json
       "auth": "bearer",
       "summary": "Decide a paused act: approve performs it once, decline closes it; the policy's performer decides who may"
     },
+    "org-workspaces": {
+      "method": "GET",
+      "path": "/o/{org}/workspaces",
+      "href": "https://agents.dna.codes/o/{org}/workspaces",
+      "auth": "bearer",
+      "summary": "The organization's workspaces the caller may read, each with its id and name"
+    },
     "fleet-read": {
       "method": "GET",
       "path": "/o/{org}/fleet",
@@ -520,6 +542,55 @@ Source: https://dna.codes/agents/discovery.json
       "href": "https://agents.dna.codes/o/{org}/fleet/queue/perform",
       "auth": "bearer",
       "summary": "A person performs queued work routed to their Position. An agent is refused with person_required"
+    },
+    "fleet-result": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/executions/{id}/result",
+      "href": "https://agents.dna.codes/o/{org}/fleet/executions/{id}/result",
+      "auth": "bearer",
+      "summary": "A performer's work-result/v1 for its own execution, under that execution's credential"
+    },
+    "fleet-effect-outcome": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/effects/{id}/outcome",
+      "href": "https://agents.dna.codes/o/{org}/fleet/effects/{id}/outcome",
+      "auth": "bearer",
+      "summary": "A bound automation's effect-outcome/v1 for its own effect, under that effect's credential"
+    },
+    "fleet-mirror-deploy": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/mirrors",
+      "href": "https://agents.dna.codes/o/{org}/fleet/mirrors",
+      "auth": "bearer",
+      "summary": "A person deploys a binding's compiled mirror; the host records its reference, digest and time"
+    },
+    "fleet-sweep": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/sweep",
+      "href": "https://agents.dna.codes/o/{org}/fleet/sweep",
+      "auth": "bearer",
+      "summary": "Escalates handed-off work past its deadline; any scheduler may call it, and it is idempotent"
+    },
+    "fleet-supervisor-retry": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/supervisor/retry",
+      "href": "https://agents.dna.codes/o/{org}/fleet/supervisor/retry",
+      "auth": "bearer",
+      "summary": "The supervisor retries escalated work with the role that first had it"
+    },
+    "fleet-supervisor-reassign": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/supervisor/reassign",
+      "href": "https://agents.dna.codes/o/{org}/fleet/supervisor/reassign",
+      "auth": "bearer",
+      "summary": "The supervisor hands escalated work to another role that performs the same Action"
+    },
+    "fleet-supervisor-propose": {
+      "method": "POST",
+      "path": "/o/{org}/fleet/supervisor/propose",
+      "href": "https://agents.dna.codes/o/{org}/fleet/supervisor/propose",
+      "auth": "bearer",
+      "summary": "The supervisor proposes a DNA change, which waits for a person to apply it"
     },
     "directory-events": {
       "method": "POST",
@@ -597,6 +668,12 @@ Source: https://dna.codes/agents/discovery.json
       "kind": "behaviour",
       "status": "stable",
       "schema": "https://dna.codes/agents/schemas/behaviour/policy/v1.json"
+    },
+    "access": {
+      "id": "https://dna.codes/schemas/behaviour/access/v1",
+      "kind": "behaviour",
+      "status": "stable",
+      "schema": "https://dna.codes/agents/schemas/behaviour/access/v1.json"
     }
   }
 }
@@ -708,11 +785,19 @@ An unclaimed sandbox may perform at most 100 governed acts per day: performed ac
 | GET | `https://agents.dna.codes/o/{org}/approvals/{id}` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/approvals/{id}/approve` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/approvals/{id}/decide` | bearer |
+| GET | `https://agents.dna.codes/o/{org}/workspaces` | bearer |
 | GET | `https://agents.dna.codes/o/{org}/fleet` | bearer |
 | PUT | `https://agents.dna.codes/o/{org}/fleet` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/fleet/workflow-executions` | bearer |
 | GET | `https://agents.dna.codes/o/{org}/fleet/activity` | bearer |
 | POST | `https://agents.dna.codes/o/{org}/fleet/queue/perform` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/executions/{id}/result` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/effects/{id}/outcome` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/mirrors` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/sweep` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/retry` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/reassign` | bearer |
+| POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/propose` | bearer |
 | POST | `https://agents.dna.codes/directory/events` | none |
 | POST | `https://agents.dna.codes/o/{org}/plan/sso` | bearer |
 
@@ -734,7 +819,7 @@ The agent host's base URL, `{base}`, is `https://agents.dna.codes`. Take it from
 
 ## Transports
 
-MCP over Streamable HTTP at `https://agents.dna.codes/o/{org}/mcp`: one JSON-RPC message per `POST`, answered with `application/json`, with no session. Protocol versions: `2025-11-25`, `2025-06-18`, `2025-03-26`.
+MCP over Streamable HTTP at `https://agents.dna.codes/o/{org}/mcp`: one JSON-RPC message per `POST`, answered with `application/json`, with no session. Protocol versions: `2026-07-28`, `2025-11-25`, `2025-06-18`, `2025-03-26`. Under protocol 2026-07-28 it publishes skills through `skills/list`: `dna-operational`, `dna-sync`, `get-started`.
 A person's own client may use the one MCP URL, `https://agents.dna.codes/mcp`, instead: its token names the one organization the person picked when signing in. A token issued for `https://agents.dna.codes/o/{org}/mcp` is refused there.
 A2A JSON-RPC at `https://agents.dna.codes/o/{org}/a2a`: `SendMessage` with a data part `{ name, arguments }` invokes the same Action as MCP `tools/call`. Agent Card at `https://agents.dna.codes/o/{org}/a2a/agent-card`: skills are the caller's Actions.
 
@@ -758,7 +843,7 @@ Their schemas: [tools](https://dna.codes/agents/docs/tools.md).
 
 ## What this release covers
 
-This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Performing one writes no domain version: it moves a record, seeded from the instances a domain declares, and appends to the organization's log of executions. An apply that would remove a state or an entity records still hold is refused. Events are not emitted yet.
+This release covers structure and behaviour: `attribute` is stable, `entity` is stable, `relationship` is stable, `domain` is stable, `behaviour` is stable, `action` is stable, `operation` is stable, `workflow` is stable, `condition` is stable, `policy` is stable, `access` is stable. Every definition is stable. Behaviour is authored and read through the same tools as structure, and checked against the organization's structure. Applied behaviour Actions are derived as business tools; performing them returns next valid actions. Performing one writes no domain version: it moves a record, seeded from the instances a domain declares, and appends to the organization's log of executions. An apply that would remove a state or an entity records still hold is refused. Events are not emitted yet.
 
 ## Refusals
 
@@ -795,6 +880,11 @@ Over HTTP the refusal is the response body. In an MCP tool result it is `structu
 | `wrong_organization` | 403 | Call the endpoint of the organization your token names, or get a token for this organization. |
 | `insufficient_scope` | 403 | Get a token carrying the scope this act requires, and retry. |
 | `not_found` | 404 | Take endpoint URLs from the discovery document under https://dna.codes/agents/ rather than constructing them. |
+| `outside_execution_scope` | 403 | Act only with the Actions your work order permits, and report only your own execution's result. |
+| `mirror_drift` | 409 | Deploy the mirror compiled from the DNA the order pins. A hand-edited or stale mirror cannot settle work. |
+| `artifact_digest_mismatch` | 409 | Report the artifact's current digest, or store the artifact again and report that. |
+| `credential_expired` | 401 | Your execution has ended or passed its deadline. Stop; the host has escalated or completed the work. |
+| `undeclared_route` | 404 | Use a route the discovery document lists. The cell serves no state-changing route it does not declare. |
 | `method_not_allowed` | 405 | Use a method named in the Allow header. |
 | `invalid_request` | 400 | Correct the request as the message describes, and retry. |
 | `unsupported_protocol_version` | 400 | Initialize again and use the protocol version the server answers with. |
@@ -868,11 +958,19 @@ Every endpoint is under the agent host's base, `https://agents.dna.codes`. `{org
 | `approval-follow` | GET | `https://agents.dna.codes/o/{org}/approvals/{id}` | bearer | Follow a pending or completed approval handle |
 | `approval-approve` | POST | `https://agents.dna.codes/o/{org}/approvals/{id}/approve` | bearer | A person approves a paused act; completes the original Operation without the agent resending |
 | `approval-decide` | POST | `https://agents.dna.codes/o/{org}/approvals/{id}/decide` | bearer | Decide a paused act: approve performs it once, decline closes it; the policy's performer decides who may |
+| `org-workspaces` | GET | `https://agents.dna.codes/o/{org}/workspaces` | bearer | The organization's workspaces the caller may read, each with its id and name |
 | `fleet-read` | GET | `https://agents.dna.codes/o/{org}/fleet` | bearer | The organization's fleet document and its version: which roles agents perform and which people perform |
 | `fleet-save` | PUT | `https://agents.dna.codes/o/{org}/fleet` | bearer | A person saves the fleet document as its next version. An agent is refused with person_required |
 | `fleet-start` | POST | `https://agents.dna.codes/o/{org}/fleet/workflow-executions` | bearer | Start a workflow execution of a behaviour's workflow; its agent work runs and its human work waits in the queue |
 | `fleet-activity` | GET | `https://agents.dna.codes/o/{org}/fleet/activity` | bearer | Each role's status and recent operation executions, and the queue of available work |
 | `fleet-perform` | POST | `https://agents.dna.codes/o/{org}/fleet/queue/perform` | bearer | A person performs queued work routed to their Position. An agent is refused with person_required |
+| `fleet-result` | POST | `https://agents.dna.codes/o/{org}/fleet/executions/{id}/result` | bearer | A performer's work-result/v1 for its own execution, under that execution's credential |
+| `fleet-effect-outcome` | POST | `https://agents.dna.codes/o/{org}/fleet/effects/{id}/outcome` | bearer | A bound automation's effect-outcome/v1 for its own effect, under that effect's credential |
+| `fleet-mirror-deploy` | POST | `https://agents.dna.codes/o/{org}/fleet/mirrors` | bearer | A person deploys a binding's compiled mirror; the host records its reference, digest and time |
+| `fleet-sweep` | POST | `https://agents.dna.codes/o/{org}/fleet/sweep` | bearer | Escalates handed-off work past its deadline; any scheduler may call it, and it is idempotent |
+| `fleet-supervisor-retry` | POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/retry` | bearer | The supervisor retries escalated work with the role that first had it |
+| `fleet-supervisor-reassign` | POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/reassign` | bearer | The supervisor hands escalated work to another role that performs the same Action |
+| `fleet-supervisor-propose` | POST | `https://agents.dna.codes/o/{org}/fleet/supervisor/propose` | bearer | The supervisor proposes a DNA change, which waits for a person to apply it |
 | `directory-events` | POST | `https://agents.dna.codes/directory/events` | none | Inbound directory (SCIM) webhook: verified events become governed Person and Membership DNA |
 | `plan-sso` | POST | `https://agents.dna.codes/o/{org}/plan/sso` | bearer | Configure enterprise SSO when the workspace plan entitles it |
 
@@ -908,7 +1006,8 @@ Input:
         "operation",
         "workflow",
         "condition",
-        "policy"
+        "policy",
+        "access"
       ],
       "description": "Return this definition's JSON Schema."
     }
@@ -1020,6 +1119,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -1364,6 +1468,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -1667,6 +1776,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -2038,6 +2152,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -2157,7 +2276,181 @@ Output:
                     "type": "array"
                   },
                   "history": {
-                    "type": "array"
+                    "type": "array",
+                    "description": "For one record read by id: each performed Action on it, oldest first. principal, actingFor and version (of the behaviour document it was performed under) are present where the Run log recorded them.",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "execution",
+                        "action",
+                        "from",
+                        "to",
+                        "at"
+                      ],
+                      "properties": {
+                        "execution": {
+                          "type": "string"
+                        },
+                        "action": {
+                          "type": "string"
+                        },
+                        "from": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "to": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "at": {
+                          "type": "string"
+                        },
+                        "principal": {
+                          "type": "object",
+                          "required": [
+                            "subject",
+                            "clientId"
+                          ]
+                        },
+                        "actingFor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "version": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "audit": {
+                    "type": "array",
+                    "description": "For one record read by id: the Run log's audit entries at the record's address (refusals), oldest first. Each names the principal, whom it acted for, the tool, the model version, the inputs, the outcome, the reason and the contributing policies.",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "at",
+                        "kind",
+                        "principal",
+                        "actingFor",
+                        "tool",
+                        "address",
+                        "version",
+                        "inputs",
+                        "outcome",
+                        "reason"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "at": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "enum": [
+                            "refusal",
+                            "policy-change"
+                          ]
+                        },
+                        "principal": {
+                          "type": "object",
+                          "required": [
+                            "subject",
+                            "clientId"
+                          ]
+                        },
+                        "actingFor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tool": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "action": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "inputs": {
+                          "type": "object"
+                        },
+                        "outcome": {
+                          "type": "string"
+                        },
+                        "reason": {
+                          "type": "string"
+                        },
+                        "contributing": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "policy",
+                              "home",
+                              "target",
+                              "effect"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "entityName": {
+                    "type": "string",
+                    "description": "The entity's name, as its domain declares it."
+                  },
+                  "workflow": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "version"
+                    ],
+                    "description": "The workflow the record runs in, and the version of the behaviour document that declares it.",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "waitingOn": {
+                    "type": "object",
+                    "required": [
+                      "who"
+                    ],
+                    "description": "Who performs the Operations open in the record's state, and since when (the execution that moved it there).",
+                    "properties": {
+                      "who": {
+                        "type": "string"
+                      },
+                      "since": {
+                        "type": "string"
+                      }
+                    }
                   }
                 }
               },
@@ -2215,6 +2508,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -2333,7 +2631,181 @@ Output:
                 "type": "array"
               },
               "history": {
-                "type": "array"
+                "type": "array",
+                "description": "For one record read by id: each performed Action on it, oldest first. principal, actingFor and version (of the behaviour document it was performed under) are present where the Run log recorded them.",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "execution",
+                    "action",
+                    "from",
+                    "to",
+                    "at"
+                  ],
+                  "properties": {
+                    "execution": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string"
+                    },
+                    "from": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "to": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "at": {
+                      "type": "string"
+                    },
+                    "principal": {
+                      "type": "object",
+                      "required": [
+                        "subject",
+                        "clientId"
+                      ]
+                    },
+                    "actingFor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "version": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "audit": {
+                "type": "array",
+                "description": "For one record read by id: the Run log's audit entries at the record's address (refusals), oldest first. Each names the principal, whom it acted for, the tool, the model version, the inputs, the outcome, the reason and the contributing policies.",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "at",
+                    "kind",
+                    "principal",
+                    "actingFor",
+                    "tool",
+                    "address",
+                    "version",
+                    "inputs",
+                    "outcome",
+                    "reason"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "at": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "enum": [
+                        "refusal",
+                        "policy-change"
+                      ]
+                    },
+                    "principal": {
+                      "type": "object",
+                      "required": [
+                        "subject",
+                        "clientId"
+                      ]
+                    },
+                    "actingFor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "tool": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "action": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "inputs": {
+                      "type": "object"
+                    },
+                    "outcome": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "contributing": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "policy",
+                          "home",
+                          "target",
+                          "effect"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "entityName": {
+                "type": "string",
+                "description": "The entity's name, as its domain declares it."
+              },
+              "workflow": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "version"
+                ],
+                "description": "The workflow the record runs in, and the version of the behaviour document that declares it.",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "waitingOn": {
+                "type": "object",
+                "required": [
+                  "who"
+                ],
+                "description": "Who performs the Operations open in the record's state, and since when (the execution that moved it there).",
+                "properties": {
+                  "who": {
+                    "type": "string"
+                  },
+                  "since": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
@@ -2383,6 +2855,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -2569,6 +3046,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -2754,6 +3236,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -2898,6 +3385,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -3089,6 +3581,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -3217,6 +3714,11 @@ Output:
                 "wrong_organization",
                 "insufficient_scope",
                 "not_found",
+                "outside_execution_scope",
+                "mirror_drift",
+                "artifact_digest_mismatch",
+                "credential_expired",
+                "undeclared_route",
                 "method_not_allowed",
                 "invalid_request",
                 "unsupported_protocol_version",
@@ -3306,7 +3808,7 @@ What a business does: Actions on entities, the Operations that perform them, Wor
 
 `https://dna.codes/schemas/behaviour/behaviour/v1`, schema: [schemas/behaviour/behaviour/v1.json](https://dna.codes/agents/schemas/behaviour/behaviour/v1.json)
 
-What a business does with the structure one domain describes: its Actions, the Operations that say who performs them on what, the workflows that sequence those Operations, and the policies that decide them. It names its domain and never changes it, so a business can be modelled structure first and given behaviour later. A set holds at most one behaviour document per domain.
+What a business does with the structure one domain describes: its Actions, the Operations that say who performs them on what, the workflows that sequence those Operations, the policies that decide them, and the defaults for what no policy governs. It names its domain and never changes it, so a business can be modelled structure first and given behaviour later. A set holds at most one behaviour document per domain. Its home is its domain: its policies and defaults target the domain or an entity in it.
 
 ### `action` (stable)
 
@@ -3330,13 +3832,19 @@ A state machine over Operations. A run starts in initial. In each state, its Ope
 
 `https://dna.codes/schemas/behaviour/condition/v1`, schema: [schemas/behaviour/condition/v1.json](https://dna.codes/agents/schemas/behaviour/condition/v1.json)
 
-A test a policy applies: one predicate, or predicates composed with allOf, anyOf and not. A predicate reads a path off one subject and compares it with a value. The grammar is closed. It has no expressions, scripts or queries, and nothing in it names a business. target is the resource acted on, actor is who is acting, context is the time and environment supplied to the evaluator, and input is the arguments the Action was called with.
+A test a policy applies: one predicate, a group, or a relation, or these composed with allOf, anyOf and not. A predicate reads a path off one subject and compares it with a literal value or with a reference to another path. The grammar is closed. It has no expressions, scripts or queries, and nothing in it names a business. target is the record acted on, actor is who is acting, context is the time and environment supplied to the evaluator, and input is the arguments the Action was called with. A group names a reusable condition over a principal, kept in the organization access document. A relation holds when a structure relationship connects two values.
 
 ### `policy` (stable)
 
 `https://dna.codes/schemas/behaviour/policy/v1`, schema: [schemas/behaviour/policy/v1.json](https://dna.codes/agents/schemas/behaviour/policy/v1.json)
 
-A decision about the Actions it names: allow, deny, route the work to another performer, or require someone else's approval, when its condition holds or always when it has none. A rule on an Action's input is a policy whose condition reads input, so permissions and business rules are written in one grammar.
+A decision about the actions it names at its target: allow, deny, route the work to another performer, or require someone else's approval, when its condition holds or always when it has none. A rule on an Action's input is a policy whose condition reads input, so permissions and business rules are written in one grammar. A policy applies to every request at or under its target, wherever it is written. Combination: every applicable policy contributes, at any target, and the most restrictive decision wins, in the order deny, then require_approval, then allow. A narrower allow removes neither a wider deny nor a wider approval requirement; an exception is written on the policy it relaxes, as a not in its condition. route allows the act and adds an obligation naming the performer: where more than one route applies, the route at the deepest target is taken, then the higher priority. Approvals required by more than one policy accumulate. Where no policy governs a request, the effective default decides.
+
+### `access` (stable)
+
+`https://dna.codes/schemas/behaviour/access/v1`, schema: [schemas/behaviour/access/v1.json](https://dna.codes/agents/schemas/behaviour/access/v1.json)
+
+Who may do what at one home, the organization or one workspace: its policies and its defaults, and at the organization its groups. An organization holds one organization access document, and each of its workspaces one workspace access document beside its structure and behaviour documents. Neither names a domain. A domain's own policies and defaults are written in its behaviour document. A policy lives in the document whose home contains its target, and its target cannot reach outside that home. Groups are defined in the organization access document alone: a workspace or a domain cannot define one.
 
 ---
 

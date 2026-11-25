@@ -34,6 +34,31 @@
       "next": "Take endpoint URLs from the discovery document under https://dna.codes/agents/ rather than constructing them."
     },
     {
+      "code": "outside_execution_scope",
+      "status": 403,
+      "next": "Act only with the Actions your work order permits, and report only your own execution's result."
+    },
+    {
+      "code": "mirror_drift",
+      "status": 409,
+      "next": "Deploy the mirror compiled from the DNA the order pins. A hand-edited or stale mirror cannot settle work."
+    },
+    {
+      "code": "artifact_digest_mismatch",
+      "status": 409,
+      "next": "Report the artifact's current digest, or store the artifact again and report that."
+    },
+    {
+      "code": "credential_expired",
+      "status": 401,
+      "next": "Your execution has ended or passed its deadline. Stop; the host has escalated or completed the work."
+    },
+    {
+      "code": "undeclared_route",
+      "status": 404,
+      "next": "Use a route the discovery document lists. The cell serves no state-changing route it does not declare."
+    },
+    {
       "code": "method_not_allowed",
       "status": 405,
       "next": "Use a method named in the Allow header."
