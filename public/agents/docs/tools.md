@@ -1502,14 +1502,72 @@ Output:
                     "required": [
                       "who"
                     ],
-                    "description": "Who performs the Operations open in the record's state, and since when (the execution that moved it there).",
+                    "description": "Who performs the Operations open in the record's state, and since when (the execution that moved it there). When the state of its workflow position declares within, also within, due (when the record entered that state plus within; inside regions, the one due first) and overdue (whether the host's clock is past due).",
                     "properties": {
                       "who": {
                         "type": "string"
                       },
                       "since": {
                         "type": "string"
+                      },
+                      "within": {
+                        "type": "string",
+                        "description": "How long the work in the state should take, as an ISO 8601 duration: P2D, PT4H."
+                      },
+                      "due": {
+                        "type": "string",
+                        "description": "When the work is due: the time the record entered the state, plus within."
+                      },
+                      "overdue": {
+                        "type": "boolean",
+                        "description": "Whether the host's clock is past due."
                       }
+                    }
+                  },
+                  "unavailable": {
+                    "type": "array",
+                    "description": "The Actions the record's state and workflow position admit that the caller may not take, each with the reason the evaluator gives: not_an_actor (roles), denied (policy and its description) or default (the default and its home). Empty for a credential whose scopes cover no business tool.",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "tool",
+                        "label",
+                        "reason"
+                      ],
+                      "properties": {
+                        "tool": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        },
+                        "reason": {
+                          "type": "object",
+                          "required": [
+                            "code",
+                            "message"
+                          ],
+                          "properties": {
+                            "code": {
+                              "enum": [
+                                "not_an_actor",
+                                "denied",
+                                "default"
+                              ]
+                            },
+                            "message": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "key": {
+                    "type": "array",
+                    "description": "The attributes a card shows, by name, at most three in declaration order: the ones the entity marks key, else its required attributes. Never the state attribute.",
+                    "items": {
+                      "type": "string"
                     }
                   }
                 }
@@ -1857,14 +1915,72 @@ Output:
                 "required": [
                   "who"
                 ],
-                "description": "Who performs the Operations open in the record's state, and since when (the execution that moved it there).",
+                "description": "Who performs the Operations open in the record's state, and since when (the execution that moved it there). When the state of its workflow position declares within, also within, due (when the record entered that state plus within; inside regions, the one due first) and overdue (whether the host's clock is past due).",
                 "properties": {
                   "who": {
                     "type": "string"
                   },
                   "since": {
                     "type": "string"
+                  },
+                  "within": {
+                    "type": "string",
+                    "description": "How long the work in the state should take, as an ISO 8601 duration: P2D, PT4H."
+                  },
+                  "due": {
+                    "type": "string",
+                    "description": "When the work is due: the time the record entered the state, plus within."
+                  },
+                  "overdue": {
+                    "type": "boolean",
+                    "description": "Whether the host's clock is past due."
                   }
+                }
+              },
+              "unavailable": {
+                "type": "array",
+                "description": "The Actions the record's state and workflow position admit that the caller may not take, each with the reason the evaluator gives: not_an_actor (roles), denied (policy and its description) or default (the default and its home). Empty for a credential whose scopes cover no business tool.",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "tool",
+                    "label",
+                    "reason"
+                  ],
+                  "properties": {
+                    "tool": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "enum": [
+                            "not_an_actor",
+                            "denied",
+                            "default"
+                          ]
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "key": {
+                "type": "array",
+                "description": "The attributes a card shows, by name, at most three in declaration order: the ones the entity marks key, else its required attributes. Never the state attribute.",
+                "items": {
+                  "type": "string"
                 }
               }
             }
