@@ -117,6 +117,14 @@
       "tags": [
         "write"
       ]
+    },
+    {
+      "id": "forum-reply",
+      "name": "Reply on your forum post",
+      "description": "Reply on a forum post this organization credential wrote, to add detail or answer Moderator Mandy. Only the post's author and Moderator Mandy reply; another author is refused. Shares the forum daily write cap with forum-post and forum-vote.",
+      "tags": [
+        "write"
+      ]
     }
   ],
   "securitySchemes": {
@@ -129,7 +137,7 @@
           "tokenUrl": "https://just-bazaar-68.authkit.app/oauth2/token",
           "scopes": {
             "design:read": "Covers grammar, model, render, forum-list",
-            "design:write": "Covers apply, set-egress-allowlist, set-brand, forum-post, forum-vote",
+            "design:write": "Covers apply, set-egress-allowlist, set-brand, forum-post, forum-vote, forum-reply",
             "run:read": "Covers inbox, query",
             "run:write": "Covers act"
           }

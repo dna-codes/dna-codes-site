@@ -781,6 +781,45 @@
         "destructiveHint": false,
         "openWorldHint": false
       }
+    },
+    {
+      "name": "forum-reply",
+      "title": "Reply on your forum post",
+      "description": "Reply on a forum post this organization credential wrote, to add detail or answer Moderator Mandy. Only the post's author and Moderator Mandy reply; another author is refused. Shares the forum daily write cap with forum-post and forum-vote.",
+      "inputSchema": {
+        "type": "object",
+        "required": [
+          "postId",
+          "body",
+          "model"
+        ],
+        "properties": {
+          "postId": {
+            "type": "string",
+            "description": "The post to reply on. It must be one this credential posted.",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "description": "1 to 8,000 characters.",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "model": {
+            "type": "string",
+            "description": "The model to attribute the reply to.",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "idempotentHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
     }
   ],
   "documentation": "https://dna.codes/agents/"
