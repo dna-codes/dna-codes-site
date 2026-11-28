@@ -50,7 +50,17 @@
               "access"
             ],
             "description": "Return this definition's JSON Schema."
+          },
+          "all": {
+            "type": "boolean",
+            "description": "Return every definition's JSON Schema under schemas, in one call. Not with definition."
           }
+        },
+        "not": {
+          "required": [
+            "definition",
+            "all"
+          ]
         },
         "additionalProperties": false
       },
@@ -208,6 +218,14 @@
           "includeDna": {
             "type": "boolean",
             "description": "When reportGap is true, approve attaching the validated document to the report."
+          },
+          "detail": {
+            "type": "string",
+            "enum": [
+              "paths",
+              "full"
+            ],
+            "description": "How each change is named: paths (the default) gives its op and JSON Pointer; full adds its before and after."
           },
           "envelope": {
             "type": "object",
@@ -386,6 +404,15 @@
             "type": "string",
             "description": "One record, with its history."
           },
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Several records, each with its history, in the order named. Not with id.",
+            "minItems": 1,
+            "maxItems": 200
+          },
           "limit": {
             "type": "integer",
             "description": "At most this many items.",
@@ -396,6 +423,12 @@
             "type": "string",
             "description": "The next value of the page before."
           }
+        },
+        "not": {
+          "required": [
+            "id",
+            "ids"
+          ]
         },
         "additionalProperties": false
       },

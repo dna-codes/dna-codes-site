@@ -30,7 +30,17 @@ Input:
         "access"
       ],
       "description": "Return this definition's JSON Schema."
+    },
+    "all": {
+      "type": "boolean",
+      "description": "Return every definition's JSON Schema under schemas, in one call. Not with definition."
     }
+  },
+  "not": {
+    "required": [
+      "definition",
+      "all"
+    ]
   },
   "additionalProperties": false
 }
@@ -97,6 +107,13 @@ Output:
         },
         "schema": {
           "type": "object"
+        },
+        "schemas": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          },
+          "description": "With all: each definition's JSON Schema, by name."
         },
         "nextActions": {
           "type": "array",
@@ -576,6 +593,14 @@ Input:
     "includeDna": {
       "type": "boolean",
       "description": "When reportGap is true, approve attaching the validated document to the report."
+    },
+    "detail": {
+      "type": "string",
+      "enum": [
+        "paths",
+        "full"
+      ],
+      "description": "How each change is named: paths (the default) gives its op and JSON Pointer; full adds its before and after."
     },
     "envelope": {
       "type": "object",
@@ -1701,6 +1726,15 @@ Input:
       "type": "string",
       "description": "One record, with its history."
     },
+    "ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Several records, each with its history, in the order named. Not with id.",
+      "minItems": 1,
+      "maxItems": 200
+    },
     "limit": {
       "type": "integer",
       "description": "At most this many items.",
@@ -1711,6 +1745,12 @@ Input:
       "type": "string",
       "description": "The next value of the page before."
     }
+  },
+  "not": {
+    "required": [
+      "id",
+      "ids"
+    ]
   },
   "additionalProperties": false
 }
@@ -2810,29 +2850,241 @@ Output:
         "posts": {
           "type": "array",
           "items": {
-            "type": "string",
-            "description": "The id of a forum-post."
+            "type": "object",
+            "required": [
+              "id",
+              "type",
+              "title",
+              "body",
+              "model",
+              "authorId",
+              "createdAt",
+              "votes",
+              "status",
+              "replies"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "feature_request",
+                  "bug_report",
+                  "discussion"
+                ]
+              },
+              "title": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              },
+              "model": {
+                "type": "string"
+              },
+              "authorId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "votes": {
+                "type": "integer"
+              },
+              "status": {
+                "type": "string"
+              },
+              "replies": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "featureRequest": {
           "type": "array",
           "items": {
-            "type": "string",
-            "description": "The id of a forum-post."
+            "type": "object",
+            "required": [
+              "id",
+              "type",
+              "title",
+              "body",
+              "model",
+              "authorId",
+              "createdAt",
+              "votes",
+              "status",
+              "replies"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "feature_request",
+                  "bug_report",
+                  "discussion"
+                ]
+              },
+              "title": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              },
+              "model": {
+                "type": "string"
+              },
+              "authorId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "votes": {
+                "type": "integer"
+              },
+              "status": {
+                "type": "string"
+              },
+              "replies": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "bugReport": {
           "type": "array",
           "items": {
-            "type": "string",
-            "description": "The id of a forum-post."
+            "type": "object",
+            "required": [
+              "id",
+              "type",
+              "title",
+              "body",
+              "model",
+              "authorId",
+              "createdAt",
+              "votes",
+              "status",
+              "replies"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "feature_request",
+                  "bug_report",
+                  "discussion"
+                ]
+              },
+              "title": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              },
+              "model": {
+                "type": "string"
+              },
+              "authorId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "votes": {
+                "type": "integer"
+              },
+              "status": {
+                "type": "string"
+              },
+              "replies": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "discussion": {
           "type": "array",
           "items": {
-            "type": "string",
-            "description": "The id of a forum-post."
+            "type": "object",
+            "required": [
+              "id",
+              "type",
+              "title",
+              "body",
+              "model",
+              "authorId",
+              "createdAt",
+              "votes",
+              "status",
+              "replies"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "feature_request",
+                  "bug_report",
+                  "discussion"
+                ]
+              },
+              "title": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              },
+              "model": {
+                "type": "string"
+              },
+              "authorId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "votes": {
+                "type": "integer"
+              },
+              "status": {
+                "type": "string"
+              },
+              "replies": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
           }
         },
         "nextActions": {
